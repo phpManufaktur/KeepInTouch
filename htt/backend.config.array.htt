@@ -1,0 +1,46 @@
+<!-- $Id: backend.config.array.htt 19 2010-03-18 05:54:10Z ralf $ -->
+<form name="{$form_name}" action="{$form_action}" method="post">
+  <input type="hidden" name="{$action_name}" value="{$action_value}" />
+  <input type="hidden" name="{$cfg_name}" value="{$cfg_value}" />
+  <input type="hidden" name="{$item_name|default: ''}" value="{$item_value|default: ''}" />
+  <h2>{$header}</h2>
+  {$intro}
+  <table width="100%">
+    <colgroup>
+      <col width="5%" />
+      <col width="15%" />
+      <col width="20%" />
+      <col width="30%" />
+      <col width="10%" />
+      <col width="20%" />
+    </colgroup>
+    <tr>
+      <th>{$header_id|default: ''}</th>
+      <th>{$header_type|default: ''}</th>
+      <th>{$header_identifier|default: ''}</th>
+      <th>{$header_value|default: ''}</th>
+      <th>{$header_status|default: ''}</th>
+      <th>{$header_changed|default: ''}</th>
+    </tr>
+    {$items}
+    <tr>
+      <td colspan="6">&nbsp;</td>
+    </tr>
+    <tr>
+      <td>&nbsp;</td><td colspan="5"><b>{$add_title|default: ''}</b></td>
+    </tr>
+    <tr>
+      <td colspan="6">&nbsp;</td>
+    </tr>
+    {$add|default: ''}
+    <tr>
+      <td colspan="6">&nbsp;</td>
+    </tr>
+    <tr>
+      <td colspan="6">
+        <input type="submit" value="{$btn_ok}" />&nbsp;
+        <input type="button" value="{$btn_abort}" onclick="javascript: window.location = '{$abort_location}'; return false;" />
+      </td>
+    </tr>
+  </table>
+</form>

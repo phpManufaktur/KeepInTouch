@@ -1,0 +1,1 @@
+<tr>{$newsletter_td|default: ''}</tr>

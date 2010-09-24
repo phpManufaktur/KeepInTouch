@@ -1,0 +1,32 @@
+<!-- $Id: backend.email.dlg.htt 22 2010-03-22 03:50:41Z ralf $ -->
+<div id="accordion">
+  <div class="accordion_tab"><a href="#">{$header_email}</a></div>
+  <div>
+    <form name="{$form_name}" action="{$form_action}" method="post">
+      <input type="hidden" name="{$action_name}" value="{$action_value}" />
+      {$intro|default: ''}
+      <table width="100%">
+        <colgroup>
+          <col width="15%" />
+          <col width="85%" />
+        </colgroup>
+        {$items|default: ''}
+        <tr><td colspan="2">&nbsp;</td></tr>
+        <tr>
+          <td colspan="2">{$value_editor}</td>
+        </tr>
+        <tr><td colspan="2">&nbsp;</td></tr>
+        <tr>
+          <td colspan="2">
+            <input type="submit" value="{$btn_send}" />&nbsp;
+            <input type="button" value="{$btn_abort}" onclick="javascript: window.location = '{$abort_location}'; return false;" />
+          </td>
+        </tr>
+      </table>
+    </form>
+  </div>
+  <div class="accordion_tab"><a href="#">{$header_help}</a></div>
+  <div>
+    - not implemented yet -
+  </div>
+</div><!-- // accordion -->

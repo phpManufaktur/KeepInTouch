@@ -1,0 +1,3 @@
+<tr>
+  {$tds|default: ''}
+</tr>

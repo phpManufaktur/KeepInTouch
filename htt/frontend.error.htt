@@ -1,0 +1,6 @@
+<!-- $Id -->
+<div class="kit_error">
+  <h1>{$header}</h1>
+  {$error}
+  <div class="kit_error_hint">{$error_hint}</div>
+</div>

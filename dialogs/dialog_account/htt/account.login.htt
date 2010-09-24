@@ -1,0 +1,13 @@
+<!-- $Id: account.login.htt 32 2010-05-24 17:16:52Z ralf $ -->
+<div class="kit_acc_dlg">
+  <form name="account_login" action="{$form_action}" method="post">
+    <input type="hidden" name="{$action_name}" value="{$action_value}" />
+    <input type="hidden" name="{$account_key_name}" value="{$account_key_value}" />
+    <input type="hidden" name="{$account_id_name}" value="{$account_id_value}" />
+    <div class="kit_acc_intro">{$intro}</div>
+    <div class="kit_acc_form_item"><span class="kit_acc_label">{$label_username}</span><input type="text" name="{$username_name}" value="{$username_value}" /></div>
+    <div class="kit_acc_form_item"><span class="kit_acc_label">{$label_userpass}</span><input type="password" name="{$userpass_name}" value="{$userpass_value}" /></div>
+    <div class="kit_acc_form_item"><span class="kit_acc_label">{$label_submit}</span><input type="submit" value="{$btn_submit}" /></div>
+    <div class="kit_acc_password_hint">{$password_hint}</div>
+  </form>
+</div>

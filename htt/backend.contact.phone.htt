@@ -1,0 +1,3 @@
+<!-- $Id: backend.contact.phone.htt 21 2010-03-20 20:06:11Z ralf $ -->
+<div class="kccl_label phone">{$label_phone|default: ''}</div>
+<div class="kccl_value phone">{$value_phone|default: ''}</div>

@@ -1,0 +1,5 @@
+<tr>
+  <th>{$label|default:''}</th>
+  <th>{$value|default: ''}</th>
+  <th>{$description|default: ''}</th>
+</tr>

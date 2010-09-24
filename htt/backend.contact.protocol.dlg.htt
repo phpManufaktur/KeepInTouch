@@ -1,0 +1,20 @@
+<!-- $Id: backend.contact.protocol.dlg.htt 19 2010-03-18 05:54:10Z ralf $ -->
+<div class="kccp_dialog">
+  <table>
+    <colgroup>
+      <col width="80%" />
+      <col width="20%" />
+    </colgroup>
+    <tr>
+      <td>{$date|default: ''}{$type|default: ''}</td>
+      <td>{$label_members|default: ''}</td>
+    </tr>
+    <tr>
+      <td>{$memo|default: ''}</td>
+      <td>{$members|default: ''}</td>
+    </tr>
+    <tr>
+      <td colspan="2">{$protocol|default: ''}</td>
+    </tr>
+  </table>  
+</div>

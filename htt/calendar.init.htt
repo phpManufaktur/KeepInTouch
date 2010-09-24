@@ -1,0 +1,16 @@
+<!-- $Id: calendar.init.htt 19 2010-03-18 05:54:10Z ralf $ -->
+<script type="text/javascript" >
+  Calendar.setup(
+    {
+    inputField  : '{$input}',
+    ifFormat    : '{$jscal_ifformat}',
+    button      : '{$button}',
+    firstDay    : {$jscal_firstday},
+    showsTime   : '{$showsTime}',
+    timeFormat  : '{$timeFormat}',
+    date        : '{$jscal_today}',
+    range       : [1970, 2037],
+    step        : 1
+    }
+  );
+</script>

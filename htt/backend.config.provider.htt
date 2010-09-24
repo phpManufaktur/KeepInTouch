@@ -1,0 +1,75 @@
+<!-- $Id: backend.config.provider.htt 28 2010-05-22 01:35:28Z ralf $ -->
+<div id="accordion">
+  <div class="accordion_tab"><a href="#">{$header_provider}</a></div>
+  <div>
+    <!-- create and edit service provider -->
+    {$intro}
+    <form name="{$form_name}" action="{$form_action}" method="post">
+      <input type="hidden" name="{$action_name}" value="{$action_value}" />
+      <input type="hidden" name="{$cfg_name}" value="{$cfg_value}" />
+      <table width="99%">
+        <colgroup>
+          <col width="20%" />
+          <col width="80%" />
+        </colgroup>
+        <tr>
+          <td>{$label_select_provider}</td>
+          <td>{$value_select_provider}</td>
+        </tr>
+        <tr><td colspan="2">&nbsp;</td></tr>
+        <tr>
+          <td>{$label_name}</td>
+          <td>{$value_name}</td>
+        </tr>
+        <tr>
+          <td>{$label_email}</td>
+          <td>{$value_email}</td>
+        </tr>
+        <tr>
+          <td>{$label_identifier}</td>
+          <td>{$value_identifier}</td>
+        </tr>
+        <tr>
+          <td>{$label_remark}</td>
+          <td>{$value_remark}</td>
+        </tr>
+        <tr>
+          <td>{$label_auth}</td>
+          <td>{$value_auth}</td>
+        </tr>
+        <tr>
+          <td>{$label_host}</td>
+          <td>{$value_host}</td>
+        </tr>
+        <tr>
+          <td>{$label_user}</td>
+          <td>{$value_user}</td>
+        </tr>
+        <tr>
+          <td>{$label_pass}</td>
+          <td>{$value_pass}</td>
+        </tr>
+         <tr>
+          <td>{$label_pass_retype}</td>
+          <td>{$value_pass_retype}</td>
+        </tr>
+        <tr>
+          <td>{$label_status}</td>
+          <td>{$value_status}</td>
+        </tr>
+        <tr><td colspan="2">&nbsp;</td></tr>
+        <tr>
+          <td colspan="2">
+            <input type="submit" value="{$btn_ok}" />&nbsp;
+            <input type="button" value="{$btn_abort}" onclick="javascript: window.location = '{$abort_location}'; return false;" />
+          </td>
+        </tr>
+      </table>
+    </form>
+  </div>
+  <div class="accordion_tab"><a href="#">{$header_help}</a></div>
+  <div>
+    <!-- help / documentation -->
+    <p>- not implemented yet -</p>
+  </div>
+</div>

@@ -1,0 +1,4 @@
+<!-- $Id: backend.contact.address.add.htt 19 2010-03-18 05:54:10Z ralf $ -->
+<div class="kccl_label add_address">{$label_add_address|default: ''}</div>
+<div class="kccl_value add_address">{$value_add_address|default: ''}</div>
+<div class="kccl_empty_row"></div>

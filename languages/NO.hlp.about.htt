@@ -1,0 +1,29 @@
+<!-- $Id -->
+<div class="help">
+  <div id="accordion">
+    <div class="accordion_tab"><a href="#">About KeepInTouch</a></div>
+      <div>
+        <div style="text-align:center;">
+           <img src="{$img_url}" width="600" height="398" alt="Logo KeepInTouch" />
+        </div>
+        <div style="text-align:left;padding:10px 0 10px 0;">
+          <p><b>KeepInTouch (KIT)<br />Release {$version}</b></p>
+          <p>&copy by phpManufaktur, Ralf Hertsch (Berlin)</p>
+          <p>Denne versjonen er fortsatt p&aring; et eksperimentelt niv&aring; og b&oslash;r derfor ikke benyttes p&aring; et nettsted som er i daglig bruk.</p>
+          <p>Jeg tar gjerne i mot forbedringer og forslag til forbedringer, p&aring; e-post <a href="mailto:rh@phpmanufaktur.de">rh@phpManufaktur.de</a> da p&aring; Engelsk/ Tysk eller - helst - i forumtr&aring;den vedrørende denne modulen i det Tyske WebsiteBaker forumet.</p>
+          <p><img src="{$signature}" width="250" height="40" alt="Ralf Hertsch" /></p>
+          <p style="font-size: smaller;">&nbsp;</p>
+          <p style="font-size: smaller;">phpManufaktur<br />Ralf Hertsch<br />Stockholmer Str. 31<br />13359 Berlin</p>
+          <p style="font-size: smaller;">E-Mail <a href="mailto:mail@phpmanufaktur.de">mail@phpManufaktur.de</a><br>Telefon +49 (30) 68813647<br />Telefax +49 (30) 68813649<br />Internet <a href="http://phpmanufaktur.de" target="blank_">http://phpManufaktur.de</a></p>
+        </div>
+      </div>
+    <div class="accordion_tab"><a href="#">Release Notes</a></div>
+      <div class="release_notes">
+        <pre>{$release_notes}</pre>
+      </div>
+    <div class="accordion_tab"><a href="#">Help, Documentation</a></div>
+      <div>
+        <p>Die Hilfedatei/Dokumentation befindet sich noch in Arbeit...</p>
+      </div>
+  </div>
+</div>

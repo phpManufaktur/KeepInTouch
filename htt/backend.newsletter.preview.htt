@@ -1,0 +1,52 @@
+<!-- $Id: backend.newsletter.preview.htt 38 2010-05-30 18:02:06Z ralf $ -->
+<div>
+  <h2>{$header_preview}</h2>
+  <div class="intro">{$intro}</div>
+  <table width="99%">
+    <colgroup>
+      <col width="10%" />
+      <col width="90%" />
+    </colgroup>
+    <tr><td colspan="2">&nbsp;</td>
+    <tr>
+      <td>{$html_label}</td>
+      <td>
+        <iframe src="{$html_source}" width="99%" height="400" name="html_preview">
+          <p>Your Browser does not support frames!</p>
+        </iframe>
+      </td>
+    </tr>
+    <tr><td colspan="2">&nbsp;</td>
+    <tr>
+      <td>{$text_label}</td>
+      <td>
+        <iframe src="{$text_source}" width="99%" height="400" name="text_preview">
+          <p>Your Browser does not support frames!</p>
+        </iframe>
+      </td>
+    </tr>
+    <tr><td colspan="2">&nbsp;</td>
+    <tr>
+      <td>&nbsp;</td>
+      <td>
+        <!-- Preview ok, save the file -->
+        <div style="width:auto; float:left;">
+        <form name="preview_save" action="{$form_action}" method="post" >
+          <input type="hidden" name="{$action_name}" value="{$action_save_value}" />
+          <input type="hidden" name="{$preview_name}" value="{$preview_value}" />
+          <input type="submit" value="{$btn_save}" />&nbsp;
+        </form>
+        </div>
+        <!-- Back to editing file -->
+        <div>
+        <form name="preview_edit" action="{$form_action}" method="post" >
+          <input type="hidden" name="{$action_name}" value="{$action_edit_value}" />
+          <input type="hidden" name="{$preview_name}" value="{$preview_value}" />
+          <input type="submit" value="{$btn_edit}" />&nbsp;
+          <input type="button" value="{$btn_abort}" onclick="javascript: window.location = '{$abort_location}'; return false;" />
+        </form>
+        </div>
+      </td>
+    </tr>
+  </table>
+</div>

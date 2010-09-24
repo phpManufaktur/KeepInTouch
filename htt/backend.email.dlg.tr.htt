@@ -1,0 +1,4 @@
+<tr>
+  <td class="md_label">{$label|default: ''}</td>
+  <td class="md_value">{$value|default: ''}</td>
+</tr>

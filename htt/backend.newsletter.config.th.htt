@@ -1,0 +1,7 @@
+<tr>
+  <th>{$label|default:''}</th>
+  <th>{$identifier|default: ''}</th>
+  <th>{$type|default: ''}</th>
+  <th>{$value|default: ''}</th>
+  <th>{$description|default: ''}</th>
+</tr>

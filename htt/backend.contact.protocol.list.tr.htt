@@ -1,0 +1,6 @@
+<tr class="{$class|default: ''}">
+  <td>{$date|default: ''}</td>
+  <td>{$type|default: ''}</td>
+  <td>{$memo|default: ''}</td>
+  <td>{$members|default: ''}</td>
+</tr>

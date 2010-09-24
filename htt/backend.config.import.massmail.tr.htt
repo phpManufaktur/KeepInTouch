@@ -1,0 +1,4 @@
+<tr>
+  <td>{$label|default: ''}</td>
+  <td>{$value|default: ''}</td>
+</tr>

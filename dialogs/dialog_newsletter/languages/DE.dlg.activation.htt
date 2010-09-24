@@ -1,0 +1,8 @@
+<div class="kit_dlg">
+  <h1>Aktivierungslink versendet</h1>
+  <p>Lieber Besucher,<br />
+  Vielen Dank für Ihre Anmeldung zu unserem Newsletter-Service.</p>
+  <p>Zum Schutz vor Missbrauch haben wir Ihnen einen Aktivierungslink an Ihre E-Mail Adresse <b>{$email}</b> gesendet.</p>
+  <p>Bitte kontrollieren Sie Ihren E-Mail Eingang und bestätigen Sie die Anmeldung.</p>
+  <p>Mit freundlichen Grüßen<br /><i>Ihr {$website} Team</i></p>
+</div>

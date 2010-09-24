@@ -1,0 +1,70 @@
+<!-- $Id: backend.newsletter.template.htt 38 2010-05-30 18:02:06Z ralf $ -->
+<div>
+  <h2>{$header}</h2>
+  {$intro}
+  <table width="99%">
+    <colgroup>
+      <col width="80%" />
+      <col width="20%" />
+    </colgroup>
+    <tr>
+      <td>
+        <!-- linke Spalte -->
+        <form name="{$form_name}" action="{$form_action}" method="post">
+          <input type="hidden" name="{$action_name}" value="{$action_value}" />
+          <input type="hidden" name="{$tid_name}" value="{$tid_value}" />
+          <input type="hidden" name="{$preview_name}" value="{$preview_value}" />
+          <table width="99%">
+            <colgroup>
+              <col width="20%" />
+              <col width="80%" />
+            </colgroup>
+            <tr>
+              <td>{$template_select_label}</td>
+              <td>{$template_select}</td>
+            </tr>
+            <tr><td colspan="2">&nbsp;</td></tr>
+            <tr>
+              <td>{$template_name_label}</td>
+              <td>{$template_name}</td>
+            </tr>
+            <tr>
+              <td>{$template_description_label}</td>
+              <td>{$template_description}</td>
+            </tr>
+            <tr>
+              <td>{$template_html_label}</td>
+              <td>{$template_html}</td>
+            </tr>
+            <tr><td colspan="2">&nbsp;</td></tr>
+            <tr>
+              <td>{$template_text_label}</td>
+              <td>{$template_text}</td>
+            </tr>
+            <tr><td colspan="2">&nbsp;</td></tr>
+            <tr>
+              <td>{$template_status_label}</td>
+              <td>{$template_status}</td>
+            </tr>
+            <tr><td colspan="2">&nbsp;</td></tr>
+            <tr>
+              <td>&nbsp;</td>
+              <td>
+                <input type="submit" value="{$btn_preview}" />&nbsp;
+                <input type="button" value="{$btn_abort}" onclick="javascript: window.location = '{$abort_location}'; return false;" />
+              </td>
+            </tr>
+          </table>
+      </td>
+      <td>
+        <!-- rechte Spalte -->
+        <div>
+          <div style="font-weight:bold;">{$header_commands}</div>
+          <div style="font-size:smaller;">{$intro_commands}</div>
+          {$commands}
+        </div>
+        </form>
+      </td>
+    </tr>
+  </table>
+</div>

@@ -1,0 +1,8 @@
+<!-- $Id: backend.body.htt 26 2010-03-31 03:24:04Z ralf $ -->
+<script type="text/javascript">
+  var WB_URL = '{$WB_URL}';
+</script>
+<div class="kit_backend">
+  {$navigation}
+  <div {$class|default: ''}>{$content}</div>
+</div>

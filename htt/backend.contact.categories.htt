@@ -1,0 +1,11 @@
+<!-- $Id: backend.contact.categories.htt 19 2010-03-18 05:54:10Z ralf $ -->
+<table>
+  <colgroup>
+    <col width="20%" />
+    <col width="20%" />
+    <col width="20%" />
+    <col width="20%" />
+    <col width="20%" />
+  </colgroup>
+  {$rows|default: ''}
+</table>

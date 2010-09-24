@@ -1,0 +1,8 @@
+<tr>
+  <td>{$id|default: ''}</td>
+  <td>{$type|default: ''}</td>
+  <td>{$identifier|default: ''}</td>
+  <td>{$value|default: ''}</td>
+  <td>{$status|default: ''}</td>
+  <td>{$lastchange|default: ''}</td>
+</tr>

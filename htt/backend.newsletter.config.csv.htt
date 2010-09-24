@@ -1,0 +1,6 @@
+<tr>
+  <td>&nbsp;</td>
+  <td colspan="4">
+    <input type="checkbox" name="{$name}" value="1">&nbsp;{$label}
+  </td>
+</tr>

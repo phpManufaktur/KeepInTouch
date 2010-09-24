@@ -1,0 +1,48 @@
+<!-- $Id: backend.newsletter.dlg.htt 38 2010-05-30 18:02:06Z ralf $ -->
+<div>
+  <form name="{$form_name}" action="{$form_action}" method="post">
+    <input type="hidden" name="{$action_name}" value="{$action_value}" />
+    <input type="hidden" name="{$preview_name}" value="{$preview_value}" />
+    {$intro|default: ''}
+    <table width="99%">
+      <colgroup>
+        <col width="80%" />
+        <col width="20%" />
+      </colgroup>
+      <tr>
+        <td>
+          <!-- linke Spalte -->
+          <table width="99%">
+            <colgroup>
+              <col width="20%" />
+              <col width="80%" />   
+            </colgroup>
+            {$items|default: ''}
+            <tr><td colspan="2">&nbsp;</td></tr>
+            <tr><td colspan="2">{$label_html_editor}</td></tr>
+            <tr>
+              <td colspan="2">{$value_html_editor}</td>
+            </tr>
+            <tr><td colspan="2">&nbsp;</td></tr>
+            <tr><td colspan="2">{$label_text_editor}</td></tr>
+            <tr>
+              <td colspan="2">{$value_text_editor}</td>
+            </tr>
+            <tr><td colspan="2">&nbsp;</td></tr>
+            <tr>
+              <td colspan="2">
+                <input type="submit" value="{$btn_preview}" />&nbsp;
+                <input type="button" value="{$btn_abort}" onclick="javascript: window.location = '{$abort_location}'; return false;" />
+              </td>
+            </tr>
+          </table>
+        </td>
+        <td>
+          <!-- rechte Spalte -->
+          {$value_commands}
+        </td>
+      </tr>
+      
+    </table>
+  </form>
+</div>

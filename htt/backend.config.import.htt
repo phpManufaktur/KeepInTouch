@@ -1,0 +1,15 @@
+<!-- $Id: backend.config.import.htt 19 2010-03-18 05:54:10Z ralf $ -->
+<h2>{$header}</h2>
+{$intro|default: ''}
+<table>
+  <colgroup>
+    <col width="20%" />
+    <col width="80%" />
+  </colgroup>
+  <tr>
+    <th>{$header_import|default: ''}</th>
+    <th>{$header_action|default: ''}</th>
+  </tr>
+  {$items|default: ''}
+  <tr><td colspan="2">&nbsp;</td></tr>
+</table>

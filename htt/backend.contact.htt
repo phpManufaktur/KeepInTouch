@@ -1,0 +1,123 @@
+<!-- $Id: backend.contact.htt 29 2010-05-23 07:53:55Z ralf $ -->
+<div class="kit_contact_container">
+  <form name="{$form_name}" action="{$form_action}" method="post">
+    <input type="hidden" name="{$action_name}" value="{$action_value}" />
+    <input type="hidden" name="{$id_name}" value="{$id_value}" />
+    <input type="hidden" name="{$address_array_name}" value="{$address_array_value}" />
+    <input type="hidden" name="{$email_array_name}" value="{$email_array_value}" />
+    <input type="hidden" name="{$phone_array_name}" value="{$phone_array_value}" />
+    <input type="hidden" name="{$internet_array_name}" value="{$internet_array_value}" />
+    <input type="hidden" id="language" name="language" value="{$language}" />
+    <div id="accordion">
+      <div class="accordion_tab"><a href="#">{$header_contact}</a></div>
+      <div>
+        <!-- contact -->
+        {$intro}
+        <div class="kit_contact_container_left">
+          <div class="kccl_label {$class_id|default: ''}">{$label_id|default: ''}</div>
+          <div class="kccl_value {$class_id|default: ''}">{$value_id|default: ''}</div>
+          <div class="kccl_empty_row"></div>
+          <div class="kccl_label {$class_type|default: ''}">{$label_type|default: ''}</div>
+          <div class="kccl_value {$class_type|default: ''}">{$value_type|default: ''}</div>
+          <div class="kccl_label {$class_access|default: ''}">{$label_access|default: ''}</div>
+          <div class="kccl_value {$class_access|default: ''}">{$value_access|default: ''}</div>
+          <div class="kccl_label {$class_status|default: ''}">{$label_status|default: ''}</div>
+          <div class="kccl_value {$class_status|default: ''}">{$value_status|default: ''}</div>
+          <div class="kccl_empty_row"></div>
+          <div class="kccl_label {$class_identifier|default: ''}">{$label_identifier|default: ''}</div>
+          <div class="kccl_value {$class_identifier|default: ''}">{$value_identifier|default: ''}</div>
+          <div class="kccl_empty_row"></div>
+          <div class="kccl_label {$class_person_title|default: ''}">{$label_person_title|default: ''}</div>
+          <div class="kccl_value {$class_person_title|default: ''}">{$value_person_title|default: ''}</div>
+          <div class="kccl_label {$class_person_title_academic|default: ''}">{$label_person_title_academic|default: ''}</div>
+          <div class="kccl_value {$class_person_title_academic|default: ''}">{$value_person_title_academic|default: ''}</div>
+          <div class="kccl_label {$class_person_first_name|default: ''}">{$label_person_first_name|default: ''}</div>
+          <div class="kccl_value {$class_person_first_name|default: ''}">{$value_person_first_name|default: ''}</div>
+          <div class="kccl_label {$class_person_last_name|default: ''}">{$label_person_last_name|default: ''}</div>
+          <div class="kccl_value {$class_person_last_name|default: ''}">{$value_person_last_name|default: ''}</div>
+          <div class="kccl_label {$class_person_function|default: ''}">{$label_person_function|default: ''}</div>
+          <div class="kccl_value {$class_person_function|default: ''}">{$value_person_function|default: ''}</div>
+          <div class="kccl_empty_row"></div>
+          <div class="kccl_label {$class_birthday|default: ''}">{$label_birthday|default: ''}</div>
+          <div class="kccl_value {$class_birthday|default: ''}">{$value_birthday|default: ''}</div>
+        </div>
+        <div class="kit_contact_container_right">
+          <div class="kccr_empty_row"></div>
+          <div class="kccr_empty_row"></div>
+          <div class="kccr_label {$class_contact_note|default: ''}">{$label_contact_note|default: ''}</div>
+          <div class="kccr_value {$class_contact_note|default: ''}">{$value_contact_note|default: ''}</div>
+          <div class="kccr_empty_row"></div>
+          <div class="kccr_empty_row"></div>
+          <div class="kccr_empty_row"></div>
+          <div class="kccr_empty_row"></div>
+          <div class="kccr_label {$class_company_title|default: ''}">{$label_company_title|default: ''}</div>
+          <div class="kccr_value {$class_company_title|default: ''}">{$value_company_title|default: ''}</div>
+          <div class="kccr_label {$class_company_name|default: ''}">{$label_company_name|default: ''}</div>
+          <div class="kccr_value {$class_company_name|default: ''}">{$value_company_name|default: ''}</div>
+          <div class="kccr_label {$class_company_department|default: ''}">{$label_company_department|default: ''}</div>
+          <div class="kccr_value {$class_company_department|default: ''}">{$value_company_department|default: ''}</div>
+          <div class="kccr_label {$class_company_additional|default: ''}">{$label_company_additional|default: ''}</div>
+          <div class="kccr_value {$class_company_additional|default: ''}">{$value_company_additional|default: ''}</div>
+          <div class="kccr_empty_row"></div>
+          <div class="kccr_empty_row"></div>
+          <div class="kccr_label {$class_contact_since|default: ''}">{$label_contact_since|default: ''}</div>
+          <div class="kccr_value {$class_contact_since|default: ''}">{$value_contact_since|default: ''}</div>          
+        </div>
+      </div>
+      <div class="accordion_tab"><a href="#">{$header_addresses}</a></div>
+      <div>
+        <!-- addresses, map -->
+        <div class="kit_contact_container_left">
+          {$addresses|default: ''}
+        </div>
+        <div class="kit_contact_container_right">
+          <div class="kccr_label {$class_map|default: '&nbsp;'}">{$label_map|default: ''}</div>
+          <div class="kccr_value {$class_map|default: ''}">{$value_map|default: ''}</div>
+        </div>
+      </div>
+      <div class="accordion_tab"><a href="#">{$header_communication}</a></div>
+      <div>
+        <!-- communication -->
+        <div class="kit_contact_container_left">
+          <div class="kccl_empty_row"></div>
+          {$phone|default: ''}
+        </div>
+        <div class="kit_contact_container_right">
+          <div class="kccr_empty_row"></div>
+          {$email|default: ''}
+          <div class="kccr_empty_row"></div>
+          {$internet|default: ''}
+        </div>
+      </div>
+      <div class="accordion_tab"><a href="#">{$header_categories}</a></div>
+      <div>
+        <!-- categories -->
+        <div class="kit_contact_categories">
+          <div class="kccc_label">{$label_categories|default: ''}</div>
+          <div class="kccc_value">{$value_categories|default: ''}</div>
+        </div>
+        <!-- newsletter -->
+        <div class="kit_contact_categories">
+          <div class="kccc_label">{$label_newsletter|default: ''}</div>
+          <div class="kccc_value">{$value_newsletter|default: ''}</div>
+        </div>
+      </div>
+      <div class="accordion_tab"><a href="#">{$header_protocol}</a></div>
+      <div>
+        <!-- protocol -->
+        <div class="kit_contact_protocol">
+          <div class="kccp_label">{$label_protocol|default: ''}</div>
+          <div class="kccp_value">{$value_protocol|default: ''}</div>
+        </div>
+      </div>
+      <div class="accordion_tab"><a href="#">{$header_help}</a></div>
+      <div>
+        <!-- help, documentation -->
+      </div>
+    </div><!-- // accordion -->
+    <div class="kit_contact_submit">
+      <input type="submit" value="{$btn_ok}" />&nbsp;
+      <input type="button" value="{$btn_abort}" onclick="javascript: window.location = '{$abort_location}'; return false;" />
+    </div>
+  </form>
+</div>

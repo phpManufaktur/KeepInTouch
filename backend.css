@@ -1,0 +1,416 @@
+/**
+  Copyright (c) 2010, Ralf Hertsch
+  ralf.hertsch@phpManufaktur.de - http://phpManufaktur.de
+  
+  $Id: backend.css 49 2010-08-06 05:03:59Z ralf $
+**/
+
+
+@import "include/jquery/themes/smoothness/ui.base.css";
+@import "include/jquery/themes/smoothness/ui.theme.css";
+@import "include/jquery/themes/smoothness/ui.accordion.css";
+@import "include/jquery/themes/smoothness/ui.datepicker.css";
+
+/*
+td,th,input,textarea,select {
+	font-family: Verdana, Arial, Helvetica, sans-serif;
+	font-size: 12px;
+	margin: 0px;
+}
+*/
+.stichwort_text {
+  cursor: help;
+  border-bottom: 1px dotted #da251d;
+}
+
+td
+{
+  font-size: 8pt;
+  vertical-align: top;
+}
+td.label {
+  font-weight: bold;
+}
+
+tr.flip {
+  background-color: #FFFFCC;
+}
+tr.flop {
+  background-color: transparent;
+}
+input
+{
+  width: 98%;
+  background-color: transparent;
+}
+input[type=submit],
+input[type=button]
+{
+  width: 150px;
+}
+input[type=radio],
+input[type=checkbox]
+{
+  width: auto;
+}
+input[type=text].disabled {
+  color: #999999;
+  background-color: transparent;
+  border: none;
+}
+
+select
+{
+  width: 98%;
+  font-size:8pt;
+}
+textarea
+{
+  width: 98%;
+  font-size:8pt;
+}
+
+.nav_tab
+{
+
+  padding: 3px 0 3px 10px;
+  margin: 15px 0;
+  border-bottom: 1px solid #dddddd;
+  list-style-type: none;
+  text-align: left; /*set to left, center, or right to align the menu as desired*/
+}
+.nav_tab li
+{
+  display: inline;
+  margin: 0;
+}
+.nav_tab li a
+{
+  text-decoration: none;
+  padding: 3px 7px;
+  margin-right: 3px;
+  border: 1px solid #dddddd;
+  border-bottom: none;
+  background-color: #E8E8E8;
+}
+.nav_tab li a:link,
+.nav_tab li a:visited
+{
+  color: #AFAFAF;
+  background-color: #e8e8e8;
+}
+.nav_tab li.extra_tab a {
+  color:#003366;
+  background-color: #e8e8e8;
+}
+.nav_tab li a:hover,
+.nav_tab li a:active
+{
+  background-color: #FFFFCC;
+  color: #000;
+}
+.nav_tab li.selected a
+{ /*selected tab effect*/
+  position: relative;
+  top: 1px;
+  padding-top: 4px;
+  color: #000;
+  background-color: #fff;
+  font-weight: bold;
+}
+
+.kit_backend {
+  width: 100%;
+  clear: both;
+  background-image: none;
+  color: #000000;
+  background-color: transparent;
+  font-size: 9pt;
+}
+.kit_contact_container {
+  width: 100%;
+}
+.kit_contact_container_left {
+  display:block;
+  width: 59%;
+  float:left;
+}
+.kit_contact_container_left select {
+  width: 68%;
+}
+.kit_contact_container_left input
+{
+  width: 68%;
+  background-color: transparent;
+}
+
+.kit_contact_container_right {
+  display:block;
+  width: 40%;
+  float: left;
+}
+.kccr_label,
+.kccl_label {
+  display: inline-block;
+  width: 30%;
+  clear: left;
+  float: left;
+  font-size: smaller;
+}
+.id.kccl_label {
+  font-weight: bold;
+  color: maroon;
+}
+.id.kccl_value {
+  font-style: italic;
+  font-weight: bold;
+  color: maroon;
+}
+.kccr_value,
+.kccl_value {
+}
+.kccl_empty_row,
+.kccr_empty_row {
+  display: inline-block;
+  clear: both;
+  height: 15px;
+  width: 98%;
+}
+.contact_birthday.kccl_value input,
+.contact_since.kccr_value input {
+  width: 100px;
+}
+.contact_note.kccr_value textarea {
+  width: 68%;
+}
+.address_zip.kccl_value input {
+  float:left;
+  width: 10%;
+  margin: 0 3px 0 0;
+}
+.address_city.kccl_value input {
+  width: 56%;
+}
+.add_address.kccl_value,
+.additional.kccl_value {
+  font-size: smaller;
+}
+.additional.kccl_value select {
+  width: 15%;
+  margin: 0 3px 0 0;
+}
+.additional.kccl_value input[type=radio] {
+  width: 5%;
+  margin: 0 6px 0 6px;
+}
+.add_address.kccl_value input[type=checkbox] {
+  width: 5%;
+  margin: 0 6px 0 0;
+}
+.contact_company_title.kccr_value select,
+.contact_company_name.kccr_value input[type=text],
+.contact_company_dept.kccr_value input[type=text],
+.contact_company_add.kccr_value input[type=text],
+.email.kccr_value input[type=text],
+.phone.kccl_value input[type=text]
+ {
+  width: 60%;
+}
+.internet.kccr_value input[type=text] {
+  width: 65%;
+}
+input[name=contact_phone_standard] {
+  display: inline;
+  width: 5px;
+}
+.kit_contact_protocol,
+.kit_contact_categories {
+  clear:both;
+  width: 98%;
+  text-align: left;
+}
+.kccp_label,
+.kccc_label {
+  display: block;
+  width: 18%;
+  clear: left;
+  float: left;
+  font-size: smaller;
+}
+.kccp_value,
+.kccc_value {
+  display:inline-block;
+  width: 82%;
+  padding: 0 0 20px 0;
+}
+.kccc_value table {
+  width: 98%;
+}
+.kccc_value input[type=checkbox] {
+  margin: 0 10px 0 0;
+}
+.kccp_value,
+.kccp_dialog {
+  width: 82%;
+}
+.kccp_dialog {
+  width:98%;
+}
+input[name=protocol_date] {
+  width:100px;
+  margin: 0 0 0 10px;
+}
+img[name=cal_img_2] {
+  margin: 0 10px 0 0;
+}
+select[name=sub],
+select[name=protocol_type] {
+  width:250px;
+  margin: 0 0 0 5px;
+}
+
+.protocol_list {
+  width: 99%;
+  height: 200px;
+  overflow: auto;
+}
+.protocol_list table {
+  width: 99%;
+}
+.cofig_container,
+.contact_list {
+  width:99%;
+}
+.config_container th,
+.contact_list th {
+  text-align:left;
+  background-color: #000;
+  color:#fff;
+  font-weight:normal;
+}
+.config_container table,
+.contact_list table {
+  width: 99%;
+}
+.massmail_import select {
+  width: 150px;
+}
+input[name=mail_to],
+input[name=mail_from_email] {
+  width:300px;
+}
+input[name=baf] {
+  width: 50px;
+  background-color:#6699ff;
+  border-style:outset;
+  border-color:#6699FF;
+}
+input[name=bat] {
+  width: 50px;
+  background-color:#FFFFCC;
+  border-style:outset;
+  border-color:#FFFFCC;
+}
+input[name=babcc] {
+  width: 99%;
+  background-color:#99CC99;
+  border-style:outset;
+  border-color:#99CC99;
+}
+textarea[name=mail_text] {
+  width: 99%;
+  height:300px;
+}
+.sub {
+  margin: 20px 0;
+}
+.flip tr {
+  background-color: #ffffdd;
+  color: #000;
+}
+.flop td {
+  background-color: #ffffff;
+  color: #000;
+}
+.kit_contact_submit {
+  clear:both;
+  width: 98%;
+  margin: 30px 0 0 0;
+  text-align:left;
+}
+.map_error {
+  display:inline-block;
+  width: 98%;
+  border: 1px solid maroon;
+  background-color: #ffffdd;
+  color: maroon;
+  padding: 30px;
+}
+.code_sample {
+  font-size: 9pt;
+  color: #003366;
+  background-color: #FFE4B5;
+  border: 1px solid #003366;
+  padding: 10px;
+}
+.copyright {
+  padding: 20px 0 15px 0;
+  font-size: 9pt;
+  font-weight: bold;
+  color: #000000;
+  background-color: transparent;
+}
+.anleitung {
+  font-size: 8pt;
+}
+
+.small
+{
+  font-size: 7pt;
+}
+.intro {
+  border: 1px solid #000000;
+  color: #000000;
+  background-color: #ffffdd;
+  margin: 20px 0 10px 0;
+  padding: 10px;
+  font-size: 8pt;
+}
+.message
+{
+  border: 1px solid #0000CC;
+  color: #000;
+  background-color: #FFFFCC;
+  margin: 20px 0 10px 0;
+  padding: 10px;
+  font-size: 8pt;
+}
+.error
+{
+ border: 1px solid #ff0000;
+ color: #ff0000;
+ background-color: #ffdddd;
+ margin: 20px 0 10px 0;
+ padding: 10px;
+ font-size: 8pt;
+}
+.small-input
+{
+  margin: 0;
+  padding: 0;
+  text-align: left;
+  font-size: 8pt;
+}
+.release_notes {
+  font-size: 9pt;
+}
+
+
+/**
+  JQuery
+**/
+
+.ui-state-active.accordion_tab {
+  font-weight: bold;
+}
+

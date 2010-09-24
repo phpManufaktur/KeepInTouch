@@ -1,0 +1,63 @@
+KeepInTouch - Contact management for WebsiteBaker
+(c) 2010 by phpManufaktur, Berlin (Germany)
+http://phpManufaktur.de - info@phpManufaktur.de
+
+Release 0.19
+2010-08-XX ????
+- Added: optional TAB's for easy switching to other applications
+
+Release 0.18
+2010-07-17
+- fixed problem with usage of MySQLi
+
+Release 0.17
+2010-06-01
+- fixed some smaller bugs
+- improved performance of class.newsletter.php
+
+Release 0.16
+2010-05-31
+- Added Support for sending personalized Newsletters
+
+Release 0.15
+2010-05-27
+- Bugfix: error checking changed phone or cell phone 
+- enable requesting for multilanguage websites
+
+Release 0.14
+2010-05-26
+- Bugfix: unsubscribing Newsletter does not change subscribed Newsletter
+- Bugfix: Contact dialog, adding Facebook, Twitter etc. does not work
+- Bugfix: Deleting user in contact dialog does not delete user account
+- Changing frontend.css
+- automatically installs and upgrade droplets for KIT
+
+Release 0.13
+2010-05-24
+- Frontend Userinterface
+- Dialogs Interface
+- Newsletter: Subscribe, Change, Unsubscribe
+- Droplet for Newsletter Dialog 
+
+Release 0.12
+2010-03-21
+
+- Bugfix: Error in Import dialog, if Massmail is not installed
+
+Release 0.11
+2010-03-21
+
+- IMPORTANT: this release efforts a new installation, upgrade is not possible!
+- some smaller Bugfixes
+- changed template engine to DWOO http://dwoo.org
+- rhTools collection no longer needed
+- Add: create different service provider
+- TODO: SMTP option of service provider is not active
+- Add: jQuery Accordion within the dialogs to get clearly arranged dialogs
+- Add: help option to the most dialogs
+- Changed: Sending E-Mails by choosing service provider and category
+
+Release 0.10
+2010-03-14
+
+*** First beta release ***

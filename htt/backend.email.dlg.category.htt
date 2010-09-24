@@ -1,0 +1,8 @@
+<table width="99%">
+  <colgroup>
+    <col width="33%" />
+    <col width="33%" />
+    <col width="34%" />
+  </colgroup>
+  {$rows}
+</table>

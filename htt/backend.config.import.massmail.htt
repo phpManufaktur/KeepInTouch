@@ -1,0 +1,16 @@
+<!-- $Id: backend.config.import.massmail.htt 19 2010-03-18 05:54:10Z ralf $ -->
+<tr>
+  <td>{$header_massmail}</td>
+  <td>
+    <div class="massmail_import">
+    <form name="{$form_name}" action="{$form_action}" method="post">
+      <input type="hidden" name="{$action_name}" value="{$action_value}" />
+      <input type="hidden" name="{$cfg_name}" value="{$cfg_value}" />
+      <input type="hidden" name="{$import_name}" value="{$import_value}" />
+      {$massmail_group|default: ''}
+      {$kit_group|default: ''}
+      <input type="submit" value="{$import}" />
+    </form>
+    </div>
+  </td>
+</tr>

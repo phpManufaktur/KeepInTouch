@@ -1,0 +1,12 @@
+<!-- $Id: backend.contact.list.row.htt 19 2010-03-18 05:54:10Z ralf $ -->
+<tr class="{$class}">
+  <td>{$select}</td>
+  <td>{$edit}</td>
+  <td>{$lastname|default: ''}</td>
+  <td>{$firstname|default: ''}</td>
+  <td>{$company|default: ''}</td>
+  <td>{$city|default: ''}</td>
+  <td>{$street|default: ''}</td>
+  <td>{$email|default: ''}</td>
+  <td>{$phone|default: ''}</td>
+</tr>
