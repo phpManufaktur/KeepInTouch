@@ -5,6 +5,8 @@
   <td>{$lastname|default: ''}</td>
   <td>{$firstname|default: ''}</td>
   <td>{$company|default: ''}</td>
+  <td>{$country|default: ''}</td>
+  <td>{$zip|default: ''}</td>
   <td>{$city|default: ''}</td>
   <td>{$street|default: ''}</td>
   <td>{$email|default: ''}</td>

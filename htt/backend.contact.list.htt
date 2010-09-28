@@ -5,17 +5,19 @@
     <h2>{$header}</h2>
     {$intro|default: ''}
     {$list_sort|default: ''}
-    <table>
+    <table width="99%">
       <colgroup>
         <col width="2%" />
         <col width="2%" />
+        <col width="14%" />
+        <col width="9%" />
+        <col width="14%" />
+        <col width="2%" />
+        <col width="5%" />
+        <col width="9%" />
+        <col width="14%" />
+        <col width="14%" />
         <col width="15%" />
-        <col width="10%" />
-        <col width="15%" />
-        <col width="10%" />
-        <col width="15%" />
-        <col width="15%" />
-        <col width="16%" />
       </colgroup>
       <tr>
         <th>{$header_select|default: ''}</th>
@@ -23,6 +25,8 @@
         <th>{$header_lastname|default: ''}</th>
         <th>{$header_firstname|default: ''}</th>
         <th>{$header_company|default: ''}</th>
+        <th>{$header_country|default: ''}</th>
+        <th>{$header_zip|default: ''}</th>
         <th>{$header_city|default: ''}</th>
         <th>{$header_street|default: ''}</th>
         <th>{$header_email|default: ''}</th>

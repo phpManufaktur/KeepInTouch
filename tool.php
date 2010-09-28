@@ -671,15 +671,21 @@ class kitBackend {
 				if (count($address) < 1) {
 					$street = '';
 					$city = '';
+					$zip = '';
+					$country = '';
 				}
 				else {
 					$street = $address[0][dbKITcontactAddress::field_street];
 					$city = $address[0][dbKITcontactAddress::field_city];
+					$zip = $address[0][dbKITcontactAddress::field_zip];
+					$country = $address[0][dbKITcontactAddress::field_country];
 				}
 			}
 			else {
 				$street = '';
 				$city = '';
+				$zip = '';
+				$country = '';
 			}
 			// E-Mail
 			if (!empty($contact[dbKITcontact::field_email]) && intval($contact[dbKITcontact::field_email_standard] >= 0)) { 
@@ -704,6 +710,8 @@ class kitBackend {
 				'lastname'		=> $contact[dbKITcontact::field_person_last_name],
 				'firstname'		=> $contact[dbKITcontact::field_person_first_name],
 				'company'			=> $contact[dbKITcontact::field_company_name],
+				'country'			=> $country,
+				'zip'					=> $zip,
 				'city'				=> $city,
 				'street'			=> $street,
 				'email'				=> $email,
@@ -732,6 +740,8 @@ class kitBackend {
 			'header_lastname'		=> kit_label_person_last_name,
 			'header_firstname'	=> kit_label_person_first_name,
 			'header_company'		=> kit_label_company_name,
+			'header_country'		=> '',
+			'header_zip'				=> kit_label_address_zip,
 			'header_street'			=> kit_label_address_street,
 			'header_city'				=> kit_label_address_city,
 			'header_email'			=> kit_label_contact_email,
@@ -862,6 +872,9 @@ class kitBackend {
 		$address_array_new = array();
 		// address template
 		$addr_template = new Dwoo_Template_File($this->template_path.'backend.contact.address.htt');
+		$countries = $dbContactAddress->country_array;
+		// sort countries by key (2-digit identifer)
+		ksort($countries);
 		foreach ($address_array as $addr) {
 			$addr_values = array();
 			$skip = false;
@@ -910,7 +923,7 @@ class kitBackend {
 												$addr_values[dbKITcontactAddress::field_city]);
 				$additional = '';
 				$select = '';
-				foreach ($dbContactAddress->country_array as $key => $name) {
+				foreach ($countries as $key => $name) {
 					($key == $addr_values[dbKITcontactAddress::field_country]) ? $selected = ' selected="selected"' : $selected = '';
 					$select .= sprintf('<option value="%s"%s title="%s">%s</option>', $key, $selected, $name, $key);
 				}

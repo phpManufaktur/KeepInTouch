@@ -207,6 +207,7 @@ define('kit_intro_preview',												'<p>Prüfen Sie die Vorschau in der <b>HT
 define('kit_label_add_new_address',								'Legg Til Ytterligere Adresse');
 define('kit_label_address_city',									'Postadresse');
 define('kit_label_address_street',								'Gate');
+define('kit_label_address_zip',										'ZIP');
 define('kit_label_address_zip_city',							'Postnummer');
 define('kit_label_audience',											'Empfänger');
 define('kit_label_birthday',											'Gebursdag');
