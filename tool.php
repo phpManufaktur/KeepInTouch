@@ -325,7 +325,7 @@ class kitBackend {
   				$tab_array = $dbCfg->getValue(dbKITcfg::cfgAddAppTab);
  					foreach ($tab_array as $item) {
   					$tab = explode('|', $item);
-  					$result .= sprintf('<li class="extra_tab"><a href="%s">%s</a></li>', $tab[1], $tab[0]);
+  					if (count($tab) > 1) $result .= sprintf('<li class="extra_tab"><a href="%s">%s</a></li>', $tab[1], $tab[0]);
   				}
   			}
 	  		($key == $action) ? $selected = ' class="selected"' : $selected = ''; 

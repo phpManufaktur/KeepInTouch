@@ -2,6 +2,10 @@ KeepInTouch - Contact management for WebsiteBaker
 (c) 2010 by phpManufaktur, Berlin (Germany)
 http://phpManufaktur.de - info@phpManufaktur.de
 
+Release 0.21
+xxxx
+- Bugfix: checking optional TAB's  
+
 Release 0.20
 2010-09-28
 - Added: additional country and zip in contact list
