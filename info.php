@@ -13,7 +13,7 @@
   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
   GNU General Public License for more details.
   
-  $Id: info.php 49 2010-08-06 05:03:59Z ralf $
+  $Id$
   
 **/
 

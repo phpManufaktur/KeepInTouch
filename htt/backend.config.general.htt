@@ -1,4 +1,4 @@
-<!-- $Id: backend.config.general.htt 49 2010-08-06 05:03:59Z ralf $ -->
+<!-- $Id$ -->
 <form name="{$form_name}" action="{$form_action}" method="post">
   <input type="hidden" name="{$action_name}" value="{$action_value}" />
   <input type="hidden" name="{$items_name|default: ''}" value="{$items_value|default: ''}" />

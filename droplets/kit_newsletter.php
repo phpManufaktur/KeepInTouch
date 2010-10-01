@@ -5,7 +5,7 @@
  * (c) 2010 by Ralf Hertsch
  * ralf.hertsch@phpmanufaktur.de - http://phpManufaktur.de
  *
- * $Id: kit_newsletter.php 35 2010-05-26 16:35:03Z ralf $
+ * $Id$
  */
 if (file_exists(WB_PATH.'/modules/kit/class.dialogs.php')) {
   require_once(WB_PATH.'/modules/kit/class.dialogs.php');

@@ -14,7 +14,7 @@
   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
   GNU General Public License for more details.
   
-  $Id: class.contact.php 51 2010-09-01 15:50:23Z ralf $
+  $Id$
   
 **/
 

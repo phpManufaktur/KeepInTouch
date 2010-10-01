@@ -1,4 +1,4 @@
-<!-- $Id: calendar.init.htt 19 2010-03-18 05:54:10Z ralf $ -->
+<!-- $Id$ -->
 <script type="text/javascript" >
   Calendar.setup(
     {

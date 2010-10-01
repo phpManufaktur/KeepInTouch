@@ -1,4 +1,4 @@
-<!-- $Id: backend.config.import.htt 19 2010-03-18 05:54:10Z ralf $ -->
+<!-- $Id$ -->
 <h2>{$header}</h2>
 {$intro|default: ''}
 <table>

@@ -14,7 +14,7 @@
   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
   GNU General Public License for more details.
   
-  $Id: class.newsletter.cfg.php 45 2010-06-30 00:54:44Z ralf $
+  $Id$
   
 **/
 

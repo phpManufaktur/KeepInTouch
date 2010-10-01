@@ -1,4 +1,4 @@
-<!-- $Id: account.login.htt 32 2010-05-24 17:16:52Z ralf $ -->
+<!-- $Id$ -->
 <div class="kit_acc_dlg">
   <form name="account_login" action="{$form_action}" method="post">
     <input type="hidden" name="{$action_name}" value="{$action_value}" />

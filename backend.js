@@ -13,7 +13,7 @@
   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
   GNU General Public License for more details.
   
-  $Id: backend.js 38 2010-05-30 18:02:06Z ralf $
+  $Id$
   
 **/
 

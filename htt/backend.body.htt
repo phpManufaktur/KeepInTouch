@@ -1,4 +1,4 @@
-<!-- $Id: backend.body.htt 26 2010-03-31 03:24:04Z ralf $ -->
+<!-- $Id$ -->
 <script type="text/javascript">
   var WB_URL = '{$WB_URL}';
 </script>

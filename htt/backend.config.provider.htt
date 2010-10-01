@@ -1,4 +1,4 @@
-<!-- $Id: backend.config.provider.htt 28 2010-05-22 01:35:28Z ralf $ -->
+<!-- $Id$ -->
 <div id="accordion">
   <div class="accordion_tab"><a href="#">{$header_provider}</a></div>
   <div>

@@ -1,4 +1,4 @@
-<!-- $Id: backend.email.dlg.htt 22 2010-03-22 03:50:41Z ralf $ -->
+<!-- $Id$ -->
 <div id="accordion">
   <div class="accordion_tab"><a href="#">{$header_email}</a></div>
   <div>

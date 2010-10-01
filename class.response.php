@@ -14,7 +14,7 @@
   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
   GNU General Public License for more details.
   
-  $Id: class.response.php 41 2010-06-04 04:37:36Z ralf $
+  $Id$
   
 **/
 

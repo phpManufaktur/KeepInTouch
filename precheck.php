@@ -14,7 +14,7 @@
   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
   GNU General Public License for more details.
   
-  $Id: precheck.php 47 2010-07-17 02:41:57Z ralf $
+  $Id$
   
 **/
 

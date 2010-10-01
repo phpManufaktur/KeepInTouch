@@ -14,7 +14,7 @@
   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
   GNU General Public License for more details.
   
-  $Id: dialog_account.php 42 2010-06-05 03:30:58Z ralf $
+  $Id$
   
 **/
 

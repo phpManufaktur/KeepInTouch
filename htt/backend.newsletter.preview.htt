@@ -1,4 +1,4 @@
-<!-- $Id: backend.newsletter.preview.htt 38 2010-05-30 18:02:06Z ralf $ -->
+<!-- $Id$ -->
 <div>
   <h2>{$header_preview}</h2>
   <div class="intro">{$intro}</div>

@@ -14,7 +14,7 @@
   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
   GNU General Public License for more details.
   
-  $Id: class.droplets.php 45 2010-06-30 00:54:44Z ralf $
+  $Id$
 
 	THIS CLASS REALIZE AN INTERFACE TO THE DROPLETS MODULE OF RUUD EISINGA (RUUD)
   

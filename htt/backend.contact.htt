@@ -1,4 +1,4 @@
-<!-- $Id: backend.contact.htt 29 2010-05-23 07:53:55Z ralf $ -->
+<!-- $Id$ -->
 <div class="kit_contact_container">
   <form name="{$form_name}" action="{$form_action}" method="post">
     <input type="hidden" name="{$action_name}" value="{$action_value}" />

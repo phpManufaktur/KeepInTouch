@@ -6,7 +6,7 @@
   Copyright (c) 2009, Ralf Hertsch
   Contact me: hertsch(at)berlin.de, http://phpManufaktur.de
 
-  $Id: class.pages.php 27 2010-05-20 18:08:56Z ralf $
+  $Id$
   
 **/
 

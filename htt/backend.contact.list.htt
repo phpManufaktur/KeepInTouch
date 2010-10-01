@@ -1,4 +1,4 @@
-<!-- $Id: backend.contact.list.htt 19 2010-03-18 05:54:10Z ralf $ -->
+<!-- $Id$ -->
 <div class="contact_list">
   <form name="{$form_name}" action="{$form_action}" method="post">
     <input type="hidden" name="{$action_name}" value="{$action_value}" />

@@ -14,7 +14,7 @@
   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
   GNU General Public License for more details.
   
-  $Id: index.php 19 2010-03-18 05:54:10Z ralf $
+  $Id$
   
 **/
 

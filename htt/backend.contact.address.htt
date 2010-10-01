@@ -1,4 +1,4 @@
-<!-- $Id: backend.contact.address.htt 19 2010-03-18 05:54:10Z ralf $ -->
+<!-- $Id$ -->
 <div class="kccl_label {$class_street}">{$label_street|default: ''}</div>
 <div class="kccl_value {$class_street}">{$value_street|default: ''}</div>
 <div class="kccl_label zip_city">{$label_zip_city|default: ''}</div>

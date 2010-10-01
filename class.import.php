@@ -14,7 +14,7 @@
   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
   GNU General Public License for more details.
   
-  $Id: class.import.php 27 2010-05-20 18:08:56Z ralf $
+  $Id$
   
 **/
 

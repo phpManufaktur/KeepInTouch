@@ -1,4 +1,4 @@
-<!-- $Id: message.htt 32 2010-05-24 17:16:52Z ralf $ -->
+<!-- $Id$ -->
 <div class="kit_nl_dlg">
   <h1>{$header}</h1>
   <div class="kit_nl_message">{$message}</div>
