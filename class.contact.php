@@ -591,11 +591,15 @@ class dbKITcontactAddress extends dbConnect {
 	const type_undefined		= 'typeUndefined'; //0;
 	const type_private			= 'typePrivate'; //1;
 	const type_business			= 'typeBusiness'; //2;
+	const type_delivery			= 'typeDelivery';
+	const type_post_office	= 'typePOB'; 
 	
 	public $type_array = array(
 		self::type_undefined			=> kit_contact_address_type_undefined,
 		self::type_private				=> kit_contact_address_type_private,
-		self::type_business				=> kit_contact_address_type_business
+		self::type_business				=> kit_contact_address_type_business,
+		self::type_delivery				=> kit_contact_address_type_delivery,
+		self::type_post_office		=> kit_contact_address_type_post_office_box
 	);
 	
 	const country_undefined	= '';

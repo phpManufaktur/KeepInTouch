@@ -112,6 +112,8 @@ define('kit_contact_array_type_type',							'Contact Type');
 define('kit_contact_array_type_undefined',				'- undefined -');
 
 define('kit_contact_address_type_business',				'Business');
+define('kit_contact_address_type_delivery',				'Lieferung');
+define('kit_contact_address_type_post_office_box','Postfach');
 define('kit_contact_address_type_private',				'Personal');
 define('kit_contact_address_type_undefined',			'');
 
