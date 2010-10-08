@@ -27,7 +27,8 @@ $PRECHECK['WB_VERSION'] = array('VERSION' => '2.8', 'OPERATOR' => '>=');
 $PRECHECK['PHP_VERSION'] = array('VERSION' => '5.2.0', 'OPERATOR' => '>=');
 $PRECHECK['PHP_EXTENSIONS'] = array('mysqli');
 $PRECHECK['WB_ADDONS'] = array(
-	'dbconnect'	=> array('VERSION' => '0.35', 'OPERATOR' => '>=')
+	'dbconnect'	=> array('VERSION' => '0.35', 'OPERATOR' => '>='),
+	'dwoo' => array('VERSION' => '0.10', 'OPERATOR' => '>=')
 );
 
 ?>

@@ -110,7 +110,7 @@ class kitRequest {
 		global $dbCfg;
 		
 		require_once(WB_PATH.'/modules/'.basename(dirname(__FILE__)).'/class.pages.php');
-		$page_link = '/kit-response';
+		$page_link = '/kit';
 		$this->response_url = WB_URL.PAGES_DIRECTORY.$page_link.PAGE_EXTENSION;
 		// pruefen, ob Seite bereits existiert
 		$dbPages = new db_wb_pages();
