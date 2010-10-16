@@ -37,20 +37,12 @@ if (!$dbKITdlgRegister->sqlTableExists()) {
 		$error .= sprintf('<p>[Upgrade] %s </p>', $dbKITdlgRegister->getError());
 	}
 }
-if ($dbKITdlgRegister->isConnected) {
-	$dbKITdlgRegister->close();
-	$dbKITdlgRegister->isConnected = false;
-}
 
 $dbKITregister = new dbKITregister();
 if (!$dbKITregister->sqlTableExists()) {
 	if (!$dbKITregister->sqlCreateTable()) {
 		$error .= sprintf('<p>[Upgrade] %s </p>', $dbKITregister->getError());
 	}
-}
-if ($dbKITregister->isConnected) {
-	$dbKITregister->close();
-	$dbKITregister->isConnected = false;
 }
 
 $dbKITprovider = new dbKITprovider();
@@ -59,20 +51,12 @@ if (!$dbKITprovider->sqlFieldExists(dbKITprovider::field_identifier)) {
 		$error .= sprintf('<p>[Upgrade] %s </p>', $dbKITprovider->getError());
 	}
 }
-if ($dbKITprovider->isConnected) {
-	$dbKITprovider->close();
-	$dbKITprovider->isConnected = false;
-}
 
 $dbKITcontact = new dbKITcontact();
 if (!$dbKITcontact->sqlFieldExists(dbKITcontact::field_newsletter)) {
 	if (!$dbKITcontact->sqlAlterTableAddField(dbKITcontact::field_newsletter, "VARCHAR (255) NOT NULL DEFAULT ''", dbKITcontact::field_category)) {
 		$error .= sprintf('<p>[Upgrade] %s </p>', $dbKITcontact->getError());
 	}
-}
-if ($dbKITcontact->isConnected) {
-	$dbKITcontact->close();
-	$dbKITcontact->isConnected = false;
 }
 
 // install tables for newsletter module
@@ -82,20 +66,12 @@ if (!$dbKITnewsletterTemplates->sqlTableExists()) {
 		$error .= sprintf('<p>[Upgrade] %s</p>', $dbKITnewsletterTemplates->getError());
 	}
 }
-if ($dbKITnewsletterTemplates->isConnected) {
-	$dbKITnewsletterTemplates->close();
-	$dbKITnewsletterTemplates->isConnected = false;
-}
 
 $dbKITnewsletterPreview = new dbKITnewsletterPreview();
 if (!$dbKITnewsletterPreview->sqlTableExists()) {
 	if (!$dbKITnewsletterPreview->sqlCreateTable()) {
 		$error .= sprintf('<p>[Upgrade] %s</p>', $dbKITnewsletterPreview->getError());
 	}
-}
-if ($dbKITnewsletterPreview->isConnected) {
-	$dbKITnewsletterPreview->close();
-	$dbKITnewsletterPreview->isConnected = false;
 }
 
 $dbKITnewsletterCfg = new dbKITnewsletterCfg();
@@ -104,20 +80,12 @@ if (!$dbKITnewsletterCfg->sqlTableExists()) {
 		$error .= sprintf('<p>[Upgrade] %s</p>', $dbKITnewsletterCfg->getError());
 	}
 }
-if ($dbKITnewsletterCfg->isConnected) {
-	$dbKITnewsletterCfg->close();
-	$dbKITnewsletterCfg->isConnected = false;
-}
 
 $dbKITnewsletterArchive = new dbKITnewsletterArchive();
 if (!$dbKITnewsletterArchive->sqlTableExists()) {
 	if (!$dbKITnewsletterArchive->sqlCreateTable()) {
 		$error .= sprintf('<p>[Upgrade] %s</p>', $dbKITnewsletterArchive->getError());
 	}
-}
-if ($dbKITnewsletterArchive->isConnected) {
-	$dbKITnewsletterArchive->close();
-	$dbKITnewsletterArchive->isConnected = false;
 }
 
 // Install Droplets

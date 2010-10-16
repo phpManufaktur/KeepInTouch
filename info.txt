@@ -2,6 +2,10 @@ KeepInTouch - Contact management for WebsiteBaker
 (c) 2010 by phpManufaktur, Berlin (Germany)
 http://phpManufaktur.de - info@phpManufaktur.de
 
+Release 0.22
+2010-10-16
+- Bugfix: access to old database connector functions in upgrade.php
+
 Release 0.21
 2010-10-16
 - Changed database connector to dbConnectLE
