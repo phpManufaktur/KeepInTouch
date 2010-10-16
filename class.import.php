@@ -26,7 +26,7 @@ if (!defined('WB_PATH')) die('invalid call of '.$_SERVER['SCRIPT_NAME']);
  * Wird fuer den Import von MASSMAIL Adressen benoetigt
  *
  */
-class dbMassMailAddresses extends dbConnect {
+class dbMassMailAddresses extends dbConnectLE {
 	
 	const field_group_id				= 'group_id';
 	const field_mail_to					= 'mail_to';
@@ -45,7 +45,7 @@ class dbMassMailAddresses extends dbConnect {
  * Wird fuer den Import von MASSMAIL Adressen benoetigt
  *
  */
-class dbMassMailGroups extends dbConnect {
+class dbMassMailGroups extends dbConnectLE {
 	
 	const field_group_id				= 'group_id';
 	const field_group_name			= 'group_name';
@@ -70,7 +70,7 @@ class dbMassMailGroups extends dbConnect {
  * Wird fuer den Import von NEWSLETTERSNIPPET Adressen benoetigt
  *
  */
-class dbNewsletterSnippet extends dbConnect {
+class dbNewsletterSnippet extends dbConnectLE {
 	
 	const field_id							= 'id';
 	const field_email						= 'email';

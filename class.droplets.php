@@ -22,7 +22,7 @@
 
 require_once(WB_PATH.'/modules/'.basename(dirname(__FILE__)).'/initialize.php');
 
-class dbDroplets extends dbConnect {
+class dbDroplets extends dbConnectLE {
 
 	const field_id							= 'id';
 	const field_name						= 'name';

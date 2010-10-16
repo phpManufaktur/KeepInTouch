@@ -47,7 +47,7 @@ if (!is_object($dbNewsletterPreview)) $dbNewsletterPreview = new dbKITnewsletter
 if (!is_object($dbNewsletterTemplates)) $dbNewsletterTemplates = new dbKITnewsletterTemplates();
 if (!is_object($newsletterCommands)) $newsletterCommands = new kitNewsletterCommands();
 
-class dbKITnewsletterTemplates extends dbConnect {
+class dbKITnewsletterTemplates extends dbConnectLE {
 	
 	const field_id								= 'nl_tpl_id';
 	const field_name							= 'nl_tpl_name';
@@ -99,7 +99,7 @@ class dbKITnewsletterTemplates extends dbConnect {
 	
 } // class dbKITnewsletterTemplates
 
-class dbKITnewsletterArchive extends dbConnect {
+class dbKITnewsletterArchive extends dbConnectLE {
 	
 	const field_id							= 'nl_arc_id';
 	const field_description			= 'nl_arc_desc';
@@ -147,7 +147,7 @@ class dbKITnewsletterArchive extends dbConnect {
 	
 } // class dbKITnewsletterArchive
 
-class dbKITnewsletterPreview extends dbConnect {
+class dbKITnewsletterPreview extends dbConnectLE {
 	
 	const field_id							= 'nl_pre_id';
 	const field_keys						= 'nl_pre_keys';

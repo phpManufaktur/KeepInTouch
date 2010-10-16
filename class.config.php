@@ -26,7 +26,7 @@ require_once(WB_PATH.'/modules/'.basename(dirname(__FILE__)).'/initialize.php');
 $dbCfg = new dbKITcfg();
 define('USE_CUSTOM_FILES', $dbCfg->getValue(dbKITcfg::cfgUseCustomFiles));
 
-class dbKITcfg extends dbConnect {
+class dbKITcfg extends dbConnectLE {
 	
 	const field_id						= 'cfg_id';
 	const field_name					= 'cfg_name';

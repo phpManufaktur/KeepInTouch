@@ -25,10 +25,19 @@ if (!defined('WB_PATH')) die('invalid call of '.$_SERVER['SCRIPT_NAME']);
 
 $PRECHECK['WB_VERSION'] = array('VERSION' => '2.8', 'OPERATOR' => '>=');
 $PRECHECK['PHP_VERSION'] = array('VERSION' => '5.2.0', 'OPERATOR' => '>=');
-$PRECHECK['PHP_EXTENSIONS'] = array('mysqli');
 $PRECHECK['WB_ADDONS'] = array(
-	'dbconnect'	=> array('VERSION' => '0.35', 'OPERATOR' => '>='),
+	'dbconnect_le'	=> array('VERSION' => '0.60', 'OPERATOR' => '>='),
 	'dwoo' => array('VERSION' => '0.10', 'OPERATOR' => '>=')
 );
+
+global $database;
+$sql = "SELECT * FROM ".TABLE_PREFIX."settings WHERE name='default_charset'";
+$result = $database->query($sql);
+if ($result) {
+	$data = $result->fetchRow();
+	($data['value'] == 'utf-8') ? $status = true : $status = false;
+	$PRECHECK['CUSTOM_CHECKS'] = array(
+    'Default Charset' => array('REQUIRED' => 'utf-8', 'ACTUAL' => $data['value'], 'STATUS' => $status));
+}
 
 ?>

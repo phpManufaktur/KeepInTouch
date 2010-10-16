@@ -353,7 +353,7 @@ abstract class kitDialogFrame {
  * data class for registering the dialogs with an unique id
  *
  */
-class dbKITdialogsRegister extends dbConnect {
+class dbKITdialogsRegister extends dbConnectLE {
 	
 	const field_id				= 'dlgreg_id';
 	const field_name			= 'dlgreg_name';

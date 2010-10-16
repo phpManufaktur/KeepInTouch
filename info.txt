@@ -3,7 +3,8 @@ KeepInTouch - Contact management for WebsiteBaker
 http://phpManufaktur.de - info@phpManufaktur.de
 
 Release 0.21
-xxxx
+2010-10-16
+- Changed database connector to dbConnectLE
 - Bugfix: checking optional TAB's  
 - Added: additional address types for delivery and p.o. boxes
 

@@ -18,7 +18,7 @@ if(defined('WB_PATH') == false) {
 
 require_once(WB_PATH.'/modules/'.basename(dirname(__FILE__)).'/initialize.php');
 
-class db_wb_pages extends dbConnect {
+class db_wb_pages extends dbConnectLE {
 
 	const field_page_id            = 'page_id';
 	const field_parent             = 'parent';
@@ -76,7 +76,7 @@ class db_wb_pages extends dbConnect {
 } // class db_wb_pages
 
 
-class db_wb_sections extends dbConnect {
+class db_wb_sections extends dbConnectLE {
 	
 	const field_section_id         = 'section_id';
 	const field_page_id            = 'page_id';
@@ -102,7 +102,7 @@ class db_wb_sections extends dbConnect {
 } // class db_wb_sections
 
 
-class db_wb_mod_wysiwyg extends dbConnect {
+class db_wb_mod_wysiwyg extends dbConnectLE {
 	
 	const field_section_id         = 'section_id';
 	const field_page_id            = 'page_id';
@@ -121,7 +121,7 @@ class db_wb_mod_wysiwyg extends dbConnect {
   
 } // class db_wb_mod_wysiwyg
 
-class db_wb_mod_code extends dbConnect {
+class db_wb_mod_code extends dbConnectLE {
 	
 	const field_section_id				= 'section_id';
 	const field_page_id            = 'page_id';

@@ -44,7 +44,7 @@ if (!is_object($dbContact)) $dbContact = new dbKITcontact();
 /**
  * General data container for all contacts
  */
-class dbKITcontact extends dbConnect {
+class dbKITcontact extends dbConnectLE {
 	
 	const field_id										= 'contact_id';
 	
@@ -455,7 +455,7 @@ class dbKITcontact extends dbConnect {
 } // class dbKITcontact
 
 
-class dbKITcontactArrayCfg extends dbConnect {
+class dbKITcontactArrayCfg extends dbConnectLE {
 	
 	const field_id							= 'array_id';
 	const field_type						= 'array_type';
@@ -575,7 +575,7 @@ class dbKITcontactArrayCfg extends dbConnect {
 } // class dbKITcontactArrayCfg
 
 
-class dbKITcontactAddress extends dbConnect {
+class dbKITcontactAddress extends dbConnectLE {
 	
 	const field_id					= 'address_id';
 	const field_contact_id	= 'contact_id';
@@ -685,7 +685,7 @@ class dbKITcontactAddress extends dbConnect {
 	
 } // class dbKITcontactAddress
 
-class dbKITcountries extends dbConnect {
+class dbKITcountries extends dbConnectLE {
 	
 	const field_id					= 'land_id';
 	const field_land_kfz		= 'land_kfz';
@@ -726,7 +726,7 @@ class dbKITcountries extends dbConnect {
 
 } // dbKITcountries
 
-class dbKITmemos extends dbConnect {
+class dbKITmemos extends dbConnectLE {
 	
 	const field_id					= 'memo_id';
 	const field_memo				= 'memo_memo';
@@ -778,7 +778,7 @@ class dbKITmemos extends dbConnect {
 	
 } // class dbKITmemos
 
-class dbKITprotocol extends dbConnect {
+class dbKITprotocol extends dbConnectLE {
 	
 	const field_id							= 'protocol_id';
 	const field_contact_id			= 'contact_id';
@@ -874,7 +874,7 @@ class dbKITprotocol extends dbConnect {
 } // class dbKITprotocol
 
 
-class dbKITprovider extends dbConnect {
+class dbKITprovider extends dbConnectLE {
 	
 	const field_id							= 'provider_id';
 	const field_name						= 'provider_name';
@@ -938,7 +938,7 @@ class dbKITprovider extends dbConnect {
 } // class dbKITprovider
 
 
-class dbKITregister extends dbConnect {
+class dbKITregister extends dbConnectLE {
 	
 	const field_id									= 'reg_id';
 	const field_email								= 'reg_email';

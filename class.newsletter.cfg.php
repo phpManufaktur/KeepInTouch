@@ -25,7 +25,7 @@ require_once(WB_PATH.'/modules/'.basename(dirname(__FILE__)).'/initialize.php');
 
 $dbNewsletterCfg = new dbKITnewsletterCfg();
 
-class dbKITnewsletterCfg extends dbConnect {
+class dbKITnewsletterCfg extends dbConnectLE {
 	
 	const field_id						= 'nl_cfg_id';
 	const field_name					= 'nl_cfg_name';

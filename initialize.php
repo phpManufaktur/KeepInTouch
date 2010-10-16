@@ -41,7 +41,7 @@ else {
 }
 
 // include dbConnect
-if (!class_exists('dbconnect')) require_once(WB_PATH.'/modules/dbconnect/include.php');
+if (!class_exists('dbConnectLE')) require_once(WB_PATH.'/modules/dbconnect_le/include.php');
 if (!class_exists('Dwoo')) require_once(WB_PATH.'/modules/dwoo/include.php');
 require_once(WB_PATH.'/modules/'.basename(dirname(__FILE__)).'/class.config.php');
 require_once(WB_PATH.'/modules/'.basename(dirname(__FILE__)).'/class.tools.php');

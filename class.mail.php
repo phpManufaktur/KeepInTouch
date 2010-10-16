@@ -288,7 +288,7 @@ class kitMail extends xPHPMailer {
   
 } // class kitMail
 
-class dbKITmail extends dbConnect {
+class dbKITmail extends dbConnectLE {
 	
 	const field_id					= 'mail_id';
 	const field_is_html			= 'mail_is_html';
