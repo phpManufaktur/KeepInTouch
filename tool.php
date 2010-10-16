@@ -3281,7 +3281,8 @@ class kitBackend {
 		} // foreach
 		$message = sprintf(kit_msg_mails_send_success, $transmitted);
 		if (!empty($error)) {
-			$message .= sprintf(kit_msg_mails_send_errors, $kitMail->error_count, $error);
+			// @todo der Zaehler fuer die aufgetretenen Fehler fehlt noch, deshalb -1...
+			$message .= sprintf(kit_msg_mails_send_errors, -1, $error);
 		}
 		$this->setMessage($message);
 		return $this->dlgEMail();

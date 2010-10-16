@@ -35,20 +35,12 @@ if ($dbConfig->sqlTableExists()) {
 		$error .= sprintf('<p>[Delete Table] %s</p>', $dbConfig->getError());
 	}
 }
-if ($dbConfig->isConnected) {
-	$dbConfig->close();
-	$dbConfig->isConnected = false;
-}
 
 $dbContact = new dbKITcontact();
 if ($dbContact->sqlTableExists()) {
 	if (!$dbContact->sqlDeleteTable()) {
 		$error .= sprintf('<p>[Delete Table] %s</p>', $dbContact->getError());
 	}
-}
-if ($dbContact->isConnected) {
-	$dbContact->close();
-	$dbContact->isConnected = false;
 }
 
 $dbContactArray = new dbKITcontactArrayCfg();
@@ -57,20 +49,12 @@ if ($dbContactArray->sqlTableExists()) {
 		$error .= sprintf('<p>[Delete Table] %s</p>', $dbContactArray->getError());
 	}
 }
-if ($dbContactArray->isConnected) {
-	$dbContactArray->close();
-	$dbContactArray->isConnected = false;
-}
 
 $dbContactAddress = new dbKITcontactAddress();
 if ($dbContactAddress->sqlTableExists()) {
 	if (!$dbContactAddress->sqlDeleteTable()) {
 		$error .= sprintf('<p>[Delete Table] %s</p>', $dbContactAddress->getError());
 	}
-}
-if ($dbContactAddress->isConnected) {
-	$dbContactAddress->close();
-	$dbContactAddress->isConnected = false;
 }
 
 $dbCountries = new dbKITcountries();
@@ -79,20 +63,12 @@ if ($dbCountries->sqlTableExists()) {
 		$error .= sprintf('<p>[Delete Table] %s</p>', $dbCountries->getError());
 	}
 }
-if ($dbCountries->isConnected) {
-	$dbCountries->close();
-	$dbCountries->isConnected = false;
-}
 
 $dbMemos = new dbKITmemos();
 if ($dbMemos->sqlTableExists()) {
 	if (!$dbMemos->sqlDeleteTable()) {
 		$error .= sprintf('<p>[Delete Table] %s</p>', $dbMemos->getError());
 	}
-}
-if ($dbMemos->isConnected) {
-	$dbMemos->close();
-	$dbMemos->isConnected = false;
 }
 
 $dbKITprotocol = new dbKITprotocol();
@@ -101,20 +77,12 @@ if ($dbKITprotocol->sqlTableExists()) {
 		$error .= sprintf('<p>[Delete Table] %s</p>', $dbKITprotocol->getError());
 	}
 }
-if ($dbKITprotocol->isConnected) {
-	$dbKITprotocol->close();
-	$dbKITprotocol->isConnected = false;
-}
 
 $dbKITprovider = new dbKITprovider();
 if ($dbKITprovider->sqlTableExists()) {
 	if (!$dbKITprovider->sqlDeleteTable()) {
 		$error .= sprintf('<p>[Delete Table] %s</p>', $dbKITprovider->getError());
 	}
-}
-if ($dbKITprovider->isConnected) {
-	$dbKITprovider->close();
-	$dbKITprovider->isConnected = false;
 }
 
 $dbKITmail = new dbKITmail();
@@ -123,20 +91,12 @@ if ($dbKITmail->sqlTableExists()) {
 		$error .= sprintf('<p>[Delete Table] %s </p>', $dbKITmail->getError());
 	}
 }
-if ($dbKITmail->isConnected) {
-	$dbKITmail->close();
-	$dbKITmail->isConnected = false;
-}
 
 $dbKITdlgRegister = new dbKITdialogsRegister();
 if ($dbKITdlgRegister->sqlTableExists()) {
 	if (!$dbKITdlgRegister->sqlDeleteTable()) {
 		$error .= sprintf('<p>[Delete Table] %s </p>', $dbKITdlgRegister->getError());
 	}
-}
-if ($dbKITdlgRegister->isConnected) {
-	$dbKITdlgRegister->close();
-	$dbKITdlgRegister->isConnected = false;
 }
 
 $dbKITregister = new dbKITregister();
@@ -145,20 +105,12 @@ if ($dbKITregister->sqlTableExists()) {
 		$error .= sprintf('<p>[Delete Table] %s </p>', $dbKITregister->getError());
 	}
 }
-if ($dbKITregister->isConnected) {
-	$dbKITregister->close();
-	$dbKITregister->isConnected = false;
-}
 
 $dbKITnewsletterCfg = new dbKITnewsletterCfg();
 if ($dbKITnewsletterCfg->sqlTableExists()) {
 	if (!$dbKITnewsletterCfg->sqlDeleteTable()) {
 		$error .= sprintf('<p>[Delete Table] %s</p>', $dbKITnewsletterCfg->getError());
 	}
-}
-if ($dbKITnewsletterCfg->isConnected) {
-	$dbKITnewsletterCfg->close();
-	$dbKITnewsletterCfg->isConnected = false;
 }
 
 $dbKITnewsletterPreview = new dbKITnewsletterPreview();
@@ -167,10 +119,6 @@ if ($dbKITnewsletterPreview->sqlTableExists()) {
 		$error .= sprintf('<p>[Delete Table] %s</p>', $dbKITnewsletterPreview->getError());
 	}
 }
-if ($dbKITnewsletterPreview->isConnected) {
-	$dbKITnewsletterPreview->close();
-	$dbKITnewsletterPreview->isConnected = false;
-}
 
 $dbKITnewsletterTemplates = new dbKITnewsletterTemplates();
 if ($dbKITnewsletterTemplates->sqlTableExists()) {
@@ -178,20 +126,12 @@ if ($dbKITnewsletterTemplates->sqlTableExists()) {
 		$error .= sprintf('<p>[Delete Table] %s</p>', $dbKITnewsletterTemplates->getError());
 	}
 }
-if ($dbKITnewsletterTemplates->isConnected) {
-	$dbKITnewsletterTemplates->close();
-	$dbKITnewsletterTemplates->isConnected = false;
-}
 
 $dbKITnewsletterArchive = new dbKITnewsletterArchive();
 if ($dbKITnewsletterArchive->sqlTableExists()) {
 	if (!$dbKITnewsletterArchive->sqlDeleteTable()) {
 		$error .= sprintf('<p>[Delete Table] %s</p>', $dbKITnewsletterArchive->getError());
 	}
-}
-if ($dbKITnewsletterArchive->isConnected) {
-	$dbKITnewsletterArchive->close();
-	$dbKITnewsletterArchive->isConnected = false;
 }
 
 // Prompt Errors
