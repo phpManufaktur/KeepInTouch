@@ -412,16 +412,25 @@ class dbKITcontact extends dbConnectLE {
 	} //getStandardPhoneByID()
 	
 	/**
-	 * Return the contact address by the requested ID
+	 * Return the contact by the requested ID
 	 * 
 	 * @param INT $id
 	 * @param REFERENCE ARRAY $contact
+	 * @param boolean $isDeleted - Search for deleted addresses
+	 * @return boolean
 	 */
-	public function getContactByID($id=-1, &$contact=array()) {
-		$where = array();
-		$where[self::field_id] = $id;
+	public function getContactByID($id=-1, &$contact=array(), $isDeleted=false) {
+		$isDeleted ? $check_deleted = '=' : $check_deleted = '!=';
+		// search for contact id
+		$SQL = sprintf(	"SELECT * FROM %s WHERE %s='%s' AND %s%s'%s'",
+										$this->getTableName(),
+										self::field_id,
+										$id,
+										self::field_status,
+										$check_deleted,
+										self::status_deleted);
 		$contact = array();
-		if (!$this->sqlSelectRecord($where, $contact)) {
+		if (!$this->sqlExec($SQL, $contact)) {
 			$this->setError(sprintf('[%s - %s] %s', __METHOD__, __LINE__, $this->getError()));
 			return false;
 		}
@@ -434,12 +443,27 @@ class dbKITcontact extends dbConnectLE {
 		return true;
 	} // getContactByID()
 	
-	public function getAddressByID($address_id=-1, &$address=array()) {
+	/**
+	 * Return the address requested by the address_ID
+	 * 
+	 * @param integer $address_id
+	 * @param reference array $address
+	 * @param boolean $isDeleted
+	 * @return boolean
+	 */
+	public function getAddressByID($address_id=-1, &$address=array(), $isDeleted=false) {
 		global $dbContactAddress;
-		$where = array();
-		$where[dbKITcontactAddress::field_id] = $address_id;
+		$isDeleted ? $check_deleted = '=' : $check_deleted = '!=';
+		// search for address_id
+		$SQL = sprintf(	"SELECT * FROM %s WHERE %s='%s' AND %s%s'%s'",
+										$dbContactAddress->getTableName(),
+										dbKITcontactAddress::field_id,
+										$address_id,
+										dbKITcontactAddress::field_status,
+										$check_deleted,
+										dbKITcontactAddress::status_deleted);
 		$address = array();
-		if (!$dbContactAddress->sqlSelectRecord($where, $address)) {
+		if (!$dbContactAddress->sqlExec($SQL, $address)) {
 			$this->setError(sprintf('[%s - %s] %s', __METHOD__, __LINE__, $dbContactAddress->getError()));
 			return false;
 		}

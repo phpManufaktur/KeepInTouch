@@ -2,6 +2,10 @@ KeepInTouch - Contact management for WebsiteBaker
 (c) 2010 by phpManufaktur, Berlin (Germany)
 http://phpManufaktur.de - info@phpManufaktur.de
 
+Release 0.23
+xxxx-xx-xx
+- changed: getContactByID() can now also search for deleted records  
+
 Release 0.22
 2010-10-16
 - Bugfix: access to old database connector functions in upgrade.php
