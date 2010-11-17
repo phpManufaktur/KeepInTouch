@@ -493,6 +493,8 @@ class kitNewsletterDialog {
 	const request_action						= 'nlact';
 	const request_command						= 'cmd';
 	const request_items							= 'its';
+  const request_send_nl_from_nr   = 'nl_sfn';
+  const request_send_nl_to_nr     = 'nl_sft';
 	
 	const action_config							= 'cfg';
 	const action_config_save				= 'cfgs';
@@ -1382,7 +1384,15 @@ class kitNewsletterDialog {
 											kit_text_records);											
 		} // foreach
 		$items .= $parser->get($row, array('label' => kit_label_newsletter, 'value' => $news));
-		
+
+    // Nur Newsletter VON ... BIS ... versenden
+    $process = sprintf( '%s <input type="text" name="%s" value="" /> %s <input type="text" name="%s" value="" />',
+                        kit_label_newsletter_send_from_no,
+                        self::request_send_nl_from_nr,
+                        kit_label_newsletter_send_to_no,
+                        self::request_send_nl_to_nr);
+    $items .= $parser->get($row, array('label' => '', 'value' => $process));
+    
 		// Template auswaehlen
 		(isset($_REQUEST[dbKITnewsletterArchive::field_template])) ? $template_id = $_REQUEST[dbKITnewsletterArchive::field_template] : $template_id = -1;  
   	
@@ -1562,6 +1572,10 @@ class kitNewsletterDialog {
   	$request_link = $dbCfg->getValue(dbKITcfg::cfgKITRequestLink);
   	
   	$data = array(
+      'send_from_item'            => self::request_send_nl_from_nr,
+      'send_from_item_value'      => isset($_REQUEST[self::request_send_nl_from_nr]) ? (int) $_REQUEST[self::request_send_nl_from_nr] : -1,
+			'send_to_item'              => self::request_send_nl_to_nr,
+      'send_to_item_value'        => isset($_REQUEST[self::request_send_nl_to_nr]) ? (int) $_REQUEST[self::request_send_nl_to_nr] : -1,
 			'header_preview'						=> kit_header_preview,
 			'intro'											=> kit_intro_preview,
 			'html_label'								=> kit_label_newsletter_tpl_html,
@@ -1731,11 +1745,25 @@ class kitNewsletterDialog {
 			return false;
 		}
 		$template = $template[0];
-		
+
+    // transmit only from ... to ... item?
+    $from_nr = (isset($_REQUEST[self::request_send_nl_from_nr]) && $_REQUEST[self::request_send_nl_from_nr] > 0) ? $_REQUEST[self::request_send_nl_from_nr] : -1;
+    $to_nr = (isset($_REQUEST[self::request_send_nl_to_nr]) && $_REQUEST[self::request_send_nl_to_nr] > 0) ? $_REQUEST[self::request_send_nl_to_nr] : -1;
+
+    if (($from_nr !== -1) && ($to_nr <= $from_nr)) $to_nr = count($to_array);
+    $count = 0;
+
 		$transmitted = 0;
 		$error = '';
 		
 		foreach ($to_array as $contact_id) {
+      if ($from_nr !== -1) {
+        $count++;
+        // Anfangsdatensatz noch nicht erreicht, springen...
+        if ($count < $from_nr) continue;
+        // Enddatensatz ueberschritten, Schleife beenden
+        if ($count > $to_nr) break;
+      }
 			$kitMail = new kitMail();
 			$html = utf8_encode($newsletter[dbKITnewsletterArchive::field_html]);
 			if ($newsletterCommands->parseCommands($html, '', $contact_id)) {
@@ -1783,12 +1811,27 @@ class kitNewsletterDialog {
 																			'',
 																			true)) {
 					$transmitted++;
+          if (!$dbContact->addSystemNotice($contact_id, sprintf( kit_protocol_send_newsletter_success,
+                                                            $newsletter[dbKITnewsletterArchive::field_subject],
+                                                            date('H:i:s'),
+                                                            $email[0][dbKITregister::field_email]))) {
+            $this->setError(sprintf('[%s - %s] %s', __METHOD__, __LINE, $dbContact->getError()));
+            return false;
+          }
 				}
 				else {
 					$error .= sprintf('<p>[%s] %s</p>', $email[0][dbKITregister::field_email], $kitMail->getMailError());
+          if (!$dbContact->addSystemNotice($contact_id, sprintf( kit_protocol_send_newsletter_fail,
+                                                            $newsletter[dbKITnewsletterArchive::field_subject],
+                                                            date('H:i:s'),
+                                                            $email[0][dbKITregister::field_email],
+                                                            $kitMail->getMailError()))) {
+            $this->setError(sprintf('[%s - %s] %s', __METHOD__, __LINE, $dbContact->getError()));
+            return false;
+          }
 				}
 			}
-			
+			$kitMail->__destruct();
 		}
 		$result = "<p>Es wurden ".$transmitted." Newsletter uebertragen.</p>";
 		if (!empty($error)) {

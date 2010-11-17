@@ -113,6 +113,10 @@ class kitMail extends xPHPMailer {
 			return false;
 		}				
 	} // __construct()
+
+  public function __destruct() {
+    // nothing to do yet...
+  } // __destruct()
 	
 	/**
     * Set $this->error to $error

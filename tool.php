@@ -351,12 +351,10 @@ class kitBackend {
    */
   public function show($action, $content) {
   	global $parser;
+    $class = '';
   	if ($this->isError()) {
   		$content = $this->getError();
   		$class = ' class="error"';
-  	}
-  	else {
-  		$class = '';
   	}
   	$data = array(
   		'WB_URL'					=> WB_URL,
@@ -380,7 +378,7 @@ class kitBackend {
   	}
   	return $_SESSION[self::session_basket_ids];
   }
-  
+
   private function clearContactBasket() {
   	if (!isset($_SESSION[self::session_basket_ids])) {
   		$_SESSION[self::session_basket_ids] = array();

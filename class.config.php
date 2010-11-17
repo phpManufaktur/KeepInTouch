@@ -76,7 +76,7 @@ class dbKITcfg extends dbConnectLE {
   const cfgKITRequestLink		= 'cfgKITRequestLink';
   const cfgMaxInvalidLogin	= 'cfgMaxInvalidLogin';
   const cfgAddAppTab				= 'cfgAddAppTab';
-  
+
   public $config_array = array(
   	//array('kit_label_cfg_developer_mode', self::cfgDeveloperMode, self::type_boolean, 0, 'kit_desc_cfg_developer_mode'),
   	array('kit_label_cfg_google_maps_api_key', self::cfgGoogleMapsAPIkey, self::type_string, '', 'kit_desc_cfg_google_maps_api_key'),

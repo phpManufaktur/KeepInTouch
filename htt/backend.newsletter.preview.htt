@@ -34,6 +34,8 @@
         <form name="preview_save" action="{$form_action}" method="post" >
           <input type="hidden" name="{$action_name}" value="{$action_save_value}" />
           <input type="hidden" name="{$preview_name}" value="{$preview_value}" />
+          <input type="hidden" name="{$send_from_item|default: 'opt_1'}" value="{$send_from_item_value|default: ''}" />
+          <input type="hidden" name="{$send_to_item|default: 'opt_2'}" value="{$send_to_item_value|default: ''}" />
           <input type="submit" value="{$btn_save}" />&nbsp;
         </form>
         </div>

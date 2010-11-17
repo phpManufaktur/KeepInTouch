@@ -3,8 +3,10 @@ KeepInTouch - Contact management for WebsiteBaker
 http://phpManufaktur.de - info@phpManufaktur.de
 
 Release 0.23
-xxxx-xx-xx
-- changed: getContactByID() can now also search for deleted records  
+2010-11-17
+- changed: getContactByID() can now also search for deleted records
+- added: Newsletter can now send with specified items
+- added: Newsletter is logging success and failures on sending
 
 Release 0.22
 2010-10-16

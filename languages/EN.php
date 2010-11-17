@@ -260,6 +260,8 @@ define('kit_label_mail_to',												'Recipient');
 define('kit_label_massmail',											'MassMail');
 define('kit_label_newsletter',										'Newsletter');
 define('kit_label_newsletter_commands',						'Befehle');
+define('kit_label_newsletter_send_from_no',       'Versende von Nr.');
+define('kit_label_newsletter_send_to_no',         'bis Nr.');
 define('kit_label_newsletter_tpl_desc',						'Template Beschreibung');
 define('kit_label_newsletter_tpl_html',						'HTML Code');
 define('kit_label_newsletter_tpl_name',						'Template Bezeichnung');
@@ -370,6 +372,8 @@ define('kit_msg_provider_updated',								'<p>Der Dienstleister <b>%s</b> wurde 
 
 define('kit_protocol_create_contact',							'%s: Data record created.');
 define('kit_protocol_create_contact_massmail',		'Data record by import of the email address %s put on by Massmail.');
+define('kit_protocol_send_newsletter_success',    'Newsletter <i>"%s"</i> um <b>%s</b> Uhr an <b>%s</b> versendet.');
+define('kit_protocol_send_newsletter_fail',       'Newsletter <i>"%s"</i> konnte um <b>%s</b> Uhr <b>nicht</b> an <b>%s</b> versendet werden.<br><b>Fehler:</b> %s.');
 
 define('kit_tab_cfg_array',												'Addapted Lists');
 define('kit_tab_cfg_general',											'General');

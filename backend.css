@@ -260,6 +260,11 @@ input[name=protocol_date] {
   width:100px;
   margin: 0 0 0 10px;
 }
+input[name=nl_sfn],
+input[name=nl_sft]
+{
+  width: 80px;
+}
 img[name=cal_img_2] {
   margin: 0 10px 0 0;
 }
