@@ -76,6 +76,8 @@ class dbKITnewsletterCfg extends dbConnectLE {
   const cfgSalutation_08		= 'cfgSalutation_08';
   const cfgSalutation_09		= 'cfgSalutation_09';
   const cfgSalutation_10		= 'cfgSalutation_10';
+  const cfgSimulateMailing	= 'cfgSimulateMailing';
+  const cfgAdjustRegister   = 'cfgAdjustRegister';
   
   public $config_array = array(
   	//array('kit_label_cfg_developer_mode', self::cfgDeveloperMode, self::type_boolean, 0, 'kit_desc_cfg_developer_mode'),
@@ -89,7 +91,8 @@ class dbKITnewsletterCfg extends dbConnectLE {
   	array('kit_label_cfg_nl_salutation', self::cfgSalutation_08, self::type_string, '', ''),
   	array('kit_label_cfg_nl_salutation', self::cfgSalutation_09, self::type_string, '', ''),
   	array('kit_label_cfg_nl_salutation', self::cfgSalutation_10, self::type_string, '', ''),
-  	
+  	array('kit_label_cfg_nl_simulate', self::cfgSimulateMailing, self::type_boolean, '0', 'kit_desc_cfg_nl_simulate'),
+    array('kit_label_cfg_nl_adjust_register', self::cfgAdjustRegister, self::type_boolean, '0', 'kit_desc_cfg_nl_adjust_register')
   );  
   
   public function __construct($createTables = false) {
