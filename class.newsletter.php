@@ -1247,6 +1247,8 @@ class kitNewsletterDialog {
   	global $newsletterCommands;
   	global $dbNewsletterTemplates;
   	global $dbNewsletterArchive;
+    global $dbRegister;
+    global $tools;
   	
   	// bestimmtes Archiv laden?
   	isset($_REQUEST[dbKITnewsletterArchive::field_id]) ? $aid = $_REQUEST[dbKITnewsletterArchive::field_id] : $aid = -1;
@@ -1355,6 +1357,7 @@ class kitNewsletterDialog {
 		$news = '';
 		isset($_REQUEST[dbKITnewsletterArchive::field_groups]) ? $news_val = $_REQUEST[dbKITnewsletterArchive::field_groups] : $news_val = array();
 		foreach ($newsletter_array as $news_item) {
+      /*
 			$SQL = sprintf(	"SELECT COUNT(%s) FROM %s WHERE %s='%s' AND ((%s LIKE '%s') OR (%s LIKE '%s,%%') OR (%s LIKE '%%,%s') OR (%s LIKE '%%%s,%%'))",
 											dbKITcontact::field_id,
 											$dbContact->getTableName(),
@@ -1368,19 +1371,84 @@ class kitNewsletterDialog {
 											$news_item[dbKITcontactArrayCfg::field_identifier],
 											dbKITcontact::field_newsletter,
 											$news_item[dbKITcontactArrayCfg::field_identifier]);
-			$result = array();
+       *
+       */
+      // Newsletter Adressaten ermitteln...
+			$SQL = sprintf(	"SELECT %s, %s, %s FROM %s WHERE %s='%s' AND ((%s LIKE '%s') OR (%s LIKE '%s,%%') OR (%s LIKE '%%,%s') OR (%s LIKE '%%%s,%%'))",
+                      dbKITcontact::field_email,
+                      dbKITcontact::field_email_standard,
+											dbKITcontact::field_id,
+											$dbContact->getTableName(),
+											dbKITcontact::field_status,
+											dbKITcontact::status_active,
+											dbKITcontact::field_newsletter,
+											$news_item[dbKITcontactArrayCfg::field_identifier],
+											dbKITcontact::field_newsletter,
+											$news_item[dbKITcontactArrayCfg::field_identifier],
+											dbKITcontact::field_newsletter,
+											$news_item[dbKITcontactArrayCfg::field_identifier],
+											dbKITcontact::field_newsletter,
+											$news_item[dbKITcontactArrayCfg::field_identifier]);
+      $result = array();
 			if (!$dbContact->sqlExec($SQL, $result)) {
 				$this->setError(sprintf('[%s - %s] %s', __METHOD__, __LINE__, $dbContact->getError()));
 				return false;
 			}
-			
+			// mit der db_kit_register abgleichen...
+			$count = 0;
+			$email_array = array();
+      foreach ($result as $contact) {
+        $emails = explode(',', $contact[dbKITcontact::field_email]);
+        list($type, $email) = explode('|', $emails[$contact[dbKITcontact::field_email_standard]]);
+        $where = array(dbKITregister::field_email => $email);
+        $email_array[] = $email;
+        $register = array();
+        if (!$dbRegister->sqlSelectRecord($where, $register)) {
+        	$this->setError(sprintf('[%s - %s] %s', __METHOD__, __LINE__, $dbRegister->getError()));
+        	return false;
+        }
+        if (count($register) > 0) {
+        	// Treffer
+        	$newsletters = explode(',', $register[0][dbKITregister::field_newsletter]);
+        	if (in_array($news_item[dbKITcontactArrayCfg::field_identifier], $newsletters)) {
+        		// befindet sich in der db_kit_register
+        		$count++;
+        	}
+        	else {
+        		// befindet sich nicht in der db_kit_register - Annahme: dieser Newsletter wurde abbestellt, ignorieren... 
+        	}
+        }
+        else {
+        	// Datensatz nicht gefunden, neu anlegen
+	        $data = array();
+					$data[dbKITregister::field_contact_id] = $contact[dbKITcontact::field_id];
+					$data[dbKITregister::field_email] = $email;
+					$data[dbKITregister::field_status] = dbKITregister::status_active;
+					$data[dbKITregister::field_username] = $email;
+					$data[dbKITregister::field_password] = md5($email);
+					$data[dbKITregister::field_register_key] = $tools->createGUID();
+					$data[dbKITregister::field_register_date] = date('Y-m-d H:i:s');
+					$data[dbKITregister::field_register_confirmed] = date('Y-m-d H:i:s');
+					$data[dbKITregister::field_newsletter] = $news_item[dbKITcontactArrayCfg::field_identifier];
+					$data[dbKITregister::field_update_by] = 'SYSTEM';
+					$data[dbKITregister::field_update_when] = date('Y-m-d H:i:s');
+					$aid = -1;
+					if (!$dbRegister->sqlInsertRecord($data, $aid)) {
+						$this->setError(sprintf('[%s - %s] %s', __METHOD__, __LINE__, $dbRegister->getError()));
+						return false;
+					}
+					$count++;
+        }
+      } // foreach
+
+      
 			(in_array($news_item[dbKITcontactArrayCfg::field_identifier], $news_val)) ? $checked=' checked="checked"' : $checked = '';
 			$news .= sprintf('<input type="checkbox" name="%s[]" value="%s"%s /> %s (<b>%d</b> %s)<br />',
 											dbKITnewsletterArchive::field_groups,
 											$news_item[dbKITcontactArrayCfg::field_identifier],
 											$checked,
 											$news_item[dbKITcontactArrayCfg::field_value],
-											$result[0]['COUNT('.dbKITcontact::field_id.')'],
+											$count, //$result[0]['COUNT('.dbKITcontact::field_id.')'],
 											kit_text_records);											
 		} // foreach
 		$items .= $parser->get($row, array('label' => kit_label_newsletter, 'value' => $news));
