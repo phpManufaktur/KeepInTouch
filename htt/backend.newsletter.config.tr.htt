@@ -1,7 +1,5 @@
 <tr>
   <td>{$label|default:''}</td>
-  <td>{$identifier|default: ''}</tdh>
-  <td>{$type|default: ''}</td>
   <td>{$value|default: ''}</td>
   <td>{$description|default: ''}</td>
 </tr>

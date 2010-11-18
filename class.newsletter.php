@@ -1072,8 +1072,6 @@ class kitNewsletterDialog {
 		$count = array();
 		$data = array(
 			'label'				=> '',
-			'identifier'	=> kit_header_cfg_identifier,
-			'type'				=> kit_header_cfg_typ,
 			'value'				=> kit_header_cfg_value,
 			'description'	=> kit_header_cfg_description
 		);
@@ -1085,8 +1083,6 @@ class kitNewsletterDialog {
 			$id = $entry[dbKITnewsletterCfg::field_id];
 			$count[] = $id;
 			$label = constant($entry[dbKITnewsletterCfg::field_label]);
-			$bezeichner = $entry[dbKITnewsletterCfg::field_name];
-			$typ = $dbNewsletterCfg->type_array[$entry[dbKITnewsletterCfg::field_type]];
 			(isset($_REQUEST[dbKITnewsletterCfg::field_value.'_'.$id])) ? 
 				$val = $_REQUEST[dbKITnewsletterCfg::field_value.'_'.$id] : 
 				$val = $entry[dbKITnewsletterCfg::field_value];
@@ -1101,8 +1097,6 @@ class kitNewsletterDialog {
 			}
 			$data = array(
 				'label'				=> $label,
-				'identifier'	=> $bezeichner,
-				'type'				=> $typ,
 				'value'				=> $value,
 				'description'	=> $desc
 			);
@@ -1746,6 +1740,9 @@ class kitNewsletterDialog {
   	global $dbRegister;
     global $dbNewsletterCfg;
 
+    // Ausfuehrungsdauer fuer das Script festlegen
+    if (!ini_get('safe_mode')) set_time_limit ($dbNewsletterCfg(dbKITnewsletterCfg::cfgSetTimeLimit));
+
     // Simulation?
     $cfgSimulateMailing = $dbNewsletterCfg->getValue(dbKITnewsletterCfg::cfgSimulateMailing);
 
@@ -1762,7 +1759,7 @@ class kitNewsletterDialog {
   		return false;
   	}
   	$newsletter = $newsletter[0];
-  	
+
   	// Provider
   	$where = array();
 		$where[dbKITprovider::field_id] = intval($newsletter[dbKITnewsletterArchive::field_provider]);
@@ -1772,35 +1769,28 @@ class kitNewsletterDialog {
 			return false;
 		}
 		$provider = $provider[0];
-		
+
 		// Adressaten auslesen
 		$to_array = array();
 		$nl_groups = explode(',', $newsletter[dbKITnewsletterArchive::field_groups]);
-		foreach ($nl_groups as $nl) { 
+		foreach ($nl_groups as $nl) {
 			// get contact ID's from selected newsletter...
-			$SQL = sprintf(	"SELECT %s FROM %s WHERE %s='%s' AND ((%s LIKE '%s') OR (%s LIKE '%s,%%') OR (%s LIKE '%%,%s') OR (%s LIKE '%%%s,%%'))",
-											dbKITcontact::field_id,
-											$dbContact->getTableName(),
-											dbKITcontact::field_status,
-											dbKITcontact::status_active,
-											dbKITcontact::field_newsletter,
-											$nl,
-											dbKITcontact::field_newsletter,
-											$nl,
-											dbKITcontact::field_newsletter,
-											$nl,
-											dbKITcontact::field_newsletter,
+      $SQL = sprintf(	'SELECT * FROM %1$s WHERE %2$s=\'%3$s\' AND ((%4$s LIKE \'%5$s\') OR (%4$s LIKE \'%5$s,%%\') OR (%4$s LIKE \'%%,%5$s\') OR (%4$s LIKE \'%%%5$s,%%\'))',
+											$dbRegister->getTableName(),
+                      dbKITregister::field_status,
+											dbKITregister::status_active,
+											dbKITregister::field_newsletter,
 											$nl);
-			$result = array();
-			if (!$dbContact->sqlExec($SQL, $result)) {
-				$this->setError(sprintf('[%s - %s] %s', __METHOD__, __LINE__, $dbContact->getError()));
+			$addresses = array();
+			if (!$dbRegister->sqlExec($SQL, $addresses)) {
+				$this->setError(sprintf('[%s - %s] %s', __METHOD__, __LINE__, $dbRegister->getError()));
 				return false;
 			}
-			foreach ($result as $id) {
-				if (!in_array($id[dbKITcontact::field_id], $to_array))	$to_array[] = $id[dbKITcontact::field_id];
+			foreach ($addresses as $id) {
+				if (!in_array($id[dbKITregister::field_contact_id], $to_array))	$to_array[] = $id[dbKITregister::field_id];
 			}
-		}	
-		
+		}
+
 		// Template
 		$where = array();
 		$where[dbKITnewsletterTemplates::field_id] = $newsletter[dbKITnewsletterArchive::field_template];
@@ -1826,7 +1816,7 @@ class kitNewsletterDialog {
 		$error = '';
 		$result = '';
 
-		foreach ($to_array as $contact_id) {
+		foreach ($addresses as $address) {
       if ($from_nr !== -1) {
         $count++;
         // Anfangsdatensatz noch nicht erreicht, springen...
@@ -1836,90 +1826,76 @@ class kitNewsletterDialog {
       }
 			$kitMail = new kitMail();
 			$html = utf8_encode($newsletter[dbKITnewsletterArchive::field_html]);
-			if ($newsletterCommands->parseCommands($html, '', $contact_id)) {
+			if ($newsletterCommands->parseCommands($html, '', $address[dbKITregister::field_contact_id])) {
 				$html_content = $template[dbKITnewsletterTemplates::field_html];
-				if (!$newsletterCommands->parseCommands($html_content, $html, $contact_id)) {
-					$this->setError(sprintf('[%s - %s] %s', __METHOD__, __LINE__, $newsletterCommands->getError())); 
+				if (!$newsletterCommands->parseCommands($html_content, $html, $address[dbKITregister::field_contact_id])) {
+					$this->setError(sprintf('[%s - %s] %s', __METHOD__, __LINE__, $newsletterCommands->getError()));
 				}
 			}
 			else {
 				$this->setError(sprintf('[%s - %s] %s', __METHOD__, __LINE__, $newsletterCommands->getError()));
 				return false;
 			}
-			
+
 			$text = utf8_encode($newsletter[dbKITnewsletterArchive::field_text]);
-			if ($newsletterCommands->parseCommands($text, '', $contact_id)) {
+			if ($newsletterCommands->parseCommands($text, '', $address[dbKITregister::field_contact_id])) {
 				$text_content = $template[dbKITnewsletterTemplates::field_text];
-				if (!$newsletterCommands->parseCommands($text_content, $text, $contact_id)) {
-					$this->setError(sprintf('[%s - %s] %s', __METHOD__, __LINE__, $newsletterCommands->getError())); 
+				if (!$newsletterCommands->parseCommands($text_content, $text, $address[dbKITregister::field_contact_id])) {
+					$this->setError(sprintf('[%s - %s] %s', __METHOD__, __LINE__, $newsletterCommands->getError()));
 				}
 			}
 			else {
 				$this->setError(sprintf('[%s - %s] %s', __METHOD__, __LINE__, $newsletterCommands->getError()));
 				return false;
-			}	
-			
-			$SQL = sprintf(	"SELECT %s FROM %s WHERE %s='%s' AND %s='%s'",
-											dbKITregister::field_email,
-											$dbRegister->getTableName(),
-											dbKITregister::field_contact_id,
-											$contact_id,
-											dbKITregister::field_status,
-											dbKITregister::status_active);
-			$email = array();
-			if (!$dbRegister->sqlExec($SQL, $email)) {
-				$this->setError(sprintf('[%s - %s] %s', __METHOD__, __LINE__, $dbRegister->getError()));
-				return false;
 			}
-			if (count($email) > 0) {
-        if ($cfgSimulateMailing) {
-          // Versand wird nur simuliert!
-          $result .= sprintf(kit_protocol_simulate_send_newsletter, $email[0][dbKITregister::field_email]);
+
+      if ($cfgSimulateMailing) {
+        // Versand wird nur simuliert!
+        $result .= sprintf(kit_protocol_simulate_send_newsletter, $address[dbKITregister::field_email]);
+      }
+      else {
+        // send Newsletter!
+        if ($kitMail->sendNewsletter(	$newsletter[dbKITnewsletterArchive::field_subject],
+                                      $html_content,
+                                      $text_content,
+                                      $provider[dbKITprovider::field_email],
+                                      $provider[dbKITprovider::field_name],
+                                      $address[dbKITregister::field_email],
+                                      '',
+                                      true)) {
+          $transmitted++;
+          $protocol = sprintf( kit_protocol_send_newsletter_success,
+                                                            $newsletter[dbKITnewsletterArchive::field_subject],
+                                                            date('H:i:s'),
+                                                            $address[dbKITregister::field_email]);
+          if (!$dbContact->addSystemNotice($address[dbKITregister::field_contact_id], $protocol)) {
+            $this->setError(sprintf('[%s - %s] %s', __METHOD__, __LINE, $dbContact->getError()));
+            return false;
+          }
+          $result .= sprintf('<p>%s</p>', $protocol);
         }
         else {
-          // send Newsletter!
-          if ($kitMail->sendNewsletter(	$newsletter[dbKITnewsletterArchive::field_subject],
-                                        $html_content,
-                                        $text_content,
-                                        $provider[dbKITprovider::field_email],
-                                        $provider[dbKITprovider::field_name],
-                                        $email[0][dbKITregister::field_email],
-                                        '',
-                                        true)) {
-            $transmitted++;
-            $protocol = sprintf( kit_protocol_send_newsletter_success,
-                                                              $newsletter[dbKITnewsletterArchive::field_subject],
-                                                              date('H:i:s'),
-                                                              $email[0][dbKITregister::field_email]);
-            if (!$dbContact->addSystemNotice($contact_id, $protocol)) {
-              $this->setError(sprintf('[%s - %s] %s', __METHOD__, __LINE, $dbContact->getError()));
-              return false;
-            }
-            $result .= sprintf('<p>%s</p>', $protocol);
+          $error .= sprintf('<p>[%s] %s</p>', $address[dbKITregister::field_email], $kitMail->getMailError());
+          if (!$dbContact->addSystemNotice($address[dbKITregister::field_contact_id], sprintf( kit_protocol_send_newsletter_fail,
+                                                            $newsletter[dbKITnewsletterArchive::field_subject],
+                                                            date('H:i:s'),
+                                                            $address[dbKITregister::field_email],
+                                                            $kitMail->getMailError()))) {
+            $this->setError(sprintf('[%s - %s] %s', __METHOD__, __LINE, $dbContact->getError()));
+            return false;
           }
-          else {
-            $error .= sprintf('<p>[%s] %s</p>', $email[0][dbKITregister::field_email], $kitMail->getMailError());
-            if (!$dbContact->addSystemNotice($contact_id, sprintf( kit_protocol_send_newsletter_fail,
-                                                              $newsletter[dbKITnewsletterArchive::field_subject],
-                                                              date('H:i:s'),
-                                                              $email[0][dbKITregister::field_email],
-                                                              $kitMail->getMailError()))) {
-              $this->setError(sprintf('[%s - %s] %s', __METHOD__, __LINE, $dbContact->getError()));
-              return false;
-            }
-          }
-        } // send Newsletter
-			}
+        }
+      } // send Newsletter
 			$kitMail->__destruct();
 		}
 		$result .= "<p>Es wurden ".$transmitted." Newsletter uebertragen.</p>";
 		if (!empty($error)) {
 			$result .= "<p>Es sind die folgenden Fehler aufgetreten:</p>".$error;
 		}
-		
+
 		return $result;
   } // processNewsletter()
-  
+
 } // kitNewsletterDialog
 
 ?>

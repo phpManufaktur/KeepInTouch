@@ -6,19 +6,17 @@
   {$intro}
   <table width="100%">
     <colgroup>
-      <col width="15%" />
-      <col width="15%" />
-      <col width="10%" />
-      <col width="25%" />
-      <col width="35%" />
+      <col width="20%" />
+      <col width="50%" />
+      <col width="30%" />
     </colgroup>
     {$items}
     <tr>
-      <td colspan="5">&nbsp;</td>
+      <td colspan="3">&nbsp;</td>
     </tr>
     {$add|default: ''}
     <tr>
-      <td colspan="5">
+      <td colspan="3">
         <input type="submit" value="{$btn_ok}" />&nbsp;
         <input type="button" value="{$btn_abort}" onclick="javascript: window.location = '{$abort_location}'; return false;" />
       </td>

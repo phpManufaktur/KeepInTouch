@@ -2,6 +2,11 @@ KeepInTouch - Contact management for WebsiteBaker
 (c) 2010 by phpManufaktur, Berlin (Germany)
 http://phpManufaktur.de - info@phpManufaktur.de
 
+Release 0.26
+2010-11-18
+- optimized: function for processing newsletters
+- added: option to set the maximum execution time for the newsletter script
+
 Release 0.25
 2010-11-18
 - added: switch for check and update of associated tables when sending newsletters
