@@ -1,0 +1,4 @@
+<tr>
+  <td class="menu_icon">{$icon}</td>
+  <td class="menu_info">{$info}</td>
+</tr>

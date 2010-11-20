@@ -1,0 +1,26 @@
+<!-- $Id$ -->
+<table width="900">
+  <colgroup>
+    <col width="400" />
+    <col width="500" />
+  </colgroup>
+  <tr>
+    <td>
+      <!-- linke Spalte -->
+      <table width="100%">
+        <colgroup>
+          <col width="30%" />
+          <col width="70%"/>
+        </colgroup>
+        {$menu_items}
+      </table>
+    </td>
+    <td>
+      <!-- rechte Spalte -->
+      {$license_info}
+      <div id="kit_info">
+        {$kit_info}
+      </div>
+    </td>
+  </tr>
+</table>

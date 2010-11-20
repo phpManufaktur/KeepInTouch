@@ -76,6 +76,7 @@ class dbKITcfg extends dbConnectLE {
   const cfgKITRequestLink		= 'cfgKITRequestLink';
   const cfgMaxInvalidLogin	= 'cfgMaxInvalidLogin';
   const cfgAddAppTab				= 'cfgAddAppTab';
+  const cfgLicenseKey				= 'cfgLicenseKey';
 
   public $config_array = array(
   	//array('kit_label_cfg_developer_mode', self::cfgDeveloperMode, self::type_boolean, 0, 'kit_desc_cfg_developer_mode'),
@@ -87,7 +88,8 @@ class dbKITcfg extends dbConnectLE {
   	array('kit_label_cfg_register_dlg', self::cfgRegisterDlgNL, self::type_string, 'dialog_newsletter', 'kit_desc_cfg_register_dlg'),
   	array('kit_label_cfg_register_data_dlg', self::cfgRegisterDlgACC, self::type_string, 'dialog_account', 'kit_desc_cfg_register_data_dlg'),
   	array('kit_label_cfg_max_invalid_login', self::cfgMaxInvalidLogin, self::type_integer, '10', 'kit_desc_cfg_max_invalid_login'),
-  	array('kit_label_cfg_add_app_tab', self::cfgAddAppTab, self::type_array, '', 'kit_desc_cfg_add_app_tab')
+  	array('kit_label_cfg_add_app_tab', self::cfgAddAppTab, self::type_array, '', 'kit_desc_cfg_add_app_tab'),
+  	array('kit_label_cfg_license_key', self::cfgLicenseKey, self::type_string, '', 'kit_desc_cfg_license_key')
   );  
   
   public function __construct($createTables = false) {

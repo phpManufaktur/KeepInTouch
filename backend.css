@@ -410,7 +410,25 @@ textarea[name=mail_text] {
   font-size: 9pt;
 }
 
-
+#license_info {
+  width: 440px;
+  margin: 0 0 30px 50px;
+  padding: 30px;
+  text-align: right;
+}
+.release_info {
+  margin: 10px 0 0 0;
+  padding: 0;
+  font-weight: bold;
+  font-size: 10pt;
+}
+#kit_info_box {
+  width: 440px;
+  margin: 30px 0 0 50px;
+  padding: 30px;
+  border: 1px solid #dddddd;
+  text-align: left;
+}
 /**
   JQuery
 **/

@@ -40,7 +40,7 @@ global $parser;
 global $dbContact;
 global $dbContactAddress;
 
-if (!is_object($parser)) $parser = new Dwoo();
+if (!is_object($parser)) $parser = new Dwoo(); 
 if (!is_object($dbContact)) $dbContact = new dbKITcontact();
 if (!is_object($dbContactAddress)) $dbContactAddress = new dbKITcontactAddress();
 
@@ -87,6 +87,7 @@ class kitBackend {
 	const action_import_massmail		= 'impmm';
 	const action_email							= 'mail';
 	const action_email_send					= 'ms';
+	const action_start							= 'start';
 	
 	public $list_sort_array = array(
 		self::action_list_lastname			=> kit_list_sort_lastname,
@@ -100,11 +101,12 @@ class kitBackend {
 	);
 	
 	private $tab_navigation_array = array(
+		self::action_start						=> kit_tab_start,
 		self::action_list							=> kit_tab_list,
 		self::action_contact					=> kit_tab_contact,
-		self::action_cfg							=> kit_tab_config,
 		self::action_email						=> kit_tab_email,
 		self::action_newsletter				=> kit_tab_newsletter,
+		self::action_cfg							=> kit_tab_config,
 		self::action_help							=> kit_tab_help
 	);
 	
@@ -262,7 +264,7 @@ class kitBackend {
   			$_REQUEST[$key] = $this->xssPrevent($value);
   		}
   	}
-    isset($_REQUEST[self::request_action]) ? $action = $_REQUEST[self::request_action] : $action = self::action_default;
+    isset($_REQUEST[self::request_action]) ? $action = $_REQUEST[self::request_action] : $action = self::action_start;
   	switch ($action):
   	case self::action_cfg:
   		$this->show(self::action_cfg, $this->dlgConfig());
@@ -300,6 +302,14 @@ class kitBackend {
   		$result = $newsletter->action();
   		if ($newsletter->isError()) $this->setError($newsletter->getError());
   		$this->show(self::action_newsletter, $result);
+  		break;
+  	case self::action_start:
+  		// Startdialog anzeigen
+  		require_once(WB_PATH.'/modules/'.basename(dirname(__FILE__)).'/class.service.php');
+  		$service = new kitService();
+  		$result = $service->action();
+  		if ($service->isError()) $this->setError($service->getError());
+  		$this->show(self::action_start, $result);
   		break;
   	case self::action_default:
   	default:

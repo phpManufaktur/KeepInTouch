@@ -1,0 +1,5 @@
+<div id="license_info">
+  <img src="{$logo}" width="298" height="55" alt="KeepInTouch" />
+  <div class="release_info">{$release}</div>
+  <div class="register_info">{$register}</div>
+</div>

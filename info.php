@@ -23,7 +23,7 @@ if (!defined('WB_PATH')) die('invalid call of '.$_SERVER['SCRIPT_NAME']);
 $module_directory     = 'kit';
 $module_name          = 'KeepInTouch';
 $module_function      = 'tool';
-$module_version       = '0.26';
+$module_version       = '0.27';
 $module_status        = 'beta';
 $module_languages			= 'DE,EN,NO';
 $module_platform      = '2.8';

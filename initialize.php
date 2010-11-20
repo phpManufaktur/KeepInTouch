@@ -50,7 +50,7 @@ require_once(WB_PATH.'/framework/class.wb.php');
 require_once(WB_PATH.'/framework/class.admin.php');
 
 global $parser;
-
+ 
 if (!is_object($parser)) $parser = new Dwoo();
 
 ?>

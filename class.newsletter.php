@@ -374,7 +374,7 @@ class kitNewsletterCommands {
 				}
 			}
 		}
-		if (empty($content)) {
+		if (empty($content)) { 
 			$tpl = new Dwoo_Template_File(WB_PATH . '/modules/' . basename(dirname(__FILE__)) . '/htt/lorem.ipsum.htt');
 			$data = array();
 			$content = $parser->get($tpl, $data); 
@@ -1359,29 +1359,23 @@ class kitNewsletterDialog {
 		$news = '';
 		isset($_REQUEST[dbKITnewsletterArchive::field_groups]) ? $news_val = $_REQUEST[dbKITnewsletterArchive::field_groups] : $news_val = array();
 		foreach ($newsletter_array as $news_item) {
-      // Newsletter Adressaten ermitteln...
-			$SQL = sprintf(	"SELECT %s, %s, %s FROM %s WHERE %s='%s' AND ((%s LIKE '%s') OR (%s LIKE '%s,%%') OR (%s LIKE '%%,%s') OR (%s LIKE '%%%s,%%'))",
-                      dbKITcontact::field_email,
-                      dbKITcontact::field_email_standard,
-											dbKITcontact::field_id,
-											$dbContact->getTableName(),
-											dbKITcontact::field_status,
-											dbKITcontact::status_active,
-											dbKITcontact::field_newsletter,
-											$news_item[dbKITcontactArrayCfg::field_identifier],
-											dbKITcontact::field_newsletter,
-											$news_item[dbKITcontactArrayCfg::field_identifier],
-											dbKITcontact::field_newsletter,
-											$news_item[dbKITcontactArrayCfg::field_identifier],
-											dbKITcontact::field_newsletter,
-											$news_item[dbKITcontactArrayCfg::field_identifier]);
-      $result = array();
-			if (!$dbContact->sqlExec($SQL, $result)) {
-				$this->setError(sprintf('[%s - %s] %s', __METHOD__, __LINE__, $dbContact->getError()));
-				return false;
-			}
+      // wenn erforderlich kit_contact mit der db_kit_register abgleichen...
       if ($cfgAdjustRegister) {
-        // mit der db_kit_register abgleichen...
+        // Newsletter Adressaten ermitteln...
+        $SQL = sprintf(	'SELECT %1$s, %2$s, %3$s FROM %4$s WHERE %5$s=\'%6$s\' AND ((%7$s LIKE \'%8$s\') OR (%7$s LIKE \'%8$s,%%\') OR (%7$s LIKE \'%%,%8$s\') OR (%7$s LIKE \'%%%8$s,%%\'))',
+                        dbKITcontact::field_email, // 1
+                        dbKITcontact::field_email_standard, // 2
+                        dbKITcontact::field_id, // 3
+                        $dbContact->getTableName(), // 4
+                        dbKITcontact::field_status, // 5
+                        dbKITcontact::status_active, // 6
+                        dbKITcontact::field_newsletter, // 7
+                        $news_item[dbKITcontactArrayCfg::field_identifier]); // 8
+        $result = array();
+        if (!$dbContact->sqlExec($SQL, $result)) {
+          $this->setError(sprintf('[%s - %s] %s', __METHOD__, __LINE__, $dbContact->getError()));
+          return false;
+        }
         $this->setMessage($this->getMessage().sprintf(kit_msg_newsletter_adjust_register, $news_item[dbKITcontactArrayCfg::field_identifier]));
         $count = 0;
         $email_array = array();
@@ -1425,12 +1419,26 @@ class kitNewsletterDialog {
               $this->setError(sprintf('[%s - %s] %s', __METHOD__, __LINE__, $dbRegister->getError()));
               return false;
             }
+            // increase counter
             $count++;
           }
         } // foreach
       } // cfgAdjustRegister
       else {
-        $count = count($result);
+        // Newsletter Adressaten ermitteln...
+        $SQL = sprintf(	'SELECT count(%1$s) FROM %2$s WHERE %3$s=\'%4$s\' AND ((%5$s LIKE \'%6$s\') OR (%5$s LIKE \'%6$s,%%\') OR (%5$s LIKE \'%%,%6$s\') OR (%5$s LIKE \'%%%6$s,%%\'))',
+                        dbKITregister::field_id, // 1
+                        $dbRegister->getTableName(), // 2
+                        dbKITregister::field_status, // 3
+                        dbKITregister::status_active, // 4
+                        dbKITregister::field_newsletter, // 5
+                        $news_item[dbKITcontactArrayCfg::field_identifier]); // 6
+        $result = array();
+        if (!$dbRegister->sqlExec($SQL, $result)) {
+          $this->setError(sprintf('[%s - %s] %s', __METHOD__, __LINE__, $dbRegister->getError()));
+          return false;
+        }
+        $count = $result[0][sprintf('count(%s)', dbKITregister::field_id)];
       }
       
 			(in_array($news_item[dbKITcontactArrayCfg::field_identifier], $news_val)) ? $checked=' checked="checked"' : $checked = '';
@@ -1741,7 +1749,7 @@ class kitNewsletterDialog {
     global $dbNewsletterCfg;
 
     // Ausfuehrungsdauer fuer das Script festlegen
-    if (!ini_get('safe_mode')) set_time_limit ($dbNewsletterCfg(dbKITnewsletterCfg::cfgSetTimeLimit));
+    set_time_limit ($dbNewsletterCfg->getValue(dbKITnewsletterCfg::cfgSetTimeLimit));
 
     // Simulation?
     $cfgSimulateMailing = $dbNewsletterCfg->getValue(dbKITnewsletterCfg::cfgSimulateMailing);

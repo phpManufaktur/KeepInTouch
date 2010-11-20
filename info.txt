@@ -2,6 +2,11 @@ KeepInTouch - Contact management for WebsiteBaker
 (c) 2010 by phpManufaktur, Berlin (Germany)
 http://phpManufaktur.de - info@phpManufaktur.de
 
+Release 0.27
+2010-11-20
+- added: start page for KeepInTouch
+- added: class.service.php enable licensing and support
+
 Release 0.26
 2010-11-18
 - optimized: function for processing newsletters

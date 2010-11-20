@@ -48,8 +48,12 @@ define('kit_btn_mail_from',												'Fra:');
 define('kit_btn_mail_to',													'Til:');
 define('kit_btn_ok',															'Ok');
 define('kit_btn_preview',													'Vorschau');
+define('kit_btn_register',                        'Registrieren');
 define('kit_btn_save',														'Speichern');
 define('kit_btn_send',														'Send');
+
+define('kit_cfg_date_str',                        'd.m.Y');
+define('kit_cfg_date_time_str',                   'd.m.Y - H:i:s');
 
 define('kit_cmd_nl_account_email',								'E-Mail Adresse des Abonnenten');
 define('kit_cmd_nl_account_first_name',						'Vorname des Abonnenten');
@@ -134,6 +138,7 @@ define('kit_desc_cfg_developer_mode',							'Gj&oslash;r det mulig &aring; legge
 define('kit_desc_cfg_google_maps_api_key',				'For &aring; benytte og vise kart trenger du en Google Maps API n&oslash;kkel.');
 define('kit_desc_cfg_kit_request_link',						'<b>kit.php</b> nimmt alle Anfragen entgegen, gibt Daten zurück oder ruft Dialoge auf. Die Datei befindet sich im Verzeichnis /modules/kit, sie kann aber auch an eine andere Stelle kopiert werden, z.B. in das Root-Verzeichnis');
 define('kit_desc_cfg_kit_response_page', 					'KIT benötigt für die Anzeige von Dialogen und Hinweisen eine eigene Seite');
+define('kit_desc_cfg_license_key',                'Um KeepInTouch in vollem Umfang nutzen zu können benötigen Sie einen Lizenzschlüssel, dieser wird hier gesichert');
 define('kit_desc_cfg_max_invalid_login',					'Maximale Anzahl von fehlerhaften Login Versuchen von Anwendern, bevor das Konto gesperrt wird.');
 define('kit_desc_cfg_nl_adjust_register',         'Gleicht beim Aufruf des Newsletter Dialog die Tabelle kit_contact mit kit_register ab (Verwenden Sie diese Einstellung nur nach Aufforderung durch den Support!).');
 define('kit_desc_cfg_nl_set_time_limit',          'Legt die Dauer in Sekunden fest, die das Newsletter Script max. für die Versendung der Mails benötigen darf. Ist der Wert zu niedrig, werden Sie einen Laufzeitfehler erhalten, erhöhen Sie den Wert dann schrittweise.');
@@ -208,6 +213,7 @@ define('kit_intro_newsletter_create',							'<p>Erstellen Sie einen Newsletter u
 define('kit_intro_newsletter_commands',						'<p>Befehle und Variablen werden zur Laufzeit ausgeführt und in das Template eingefügt.</p>');
 define('kit_intro_newsletter_template',						'<p>Wählen Sie ein Newsletter Template zum Bearbeiten aus oder legen Sie ein neues Template an.</p>');
 define('kit_intro_preview',												'<p>Prüfen Sie die Vorschau in der <b>HTML</b> und in der <b>NUR TEXT</b> Ansicht.</p>');
+define('kit_intro_register_installation',         '<p>Registrieren Sie Ihre KeepInTouch Installation.</p><p>Dies ermöglicht Ihnen unentgeltlich den vollen Funktionsumfang von KeepInTouch zu testen.</p>');
 
 define('kit_label_add_new_address',								'Legg Til Ytterligere Adresse');
 define('kit_label_address_city',									'Postadresse');
@@ -223,6 +229,7 @@ define('kit_label_contact_edit',									'Rediger Kontakt');
 define('kit_label_contact_email',									'e-post');
 define('kit_label_cfg_kit_request_link',					'KIT Request Link');
 define('kit_label_contact_note',									'Notater');
+define('kit_label_cfg_license_key',               'Lizenzschlüssel');
 define('kit_label_cfg_max_invalid_login',					'Maximale Loginversuche');
 define('kit_label_cfg_nl_adjust_register',        'kit_register abgleichen');
 define('kit_label_cfg_nl_salutation',							'Grußformel');
@@ -377,12 +384,23 @@ define('kit_msg_provider_check_auth',							'<p>Sie haben keine SMTP Authentifiz
 define('kit_msg_provider_inserted',								'<p>Der Dienstleister <b>%s</b> wurde neu angelegt.</p>');
 define('kit_msg_provider_minum_failed',						'<p>Die Angaben zum Dienstleister reichen nicht aus. Sie müssen mindestens angeben: Name und E-Mail Adresse und - falls der Mailserver eine SMTP Authentifizierung erfordert - SMTP Host, SMTP Benutzername und das Passwort.</p>');
 define('kit_msg_provider_updated',								'<p>Der Dienstleister <b>%s</b> wurde aktualisiert.</p>');
+define('kit_msg_service_invalid_user_name',       '<p>Bitte geben Sie einen gültigen Vor- und Nachnamen an.</p>');
+define('kit_msg_service_license_beta_evaluate',   '<p><b>Diese KeepInTouch Installation ist nicht registriert.</b></p><p><a href="%s">Registrieren Sie diese BETA Version</a> unentgeltlich damit Sie den vollen Funktionsumfang von KeepInTouch testen können!</p>');
+define('kit_msg_service_license_beta_registered', '<p<b>KeepInTouch BETA</b><br /><i>%s</i><br />Lizenz gültig bis zum %s, registriert für <i>%s %s</i>.</p>');
+define('kit_msg_service_no_connect',              '<p>Der Updateserver konnte nicht erreicht werden.</p>');
 
 define('kit_protocol_create_contact',							'%s: Oppf&oslash;ringen ble opprettet.');
 define('kit_protocol_create_contact_massmail',		'Data som skal benyttes ved import av e-postadresser %s oppretter i MassMail.');
 define('kit_protocol_send_newsletter_success',    'Newsletter <i>"%s"</i> um <b>%s</b> Uhr an <b>%s</b> versendet.');
 define('kit_protocol_send_newsletter_fail',       'Newsletter <i>"%s"</i> konnte um <b>%s</b> Uhr <b>nicht</b> an <b>%s</b> versendet werden.<br><b>Fehler:</b> %s.');
 define('kit_protocol_simulate_send_newsletter',   '<p>SIMULATION: Der Newsletter wurde an <b>%s</b> versendet!</p>');
+
+define('kit_start_list',                          '<h2>Alle Kontakte</h2><p>Alle Kontakte, die Sie mit KeepInTouch verwalten in der Übersicht.</p>');
+define('kit_start_contact',                       '<h2>Kontakt bearbeiten</h2><p>Legen Sie neue Kontakte an oder bearbeiten Sie Kontakte, die Sie in der Übersicht ausgewählt haben.</p>');
+define('kit_start_email',                         '<h2>Gruppen E-Mail</h2><p>Versenden Sie schnell und einfach E-Mails an Kontakte, die Sie in Gruppen organisiert haben.</p>');
+define('kit_start_newsletter',                    '<h2>Newsletter versenden</h2><p>Erstellen und versenden Sie personalisierte Newsletter mit KeepInTouch.</p>');
+define('kit_start_config',                        '<h2>Einstellungen</h2><p>Allgemeine Einstellungen, Listen anpassen, Dienstleister verwalten sowie Daten importieren und exportieren.</p>');
+define('kit_start_help',                          '<h2>Hilfe & Dokumentation</h2><p>Die Hilfe und Dokumentation zu KeepInTouch.</p>');
 
 define('kit_tab_cfg_array',												'Tilpassede Lister');
 define('kit_tab_cfg_general',											'Generelt');
@@ -396,6 +414,7 @@ define('kit_tab_list',														'Oversikt');
 define('kit_tab_newsletter',											'Newsletter');
 define('kit_tab_nl_create',												'Erstellen');
 define('kit_tab_nl_template',											'Vorlagen');
+define('kit_tab_start',														'Start');
 
 define('kit_text_as_email_type',									'som e-post Type:');
 define('kit_text_calendar_delete',								'Slett dato');

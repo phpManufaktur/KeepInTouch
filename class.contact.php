@@ -534,7 +534,7 @@ class dbKITcontactArrayCfg extends dbConnectLE {
 		$this->addFieldDefinition(self::field_id, "INT NOT NULL AUTO_INCREMENT", true);
 		$this->addFieldDefinition(self::field_type, "VARCHAR(30) NULL DEFAULT '".self::type_undefined."'");
 		$this->addFieldDefinition(self::field_identifier, "VARCHAR(30) NOT NULL DEFAULT ''");
-		$this->addFieldDefinition(self::field_value, "VARCHAR(30) NOT NULL DEFAULT ''");
+		$this->addFieldDefinition(self::field_value, "VARCHAR(50) NOT NULL DEFAULT ''");
 		$this->addFieldDefinition(self::field_status, "VARCHAR(30) NULL DEFAULT '".self::status_active."'");
 		$this->addFieldDefinition(self::field_update_by, "VARCHAR(30) NOT NULL DEFAULT 'SYSTEM'");
 		$this->addFieldDefinition(self::field_update_when, "DATETIME NOT NULL DEFAULT '0000-00-00 00:00:00'");
