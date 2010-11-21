@@ -227,79 +227,86 @@ class kitService {
    */
   private function getActualLicense(&$response=array()) {
   	global $dbCfg; 
-  	$result = '-no result-';
-  	// 1. Schritt, gibt es einen Lizenzschluessel?
-  	if (empty($this->license_key)) { 
-  		// kein Lizenzschluessel vorhanden
-  		$url = sprintf(	'%s?%s=%s&%s=%s&%s=%s&%s=%s',
-  										$this->update_server,
-  										self::request_action, self::action_get_guid,
-  										self::request_url, WB_URL,
-  										self::request_ip, $_SERVER['SERVER_ADDR'],
-  										self::request_module_guid, $this->module_guid);
-  		if (false == ($result = strip_tags(file_get_contents($url)))) {
-  			$this->setMessage(kit_msg_service_no_connect);
-  			return false;
-  		} 
-  		$response = array();
-  		if ($this->explodeAnswer($result, $response)) {
-  			if (isset($response[self::request_status]) && ($response[self::request_status] == self::status_ok) && isset($response[self::request_install_guid])) {
-  				// Lizenzschluessel sichern
-  				$dbCfg->setValueByName($response[self::request_install_guid], dbKITcfg::cfgLicenseKey); 	
-  			}
-  			elseif (isset($response[self::request_status]) && ($response[self::request_status] !== self::status_ok)) {
-  				// Fehler
-  				if (isset($response[self::request_message])) {
-  					$this->setMessage($response[self::request_message]);
-  					return false;
-  				}
-  				else {
-  					$this->setMessage(kit_error_undefined);
-  					return false;
-  				}
-  			}
-  			else {
-  				$error = (strlen($result) > 0) ? sprintf('<p>ERROR: %s</p>', $result) : kit_error_undefined;
-  				$this->setMessage($error);
-  				return false;
-  			}
-  		}
-  		else {
-  			$error = (strlen($result) > 0) ? sprintf('<p>ERROR: %s</p>', $result) : kit_error_undefined;
-  			$this->setMessage($error);
-  			return false;
-  		}
-  	} 
-  	// 2. Schritt Lizenz pruefen
-  	$url = sprintf(	'%s?%s=%s&%s=%s&%s=%s&%s=%s&%s=%s',
-  									$this->update_server,
-  									self::request_action, self::action_get_license,
-  									self::request_url, WB_URL,
-  									self::request_ip, $_SERVER['SERVER_ADDR'],
-  									self::request_module_guid, $this->module_guid,
-  									self::request_install_guid, $this->license_key );
-  	if (false == ($result = strip_tags(file_get_contents($url)))) {
-  		$this->setMessage(kit_msg_service_no_connect);
-  		return false;
-  	}
-  	if ($this->explodeAnswer($result, $response)) {
-  		if (isset($response[self::request_status]) && ($response[self::request_status] == self::status_ok) && isset($response[self::request_license_type])) {
-  			// if (isset($response[self::request_message])) $this->setMessage($response[self::request_message]);
-  			return $response[self::request_license_type];
-  		}
-  		elseif(isset($response[self::request_status]) && ($response[self::request_status] !== self::status_ok) && isset($response[self::request_message])) {
-  			$this->setMessage($response[self::request_message]);
-  			return false;
-  		}
-  		else {
-  			$this->setMessage(kit_error_undefined);
-  			return false;
-  		}
+  	if (ini_get('allow_url_fopen') == '1') {
+  		ini_set('allow_url_include', '1');
+  	
+	  	$result = '-no result-';
+	  	// 1. Schritt, gibt es einen Lizenzschluessel?
+	  	if (empty($this->license_key)) { 
+	  		// kein Lizenzschluessel vorhanden
+	  		$url = sprintf(	'%s?%s=%s&%s=%s&%s=%s&%s=%s',
+	  										$this->update_server,
+	  										self::request_action, self::action_get_guid,
+	  										self::request_url, WB_URL,
+	  										self::request_ip, $_SERVER['SERVER_ADDR'],
+	  										self::request_module_guid, $this->module_guid);
+	  		if (false == ($result = strip_tags(file_get_contents($url)))) {
+	  			$this->setMessage(kit_msg_service_no_connect);
+	  			return false;
+	  		} 
+	  		$response = array();
+	  		if ($this->explodeAnswer($result, $response)) {
+	  			if (isset($response[self::request_status]) && ($response[self::request_status] == self::status_ok) && isset($response[self::request_install_guid])) {
+	  				// Lizenzschluessel sichern
+	  				$dbCfg->setValueByName($response[self::request_install_guid], dbKITcfg::cfgLicenseKey); 	
+	  			}
+	  			elseif (isset($response[self::request_status]) && ($response[self::request_status] !== self::status_ok)) {
+	  				// Fehler
+	  				if (isset($response[self::request_message])) {
+	  					$this->setMessage($response[self::request_message]);
+	  					return false;
+	  				}
+	  				else {
+	  					$this->setMessage(kit_error_undefined);
+	  					return false;
+	  				}
+	  			}
+	  			else {
+	  				$error = (strlen($result) > 0) ? sprintf('<p>ERROR: %s</p>', $result) : kit_error_undefined;
+	  				$this->setMessage($error);
+	  				return false;
+	  			}
+	  		}
+	  		else {
+	  			$error = (strlen($result) > 0) ? sprintf('<p>ERROR: %s</p>', $result) : kit_error_undefined;
+	  			$this->setMessage($error);
+	  			return false;
+	  		}
+	  	} 
+	  	// 2. Schritt Lizenz pruefen
+	  	$url = sprintf(	'%s?%s=%s&%s=%s&%s=%s&%s=%s&%s=%s',
+	  									$this->update_server,
+	  									self::request_action, self::action_get_license,
+	  									self::request_url, WB_URL,
+	  									self::request_ip, $_SERVER['SERVER_ADDR'],
+	  									self::request_module_guid, $this->module_guid,
+	  									self::request_install_guid, $this->license_key );
+	  	if (false == ($result = strip_tags(file_get_contents($url)))) {
+	  		$this->setMessage(kit_msg_service_no_connect);
+	  		return false;
+	  	}
+	  	if ($this->explodeAnswer($result, $response)) {
+	  		if (isset($response[self::request_status]) && ($response[self::request_status] == self::status_ok) && isset($response[self::request_license_type])) {
+	  			// if (isset($response[self::request_message])) $this->setMessage($response[self::request_message]);
+	  			return $response[self::request_license_type];
+	  		}
+	  		elseif(isset($response[self::request_status]) && ($response[self::request_status] !== self::status_ok) && isset($response[self::request_message])) {
+	  			$this->setMessage($response[self::request_message]);
+	  			return false;
+	  		}
+	  		else {
+	  			$this->setMessage(kit_error_undefined);
+	  			return false;
+	  		}
+	  	}
+	  	else {
+	  		$error = (strlen($result) > 0) ? sprintf('<p>ERROR: %s</p>', $result) : kit_error_undefined;
+	  		$this->setMessage($error);
+	  		return false;
+	  	}
   	}
   	else {
-  		$error = (strlen($result) > 0) ? sprintf('<p>ERROR: %s</p>', $result) : kit_error_undefined;
-  		$this->setMessage($error);
-  		return false;
+  		return self::license_beta_limited;
   	}
   } // getActualLicense()
   

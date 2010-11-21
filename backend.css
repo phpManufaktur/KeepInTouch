@@ -286,6 +286,7 @@ select[name=protocol_type] {
 .contact_list {
   width:99%;
 }
+.cronjob_list th,
 .config_container th,
 .contact_list th {
   text-align:left;
@@ -429,6 +430,7 @@ textarea[name=mail_text] {
   border: 1px solid #dddddd;
   text-align: left;
 }
+
 /**
   JQuery
 **/

@@ -25,6 +25,7 @@ require_once(WB_PATH.'/modules/'.basename(dirname(__FILE__)).'/class.mail.php');
 require_once(WB_PATH.'/modules/'.basename(dirname(__FILE__)).'/class.dialogs.php');
 require_once(WB_PATH.'/modules/'.basename(dirname(__FILE__)).'/class.droplets.php');
 require_once(WB_PATH.'/modules/'.basename(dirname(__FILE__)).'/class.newsletter.php');
+require_once(WB_PATH.'/modules/'.basename(dirname(__FILE__)).'/class.cronjob.php');
 
 global $admin;
 
@@ -85,6 +86,35 @@ if ($dbKITnewsletterCfg->isError()) {
 $dbKITnewsletterArchive = new dbKITnewsletterArchive(true);
 if ($dbKITnewsletterArchive->isError()) {
 	$error .= sprintf('<p>[Installation] %s</p>', $dbKITnewsletterArchive->getError());
+}
+
+$dbKITnewsletterProcess = new dbKITnewsletterProcess(true);
+if (!$dbKITnewsletterProcess->isError()) {
+	$error .= sprintf('<p>[Installation] %s</p>', $dbKITnewsletterProcess->getError());
+}
+
+$dbCronjobData = new dbCronjobData(true);
+if (!$dbCronjobData->isError()) {
+	$error .= sprintf('<p>[Installation] %s</p>', $dbCronjobData->getError());
+}
+// Blindwerte eintragen
+$datas = array(	array(dbCronjobData::field_item => dbCronjobData::item_last_call, dbCronjobData::field_value => ''), 
+								array(dbCronjobData::field_item => dbCronjobData::item_last_job, dbCronjobData::field_value => ''),
+								array(dbCronjobData::field_item => dbCronjobData::item_last_nl_id, dbCronjobData::field_value => ''));
+foreach ($datas as $data) {
+	if (!$dbCronjobData->sqlInsertRecord($data)) {
+		$error .= sprintf('<p>[Installation] %s</p>', $dbCronjobData->getError());
+	}
+}
+
+$dbCronjobNewsletterLog = new dbCronjobNewsletterLog(true);
+if (!$dbCronjobNewsletterLog->isError()) {
+	$error .= sprintf('<p>[Installation] %s</p>', $dbCronjobNewsletterLog->getError());
+}
+
+$dbCronjobErrorLog = new dbCronjobErrorLog(true);
+if (!$dbCronjobErrorLog->isError()) {
+	$error .= sprintf('<p>[Installation] %s</p>', $dbCronjobErrorLog->getError());
 }
 
 // Install Droplets

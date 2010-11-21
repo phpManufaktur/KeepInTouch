@@ -1,0 +1,10 @@
+<!-- $Id$ -->
+<tr class="{$class}">
+  <td class="job_cb">{$select}</td>
+  <td class="job_id">{$id}</td>
+  <td class="job_created">{$created}</td>
+  <td class="job_process">{$process}</td>
+  <td class="job_count">{$count}</td>
+  <td class="job_archiv_id">{$archiv_id}</td>
+  <td class="job_subject">{$newsletter}</td>
+</tr>

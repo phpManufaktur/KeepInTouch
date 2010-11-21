@@ -1,0 +1,29 @@
+<!-- $Id$ -->
+<div class="cronjob_list">
+  <form name="{$form_name}" action="{$form_action}" method="post">
+    <input type="hidden" name="{$action_name}" value="{$action_value}" />
+    <h2>{$header}</h2>
+    {$intro|default: ''}
+    <table width="99%">
+      <colgroup>
+        <col width="5%" />
+        <col width="10%" />
+        <col width="20%" />
+        <col width="15%" />
+        <col width="10%" />
+        <col width="10%" />
+        <col width="30%" />
+      </colgroup>
+      <tr>
+        <th>{$header_select|default: ''}</th>
+        <th>{$header_id|default: ''}</th>
+        <th>{$header_created|default: ''}</th>
+        <th>{$header_process|default: ''}</th>
+        <th>{$header_count|default: ''}</th>
+        <th>{$header_archive_id|default: ''}</th>
+        <th>{$header_newsletter|default: ''}</th>
+      </tr>
+      {$rows}
+    </table>
+  </form>
+</div>

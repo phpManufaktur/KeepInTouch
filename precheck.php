@@ -26,7 +26,7 @@ if (!defined('WB_PATH')) die('invalid call of '.$_SERVER['SCRIPT_NAME']);
 $PRECHECK['WB_VERSION'] = array('VERSION' => '2.8', 'OPERATOR' => '>=');
 $PRECHECK['PHP_VERSION'] = array('VERSION' => '5.2.0', 'OPERATOR' => '>=');
 $PRECHECK['WB_ADDONS'] = array(
-	'dbconnect_le'	=> array('VERSION' => '0.60', 'OPERATOR' => '>='),
+	'dbconnect_le'	=> array('VERSION' => '0.63', 'OPERATOR' => '>='),
 	'dwoo' => array('VERSION' => '0.10', 'OPERATOR' => '>=')
 );
 

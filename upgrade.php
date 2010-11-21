@@ -26,6 +26,7 @@ require_once(WB_PATH.'/modules/'.basename(dirname(__FILE__)).'/class.dialogs.php
 require_once(WB_PATH.'/modules/'.basename(dirname(__FILE__)).'/class.mail.php');
 require_once(WB_PATH.'/modules/'.basename(dirname(__FILE__)).'/class.droplets.php');
 require_once(WB_PATH.'/modules/'.basename(dirname(__FILE__)).'/class.newsletter.php');
+require_once(WB_PATH.'/modules/'.basename(dirname(__FILE__)).'/class.cronjob.php');
 
 global $admin;
 
@@ -85,6 +86,45 @@ $dbKITnewsletterArchive = new dbKITnewsletterArchive();
 if (!$dbKITnewsletterArchive->sqlTableExists()) {
 	if (!$dbKITnewsletterArchive->sqlCreateTable()) {
 		$error .= sprintf('<p>[Upgrade] %s</p>', $dbKITnewsletterArchive->getError());
+	}
+}
+
+$dbKITnewsletterProcess = new dbKITnewsletterProcess();
+if (!$dbKITnewsletterProcess->sqlTableExists()) {
+	if (!$dbKITnewsletterProcess->sqlCreateTable()) {
+		$error .= sprintf('<p>[Upgrade] %s</p>', $dbKITnewsletterProcess->getError());
+	}
+}
+
+$dbCronjobData = new dbCronjobData();
+if (!$dbCronjobData->sqlTableExists()) {
+	if (!$dbCronjobData->sqlCreateTable()) {
+		$error .= sprintf('<p>[Upgrade] %s</p>', $dbCronjobData->getError());
+	}
+	else {
+		// Blindwerte eintragen
+		$datas = array(	array(dbCronjobData::field_item => dbCronjobData::item_last_call, dbCronjobData::field_value => ''), 
+										array(dbCronjobData::field_item => dbCronjobData::item_last_job, dbCronjobData::field_value => ''),
+										array(dbCronjobData::field_item => dbCronjobData::item_last_nl_id, dbCronjobData::field_value => ''));
+		foreach ($datas as $data) {
+			if (!$dbCronjobData->sqlInsertRecord($data)) {
+				$error .= sprintf('<p>[Installation] %s</p>', $dbCronjobData->getError());
+			}
+		}				
+	}
+}
+
+$dbCronjobNewsletterLog = new dbCronjobNewsletterLog();
+if (!$dbCronjobNewsletterLog->sqlTableExists()) {
+	if (!$dbCronjobNewsletterLog->sqlCreateTable()) {
+		$error .= sprintf('<p>[Upgrade] %s</p>', $dbCronjobNewsletterLog->getError());
+	}
+}
+
+$dbCronjobErrorLog = new dbCronjobErrorLog();
+if (!$dbCronjobErrorLog->sqlTableExists()) {
+	if (!$dbCronjobErrorLog->sqlCreateTable()) {
+		$error .= sprintf('<p>[Upgrade] %s</p>', $dbCronjobErrorLog->getError());
 	}
 }
 

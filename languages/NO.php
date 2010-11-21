@@ -141,6 +141,7 @@ define('kit_desc_cfg_kit_response_page', 					'KIT benötigt für die Anzeige vo
 define('kit_desc_cfg_license_key',                'Um KeepInTouch in vollem Umfang nutzen zu können benötigen Sie einen Lizenzschlüssel, dieser wird hier gesichert');
 define('kit_desc_cfg_max_invalid_login',					'Maximale Anzahl von fehlerhaften Login Versuchen von Anwendern, bevor das Konto gesperrt wird.');
 define('kit_desc_cfg_nl_adjust_register',         'Gleicht beim Aufruf des Newsletter Dialog die Tabelle kit_contact mit kit_register ab (Verwenden Sie diese Einstellung nur nach Aufforderung durch den Support!).');
+define('kit_desc_cfg_nl_max_package_size',        'Legt die max. Anzahl von Adressaten pro Paket während des Newsletterversand fest. Die einzelnen Pakete werden von einem Cronjob nach und nach abgearbeitet, der höchste zulässige Wert ist 100.');
 define('kit_desc_cfg_nl_set_time_limit',          'Legt die Dauer in Sekunden fest, die das Newsletter Script max. für die Versendung der Mails benötigen darf. Ist der Wert zu niedrig, werden Sie einen Laufzeitfehler erhalten, erhöhen Sie den Wert dann schrittweise.');
 define('kit_desc_cfg_nl_salutation',							'Sie können 10 unterschiedliche Grußformeln definieren, die Sie mit {$salutation_01} bis {$salutation_10} innerhlab des Newsletters verwenden können. Die Grußformeln bestehen jeweils aus 3 Definitionen: männlich, weiblich sowie unbekannt. Die Definitionen werden durch ein Pipe-Symbol von einander getrennt. Sie können innerhalb der Definitionen KIT CMDs verwenden.');
 define('kit_desc_cfg_nl_simulate',                'Durchläuft die vollständige Versandabwicklung der Newsletter <b>ohne</b> die Mails tatsächlich zu versenden.');
@@ -191,6 +192,7 @@ define('kit_header_contact_list',									'Kontaktliste');
 define('kit_header_email',												'e-post Sentralbord');
 define('kit_header_error',												'KeepInTouch (KIT) Fehlermeldung');
 define('kit_header_help_documentation',						'Hilfe & Dokumentation');
+define('kit_header_nl_cronjob_active_list',       'Noch nicht ausgeführte Jobs');
 define('kit_header_preview',											'Vorschau');
 define('kit_header_protocol',											'Protokoll');
 define('kit_header_provider',											'Dienstleister');
@@ -212,6 +214,7 @@ define('kit_intro_newsletter_cfg',								'<p>Bearbeiten Sie die speziellen Eins
 define('kit_intro_newsletter_create',							'<p>Erstellen Sie einen Newsletter und versenden Sie ihn an ihre Abonnenten.</p>');
 define('kit_intro_newsletter_commands',						'<p>Befehle und Variablen werden zur Laufzeit ausgeführt und in das Template eingefügt.</p>');
 define('kit_intro_newsletter_template',						'<p>Wählen Sie ein Newsletter Template zum Bearbeiten aus oder legen Sie ein neues Template an.</p>');
+define('kit_intro_nl_cronjob_active_list',        '<p>Die Liste zeigt Ihnen aktuelle Cronjobs an, die noch nicht abgwickelt sind.</p>');
 define('kit_intro_preview',												'<p>Prüfen Sie die Vorschau in der <b>HTML</b> und in der <b>NUR TEXT</b> Ansicht.</p>');
 define('kit_intro_register_installation',         '<p>Registrieren Sie Ihre KeepInTouch Installation.</p><p>Dies ermöglicht Ihnen unentgeltlich den vollen Funktionsumfang von KeepInTouch zu testen.</p>');
 
@@ -220,6 +223,7 @@ define('kit_label_address_city',									'Postadresse');
 define('kit_label_address_street',								'Gate');
 define('kit_label_address_zip',										'ZIP');
 define('kit_label_address_zip_city',							'Postnummer');
+define('kit_label_archive_id',                    'Archiv ID');
 define('kit_label_audience',											'Empfänger');
 define('kit_label_birthday',											'Gebursdag');
 define('kit_label_categories',										'Kategorier');
@@ -232,6 +236,7 @@ define('kit_label_contact_note',									'Notater');
 define('kit_label_cfg_license_key',               'Lizenzschlüssel');
 define('kit_label_cfg_max_invalid_login',					'Maximale Loginversuche');
 define('kit_label_cfg_nl_adjust_register',        'kit_register abgleichen');
+define('kit_label_cfg_nl_max_package_size',       'Max. Paketgröße');
 define('kit_label_cfg_nl_salutation',							'Grußformel');
 define('kit_label_cfg_nl_set_time_limit',         'Max. Ausführungsdauer');
 define('kit_label_cfg_nl_simulate',								'Versand simulieren');
@@ -261,6 +266,10 @@ define('kit_label_identifier',										'Identifikatorer');
 define('kit_label_image',													'Bilde');
 define('kit_label_import_action',									'');
 define('kit_label_import_from',										'Import');
+define('kit_label_job_id',                        'Job ID');
+define('kit_label_job_created',                   'Angelegt am');
+define('kit_label_job_process',                   'Prozess');
+define('kit_label_job_count',                     'Aussendungen');
 define('kit_label_kit_id',												'KIT ID');
 define('kit_label_last_changed_by',								'Sist Endret Av');
 define('kit_label_list_sort',											'Sorter Liste');
@@ -402,12 +411,18 @@ define('kit_start_newsletter',                    '<h2>Newsletter versenden</h2>
 define('kit_start_config',                        '<h2>Einstellungen</h2><p>Allgemeine Einstellungen, Listen anpassen, Dienstleister verwalten sowie Daten importieren und exportieren.</p>');
 define('kit_start_help',                          '<h2>Hilfe & Dokumentation</h2><p>Die Hilfe und Dokumentation zu KeepInTouch.</p>');
 
+define('kit_status_ok',                           'OK');
+define('kit_status_error',                        'ERROR');
+define('kit_status_simulation',                   'SIMULATION');
+
 define('kit_tab_cfg_array',												'Tilpassede Lister');
 define('kit_tab_cfg_general',											'Generelt');
 define('kit_tab_cfg_import',											'Import/Eksport');
 define('kit_tab_cfg_provider',										'Service Provider');
 define('kit_tab_config',													'Konfigurasjon');
 define('kit_tab_contact',													'Kontakt');
+define('kit_tab_cronjobs_active',                 'Aktuelle Jobs');
+define('kit_tab_cronjobs_protocol',               'Protokoll');
 define('kit_tab_email',														'e-post');
 define('kit_tab_help',														'?');
 define('kit_tab_list',														'Oversikt');
@@ -422,7 +437,10 @@ define('kit_text_calendar_select',								'Velg Dato');
 define('kit_text_from_massmail_group',						'Importer Gruppe:');
 define('kit_text_new_id',													'- ny -');
 define('kit_text_please_select',									'- bitte auswählen -');
+define('kit_text_process_execute',                '<b>ausführen</b>');
+define('kit_text_process_simulate',               '<i>simulieren</i>');
 define('kit_text_records',												'Datensätze');
 define('kit_text_to_category',										'Til KIT Kategori:');
+define('kit_text_unknown',                        '- unbekannt -');
 
 ?>
