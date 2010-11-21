@@ -54,6 +54,11 @@ define('kit_btn_send',														'Send');
 
 define('kit_cfg_date_str',                        'd.m.Y');
 define('kit_cfg_date_time_str',                   'd.m.Y - H:i:s');
+define('kit_cfg_thousand_separator',							'.');
+define('kit_cfg_date_separator',									'.');
+define('kit_cfg_decimal_separator',               ',');
+define('kit_cfg_price',                           '%s €');
+define('kit_cfg_euro',														'%s EUR');
 
 define('kit_cmd_nl_account_email',								'E-Mail Adresse des Abonnenten');
 define('kit_cmd_nl_account_first_name',						'Vorname des Abonnenten');
@@ -193,6 +198,7 @@ define('kit_header_email',												'e-post Sentralbord');
 define('kit_header_error',												'KeepInTouch (KIT) Fehlermeldung');
 define('kit_header_help_documentation',						'Hilfe & Dokumentation');
 define('kit_header_nl_cronjob_active_list',       'Noch nicht ausgeführte Jobs');
+define('kit_header_nl_cronjob_protocol_list',     'Ausgeführte Jobs');
 define('kit_header_preview',											'Vorschau');
 define('kit_header_protocol',											'Protokoll');
 define('kit_header_provider',											'Dienstleister');
@@ -209,12 +215,14 @@ define('kit_intro_cfg_import',										'<p>Her kan du importere data fra andre 
 define('kit_intro_cfg_provider',									'<p>Wählen Sie einen Dienstleister zum Bearbeiten aus oder legen Sie einen neuen Dienstleister an.</p>');
 define('kit_intro_contact',												'<p>Bruk denne dilogboksen til &aring; redigerer kontaktinformasjonen</p>');
 define('kit_intro_contact_list',									'<p>Denne listen viser de tilgjengelige kontaketene avhengig av hvilke utvalg som er gjort.</p>');
+define('kit_intro_cronjobs',                      '<p>KeepInTouch (KIT) benötigt für den Versand der Newsletter einen Cronjob der in regelmäßigen Abständen, z.B. alle 5 Minuten die Steuerdatei <b>/modules/kit/cronjob.php</b> aufruft.</p><p>Auf diese Weise wird sichergestellt, dass KIT eine grosse Anzahl von Newslettern kontinuierlich in kleineren Paketen versendet. Durch den maßvollen Versand wird außerdem verhindert, dass Ihre Aussendung von Ihrem Provider als kritisches Massenmailing klassifiziert wird.</p><p>Sollte Ihnen auf Ihrer Installation die Möglichkeit fehlen Cronjobs auszuführen, verwenden Sie einfach einen kostenlosen Dienstleister, wie <a href="http://www.cronjob.de">cronjob.de</a> für die Ansteuerung von KIT.</p></p>');
 define('kit_intro_email',													'<p>Her kan du opprette og sende e-post.</p>');
 define('kit_intro_newsletter_cfg',								'<p>Bearbeiten Sie die speziellen Einstellungen für das Newsletter Modul von KeepInTouch.</p>');
 define('kit_intro_newsletter_create',							'<p>Erstellen Sie einen Newsletter und versenden Sie ihn an ihre Abonnenten.</p>');
 define('kit_intro_newsletter_commands',						'<p>Befehle und Variablen werden zur Laufzeit ausgeführt und in das Template eingefügt.</p>');
 define('kit_intro_newsletter_template',						'<p>Wählen Sie ein Newsletter Template zum Bearbeiten aus oder legen Sie ein neues Template an.</p>');
 define('kit_intro_nl_cronjob_active_list',        '<p>Die Liste zeigt Ihnen aktuelle Cronjobs an, die noch nicht abgwickelt sind.</p>');
+define('kit_intro_nl_cronjob_protocol_list',      '<p>Diese Liste zeigt die letzten 200 durchgeführten Newsletter Jobs, die der KeepInTouch Cronjob durchgeführt hat.</p>');
 define('kit_intro_preview',												'<p>Prüfen Sie die Vorschau in der <b>HTML</b> und in der <b>NUR TEXT</b> Ansicht.</p>');
 define('kit_intro_register_installation',         '<p>Registrieren Sie Ihre KeepInTouch Installation.</p><p>Dies ermöglicht Ihnen unentgeltlich den vollen Funktionsumfang von KeepInTouch zu testen.</p>');
 
@@ -269,8 +277,11 @@ define('kit_label_import_from',										'Import');
 define('kit_label_job_id',                        'Job ID');
 define('kit_label_job_created',                   'Angelegt am');
 define('kit_label_job_process',                   'Prozess');
-define('kit_label_job_count',                     'Aussendungen');
+define('kit_label_job_count',                     'E-Mails SOLL');
 define('kit_label_kit_id',												'KIT ID');
+define('kit_label_job_done',                      'Ausgeführt');
+define('kit_label_job_time',                      'Dauer (Sec.)');
+define('kit_label_job_send',                      'E-Mails IST');
 define('kit_label_last_changed_by',								'Sist Endret Av');
 define('kit_label_list_sort',											'Sorter Liste');
 define('kit_label_map',														'&nbsp;');

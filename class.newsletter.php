@@ -1936,7 +1936,7 @@ class kitNewsletterDialog {
   	}
   	if (count($process) < 1) {
   		// keine Eintraege vorhanden
-  		return ' - no jobs! -';
+  		return sprintf('<div class="intro">%s</div>', kit_intro_cronjobs);
   	}
   	else {
   		// Liste anzeigen
@@ -1996,173 +1996,64 @@ class kitNewsletterDialog {
   } // dlgCronjobsActive()
   
   public function dlgCronjobsProtocoll() {
-  	return __METHOD__;
+  	global $dbNewsletterProcess;
+  	global $parser;
+  	
+  	$SQL = sprintf(	"SELECT * FROM %s ORDER BY %s DESC LIMIT 200", 
+  									$dbNewsletterProcess->getTableName(),
+  									dbKITnewsletterProcess::field_job_done_dt);
+  	$protocols = array();
+  	if (!$dbNewsletterProcess->sqlExec($SQL, $protocols)) {
+  		$this->setError(sprintf('[%s - %s] %s', __METHOD__, __LINE__, $dbNewsletterProcess->getError()));
+  		return false;
+  	}
+  	
+  	$row = new Dwoo_Template_File($this->template_path.'backend.newsletter.cronjob.protocol.list.tr.htt');
+  	$rows = '';
+		$flipflop = true;
+			
+  	foreach ($protocols as $protocol) {
+  		($flipflop) ? $flipflop = false : $flipflop = true;
+			($flipflop) ? $class = 'flip' : $class = 'flop';
+			$data = array(
+				'class'			=> $class,
+				'pid'				=> sprintf('%010d', $protocol[dbKITnewsletterProcess::field_id]),
+				'aid'				=> sprintf('%08d', $protocol[dbKITnewsletterProcess::field_archiv_id]),
+				'process'		=> ($protocol[dbKITnewsletterProcess::field_simulate] == 1) ? kit_text_process_simulate : kit_text_process_execute,
+				'created'		=> date(kit_cfg_date_time_str, strtotime($protocol[dbKITnewsletterProcess::field_job_created_dt])),	
+				'done'			=> date(kit_cfg_date_time_str, strtotime($protocol[dbKITnewsletterProcess::field_job_done_dt])),
+				'time'			=> number_format($protocol[dbKITnewsletterProcess::field_job_process_time], 4, kit_cfg_decimal_separator, kit_cfg_thousand_separator),
+				'count'			=> $protocol[dbKITnewsletterProcess::field_count],
+				'send'			=> $protocol[dbKITnewsletterProcess::field_send]
+			);
+			$rows .= $parser->get($row, $data);
+  	}
+  	
+  	// intro oder meldung?
+		if ($this->isMessage()) {
+			$intro = sprintf('<div class="message">%s</div>', $this->getMessage());
+		}
+		else {
+			$intro = sprintf('<div class="intro">%s</div>', kit_intro_nl_cronjob_protocol_list);
+		}		
+		
+		$data = array(
+			'header'			=> kit_header_nl_cronjob_protocol_list,
+			'intro'				=> $intro,
+			'rows'				=> $rows,
+			'pid'					=> kit_label_id,
+			'aid'					=> kit_label_archive_id,	
+			'process'			=> kit_label_job_process,
+			'created'			=> kit_label_job_created,
+			'done'				=> kit_label_job_done,	
+			'time'				=> kit_label_job_time,
+			'count'				=> kit_label_job_count,
+			'send'				=> kit_label_job_send
+		);
+		
+		return $parser->get($this->template_path.'backend.newsletter.cronjob.protocol.list.htt', $data);
   } // dlgCronjobsProtocoll()
   
-  /*
-  public function processNewsletter($id=-1) {
-  	global $dbNewsletterArchive;
-  	global $dbProvider;
-  	global $dbContact;
-  	global $dbNewsletterTemplates;
-  	global $newsletterCommands;
-  	global $dbRegister;
-    global $dbNewsletterCfg;
-
-    
-    // Simulation?
-    $cfgSimulateMailing = $dbNewsletterCfg->getValue(dbKITnewsletterCfg::cfgSimulateMailing);
-
-  	// Newsletter auslesen
-  	$where = array();
-  	$where[dbKITnewsletterArchive::field_id] = $id;
-  	$newsletter = array();
-  	if (!$dbNewsletterArchive->sqlSelectRecord($where, $newsletter)) {
-  		$this->setError(sprintf('[%s - %s] %s', __METHOD__, __LINE__, $dbNewsletterArchive->getError()));
-  		return false;
-  	}
-  	if (count($newsletter) < 1) {
-  		$this->setError(sprintf('[%s - %s] %s', __METHOD__, __LINE__, sprintf(kit_error_item_id, $id)));
-  		return false;
-  	}
-  	$newsletter = $newsletter[0];
-
-  	// Provider
-  	$where = array();
-		$where[dbKITprovider::field_id] = intval($newsletter[dbKITnewsletterArchive::field_provider]);
-		$provider = array();
-		if (!$dbProvider->sqlSelectRecord($where, $provider)) {
-			$this->setError(sprintf('[%s - %s] %s', __METHOD__, __LINE__, $dbProvider->getError()));
-			return false;
-		}
-		$provider = $provider[0];
-
-		// Adressaten auslesen
-		$to_array = array();
-		$nl_groups = explode(',', $newsletter[dbKITnewsletterArchive::field_groups]);
-		foreach ($nl_groups as $nl) {
-			// get contact ID's from selected newsletter...
-      $SQL = sprintf(	'SELECT * FROM %1$s WHERE %2$s=\'%3$s\' AND ((%4$s LIKE \'%5$s\') OR (%4$s LIKE \'%5$s,%%\') OR (%4$s LIKE \'%%,%5$s\') OR (%4$s LIKE \'%%%5$s,%%\'))',
-											$dbRegister->getTableName(),
-                      dbKITregister::field_status,
-											dbKITregister::status_active,
-											dbKITregister::field_newsletter,
-											$nl);
-			$addresses = array();
-			if (!$dbRegister->sqlExec($SQL, $addresses)) {
-				$this->setError(sprintf('[%s - %s] %s', __METHOD__, __LINE__, $dbRegister->getError()));
-				return false;
-			}
-			foreach ($addresses as $id) {
-				if (!in_array($id[dbKITregister::field_contact_id], $to_array))	$to_array[] = $id[dbKITregister::field_id];
-			}
-		}
-
-		// Template
-		$where = array();
-		$where[dbKITnewsletterTemplates::field_id] = $newsletter[dbKITnewsletterArchive::field_template];
-		$template = array();
-		if (!$dbNewsletterTemplates->sqlSelectRecord($where, $template)) {
-			$this->setError(sprintf('[%s - %s] %s', __METHOD__, __LINE__, $dbNewsletterTemplates->getError()));
-			return false;
-		}
-		if (count($template) < 1) {
-			$this->setError(sprintf('[%s - %s] %s', __METHOD__, __LINE__, sprintf(kit_error_item_id, $newsletter[dbKITnewsletterArchive::field_template])));
-			return false;
-		}
-		$template = $template[0];
-
-    // transmit only from ... to ... item?
-    $from_nr = (isset($_REQUEST[self::request_send_nl_from_nr]) && $_REQUEST[self::request_send_nl_from_nr] > 0) ? $_REQUEST[self::request_send_nl_from_nr] : -1;
-    $to_nr = (isset($_REQUEST[self::request_send_nl_to_nr]) && $_REQUEST[self::request_send_nl_to_nr] > 0) ? $_REQUEST[self::request_send_nl_to_nr] : -1;
-
-    if (($from_nr !== -1) && ($to_nr <= $from_nr)) $to_nr = count($to_array);
-    $count = 0;
-
-		$transmitted = 0;
-		$error = '';
-		$result = '';
-
-		foreach ($addresses as $address) {
-      if ($from_nr !== -1) {
-        $count++;
-        // Anfangsdatensatz noch nicht erreicht, springen...
-        if ($count < $from_nr) continue;
-        // Enddatensatz ueberschritten, Schleife beenden
-        if ($count > $to_nr) break;
-      }
-			$kitMail = new kitMail();
-			$html = utf8_encode($newsletter[dbKITnewsletterArchive::field_html]);
-			if ($newsletterCommands->parseCommands($html, '', $address[dbKITregister::field_contact_id])) {
-				$html_content = $template[dbKITnewsletterTemplates::field_html];
-				if (!$newsletterCommands->parseCommands($html_content, $html, $address[dbKITregister::field_contact_id])) {
-					$this->setError(sprintf('[%s - %s] %s', __METHOD__, __LINE__, $newsletterCommands->getError()));
-				}
-			}
-			else {
-				$this->setError(sprintf('[%s - %s] %s', __METHOD__, __LINE__, $newsletterCommands->getError()));
-				return false;
-			}
-
-			$text = utf8_encode($newsletter[dbKITnewsletterArchive::field_text]);
-			if ($newsletterCommands->parseCommands($text, '', $address[dbKITregister::field_contact_id])) {
-				$text_content = $template[dbKITnewsletterTemplates::field_text];
-				if (!$newsletterCommands->parseCommands($text_content, $text, $address[dbKITregister::field_contact_id])) {
-					$this->setError(sprintf('[%s - %s] %s', __METHOD__, __LINE__, $newsletterCommands->getError()));
-				}
-			}
-			else {
-				$this->setError(sprintf('[%s - %s] %s', __METHOD__, __LINE__, $newsletterCommands->getError()));
-				return false;
-			}
-
-      if ($cfgSimulateMailing) {
-        // Versand wird nur simuliert!
-        $result .= sprintf(kit_protocol_simulate_send_newsletter, $address[dbKITregister::field_email]);
-      }
-      else {
-        // send Newsletter!
-        if ($kitMail->sendNewsletter(	$newsletter[dbKITnewsletterArchive::field_subject],
-                                      $html_content,
-                                      $text_content,
-                                      $provider[dbKITprovider::field_email],
-                                      $provider[dbKITprovider::field_name],
-                                      $address[dbKITregister::field_email],
-                                      '',
-                                      true)) {
-          $transmitted++;
-          $protocol = sprintf( kit_protocol_send_newsletter_success,
-                                                            $newsletter[dbKITnewsletterArchive::field_subject],
-                                                            date('H:i:s'),
-                                                            $address[dbKITregister::field_email]);
-          if (!$dbContact->addSystemNotice($address[dbKITregister::field_contact_id], $protocol)) {
-            $this->setError(sprintf('[%s - %s] %s', __METHOD__, __LINE, $dbContact->getError()));
-            return false;
-          }
-          $result .= sprintf('<p>%s</p>', $protocol);
-        }
-        else {
-          $error .= sprintf('<p>[%s] %s</p>', $address[dbKITregister::field_email], $kitMail->getMailError());
-          if (!$dbContact->addSystemNotice($address[dbKITregister::field_contact_id], sprintf( kit_protocol_send_newsletter_fail,
-                                                            $newsletter[dbKITnewsletterArchive::field_subject],
-                                                            date('H:i:s'),
-                                                            $address[dbKITregister::field_email],
-                                                            $kitMail->getMailError()))) {
-            $this->setError(sprintf('[%s - %s] %s', __METHOD__, __LINE, $dbContact->getError()));
-            return false;
-          }
-        }
-      } // send Newsletter
-			$kitMail->__destruct();
-		}
-		$result .= "<p>Es wurden ".$transmitted." Newsletter uebertragen.</p>";
-		if (!empty($error)) {
-			$result .= "<p>Es sind die folgenden Fehler aufgetreten:</p>".$error;
-		}
-
-		return $result;
-  } // processNewsletter()
-	*/
 } // kitNewsletterDialog
 
 ?>

@@ -1,0 +1,11 @@
+<!-- $Id$ -->
+<tr class="{$class}">
+  <td>{$pid}</td>
+  <td>{$aid}</td>
+  <td>{$process}</td>
+  <td>{$created}</td>
+  <td>{$done}</td>
+  <td>{$time}</td>
+  <td>{$count}</td>
+  <td>{$send}</td>
+</tr>

@@ -89,12 +89,12 @@ if ($dbKITnewsletterArchive->isError()) {
 }
 
 $dbKITnewsletterProcess = new dbKITnewsletterProcess(true);
-if (!$dbKITnewsletterProcess->isError()) {
+if ($dbKITnewsletterProcess->isError()) {
 	$error .= sprintf('<p>[Installation] %s</p>', $dbKITnewsletterProcess->getError());
 }
 
 $dbCronjobData = new dbCronjobData(true);
-if (!$dbCronjobData->isError()) {
+if ($dbCronjobData->isError()) {
 	$error .= sprintf('<p>[Installation] %s</p>', $dbCronjobData->getError());
 }
 // Blindwerte eintragen
@@ -108,12 +108,12 @@ foreach ($datas as $data) {
 }
 
 $dbCronjobNewsletterLog = new dbCronjobNewsletterLog(true);
-if (!$dbCronjobNewsletterLog->isError()) {
+if ($dbCronjobNewsletterLog->isError()) {
 	$error .= sprintf('<p>[Installation] %s</p>', $dbCronjobNewsletterLog->getError());
 }
 
 $dbCronjobErrorLog = new dbCronjobErrorLog(true);
-if (!$dbCronjobErrorLog->isError()) {
+if ($dbCronjobErrorLog->isError()) {
 	$error .= sprintf('<p>[Installation] %s</p>', $dbCronjobErrorLog->getError());
 }
 

@@ -24,6 +24,8 @@ if (!defined('WB_PATH')) die('invalid call of '.$_SERVER['SCRIPT_NAME']);
 require_once(WB_PATH.'/modules/'.basename(dirname(__FILE__)).'/initialize.php');
 require_once(WB_PATH.'/modules/'.basename(dirname(__FILE__)).'/class.mail.php');
 require_once(WB_PATH.'/modules/'.basename(dirname(__FILE__)).'/class.dialogs.php');
+require_once(WB_PATH.'/modules/'.basename(dirname(__FILE__)).'/class.newsletter.php');
+require_once(WB_PATH.'/modules/'.basename(dirname(__FILE__)).'/class.cronjob.php');
 
 global $admin;
 
@@ -131,6 +133,34 @@ $dbKITnewsletterArchive = new dbKITnewsletterArchive();
 if ($dbKITnewsletterArchive->sqlTableExists()) {
 	if (!$dbKITnewsletterArchive->sqlDeleteTable()) {
 		$error .= sprintf('<p>[Delete Table] %s</p>', $dbKITnewsletterArchive->getError());
+	}
+}
+
+$dbKITnewsletterProcess = new dbKITnewsletterProcess(true);
+if ($dbKITnewsletterProcess->sqlTableExists()) {
+	if (!$dbKITnewsletterProcess->sqlDeleteTable()) {
+		$error .= sprintf('<p>[Delete Table] %s</p>', $dbKITnewsletterProcess->getError());
+	}
+}
+
+$dbCronjobData = new dbCronjobData(true);
+if ($dbCronjobData->sqlTableExists()) {
+	if (!$dbCronjobData->sqlDeleteTable()) {
+		$error .= sprintf('<p>[Delete Table] %s</p>', $dbCronjobData->getError());
+	}
+}
+
+$dbCronjobNewsletterLog = new dbCronjobNewsletterLog(true);
+if ($dbCronjobNewsletterLog->sqlTableExists()) {
+	if (!$dbCronjobNewsletterLog->sqlDeleteTable()) {
+		$error .= sprintf('<p>[Delete Table] %s</p>', $dbCronjobNewsletterLog->getError());
+	}
+}
+
+$dbCronjobErrorLog = new dbCronjobErrorLog(true);
+if ($dbCronjobErrorLog->sqlTableExists()) {
+	if (!$dbCronjobErrorLog->sqlDeleteTable()) {
+		$error .= sprintf('<p>[Delete Table] %s</p>', $dbCronjobErrorLog->getError());
 	}
 }
 

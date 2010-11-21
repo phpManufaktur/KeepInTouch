@@ -1,0 +1,28 @@
+<!-- $Id: backend.newsletter.cronjob.active.list.htt 21 2010-11-21 11:34:55Z phpmanufaktur $ -->
+<div class="cronjob_list">
+  <h2>{$header}</h2>
+  {$intro|default: ''}
+  <table width="99%">
+    <colgroup>
+      <col width="11%" />
+      <col width="11%" />
+      <col width="11%" />
+      <col width="17%" />
+      <col width="17%" />
+      <col width="11%" />
+      <col width="11%" />
+      <col width="11%" />
+    </colgroup>
+    <tr>
+      <th>{$pid}</th>
+      <th>{$aid}</th>
+      <th>{$process}</th>
+      <th>{$created}</th>
+      <th>{$done}</th>
+      <th>{$time}</th>
+      <th>{$count}</th>
+      <th>{$send}</th>
+    </tr>
+    {$rows}
+  </table>
+</div>
