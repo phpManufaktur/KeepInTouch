@@ -347,11 +347,7 @@ class dbKITmail extends dbConnectLE {
 		}		
 	} // __construct()
 	
-	public function __destruct() {
- 		@$this->close();
-  } // __destruct()
-  
-  private function initTables() {
+	private function initTables() {
 		if (!$this->sqlTableExists()) {
 			if (!$this->sqlCreateTable()) {
 				$this->setError(sprintf('[%s - %s] %s', __METHOD__, __LINE__, $this->getError()));

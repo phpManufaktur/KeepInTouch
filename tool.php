@@ -305,11 +305,7 @@ class kitBackend {
   		break;
   	case self::action_start:
   		// Startdialog anzeigen
-  		require_once(WB_PATH.'/modules/'.basename(dirname(__FILE__)).'/class.service.php');
-  		$service = new kitService();
-  		$result = $service->action();
-  		if ($service->isError()) $this->setError($service->getError());
-  		$this->show(self::action_start, $result);
+  		$this->show(self::action_start, $this->dlgStart());
   		break;
   	case self::action_default:
   	default:
@@ -2147,8 +2143,6 @@ class kitBackend {
 		$count = array();
 		$data = array(
 			'label'				=> '',
-//			'identifier'	=> kit_header_cfg_identifier,
-//			'type'				=> kit_header_cfg_typ,
 			'value'				=> kit_header_cfg_value,
 			'description'	=> kit_header_cfg_description
 		);
@@ -2160,8 +2154,6 @@ class kitBackend {
 			$id = $entry[dbKITcfg::field_id];
 			$count[] = $id;
 			$label = constant($entry[dbKITcfg::field_label]);
-//			$bezeichner = $entry[dbKITcfg::field_name];
-//			$typ = $dbCfg->type_array[$entry[dbKITcfg::field_type]];
 			(isset($_REQUEST[dbKITcfg::field_value.'_'.$id])) ? 
 				$val = $_REQUEST[dbKITcfg::field_value.'_'.$id] : 
 				$val = $entry[dbKITcfg::field_value];
@@ -2171,8 +2163,6 @@ class kitBackend {
 			$desc = constant($entry[dbKITcfg::field_description]);
 			$data = array(
 				'label'				=> $label,
-//				'identifier'	=> $bezeichner,
-//				'type'				=> $typ,
 				'value'				=> $value,
 				'description'	=> $desc
 			);
@@ -3230,7 +3220,7 @@ class kitBackend {
 		
 		isset($_REQUEST[dbKITmail::field_is_html]) ? $is_html = 1 : $is_html = 0;
 		// insert new record
-		$dbKITmail = new dbKITmail(true);
+		$dbKITmail = new dbKITmail();
 		$data = array();
 		$data[dbKITmail::field_from_email] = $provider[dbKITprovider::field_email];
 		$data[dbKITmail::field_from_name] = $provider[dbKITprovider::field_name];
@@ -3292,9 +3282,22 @@ class kitBackend {
 			// @todo der Zaehler fuer die aufgetretenen Fehler fehlt noch, deshalb -1...
 			$message .= sprintf(kit_msg_mails_send_errors, -1, $error);
 		}
-		$this->setMessage($message);
-		return $this->dlgEMail();
+		$this->setMessage($message); 
+		return $this->dlgStart();
 	} // sendEMail()
+	
+	/**
+	 * Show the Start dialog of KeepInTouch
+	 * @return STR dialog
+	 */
+	public function dlgStart() {
+		require_once(WB_PATH.'/modules/'.basename(dirname(__FILE__)).'/class.service.php');
+  	$service = new kitService();
+  	if ($this->isMessage()) $service->setMessage($this->getMessage());
+  	$result = $service->action();
+  	if ($service->isError()) $this->setError($service->getError());
+  	return $result;	
+	} // dlgStart()
 	
 	public function dlgAbout() {
 		global $parser;

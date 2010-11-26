@@ -30,6 +30,8 @@ $cronjob->action();
 
 class cronjob {
 	
+	const request_key			= 'key';
+	
 	private $error;
 	private $start_script;
 	
@@ -59,6 +61,8 @@ class cronjob {
 	public function action() {
 		global $dbCronjobData;
 		global $dbNewsProcess;
+		global $dbCfg;
+		global $tools;
 		
 		// Log access to cronjob...
 		$where = array(dbCronjobData::field_item => dbCronjobData::item_last_call);
@@ -67,6 +71,21 @@ class cronjob {
 			$this->setError(sprintf('[%s - %s] %s', __METHOD__, __LINE__, $dbCronjobData->getError()));
 			exit($this->getError());
 		} 
+		
+		// check if the access is allowed
+		$cronjob_key = $dbCfg->getValue(dbKITcfg::cfgCronjobKey);
+		if (strlen($cronjob_key) < 3) {
+			// Cronjob Key does not exist, so create one...
+			$cronjob_key = $tools->generatePassword();
+			$dbCfg->setValueByName($cronjob_key, dbKITcfg::cfgCronjobKey); 
+		}
+		if (!isset($_REQUEST[self::request_key]) || ($_REQUEST[self::request_key] !== $cronjob_key)) {
+			// Cronjob key does not match, log denied access...
+			$ip = (isset($_SERVER['SERVER_ADDR'])) ? $_SERVER['SERVER_ADDR'] : '000.000.000.000';
+			$this->setError(sprintf('[%s - %s] %s', __METHOD__, __LINE__, sprintf('Access denied from IP %s:  invalid or missing cronjob key!', $ip)));
+			// dont give attacker any hint, so exit with regular code...
+			exit(0);
+		}
 		
 		// check if there are jobs waiting...
 		$SQL = sprintf(	"SELECT * FROM %s WHERE %s='0' ORDER BY %s ASC LIMIT 1",

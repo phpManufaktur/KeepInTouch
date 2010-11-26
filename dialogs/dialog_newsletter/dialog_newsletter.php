@@ -454,7 +454,7 @@ class dialog_newsletter extends kitDialogFrame  {
 			break;
 		case dbKITregister::status_key_send:
 			// Schluessel bereits versendet
-			$data['message'] = kit_dialog_nl_message_key_send;		
+			$data['message'] = kit_dialog_nl_message_key_already_send;		
 			break;
 		default:
 			$data['message'] = sprintf(kit_dialog_nl_no_action, $action);
@@ -470,6 +470,7 @@ class dialog_newsletter extends kitDialogFrame  {
 	 * @return STR
 	 */
 	public function sendActivationKey($register_id) {
+		global $tools;
 		// load PHPMailer
 		require_once(WB_PATH.'/modules/kit/class.mail.php');
 		

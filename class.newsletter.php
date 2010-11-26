@@ -534,9 +534,6 @@ class kitNewsletterDialog {
 	const request_action						= 'nlact';
 	const request_command						= 'cmd';
 	const request_items							= 'its';
-  const request_send_nl_from_nr   = 'nl_sfn';
-  const request_send_nl_to_nr     = 'nl_sft';
-	
 	const action_config							= 'cfg';
 	const action_config_save				= 'cfgs';
 	const action_cronjobs_active		= 'cja';
@@ -1503,7 +1500,7 @@ class kitNewsletterDialog {
 											kit_text_records);											
 		} // foreach
 		$items .= $parser->get($row, array('label' => kit_label_newsletter, 'value' => $news));
-
+/*
     // Nur Newsletter VON ... BIS ... versenden
     $process = sprintf( '%s <input type="text" name="%s" value="" /> %s <input type="text" name="%s" value="" />',
                         kit_label_newsletter_send_from_no,
@@ -1511,7 +1508,7 @@ class kitNewsletterDialog {
                         kit_label_newsletter_send_to_no,
                         self::request_send_nl_to_nr);
     $items .= $parser->get($row, array('label' => '', 'value' => $process));
-    
+*/    
 		// Template auswaehlen
 		(isset($_REQUEST[dbKITnewsletterArchive::field_template])) ? $template_id = $_REQUEST[dbKITnewsletterArchive::field_template] : $template_id = -1;  
   	
@@ -1691,10 +1688,6 @@ class kitNewsletterDialog {
   	$request_link = $dbCfg->getValue(dbKITcfg::cfgKITRequestLink);
   	
   	$data = array(
-      'send_from_item'            => self::request_send_nl_from_nr,
-      'send_from_item_value'      => isset($_REQUEST[self::request_send_nl_from_nr]) ? (int) $_REQUEST[self::request_send_nl_from_nr] : -1,
-			'send_to_item'              => self::request_send_nl_to_nr,
-      'send_to_item_value'        => isset($_REQUEST[self::request_send_nl_to_nr]) ? (int) $_REQUEST[self::request_send_nl_to_nr] : -1,
 			'header_preview'						=> kit_header_preview,
 			'intro'											=> kit_intro_preview,
 			'html_label'								=> kit_label_newsletter_tpl_html,
@@ -1926,6 +1919,15 @@ class kitNewsletterDialog {
   	global $dbNewsletterProcess;
   	global $dbNewsletterArchive;
   	global $parser;
+  	global $dbCfg;
+  	global $tools;
+  	
+  	// Pruefen ob ein CronjobKey existiert
+  	$cronjob_key = $dbCfg->getValue(dbKITcfg::cfgCronjobKey);
+  	if (strlen($cronjob_key) < 3) { 
+  		$key = $tools->generatePassword(); echo $key;
+  		$dbCfg->setValueByName($key, dbKITcfg::cfgCronjobKey);
+  	}
   	
   	// offene Auftraege ermitteln
   	$where = array(dbKITnewsletterProcess::field_is_done => 0);

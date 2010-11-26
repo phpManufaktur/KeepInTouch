@@ -248,6 +248,7 @@ class kitService {
   private function getActualLicense(&$response=array()) {
   	global $dbCfg; 
   	$result = '-no result-';
+  	$server_addr = (isset($_SERVER['SERVER_ADDR'])) ? $_SERVER['SERVER_ADDR'] : '000.000.000.000';
 	  // 1. Schritt, gibt es einen Lizenzschluessel?
 	  if (empty($this->license_key)) { 
 	  	// kein Lizenzschluessel vorhanden
@@ -255,7 +256,7 @@ class kitService {
 	  									$this->update_server,
 	  									self::request_action, self::action_get_guid,
 	  									self::request_url, WB_URL,
-	  									self::request_ip, $_SERVER['SERVER_ADDR'],
+	  									self::request_ip, $server_addr,
 	  									self::request_module_guid, $this->module_guid);
 	  	if (false == ($result = $this->requestURI($url))) {
 	  		$this->setMessage(kit_msg_service_no_connect);
@@ -295,7 +296,7 @@ class kitService {
 	  								$this->update_server,
 	  								self::request_action, self::action_get_license,
 	  								self::request_url, WB_URL,
-	  								self::request_ip, $_SERVER['SERVER_ADDR'],
+	  								self::request_ip, $server_addr,
 	  								self::request_module_guid, $this->module_guid,
 	  								self::request_install_guid, $this->license_key );
 	  if (false == ($result = $this->requestURI($url))) {
@@ -536,13 +537,14 @@ class kitService {
   	if ((strlen(trim($_REQUEST[self::request_first_name])) < 2) || (strlen(trim($_REQUEST[self::request_last_name])) < 3)) {
   		$this->setMessage(kit_msg_service_invalid_user_name);
   	}
+  	$server_addr = (isset($_SERVER['SERVER_ADDR'])) ? $_SERVER['SERVER_ADDR'] : '000.000.000.000';
   	// Kontakt mit dem Server aufnehmen
   	$url = sprintf(	'%s?%s=%s&%s=%s&%s=%s&%s=%s&%s=%s&%s=%s&%s=%s&%s=%s&%s=%s&%s=%s&%s=%s&%s=%s',
   									$this->update_server,
   									self::request_language,	LANGUAGE,
   									self::request_action,	self::action_register,
   									self::request_url, WB_URL,
-  									self::request_ip,	$_SERVER['SERVER_ADDR'],
+  									self::request_ip,	$server_addr,
   									self::request_module_guid, $this->module_guid,
   									self::request_install_guid,	$this->license_key,
   									self::request_license_type,	self::license_beta_limited,

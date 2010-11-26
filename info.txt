@@ -2,6 +2,15 @@ KeepInTouch - Contact management for WebsiteBaker
 (c) 2010 by phpManufaktur, Berlin (Germany)
 http://phpManufaktur.de - info@phpManufaktur.de
 
+Release 0.29
+xxx
+- fixed: wrong response string in dialog_newsletter when key already send
+- fixed: using undefined $_SERVER variable in class.service.php
+- fixed: KIT shows an empty page after processing group mail
+- removed: no longer supported switch for sending newsletter number from... to...
+- fixed: bad escape sequence in class.tools.php in function checkLink()
+- added: Cronjob key prevents cronjob.php for illegal access
+
 Release 0.28
 2010-11-21
 - added: cronjob for cycling throught the newsletter packages

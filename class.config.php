@@ -77,9 +77,9 @@ class dbKITcfg extends dbConnectLE {
   const cfgMaxInvalidLogin	= 'cfgMaxInvalidLogin';
   const cfgAddAppTab				= 'cfgAddAppTab';
   const cfgLicenseKey				= 'cfgLicenseKey';
+  const cfgCronjobKey				= 'cfgCronjobKey';
 
   public $config_array = array(
-  	//array('kit_label_cfg_developer_mode', self::cfgDeveloperMode, self::type_boolean, 0, 'kit_desc_cfg_developer_mode'),
   	array('kit_label_cfg_google_maps_api_key', self::cfgGoogleMapsAPIkey, self::type_string, '', 'kit_desc_cfg_google_maps_api_key'),
   	array('kit_label_cfg_kit_request_link', self::cfgKITRequestLink, self::type_string, '', 'kit_desc_cfg_kit_request_link'),
   	array('kit_label_cfg_kit_reponse_page', self::cfgKITResponsePage, self::type_string, '', 'kit_desc_cfg_kit_response_page'),
@@ -89,7 +89,8 @@ class dbKITcfg extends dbConnectLE {
   	array('kit_label_cfg_register_data_dlg', self::cfgRegisterDlgACC, self::type_string, 'dialog_account', 'kit_desc_cfg_register_data_dlg'),
   	array('kit_label_cfg_max_invalid_login', self::cfgMaxInvalidLogin, self::type_integer, '10', 'kit_desc_cfg_max_invalid_login'),
   	array('kit_label_cfg_add_app_tab', self::cfgAddAppTab, self::type_array, '', 'kit_desc_cfg_add_app_tab'),
-  	array('kit_label_cfg_license_key', self::cfgLicenseKey, self::type_string, '', 'kit_desc_cfg_license_key')
+  	array('kit_label_cfg_license_key', self::cfgLicenseKey, self::type_string, '', 'kit_desc_cfg_license_key'),
+  	array('kit_label_cfg_cronjob_key', self::cfgCronjobKey, self::type_string, '', 'kit_desc_cfg_cronjob_key')
   );  
   
   public function __construct($createTables = false) {

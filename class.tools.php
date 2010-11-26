@@ -663,7 +663,7 @@ class kitTools {
 	    while(!feof($fp)) $head .= fgets($fp, 1024);
 	    fclose($fp);
 			$matches = array();
-	    preg_match("=^(HTTP/\d+\.\d+) (\d{3}) ([^\r\n]*)=", $head, $matches);
+	    preg_match('=^(HTTP/\d+\.\d+) (\d{3}) ([^\r\n]*)=', $head, $matches);
 	    $http["Status-Line"] = $matches[0];
 	    $http["HTTP-Version"] = $matches[1];
 	    $http["Status-Code"] = $matches[2];
