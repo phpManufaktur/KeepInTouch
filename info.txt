@@ -3,7 +3,12 @@ KeepInTouch - Contact management for WebsiteBaker
 http://phpManufaktur.de - info@phpManufaktur.de
 
 Release 0.29
-xxx
+2010-11-28
+- changed: import addresses from massmail now into a KIT newsletter group and no longer into a KIT category
+- fixed: problem in Newsletter HTML Preview with special chars within the template 
+- fixed: switching between Preview and Editing Newsletter disturb HTML code
+- changed: after creating a newsletter the dialog now redirect to the list of active cronjobs 
+- added: distribution lists may be defined and will be send beside newsletter
 - fixed: wrong response string in dialog_newsletter when key already send
 - fixed: using undefined $_SERVER variable in class.service.php
 - fixed: KIT shows an empty page after processing group mail

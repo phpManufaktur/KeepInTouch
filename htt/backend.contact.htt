@@ -101,6 +101,11 @@
           <div class="kccc_label">{$label_newsletter|default: ''}</div>
           <div class="kccc_value">{$value_newsletter|default: ''}</div>
         </div>
+        <!-- distribution -->
+        <div class="kit_contact_categories">
+          <div class="kccc_label">{$label_distribution|default: ''}</div>
+          <div class="kccc_value">{$value_distribution|default: ''}</div>
+        </div>
       </div>
       <div class="accordion_tab"><a href="#">{$header_protocol}</a></div>
       <div>

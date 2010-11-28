@@ -70,6 +70,7 @@ class dbKITcontact extends dbConnectLE {
 	
 	const field_category							= 'contact_category_ids';
 	const field_newsletter						= 'contact_newsletter_ids';
+	const field_distribution					= 'contact_distribution_ids';
 	
 	const field_internet							= 'contact_internet';
 	
@@ -165,6 +166,12 @@ class dbKITcontact extends dbConnectLE {
 		self::newsletter_newsletter	=> kit_contact_newsletter_newsletter
 	);
 	
+	const distribution_control		= 'distControl';
+	
+	public $distribution_array = array(
+		self::distribution_control	=> kit_contact_distribution_control
+	);
+	
 	const internet_homepage				= 'inetHomepage'; //1;
 	const internet_xing						= 'inetXing'; //2;
 	const internet_facebook				= 'inetFacebook'; //3;
@@ -223,6 +230,7 @@ class dbKITcontact extends dbConnectLE {
 		$this->addFieldDefinition(self::field_address_standard, "INT NOT NULL DEFAULT '-1'");
 		$this->addFieldDefinition(self::field_category, "VARCHAR(255) NOT NULL DEFAULT ''");
 		$this->addFieldDefinition(self::field_newsletter, "VARCHAR(255) NOT NULL DEFAULT ''");
+		$this->addFieldDefinition(self::field_distribution, "VARCHAR(255) NOT NULL DEFAULT ''");
 		$this->addFieldDefinition(self::field_internet, "TEXT NOT NULL DEFAULT ''");
 		$this->addFieldDefinition(self::field_phone, "TEXT NOT NULL DEFAULT ''");
 		$this->addFieldDefinition(self::field_phone_standard, "INT NOT NULL DEFAULT '-1'");
@@ -286,6 +294,7 @@ class dbKITcontact extends dbConnectLE {
 			dbKITcontactArrayCfg::type_person_academic	=> $this->person_title_academic_array,
 			dbKITcontactArrayCfg::type_category					=> $this->category_array,
 			dbKITcontactArrayCfg::type_newsletter				=> $this->newsletter_array,
+			dbKITcontactArrayCfg::type_distribution			=> $this->distribution_array,
 			dbKITcontactArrayCfg::type_internet					=> $this->internet_array,
 			dbKITcontactArrayCfg::type_phone						=> $this->phone_array,
 			dbKITcontactArrayCfg::type_email						=> $this->email_array,
@@ -326,6 +335,8 @@ class dbKITcontact extends dbConnectLE {
 				$this->person_title_array = $result_array; break;
 			case dbKITcontactArrayCfg::type_newsletter:
 				$this->newsletter_array = $result_array; break;
+			case dbKITcontactArrayCfg::type_distribution:
+				$this->distribution_array = $result_array; break;
 			case dbKITcontactArrayCfg::type_person_academic:
 				$this->person_title_academic_array = $result_array; break;
 			case dbKITcontactArrayCfg::type_category:
@@ -501,6 +512,7 @@ class dbKITcontactArrayCfg extends dbConnectLE {
 	const type_phone						= 'typePhone'; //8;
 	const type_email						= 'typeEmail'; //9;
 	const type_protocol					= 'typeProtocol'; //10;
+	const type_distribution			= 'typeDistribution';
 	
 	public $type_array = array(
 //		self::type_undefined				=> kit_contact_array_type_undefined,
@@ -514,7 +526,8 @@ class dbKITcontactArrayCfg extends dbConnectLE {
 		self::type_internet					=> kit_contact_array_type_internet,
 		self::type_phone						=> kit_contact_array_type_phone,
 		self::type_email						=> kit_contact_array_type_email,
-		self::type_protocol					=> kit_contact_array_type_protocol
+		self::type_protocol					=> kit_contact_array_type_protocol,
+		self::type_distribution			=> kit_contact_array_type_distribution
 	);
 	
 	const status_active								= 'statusActive'; //1;

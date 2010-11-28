@@ -1,0 +1,1 @@
+<tr>{$distribution_td|default: ''}</tr>

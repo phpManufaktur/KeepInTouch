@@ -1,0 +1,1 @@
+<td>{$distribution_item|default: ''}</td>

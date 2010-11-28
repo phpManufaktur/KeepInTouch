@@ -1266,6 +1266,48 @@ class kitBackend {
 		$newsletter = $parser->get($this->template_path.'backend.contact.newsletter.htt', $data);
 		
 		/*
+		 * Verteiler
+		 */
+		$distribution = '';
+		$distribution_array = explode(',', $item[dbKITcontact::field_distribution]);
+		$distribution_td = '';
+		$distribution_tr = '';
+		$i = 0; 
+		// Template fuer die Newsletter
+		$template_distribution_td = new Dwoo_Template_File($this->template_path.'backend.contact.distribution.td.htt');
+		$template_distribution_tr = new Dwoo_Template_File($this->template_path.'backend.contact.distribution.tr.htt');
+		foreach ($dbContact->distribution_array as $key => $value) {
+			$i++;
+			if ($i > 5) {
+				$i=1;
+				$data = array(
+					'distribution_td'	=> $newsletter_td
+				);
+				$distribution_tr .= $parser->get($template_distribution_tr, $data);
+				$distribution_td = '';
+			}
+			(in_array($key, $distribution_array)) ? $checked = ' checked="checked"' : $checked = '';
+			$news = sprintf('<input type="checkbox" name="%s[]" value="%s"%s />%s',
+																dbKITcontact::field_distribution,
+																$key,
+																$checked,
+																$value);
+			$data = array(
+				'distribution_item' => $news
+			);
+			$distribution_td .= $parser->get($template_distribution_td, $data);
+		}
+		for ($u=$i; $u<6; $u++) {
+			$data = array('distribution_item' => '&nbsp;');
+			$distribution_td .= $parser->get($template_distribution_td, $data);
+		}
+		$data = array('distribution_td' => $distribution_td);
+		$distribution_tr .= $parser->get($template_distribution_tr, $data);
+		$data = array('rows' => $distribution_tr);
+		$distribution = $parser->get($this->template_path.'backend.contact.distribution.htt', $data);
+		
+		
+		/*
 		 * Protokoll
 		 */
 		$protocol = '';
@@ -1423,6 +1465,9 @@ class kitBackend {
   		// Newsletter
   		'label_newsletter'							=> kit_label_newsletter,
   		'value_newsletter'							=> $newsletter,
+  		// Verteiler
+  		'label_distribution'						=> kit_label_distribution,
+  		'value_distribution'						=> $distribution,
   		// Protokoll
   		'label_protocol'								=> kit_label_protocol,
   		'value_protocol'								=> $protocol
@@ -1462,6 +1507,7 @@ class kitBackend {
 			dbKITcontact::field_address_standard			=> -1,
 			dbKITcontact::field_category							=> '',
 			dbKITcontact::field_newsletter						=> '',
+			dbKITcontact::field_distribution					=> '',
 			dbKITcontact::field_internet							=> '',
 			dbKITcontact::field_phone									=> '',
 			dbKITcontact::field_phone_standard				=> -1,
@@ -1490,6 +1536,9 @@ class kitBackend {
 					break;
 				case dbKITcontact::field_newsletter:
 					$this->contact_array[$key] = implode(',', $_REQUEST[dbKITcontact::field_newsletter]);
+					break;
+				case dbKITcontact::field_distribution:
+					$this->contact_array[$key] = implode(',', $_REQUEST[dbKITcontact::field_distribution]);
 					break;
 				default:
 					$this->contact_array[$key] = $_REQUEST[$key];
@@ -2338,11 +2387,22 @@ class kitBackend {
 				$option .= sprintf('<option value="%s">%s</option>', $group[dbMassmailGroups::field_group_id], utf8_decode($group[dbMassmailGroups::field_group_name]));
 			}
 			$select_massmail_group = sprintf('<select name="%s">%s</select>', dbMassmailGroups::field_group_name, $option);
+			
+			/*
 			$option = '';
 			foreach ($dbContact->category_array as $key => $value) {
 				$option .= sprintf('<option value="%s">%s</option>', $key, $value);
 			}
 			$select_kit_category = sprintf('<select name="%s">%s</select>', dbKITcontact::field_category, $option);
+			*/
+			
+			$option = '';
+			foreach ($dbContact->newsletter_array as $key => $value) {
+				$option .= sprintf('<option value="%s">%s</option>', $key, $value);
+			}
+			$select_kit_newsletter = sprintf('<select name="%s">%s</select>', dbKITcontact::field_newsletter, $option);
+			
+			
 			$option = '';
 			foreach ($dbContact->email_array as $key => $value) {
 				$option .= sprintf('<option value="%s">%s</option>', $key, $value);
@@ -2359,7 +2419,7 @@ class kitBackend {
 				'import_name'						=> self::request_import,
 				'import_value'					=> self::action_import_massmail,
 				'massmail_group'				=> sprintf('%s %s', kit_text_from_massmail_group, $select_massmail_group),
-				'kit_group'							=> sprintf('%s %s %s %s', kit_text_to_category, $select_kit_category, kit_text_as_email_type, $select_email_type),
+				'kit_group'							=> sprintf('%s %s %s %s', kit_text_to_category, $select_kit_newsletter, kit_text_as_email_type, $select_email_type),
 				'import'								=> kit_btn_import
 			);
 			$items .= $parser->get($this->template_path.'backend.config.import.massmail.htt', $data);
@@ -2395,7 +2455,7 @@ class kitBackend {
 		global $dbContact;
 		
 		if (!isset($_REQUEST[dbMassmailGroups::field_group_name]) ||
-				!isset($_REQUEST[dbKITcontact::field_category]) ||
+				!isset($_REQUEST[dbKITcontact::field_newsletter]) ||
 				!isset($_REQUEST[dbKITcontact::field_email])) {
 			// Fataler Fehler: nicht alle Variablen gesetzt
 			$this->setError(kit_error_import_massmail_missing_vars);
@@ -2442,7 +2502,8 @@ class kitBackend {
 					$data[dbKITcontact::field_contact_identifier] = strtolower($massmail[dbMassmailAddresses::field_mail_to]);
 					$data[dbKITcontact::field_status] = dbKITcontact::status_active;
 					$data[dbKITcontact::field_access] = dbKITcontact::access_internal;
-					$data[dbKITcontact::field_category] = $_REQUEST[dbKITcontact::field_category];
+					//$data[dbKITcontact::field_category] = $_REQUEST[dbKITcontact::field_category];
+					$data[dbKITcontact::field_newsletter] = $_REQUEST[dbKITcontact::field_newsletter];
 					$data[dbKITcontact::field_update_by] = $tools->getDisplayName();
 					$data[dbKITcontact::field_update_when] = date('Y-m-d H:i:s');
 					$id = -1;

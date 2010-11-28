@@ -1,0 +1,11 @@
+<!-- $Id$ -->
+<table>
+  <colgroup>
+    <col width="20%" />
+    <col width="20%" />
+    <col width="20%" />
+    <col width="20%" />
+    <col width="20%" />
+  </colgroup>
+  {$rows|default: ''}
+</table>

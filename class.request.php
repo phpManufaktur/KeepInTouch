@@ -380,7 +380,8 @@ else {
 				header('content-type:text/html; charset=utf-8');
 				$tpl = $template[dbKITnewsletterTemplates::field_html];
 				if ($newsletterCommands->parseCommands($tpl, $content, -1)) {
-					echo utf8_encode($tpl);
+					//echo utf8_encode($tpl);
+					echo $tpl;
 				}
 				else {
 					echo $newsletterCommands->getError();
@@ -421,7 +422,7 @@ else {
 		}
 		$template = '';
 		if ($_REQUEST[self::request_type] == self::action_type_html) {
-			$template = $prev[dbKITnewsletterTemplates::field_html];
+			$template = stripcslashes($prev[dbKITnewsletterTemplates::field_html]);
 		}
 		else {
 			$template = $prev[dbKITnewsletterTemplates::field_text];

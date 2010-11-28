@@ -26,7 +26,7 @@ class dbCronjobData extends dbConnectLE {
 	
 	public $create_tables = false;
 	
-	function __construct($create_tables=false) {
+	public function __construct($create_tables=false) {
 		parent::__construct();
 		$this->create_tables = $create_tables;
 		$this->setTableName('mod_kit_cronjob_data');
@@ -47,6 +47,23 @@ class dbCronjobData extends dbConnectLE {
 		}	
 		return true;
 	} // __construct()
+	
+	/**
+	 * Return the last Call of cronjob.php as UNIX timestamp or FALSE on error
+	 * @return INT timestamp
+	 */
+	public function getLastCronjobCall() {
+		$where = array(self::field_item => self::item_last_call);
+		$result = array();
+		if (!$this->sqlSelectRecord($where, $result)) {
+			$this->setError(sprintf('[%s - %s] %s', __METHOD__, __LINE__, $this->getError()));
+			return false;
+		}
+		if (count($result) > 0) {
+			return strtotime($result[0][self::field_value]);
+		}
+		return false;
+	} // getLastCronjobCall()
 	
 } // class dbCronjobData
 

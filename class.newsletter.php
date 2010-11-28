@@ -117,7 +117,8 @@ class dbKITnewsletterArchive extends dbConnectLE {
 	const field_provider				= 'nl_arc_prov';
 	const field_subject					= 'nl_arc_subj';
 	const field_recipients			= 'nl_arc_recip';
-	const field_groups					= 'nl_arc_grps';
+	const field_groups					= 'nl_arc_grps'; 		// Newsletter Groups
+	const field_distributions		= 'nl_arc_dist';		// Distribution Groups
 	const field_update_when			= 'nl_arc_update_when';
 	const field_update_by				= 'nl_arc_update_by';
 	
@@ -136,6 +137,7 @@ class dbKITnewsletterArchive extends dbConnectLE {
 		$this->addFieldDefinition(self::field_subject, "VARCHAR(80) NOT NULL DEFAULT ''");
 		$this->addFieldDefinition(self::field_recipients, "INT NOT NULL DEFAULT '-1'");
 		$this->addFieldDefinition(self::field_groups, "VARCHAR(255) NOT NULL DEFAULT ''");
+		$this->addFieldDefinition(self::field_distributions, "VARCHAR(255) NOT NULL DEFAULT ''");
 		$this->addFieldDefinition(self::field_update_by, "VARCHAR(30) NOT NULL DEFAULT 'SYSTEM'");
 		$this->addFieldDefinition(self::field_update_when, "DATETIME NOT NULL DEFAULT '0000-00-00 00:00:00'");
 		// check field definitions
@@ -196,6 +198,7 @@ class dbKITnewsletterProcess extends dbConnectLE {
 	const field_id								= 'nl_pro_id';
 	const field_archiv_id					= 'nl_arc_id';
 	const field_register_ids			= 'nl_pro_reg_ids';
+	const field_distribution_ids	= 'nl_pro_dist_ids';
 	const field_count							= 'nl_pro_count';
 	const field_send							= 'nl_pro_send';
 	const field_simulate					= 'nl_pro_simulate';
@@ -214,6 +217,7 @@ class dbKITnewsletterProcess extends dbConnectLE {
 		$this->addFieldDefinition(self::field_id, "INT NOT NULL AUTO_INCREMENT", true);
 		$this->addFieldDefinition(self::field_archiv_id, "INT(11) NOT NULL DEFAULT '-1'");
 		$this->addFieldDefinition(self::field_register_ids, "TEXT NOT NULL DEFAULT ''");
+		$this->addFieldDefinition(self::field_distribution_ids, "TEXT NOT NULL DEFAULT ''");
 		$this->addFieldDefinition(self::field_count, "INT(11) NOT NULL DEFAULT '0'");
 		$this->addFieldDefinition(self::field_send, "INT(11) NOT NULL DEFAULT '0'");
 		$this->addFieldDefinition(self::field_simulate, "TINYINT NOT NULL DEFAULT '0'");
@@ -679,7 +683,7 @@ class kitNewsletterDialog {
   		return $this->show(self::action_newsletter, $this->checkNewsletter());
   		break;
   	case self::action_newsletter_save:
-  		return $this->show(self::action_newsletter, $this->saveNewsletter());
+  		return $this->show(self::action_cronjobs_active, $this->saveNewsletter());
   		break;
   	case self::action_cronjobs_protocol:
   		return $this->show(self::action_cronjobs_protocol, $this->dlgCronjobsProtocoll());
@@ -1322,6 +1326,7 @@ class kitNewsletterDialog {
 			$result = $result[0];
 			foreach ($result as $key => $value) {
 				switch ($key):
+				case dbKITnewsletterArchive::field_distributions:
 				case dbKITnewsletterArchive::field_groups:
 					$value = explode(',', $value);
 					break;
@@ -1346,6 +1351,7 @@ class kitNewsletterDialog {
 			foreach ($prev_array as $item) {
 				list($key, $value) = explode(dbKITnewsletterPreview::array_separator_value, $item);
 				switch ($key):
+				case dbKITnewsletterArchive::field_distributions:
 				case dbKITnewsletterArchive::field_groups:
 					$value = explode(',', $value);
 					break;
@@ -1486,7 +1492,7 @@ class kitNewsletterDialog {
         if (!$dbRegister->sqlExec($SQL, $result)) {
           $this->setError(sprintf('[%s - %s] %s', __METHOD__, __LINE__, $dbRegister->getError()));
           return false;
-        }
+        }        
         $count = $result[0][sprintf('count(%s)', dbKITregister::field_id)];
       }
       
@@ -1500,15 +1506,50 @@ class kitNewsletterDialog {
 											kit_text_records);											
 		} // foreach
 		$items .= $parser->get($row, array('label' => kit_label_newsletter, 'value' => $news));
-/*
-    // Nur Newsletter VON ... BIS ... versenden
-    $process = sprintf( '%s <input type="text" name="%s" value="" /> %s <input type="text" name="%s" value="" />',
-                        kit_label_newsletter_send_from_no,
-                        self::request_send_nl_from_nr,
-                        kit_label_newsletter_send_to_no,
-                        self::request_send_nl_to_nr);
-    $items .= $parser->get($row, array('label' => '', 'value' => $process));
-*/    
+		
+		// Verteiler ermitteln
+		$SQL = sprintf(	"SELECT * FROM %s WHERE %s='%s' AND %s='%s' ORDER BY %s ASC",
+										$dbContactArrayCfg->getTableName(),
+										dbKITcontactArrayCfg::field_type,
+										dbKITcontactArrayCfg::type_distribution,
+										dbKITcontactArrayCfg::field_status,
+										dbKITcontactArrayCfg::status_active,
+										dbKITcontactArrayCfg::field_value);
+		$distribution_array = array();
+		if (!$dbContactArrayCfg->sqlExec($SQL, $distribution_array)) {
+			$this->setError(sprintf('[%s - %s] %s', __METHOD__, __LINE__, $dbContactArrayCfg->getError()));
+			return false;
+		}
+		// walk through distribution array
+		$dist = '';
+		isset($_REQUEST[dbKITnewsletterArchive::field_distributions]) ? $dist_val = $_REQUEST[dbKITnewsletterArchive::field_distributions] : $dist_val = array();
+		foreach ($distribution_array as $dist_item) {
+			// Verteiler Adressaten ermitteln...
+      $SQL = sprintf(	'SELECT count(%1$s) FROM %2$s WHERE %3$s=\'%4$s\' AND ((%5$s LIKE \'%6$s\') OR (%5$s LIKE \'%6$s,%%\') OR (%5$s LIKE \'%%,%6$s\') OR (%5$s LIKE \'%%%6$s,%%\'))',
+                      dbKITcontact::field_id, // 1
+                      $dbContact->getTableName(), // 2
+                      dbKITcontact::field_status, // 3
+                      dbKITcontact::status_active, // 4
+                      dbKITcontact::field_distribution, // 5
+                      $dist_item[dbKITcontactArrayCfg::field_identifier]); // 6
+      $result = array();
+      if (!$dbContact->sqlExec($SQL, $result)) {
+        $this->setError(sprintf('[%s - %s] %s', __METHOD__, __LINE__, $dbContact->getError()));
+        return false;
+      }
+      $count = $result[0][sprintf('count(%s)', dbKITcontact::field_id)];
+      (in_array($dist_item[dbKITcontactArrayCfg::field_identifier], $dist_val)) ? $checked=' checked="checked"' : $checked = '';
+			$dist .= sprintf('<input type="checkbox" name="%s[]" value="%s"%s /> %s (<b>%d</b> %s)<br />',
+											dbKITnewsletterArchive::field_distributions,
+											$dist_item[dbKITcontactArrayCfg::field_identifier],
+											$checked,
+											$dist_item[dbKITcontactArrayCfg::field_value],
+											$count, 
+											kit_text_records);
+		} // foreach
+		$items .= $parser->get($row, array('label' => kit_label_distribution, 'value' => $dist));
+		
+		
 		// Template auswaehlen
 		(isset($_REQUEST[dbKITnewsletterArchive::field_template])) ? $template_id = $_REQUEST[dbKITnewsletterArchive::field_template] : $template_id = -1;  
   	
@@ -1546,7 +1587,7 @@ class kitNewsletterDialog {
 		$items .= $parser->get($row, array('label' => kit_label_mail_subject, 'value' => $subject));
 		
   	// HTML Edit
-  	isset($_REQUEST[dbKITnewsletterArchive::field_html]) ? $content=utf8_encode($_REQUEST[dbKITnewsletterArchive::field_html]) : $content = '';
+  	isset($_REQUEST[dbKITnewsletterArchive::field_html]) ? $content=stripcslashes($_REQUEST[dbKITnewsletterArchive::field_html]) : $content = '';
 		ob_start();
 			show_wysiwyg_editor(dbKITnewsletterArchive::field_html, dbKITnewsletterArchive::field_html, $content, '99%', '400px');
 			$editor = ob_get_contents();
@@ -1613,7 +1654,7 @@ class kitNewsletterDialog {
   		return $this->dlgNewsletter();
   	}
   	// check newsletter groups
-  	if (!isset($_REQUEST[dbKITnewsletterArchive::field_groups]))  {
+  	if (!isset($_REQUEST[dbKITnewsletterArchive::field_groups]) && !isset($_REQUEST[dbKITnewsletterArchive::field_distributions]))  {
   		$this->setMessage(kit_msg_newsletter_new_no_groups);
   		return $this->dlgNewsletter();
   	}
@@ -1655,8 +1696,9 @@ class kitNewsletterDialog {
   	foreach ($dbNewsletterArchive->getFields() as $key => $value) {
   		if (isset($_REQUEST[$key])) $value = $_REQUEST[$key];
   		switch ($key):
+  		case dbKITnewsletterArchive::field_distributions:
   		case dbKITnewsletterArchive::field_groups:
-  			$value = implode(',', $value);
+  			if (!empty($value)) $value = implode(',', $value);
   			break;
   		endswitch;
   		$view[] = sprintf('%s%s%s', $key, dbKITnewsletterPreview::array_separator_value, $value);
@@ -1789,6 +1831,7 @@ class kitNewsletterDialog {
 		global $dbNewsletterArchive;
 		global $dbRegister;
 		global $dbNewsletterProcess;
+		global $dbContact;
 		
   	// Simulation?
     $cfgSimulateMailing = $dbNewsletterCfg->getValue(dbKITnewsletterCfg::cfgSimulateMailing);
@@ -1815,104 +1858,215 @@ class kitNewsletterDialog {
   	}
   	$newsletter = $newsletter[0];
     
-  	$nl_groups = explode(',', $newsletter[dbKITnewsletterArchive::field_groups]);
+  	// Newsletter Gruppen
+  	$nl_groups = (!empty($newsletter[dbKITnewsletterArchive::field_groups])) ? explode(',', $newsletter[dbKITnewsletterArchive::field_groups]) : array();
+  	// Verteiler Gruppen
+		$dist_groups = (!empty($newsletter[dbKITnewsletterArchive::field_distributions])) ? explode(',', $newsletter[dbKITnewsletterArchive::field_distributions]) : array();
 		
-  	// Adressaten auslesen
+  	// Sammelarray fuer NEWSLETTER Adressaten
 		$register_ids = array();
+		// Sammelarray fuer VERTEILER Addressaten
+		$dist_ids = array();
 		
+		$count_packages = 0;
+	    
 		$QUERY = 'SELECT %1$s%2$s FROM %3$s WHERE %4$s=\'%5$s\' AND ((%6$s LIKE \'%7$s\') OR (%6$s LIKE \'%7$s,%%\') OR (%6$s LIKE \'%%,%7$s\') OR (%6$s LIKE \'%%%7$s,%%\')) LIMIT %8$d,%9$d';
-			
-		foreach ($nl_groups as $nl) {
-			// get contact ID's from selected newsletter...
-			// First read only ONE row from the table and COUNT the ROWs
-    	$SQL = sprintf(	$QUERY,
-      								'SQL_CALC_FOUND_ROWS ',
-      								dbKITregister::field_contact_id,
-											$dbRegister->getTableName(),
-                      dbKITregister::field_status,
-											dbKITregister::status_active,
-											dbKITregister::field_newsletter,
-											$nl,
-											0,
-											1);
-			$addresses = array();
-			if (!$dbRegister->sqlExec($SQL, $addresses)) {
-				$this->setError(sprintf('[%s - %s] %s', __METHOD__, __LINE__, $dbRegister->getError()));
-				return false;
-			}
-			// rows total
-			$rows_total = $dbRegister->sqlFoundRows();
-			
-			// Step to the table to prevent exceeded memory usage
-			for ($i=0; $i<$rows_total; $i=$i+$cfgMaxPackageSize) {
-				$SQL = sprintf(	$QUERY,
-	      								'',
+		
+		/**
+     * Verteiler erfassen
+     */ 
+    if (!empty($dist_groups)) {
+	    foreach ($dist_groups as $dist) {
+				// First read only ONE row from the table and COUNT the ROWs
+	    	$SQL = sprintf(	$QUERY,
+	      								'SQL_CALC_FOUND_ROWS ',
+	      								dbKITcontact::field_id,
+												$dbContact->getTableName(),
+	                      dbKITcontact::field_status,
+												dbKITcontact::status_active,
+												dbKITcontact::field_distribution,
+												$dist,
+												0,
+												1);
+				$addresses = array();
+				if (!$dbContact->sqlExec($SQL, $addresses)) {
+					$this->setError(sprintf('[%s - %s] %s', __METHOD__, __LINE__, $dbContact->getError()));
+					return false;
+				}
+				// rows total
+				$rows_total = $dbContact->sqlFoundRows();
+				
+				// Step to the table to prevent exceeded memory usage
+				for ($i=0; $i<$rows_total; $i=$i+$cfgMaxPackageSize) {
+					$SQL = sprintf(	$QUERY,
+		      								'',
+		      								dbKITcontact::field_id,
+													$dbContact->getTableName(),
+		                      dbKITcontact::field_status,
+													dbKITcontact::status_active,
+													dbKITcontact::field_distribution,
+													$dist,
+													$i,
+													$cfgMaxPackageSize);
+					$addresses = array();
+					if (!$dbContact->sqlExec($SQL, $addresses)) {
+						$this->setError(sprintf('[%s - %s] %s', __METHOD__, __LINE__, $dbContact->getError()));
+						return false;
+					}
+					// save unique IDs in $dist_ids...
+					foreach ($addresses as $address) {
+						if (!in_array($address[dbKITregister::field_contact_id], $dist_ids)) {
+							$dist_ids[] = $address[dbKITregister::field_contact_id];
+						}
+					}		
+				} // for			
+			} // foreach
+	  	
+	    $count = 1;
+	    $id_array = array();
+	    foreach ($dist_ids as $item) {
+	    	if ($count > $cfgMaxPackageSize) {
+	    		// Max. Paketgroesse erreicht, Paket sichern
+	    		$data = array(
+	    			dbKITnewsletterProcess::field_archiv_id => $id,
+	    			dbKITnewsletterProcess::field_count => $count-1,
+	    			dbKITnewsletterProcess::field_is_done => 0,
+	    			dbKITnewsletterProcess::field_job_created_dt => date('Y-m-d H:i:s'),
+	    			dbKITnewsletterProcess::field_register_ids => '', 
+	    			dbKITnewsletterProcess::field_distribution_ids => implode(',', $id_array),
+	    			dbKITnewsletterProcess::field_simulate => $cfgSimulateMailing
+	    		);
+	    		if (!$dbNewsletterProcess->sqlInsertRecord($data)) {
+	    			$this->setError(sprintf('[%s - %s] %s', __METHOD__, __LINE__, $dbNewsletterProcess->getError()));
+	    			return false;
+	    		}
+	    		$count = 1;
+	    		$count_packages++;
+	    		$id_array = array();
+	    	}
+	    	$id_array[] = $item;
+	    	$count++;
+	    } // foreach
+	    
+	    if (count($id_array) > 0) {
+	    	// Uebrige IDs in einem Paket sichern
+	    	$data = array(
+	    		dbKITnewsletterProcess::field_archiv_id => $id,
+	    		dbKITnewsletterProcess::field_count => $count-1,
+	    		dbKITnewsletterProcess::field_is_done => 0,
+	    		dbKITnewsletterProcess::field_job_created_dt => date('Y-m-d H:i:s'),
+	    		dbKITnewsletterProcess::field_register_ids => '',
+	    		dbKITnewsletterProcess::field_distribution_ids => implode(',', $id_array),
+	    		dbKITnewsletterProcess::field_simulate => $cfgSimulateMailing
+	    	);
+	    	if (!$dbNewsletterProcess->sqlInsertRecord($data)) {
+	    		$this->setError(sprintf('[%s - %s] %s', __METHOD__, __LINE__, $dbNewsletterProcess->getError()));
+	    		return false;
+	    	}
+	    	$count_packages++;	
+	    }
+    } // !empty($dist_groups)
+    
+    /**
+     * Newsletter durchlaufen
+     */
+    if (!empty($nl_groups)) {
+			foreach ($nl_groups as $nl) { echo "durchlauf $nl";
+				// get contact ID's from selected newsletter...
+				// First read only ONE row from the table and COUNT the ROWs
+	    	$SQL = sprintf(	$QUERY,
+	      								'SQL_CALC_FOUND_ROWS ',
 	      								dbKITregister::field_contact_id,
 												$dbRegister->getTableName(),
 	                      dbKITregister::field_status,
 												dbKITregister::status_active,
 												dbKITregister::field_newsletter,
 												$nl,
-												$i,
-												$cfgMaxPackageSize);
+												0,
+												1);
 				$addresses = array();
 				if (!$dbRegister->sqlExec($SQL, $addresses)) {
 					$this->setError(sprintf('[%s - %s] %s', __METHOD__, __LINE__, $dbRegister->getError()));
 					return false;
 				}
-				// save unique IDs in $register_ids...
-				foreach ($addresses as $address) {
-					if (!in_array($address[dbKITregister::field_contact_id], $register_ids)) {
-						$register_ids[] = $address[dbKITregister::field_contact_id];
+				// rows total
+				$rows_total = $dbRegister->sqlFoundRows();
+				
+				// Step to the table to prevent exceeded memory usage
+				for ($i=0; $i<$rows_total; $i=$i+$cfgMaxPackageSize) {
+					$SQL = sprintf(	$QUERY,
+		      								'',
+		      								dbKITregister::field_contact_id,
+													$dbRegister->getTableName(),
+		                      dbKITregister::field_status,
+													dbKITregister::status_active,
+													dbKITregister::field_newsletter,
+													$nl,
+													$i,
+													$cfgMaxPackageSize);
+					$addresses = array();
+					if (!$dbRegister->sqlExec($SQL, $addresses)) {
+						$this->setError(sprintf('[%s - %s] %s', __METHOD__, __LINE__, $dbRegister->getError()));
+						return false;
 					}
-				}		
-			} // for			
-		}
-  	
-    $count_packages = 0;
-    $count = 1;
-    $id_array = array();
+					// save unique IDs in $register_ids AND $dist_ids...
+					foreach ($addresses as $address) {
+						if ((!in_array($address[dbKITregister::field_contact_id], $register_ids)) &&
+								(!in_array($address[dbKITregister::field_contact_id], $dist_ids))) {
+							$register_ids[] = $address[dbKITregister::field_contact_id];
+						}
+					}		
+				} // for			
+			} // foreach
+		
+			$count = 1;
+	    $id_array = array();
+	    foreach ($register_ids as $item) { 
+	    	if ($count > $cfgMaxPackageSize) {
+	    		// Max. Paketgroesse erreicht, Paket sichern
+	    		$data = array(
+	    			dbKITnewsletterProcess::field_archiv_id => $id,
+	    			dbKITnewsletterProcess::field_count => $count-1,
+	    			dbKITnewsletterProcess::field_is_done => 0,
+	    			dbKITnewsletterProcess::field_job_created_dt => date('Y-m-d H:i:s'),
+	    			dbKITnewsletterProcess::field_register_ids => implode(',', $id_array),
+	    			dbKITnewsletterProcess::field_distribution_ids => '',
+	    			dbKITnewsletterProcess::field_simulate => $cfgSimulateMailing
+	    		);
+	    		if (!$dbNewsletterProcess->sqlInsertRecord($data)) {
+	    			$this->setError(sprintf('[%s - %s] %s', __METHOD__, __LINE__, $dbNewsletterProcess->getError()));
+	    			return false;
+	    		}
+	    		$count = 1;
+	    		$count_packages++;
+	    		$id_array = array();
+	    	}
+	    	$id_array[] = $item;
+	    	$count++;
+	    } // foreach
+	    
+	    if (count($id_array) > 0) {
+	    	// Uebrige IDs in einem Paket sichern
+	    	$data = array(
+	    		dbKITnewsletterProcess::field_archiv_id => $id,
+	    		dbKITnewsletterProcess::field_count => $count-1,
+	    		dbKITnewsletterProcess::field_is_done => 0,
+	    		dbKITnewsletterProcess::field_job_created_dt => date('Y-m-d H:i:s'),
+	    		dbKITnewsletterProcess::field_register_ids => implode(',', $id_array),
+	    		dbKITnewsletterProcess::field_distribution_ids => '',
+	    		dbKITnewsletterProcess::field_simulate => $cfgSimulateMailing
+	    	);
+	    	if (!$dbNewsletterProcess->sqlInsertRecord($data)) {
+	    		$this->setError(sprintf('[%s - %s] %s', __METHOD__, __LINE__, $dbNewsletterProcess->getError()));
+	    		return false;
+	    	}
+	    	$count_packages++;	
+	    }
+    } // !empty($nl_groups)
     
-    foreach ($register_ids as $item) {
-    	if ($count > $cfgMaxPackageSize) {
-    		// Max. Paketgroesse erreicht, Paket sichern
-    		$data = array(
-    			dbKITnewsletterProcess::field_archiv_id => $id,
-    			dbKITnewsletterProcess::field_count => $count-1,
-    			dbKITnewsletterProcess::field_is_done => 0,
-    			dbKITnewsletterProcess::field_job_created_dt => date('Y-m-d H:i:s'),
-    			dbKITnewsletterProcess::field_register_ids => implode(',', $id_array),
-    			dbKITnewsletterProcess::field_simulate => $cfgSimulateMailing
-    		);
-    		if (!$dbNewsletterProcess->sqlInsertRecord($data)) {
-    			$this->setError(sprintf('[%s - %s] %s', __METHOD__, __LINE__, $dbNewsletterProcess->getError()));
-    			return false;
-    		}
-    		$count = 1;
-    		$count_packages++;
-    		$id_array = array();
-    	}
-    	$id_array[] = $item;
-    	$count++;
-    } // foreach
-    
-    if (count($id_array) > 0) {
-    	// Uebrige IDs in einem Paket sichern
-    	$data = array(
-    		dbKITnewsletterProcess::field_archiv_id => $id,
-    		dbKITnewsletterProcess::field_count => $count-1,
-    		dbKITnewsletterProcess::field_is_done => 0,
-    		dbKITnewsletterProcess::field_job_created_dt => date('Y-m-d H:i:s'),
-    		dbKITnewsletterProcess::field_register_ids => implode(',', $id_array),
-    		dbKITnewsletterProcess::field_simulate => $cfgSimulateMailing
-    	);
-    	if (!$dbNewsletterProcess->sqlInsertRecord($data)) {
-    		$this->setError(sprintf('[%s - %s] %s', __METHOD__, __LINE__, $dbNewsletterProcess->getError()));
-    		return false;
-    	}
-    	$count_packages++;	
-    }
-    return "$count_packages Pakete erstellt!";
+    // Job finished
+    $this->setMessage(sprintf(kit_msg_newsletter_new_packages_created, $count_packages));
+    return $this->dlgCronjobsActive();
   } // processNewsletter()
   
   public function dlgCronjobsActive() {
@@ -1921,13 +2075,16 @@ class kitNewsletterDialog {
   	global $parser;
   	global $dbCfg;
   	global $tools;
+  	global $dbCronjobData;
   	
   	// Pruefen ob ein CronjobKey existiert
   	$cronjob_key = $dbCfg->getValue(dbKITcfg::cfgCronjobKey);
   	if (strlen($cronjob_key) < 3) { 
-  		$key = $tools->generatePassword(); echo $key;
+  		$key = $tools->generatePassword(); 
   		$dbCfg->setValueByName($key, dbKITcfg::cfgCronjobKey);
   	}
+  	
+  	$cronjob_running = (false !== ($cronjob_last_call = $dbCronjobData->getLastCronjobCall())) ? true : false;
   	
   	// offene Auftraege ermitteln
   	$where = array(dbKITnewsletterProcess::field_is_done => 0);
@@ -1938,7 +2095,12 @@ class kitNewsletterDialog {
   	}
   	if (count($process) < 1) {
   		// keine Eintraege vorhanden
-  		return sprintf('<div class="intro">%s</div>', kit_intro_cronjobs);
+  		if ($cronjob_running) {
+  			return sprintf('<div class="intro">%s</div>', sprintf(kit_msg_cronjob_last_call, date(kit_cfg_date_time_str, $cronjob_last_call)));
+  		}
+  		else {
+  			return sprintf('<div class="intro">%s</div>', kit_intro_cronjobs);
+  		}
   	}
   	else {
   		// Liste anzeigen

@@ -59,6 +59,12 @@ if (!$dbKITcontact->sqlFieldExists(dbKITcontact::field_newsletter)) {
 		$error .= sprintf('<p>[Upgrade] %s </p>', $dbKITcontact->getError());
 	}
 }
+// check field_distribution --> #0.29
+if (!$dbKITcontact->sqlFieldExists(dbKITcontact::field_distribution)) {
+  if (!$dbKITcontact->sqlAlterTableAddField(dbKITcontact::field_distribution, "VARCHAR(255) NOT NULL DEFAULT ''", dbKITcontact::field_newsletter)) {
+ 		$error .= sprintf('<p>[Upgrade] %s </p>', $dbKITcontact->getError()); 	
+  }
+}		
 
 // install tables for newsletter module
 $dbKITnewsletterTemplates = new dbKITnewsletterTemplates();
@@ -88,6 +94,13 @@ if (!$dbKITnewsletterArchive->sqlTableExists()) {
 		$error .= sprintf('<p>[Upgrade] %s</p>', $dbKITnewsletterArchive->getError());
 	}
 }
+// check support for distributions --> #0.29
+if (!$dbKITnewsletterArchive->sqlFieldExists(dbKITnewsletterArchive::field_distributions)) {
+  if (!$dbKITnewsletterArchive->sqlAlterTableAddField(dbKITnewsletterArchive::field_distributions, "VARCHAR(255) NOT NULL DEFAULT ''", dbKITnewsletterArchive::field_groups)) {
+ 		$error .= sprintf('<p>[Upgrade] %s </p>', $dbKITnewsletterArchive->getError()); 	
+  }
+}		
+
 
 $dbKITnewsletterProcess = new dbKITnewsletterProcess();
 if (!$dbKITnewsletterProcess->sqlTableExists()) {
@@ -95,6 +108,13 @@ if (!$dbKITnewsletterProcess->sqlTableExists()) {
 		$error .= sprintf('<p>[Upgrade] %s</p>', $dbKITnewsletterProcess->getError());
 	}
 }
+// check process for distributions --> #0.29
+if (!$dbKITnewsletterProcess->sqlFieldExists(dbKITnewsletterProcess::field_distribution_ids)) {
+  if (!$dbKITnewsletterProcess->sqlAlterTableAddField(dbKITnewsletterProcess::field_distribution_ids, "VARCHAR(255) NOT NULL DEFAULT ''", dbKITnewsletterProcess::field_register_ids)) {
+ 		$error .= sprintf('<p>[Upgrade] %s </p>', $dbKITnewsletterProcess->getError()); 	
+  }
+}		
+
 
 $dbCronjobData = new dbCronjobData();
 if (!$dbCronjobData->sqlTableExists()) {
