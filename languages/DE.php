@@ -214,7 +214,7 @@ define('kit_info',																'<a href="http://phpmanufaktur.de/kit" target=
 define('kit_intro_cfg',														'<p>Bearbeiten Sie die Einstellungen für <b>dbKeepInTouch</b>.</p>');
 define('kit_intro_cfg_add_item',									'<p>Das Hinzufügen von Einträgen zur Konfiguration ist nur sinnvoll, wenn die angegebenen Werte mit dem Programm korrespondieren.</p>');
 define('kit_intro_cfg_array',											'<p>Bearbeiten Sie die unterschiedlichen Listen für <b>dbKeepInTouch</b>.</p>');
-define('kit_intro_cfg_import',										'<p>Mit diesem Dialog können Sie Daten aus anderen Anwendungen in <b>dbKeepInTouch</b> importieren.</p>');
+define('kit_intro_cfg_import',										'<p>Mit diesem Dialog können Sie Daten aus anderen Anwendungen in <b>KeepInTouch</b> importieren.</p>');
 define('kit_intro_cfg_provider',									'<p>Wählen Sie einen Dienstleister zum Bearbeiten aus oder legen Sie einen neuen Dienstleister an.</p>');
 define('kit_intro_contact',												'<p>Mit diesem Dialog bearbeiten Sie die Kontaktdaten</p>');
 define('kit_intro_contact_list',									'<p>Diese Liste zeigt Ihnen die verfügbaren Kontakte je nach ausgewählter Sortierung an.</p>');

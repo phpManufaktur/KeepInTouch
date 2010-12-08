@@ -2419,7 +2419,7 @@ class kitBackend {
 				'import_name'						=> self::request_import,
 				'import_value'					=> self::action_import_massmail,
 				'massmail_group'				=> sprintf('%s %s', kit_text_from_massmail_group, $select_massmail_group),
-				'kit_group'							=> sprintf('%s %s %s %s', kit_text_to_category, $select_kit_newsletter, kit_text_as_email_type, $select_email_type),
+				'kit_group'							=> sprintf('%s %s<br />%s %s', kit_text_to_category, $select_kit_newsletter, kit_text_as_email_type, $select_email_type),
 				'import'								=> kit_btn_import
 			);
 			$items .= $parser->get($this->template_path.'backend.config.import.massmail.htt', $data);
