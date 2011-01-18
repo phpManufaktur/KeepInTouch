@@ -1281,7 +1281,7 @@ class kitBackend {
 			if ($i > 5) {
 				$i=1;
 				$data = array(
-					'distribution_td'	=> $newsletter_td
+					'distribution_td'	=> $distribution_td
 				);
 				$distribution_tr .= $parser->get($template_distribution_tr, $data);
 				$distribution_td = '';

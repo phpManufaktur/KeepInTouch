@@ -60,9 +60,8 @@ class kitResponse {
   			unset($_SESSION[$key]);
   		}
   	}
- 	
+ 		// use $_GET!
 		isset($_REQUEST[kitRequest::request_action]) ? $action = $_REQUEST[kitRequest::request_action] : $action = kitRequest::action_none; 
-		
 		switch($action):
   	case kitRequest::action_login:
   	case kitRequest::action_unsubscribe:	
@@ -141,9 +140,9 @@ class kitResponse {
 				$this->promptError(sprintf(kit_error_dlg_missing, $dialog));
 			}
   		break;
-  	case kitRequest::action_error:
+  	case kitRequest::action_error: 
   		// Fehlermeldung ausgeben
-  		$this->promptError(utf8_encode(rawurldecode($_REQUEST[kitRequest::request_message])));
+  		$this->promptError($_REQUEST[kitRequest::request_message]);
   		break;
   	default:
   		// keine Aktion angefordert oder fehlende Parameter...

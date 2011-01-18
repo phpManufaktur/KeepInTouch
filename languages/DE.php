@@ -109,12 +109,12 @@ define('kit_contact_type_institution',						'Institution');
 define('kit_contact_type_person',									'Person');
 
 define('kit_contact_array_type_access',						'Kontakt Freigabe');
-define('kit_contact_array_type_category',					'Kontakt Kategorie');
+define('kit_contact_array_type_category',					'Kategorie - Intern');
 define('kit_contact_array_type_company_title',		'Firma Anrede');
-define('kit_contact_array_type_distribution',     'Verteiler');
+define('kit_contact_array_type_distribution',     'Kategorie - Verteiler');
 define('kit_contact_array_type_email',						'E-Mail');
 define('kit_contact_array_type_internet',					'Internet Adresse');
-define('kit_contact_array_type_newsletter',				'Newsletter');
+define('kit_contact_array_type_newsletter',				'Kategorie - Newsletter');
 define('kit_contact_array_type_person_academic',	'Person Titel');
 define('kit_contact_array_type_person_title',			'Person Anrede');
 define('kit_contact_array_type_phone',						'Telekommunikation');
@@ -179,8 +179,9 @@ define('kit_error_preview_id_missing',						'<p>Es wurde keine Preview ID angege
 define('kit_error_request_dlg_invalid_id',				'<p>[kitRequest] Der Dialog mit der <b>ID %03d</b> wurde nicht gefunden, Vorgang abgebrochen!</p>');
 define('kit_error_request_dlg_invalid_name',			'<p>[kitRequest] Der Dialog mit der Klassenbezeichnung <b>%s</b> wurde nicht gefunden, Vorgang abgebrochen!</p>');
 define('kit_error_request_invalid_action',				'<p>[kitRequest] Der Parameter <b>%s=%s</b> ist ungültig, Vorgang abgebrochen!</p>');
-define('kit_error_request_no_action',							'<p>[kitRequest] Es wurden keine geeigneten Parameter übergeben!</p><p><b>Hinweis:</b> Diese Fehlermeldung wird auch dann angezeigt, wenn Sie versucht haben, einen Dialog erneut zu laden (<i>Reload Sperre</i>).</p>');
+define('kit_error_request_link_invalid',					'<p>[kitRequest] Es wurde kein gültiger Link übergeben!</p>');
 define('kit_error_request_missing_parameter',			'<p>[kitRequest] Der Parameter <b>%s</b> wurde nicht angegeben, Vorgang abgebrochen!</p>');
+define('kit_error_request_no_action',							'<p>[kitRequest] Es wurden keine geeigneten Parameter übergeben!</p><p><b>Hinweis:</b> Diese Fehlermeldung wird auch dann angezeigt, wenn Sie versucht haben, einen Dialog erneut zu laden (<i>Reload Sperre</i>).</p>');
 define('kit_error_request_parameter_incomplete',	'<p>[kitRequest] Die übergebenen Parameter sind nicht vollständig, der Befehl konnte nicht ausgeführt werden.</p>');
 define('kit_error_undefined',											'<p>Es ist ein nicht näher definierter Fehler aufgetreten, bitte informieren Sie den Support über das aufgetretene Problem.</p>');
 
@@ -237,7 +238,7 @@ define('kit_label_address_zip_city',							'PLZ, Stadt');
 define('kit_label_archive_id',                    'Archiv ID');
 define('kit_label_audience',											'Empfänger');
 define('kit_label_birthday',											'Geburtstag');
-define('kit_label_categories',										'Kategorien');
+define('kit_label_categories',										'Intern'); // anstatt Kategorie
 define('kit_label_cfg_add_app_tab',								'Zusätzliche TAB\'s einfügen');
 define('kit_label_cfg_array_add_items',						'Fügen Sie weitere Einträge hinzu:');
 define('kit_label_cfg_cronjob_key',               'Schlüssel für Cronjobs');
@@ -297,6 +298,7 @@ define('kit_label_mail_to',												'Empfänger');
 define('kit_label_map',														'&nbsp;');
 define('kit_label_massmail',											'MassMail');
 define('kit_label_newsletter',										'Newsletter');
+define('kit_label_newsletter_archive_select',			'aus Archiv laden');
 define('kit_label_newsletter_commands',						'Befehle & Variablen');
 define('kit_label_newsletter_tpl_desc',						'Beschreibung');
 define('kit_label_newsletter_tpl_html',						'HTML Code');

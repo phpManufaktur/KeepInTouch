@@ -26,6 +26,7 @@ require_once(WB_PATH.'/modules/'.basename(dirname(__FILE__)).'/class.dialogs.php
 require_once(WB_PATH.'/modules/'.basename(dirname(__FILE__)).'/class.droplets.php');
 require_once(WB_PATH.'/modules/'.basename(dirname(__FILE__)).'/class.newsletter.php');
 require_once(WB_PATH.'/modules/'.basename(dirname(__FILE__)).'/class.cronjob.php');
+require_once(WB_PATH.'/modules/'.basename(dirname(__FILE__)).'/class.newsletter.link.php');
 
 global $admin;
 
@@ -115,6 +116,11 @@ if ($dbCronjobNewsletterLog->isError()) {
 $dbCronjobErrorLog = new dbCronjobErrorLog(true);
 if ($dbCronjobErrorLog->isError()) {
 	$error .= sprintf('<p>[Installation] %s</p>', $dbCronjobErrorLog->getError());
+}
+
+$dbNewsletterLinks = new dbKITnewsletterLinks(true);
+if ($dbNewsletterLinks->isError()) {
+	$error .= sprintf('<p>[Installation] %s</p>', $dbNewsletterLinks->getError());
 }
 
 // Install Droplets

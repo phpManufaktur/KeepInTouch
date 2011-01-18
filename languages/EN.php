@@ -179,6 +179,7 @@ define('kit_error_preview_id_missing',						'<p>Es wurde keine Preview ID angege
 define('kit_error_request_dlg_invalid_id',				'<p>[kitRequest] Der Dialog mit der <b>ID %03d</b> wurde nicht gefunden, Vorgang abgebrochen!</p>');
 define('kit_error_request_dlg_invalid_name',			'<p>[kitRequest] Der Dialog mit der Klassenbezeichnung <b>%s</b> wurde nicht gefunden, Vorgang abgebrochen!</p>');
 define('kit_error_request_invalid_action',				'<p>[kitRequest] Der Parameter <b>%s=%s</b> ist ungültig, Vorgang abgebrochen!</p>');
+define('kit_error_request_link_invalid',					'<p>[kitRequest] Es wurde kein gültiger Link übergeben!</p>');
 define('kit_error_request_missing_parameter',			'<p>[kitRequest] Der Parameter <b>%s</b> wurde nicht angegeben, Vorgang abgebrochen!</p>');
 define('kit_error_request_no_action',							'<p>[kitRequest] Es wurden keine geeigneten Parameter übergeben!</p><p><b>Hinweis:</b> Diese Fehlermeldung wird auch dann angezeigt, wenn Sie versucht haben, einen Dialog erneut zu laden (<i>Reload Sperre</i>).</p>');
 define('kit_error_request_parameter_incomplete',	'<p>[kitRequest] Die übergebenen Parameter sind nicht vollständig, der Befehl konnte nicht ausgeführt werden.</p>');
@@ -297,6 +298,7 @@ define('kit_label_mail_text',											'Text');
 define('kit_label_mail_to',												'Recipient');
 define('kit_label_massmail',											'MassMail');
 define('kit_label_newsletter',										'Newsletter');
+define('kit_label_newsletter_archive_select',			'aus Archiv laden');
 define('kit_label_newsletter_commands',						'Befehle');
 define('kit_label_newsletter_tpl_desc',						'Template Beschreibung');
 define('kit_label_newsletter_tpl_html',						'HTML Code');

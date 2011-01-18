@@ -27,6 +27,7 @@ require_once(WB_PATH.'/modules/'.basename(dirname(__FILE__)).'/class.editor.php'
 require_once(WB_PATH.'/modules/'.basename(dirname(__FILE__)).'/class.request.php');
 require_once(WB_PATH.'/modules/'.basename(dirname(__FILE__)).'/class.newsletter.cfg.php');
 require_once(WB_PATH.'/modules/'.basename(dirname(__FILE__)).'/class.cronjob.php');
+require_once(WB_PATH.'/modules/'.basename(dirname(__FILE__)).'/class.newsletter.link.php');
 
 if (DEBUG_MODE) {
 	ini_set('display_errors', 1);
@@ -45,6 +46,7 @@ global $dbNewsletterProcess;
 global $dbCronjobData;
 global $dbCronjobErrorLog;
 global $dbCronjobNewsletterLog;
+global $dbNewsletterLinks;
 
 if (!is_object($dbNewsletterArchive)) $dbNewsletterArchive = new dbKITnewsletterArchive();
 if (!is_object($dbNewsletterPreview)) $dbNewsletterPreview = new dbKITnewsletterPreview();
@@ -54,6 +56,7 @@ if (!is_object($dbNewsletterProcess)) $dbNewsletterProcess = new dbKITnewsletter
 if (!is_object($dbCronjobData)) $dbCronjobData = new dbCronjobData();
 if (!is_object($dbCronjobErrorLog)) $dbCronjobErrorLog = new dbCronjobErrorLog();
 if (!is_object($dbCronjobNewsletterLog)) $dbCronjobNewsletterLog = new dbCronjobNewsletterLog();
+if (!is_object($dbNewsletterLinks)) $dbNewsletterLinks = new dbKITnewsletterLinks();
 
 class dbKITnewsletterTemplates extends dbConnectLE {
 	
@@ -347,7 +350,7 @@ class kitNewsletterCommands {
    * @param INT $contact_id
    * @return BOOL
    */
-	public function parseCommands(&$template, $content='', $contact_id=-1) {
+	public function parseCommands(&$template, $content='', $contact_id=-1, $newsletter_archive = array()) {
 		global $dbContact;
 		global $dbRegister; 
 		global $kitRequest;
@@ -427,6 +430,17 @@ class kitNewsletterCommands {
 			$content = $parser->get($tpl, $data); 
 		}	
 		
+		// unsubscribe link
+		if ($contact_id < 1) {
+			$unsubscribe_link = sprintf('%s&%s=%s',
+																	$request_link,
+																	kitRequest::request_link,
+																	0);
+		}
+		else {
+			$unsubscribe_link = $this->getUnsubscribeLink($contact_id, $newsletter_archive);
+		}
+		
 		// Daten zusammenstellen
 		$data = array(
 			$this->extractCommand(self::cmd_account_email)						=> $contact[dbKITregister::field_email],
@@ -446,10 +460,13 @@ class kitNewsletterCommands {
 			$this->extractCommand(self::cmd_content)									=> $content,
 			$this->extractCommand(self::cmd_kit_info)									=> sprintf(kit_info, $this->getVersion()),
 			$this->extractCommand(self::cmd_kit_release)							=> $this->getVersion(),
+			/*
 			$this->extractCommand(self::cmd_newsletter_unsubscribe)		=> sprintf(	'%s&%s=%s',
 																																						$request_link,
 																																						kitRequest::request_action,
 																																						kitRequest::action_login),
+			*/																																	
+			$this->extractCommand(self::cmd_newsletter_unsubscribe)		=> $unsubscribe_link,					
 			$this->extractCommand(self::cmd_salutation_01)						=> $this->getSalutationStr(dbKITnewsletterCfg::cfgSalutation_01, $contact),
 			$this->extractCommand(self::cmd_salutation_02)						=> $this->getSalutationStr(dbKITnewsletterCfg::cfgSalutation_02, $contact),
 			$this->extractCommand(self::cmd_salutation_03)						=> $this->getSalutationStr(dbKITnewsletterCfg::cfgSalutation_03, $contact),
@@ -505,6 +522,70 @@ class kitNewsletterCommands {
 		str_replace('  ', ' ', $result);
 		return $result; 
 	} // getSalutationStr()
+	
+	public function getUnsubscribeLink($contact_id, $newsletter_archive) {
+		global $dbNewsletterLinks;
+		global $kitRequest;
+		
+		$where = array();
+		$where[dbKITnewsletterLinks::field_kit_id] = $contact_id;
+		$where[dbKITnewsletterLinks::field_type] = dbKITnewsletterLinks::type_link_unsubscribe;
+		$links = array();
+		if (!$dbNewsletterLinks->sqlSelectRecord($where, $links)) {
+			$this->setError(sprintf('[%s - %s] %s', __METHOD__, __LINE__, $dbNewsletterLinks->getError()));
+			return false;
+		}
+		if (count($links) > 0) {
+			// Eintrag existiert bereits
+			$links = $links[0];
+			if ($links[dbKITnewsletterLinks::field_archive_id] !== $newsletter_archive[dbKITnewsletterArchive::field_id]) {
+				// Newsletter Archive ID aktualisieren
+				$links[dbKITnewsletterLinks::field_archive_id] = $newsletter_archive[dbKITnewsletterArchive::field_id];
+				$links[dbKITnewsletterLinks::field_newsletter_grps] = $newsletter_archive[dbKITnewsletterArchive::field_groups];
+				if (!$dbNewsletterLinks->sqlUpdateRecord($links, array(dbKITnewsletterLinks::field_id => $links[dbKITnewsletterLinks::field_id]))) {
+					$this->setError(sprintf('[%s - %s] %s', __METHOD__, __LINE__, $dbNewsletterLinks->getError()));
+					return false;
+				}
+			}
+			$result = sprintf('%s&%s=%s&%s=%s',
+												$kitRequest->getRequestLink(),
+												kitRequest::request_action,
+												kitRequest::action_link,
+												kitRequest::request_link,
+												$links[dbKITnewsletterLinks::field_link_value]);
+			return $result;	
+		}
+		// neuen Eintrag anlegen
+		$links = array(
+			dbKITnewsletterLinks::field_archive_id			=> $newsletter_archive[dbKITnewsletterArchive::field_id],
+			dbKITnewsletterLinks::field_type						=> dbKITnewsletterLinks::type_link_unsubscribe,
+			dbKITnewsletterLinks::field_count						=> 0,
+			dbKITnewsletterLinks::field_kit_id					=> $contact_id,
+			dbKITnewsletterLinks::field_newsletter_grps	=> $newsletter_archive[dbKITnewsletterArchive::field_groups],
+			dbKITnewsletterLinks::field_option					=> '',
+			dbKITnewsletterLinks::field_origin					=> ''
+		);
+		$id = -1;
+		if (!$dbNewsletterLinks->sqlInsertRecord($links, $id)) {
+			$this->setError(sprintf('[%s - %s] %s', __METHOD__, __LINE__, $dbNewsletterLinks->getError()));
+			return false;
+		}
+		$base = base_convert($id, 10, 36);
+		$links = array(
+			dbKITnewsletterLinks::field_link_value			=> $base
+		);
+		if (!$dbNewsletterLinks->sqlUpdateRecord($links, array(dbKITnewsletterLinks::field_id => $id))) {
+			$this->setError(sprintf('[%s - %s] %s', __METHOD__, __LINE__, $dbNewsletterLinks->getError()));
+			return false;
+		}
+		$result = sprintf('%s&%s=%s&%s=%s',
+												$kitRequest->getRequestLink(),
+												kitRequest::request_action,
+												kitRequest::action_link,
+												kitRequest::request_link,
+												$base);
+		return $result;	
+	} // getUnsubscribeLink()
 	
 	/**
    * Return Version of KIT
@@ -1362,6 +1443,40 @@ class kitNewsletterDialog {
   	$items = '';
   	$row = new Dwoo_Template_File($this->template_path.'backend.newsletter.dlg.tr.htt');
 		
+  	// show newsletter archive
+  	$SQL = sprintf(	"SELECT %s, %s, %s FROM %s ORDER BY %s DESC",
+  									dbKITnewsletterArchive::field_id,
+  									dbKITnewsletterArchive::field_subject,
+  									dbKITnewsletterArchive::field_update_when,
+  									$dbNewsletterArchive->getTableName(),
+  									dbKITnewsletterArchive::field_id);
+  	$newsletter_archive = array();
+  	if (!$dbNewsletterArchive->sqlExec($SQL, $newsletter_archive)) {
+  		$this->setError(sprintf('[%s - %s] %s', __METHOD__, __LINE__, $dbNewsletterArchive->getError()));
+  		return false;
+  	}
+  	if (count($newsletter_archive) > 0) {
+  		// show newsletter archive for selection
+  		$option = sprintf('<option value="-1">%s</option>', kit_text_please_select);
+  		foreach ($newsletter_archive as $item) {
+  			$option .= sprintf(	'<option value="%s">[%04d] %s - %s',
+  													$item[dbKITnewsletterArchive::field_id],
+  													$item[dbKITnewsletterArchive::field_id],
+  													date(kit_cfg_date_time_str, strtotime($item[dbKITnewsletterArchive::field_update_when])),
+  													$item[dbKITnewsletterArchive::field_subject]);
+  		}
+  		$archive = sprintf(	'<select name="%s" onchange="javascript: window.location = \'%s\' + this.value; return false;">%s</select>', 
+  												dbKITnewsletterArchive::field_id,
+  												sprintf('%s&%s=%s&%s=',
+  																$this->page_link,
+  																self::request_action,
+  																self::action_newsletter,
+  																dbKITnewsletterArchive::field_id ), 
+  												$option);
+  		$items .= $parser->get($row, array('label' => sprintf('<i>%s</i>', kit_label_newsletter_archive_select), 'value' => $archive));
+  		$items .= $parser->get($row, array('label' => '', 'value' => '<hr />'));
+  	}
+  	
   	// get all service provider for selection list
 		$SQL = sprintf(	"SELECT %s,%s,%s FROM %s WHERE %s != '%s' ORDER BY %s ASC",
 										dbKITprovider::field_id,

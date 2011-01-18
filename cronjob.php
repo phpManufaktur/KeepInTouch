@@ -252,9 +252,9 @@ class cronjob {
     	$kitMail = new kitMail();
     	// HTML body generieren
 			$html = utf8_encode($newsletter[dbKITnewsletterArchive::field_html]);
-			if ($newsletterCommands->parseCommands($html, '', $address[dbKITregister::field_contact_id])) {
+			if ($newsletterCommands->parseCommands($html, '', $address[dbKITregister::field_contact_id], $newsletter)) {
 				$html_content = $template[dbKITnewsletterTemplates::field_html];
-				if (!$newsletterCommands->parseCommands($html_content, $html, $address[dbKITregister::field_contact_id])) {
+				if (!$newsletterCommands->parseCommands($html_content, $html, $address[dbKITregister::field_contact_id], $newsletter)) {
 					$this->setError(sprintf('[%s - %s] %s', __METHOD__, __LINE__, $newsletterCommands->getError()));
 					exit($this->getError());
 				}
@@ -266,9 +266,9 @@ class cronjob {
 
 			// TEXT body generieren
 			$text = utf8_encode($newsletter[dbKITnewsletterArchive::field_text]);
-			if ($newsletterCommands->parseCommands($text, '', $address[dbKITregister::field_contact_id])) {
+			if ($newsletterCommands->parseCommands($text, '', $address[dbKITregister::field_contact_id], $newsletter)) {
 				$text_content = $template[dbKITnewsletterTemplates::field_text];
-				if (!$newsletterCommands->parseCommands($text_content, $text, $address[dbKITregister::field_contact_id])) {
+				if (!$newsletterCommands->parseCommands($text_content, $text, $address[dbKITregister::field_contact_id], $newsletter)) {
 					$this->setError(sprintf('[%s - %s] %s', __METHOD__, __LINE__, $newsletterCommands->getError()));
 					exit($this->getError());
 				}
@@ -423,9 +423,9 @@ class cronjob {
     	$kitMail = new kitMail();
     	// HTML body generieren
 			$html = utf8_encode($newsletter[dbKITnewsletterArchive::field_html]);
-			if ($newsletterCommands->parseCommands($html, '', $address[dbKITcontact::field_id])) {
+			if ($newsletterCommands->parseCommands($html, '', $address[dbKITcontact::field_id], $newsletter)) {
 				$html_content = $template[dbKITnewsletterTemplates::field_html];
-				if (!$newsletterCommands->parseCommands($html_content, $html, $address[dbKITcontact::field_id])) {
+				if (!$newsletterCommands->parseCommands($html_content, $html, $address[dbKITcontact::field_id], $newsletter)) {
 					$this->setError(sprintf('[%s - %s] %s', __METHOD__, __LINE__, $newsletterCommands->getError()));
 					exit($this->getError());
 				}
@@ -437,9 +437,9 @@ class cronjob {
 
 			// TEXT body generieren
 			$text = utf8_encode($newsletter[dbKITnewsletterArchive::field_text]);
-			if ($newsletterCommands->parseCommands($text, '', $address[dbKITcontact::field_id])) {
+			if ($newsletterCommands->parseCommands($text, '', $address[dbKITcontact::field_id], $newsletter)) {
 				$text_content = $template[dbKITnewsletterTemplates::field_text];
-				if (!$newsletterCommands->parseCommands($text_content, $text, $address[dbKITcontact::field_id])) {
+				if (!$newsletterCommands->parseCommands($text_content, $text, $address[dbKITcontact::field_id], $newsletter)) {
 					$this->setError(sprintf('[%s - %s] %s', __METHOD__, __LINE__, $newsletterCommands->getError()));
 					exit($this->getError());
 				}

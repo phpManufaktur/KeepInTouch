@@ -40,12 +40,14 @@ global $tools;
 global $dbNewsletterPreview;
 global $newsletterCommands;
 global $dbNewsletterTemplates;
+global $dbNewsletterLinks;
 
 if (!is_object($dbCfg)) $dbCfg = new dbKITcfg();
 if (!is_object($tools)) $tools = new kitTools();
 if (!is_object($dbNewsletterPreview)) $dbNewsletterPreview = new dbKITnewsletterPreview();
 if (!is_object($newsletterCommands)) $newsletterCommands = new kitNewsletterCommands();
 if (!is_object($dbNewsletterTemplates)) $dbNewsletterTemplates = new dbKITnewsletterTemplates();
+if (!is_object($dbNewsletterLinks)) $dbNewsletterLinks = new dbKITnewsletterLinks();
 
 class kitRequest {
 	
@@ -59,10 +61,12 @@ class kitRequest {
 	const request_message						= 'msg';
 	const request_newsletter				= 'nl';
 	const request_type							= 'typ';
+	const request_link							= 'lk';
 	
 	const action_activate_key				= 'ack';
 	const action_dialog							= 'dlg';
 	const action_error							= 'err';
+	const action_link								= 'lk';
 	const action_login							= 'login';
 	const action_none								= 'no';
 	const action_preview_newsletter	= 'pvn';
@@ -291,27 +295,38 @@ else {
 			// Newsletter Vorschau ausgeben
 			$this->showNewsletterPreview();
 			break;
+		case self::action_link:
+			// Action Handler fuer Links ausfuehren
+			if (!isset($_REQUEST[self::request_link])) {
+				$_SESSION['kit7543_'.self::request_action] = self::action_error;
+				$_SESSION['kit7543_'.self::request_message] = kit_error_request_link_invalid;
+				header("Location: ".$this->response_url);
+				exit();
+			}
+			$this->actionLinks();
+			break;
 		case self::action_none:
 			// keine Aktion angefordert
-			$param_str = sprintf(	'?%s=%s&%s=%s',
-														self::request_action,
-														self::action_error,
-														self::request_message,
-														rawurlencode(kit_error_request_no_action));
-			header("Location: ".$this->response_url.$param_str);
+			$_SESSION['kit7543_'.self::request_action] = self::action_error;
+			$_SESSION['kit7543_'.self::request_message] = kit_error_request_no_action;	
+			header("Location: ".$this->response_url);
 			exit();
+			break;
 		default:
 			// ungueltige Aktion
-			$param_str = sprintf( '?%s=%s&%s=%s',
-														self::request_action,
-														self::action_error,
-														self::request_message,
-														rawurlencode(sprintf(kit_error_request_invalid_action, self::request_action, $action)));
-			header("Location: ".$this->response_url.$param_str);
+			$_SESSION['kit7543_'.self::request_action] = self::action_error;
+			$_SESSION['kit7543_'.self::request_message] = sprintf(kit_error_request_invalid_action, self::request_action, $action);	
+			header("Location: ".$this->response_url);
 			exit();
 		endswitch;
 		
 	} // action()
+	
+	public function actionLinks() {
+		global $db
+		$link = $_REQUEST[self::request_link];
+		
+	} // actionLinks()
 	
 	public function showNewsletterPreview() {
 		require_once(WB_PATH.'/modules/'.basename(dirname(__FILE__)).'/class.newsletter.php');

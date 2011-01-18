@@ -27,6 +27,7 @@ require_once(WB_PATH.'/modules/'.basename(dirname(__FILE__)).'/class.mail.php');
 require_once(WB_PATH.'/modules/'.basename(dirname(__FILE__)).'/class.droplets.php');
 require_once(WB_PATH.'/modules/'.basename(dirname(__FILE__)).'/class.newsletter.php');
 require_once(WB_PATH.'/modules/'.basename(dirname(__FILE__)).'/class.cronjob.php');
+require_once(WB_PATH.'/modules/'.basename(dirname(__FILE__)).'/class.newsletter.link.php');
 
 global $admin;
 
@@ -145,6 +146,13 @@ $dbCronjobErrorLog = new dbCronjobErrorLog();
 if (!$dbCronjobErrorLog->sqlTableExists()) {
 	if (!$dbCronjobErrorLog->sqlCreateTable()) {
 		$error .= sprintf('<p>[Upgrade] %s</p>', $dbCronjobErrorLog->getError());
+	}
+}
+
+$dbNewsletterLinks = new dbKITnewsletterLinks();
+if (!$dbNewsletterLinks->sqlTableExists()) {
+	if (!$dbNewsletterLinks->sqlCreateTable()) {
+		$error .= sprintf('<p>[Upgrade] %s</p>', $dbNewsletterLinks->getError());
 	}
 }
 

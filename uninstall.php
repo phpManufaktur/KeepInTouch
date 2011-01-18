@@ -26,6 +26,7 @@ require_once(WB_PATH.'/modules/'.basename(dirname(__FILE__)).'/class.mail.php');
 require_once(WB_PATH.'/modules/'.basename(dirname(__FILE__)).'/class.dialogs.php');
 require_once(WB_PATH.'/modules/'.basename(dirname(__FILE__)).'/class.newsletter.php');
 require_once(WB_PATH.'/modules/'.basename(dirname(__FILE__)).'/class.cronjob.php');
+require_once(WB_PATH.'/modules/'.basename(dirname(__FILE__)).'/class.newsletter.link.php');
 
 global $admin;
 
@@ -136,31 +137,38 @@ if ($dbKITnewsletterArchive->sqlTableExists()) {
 	}
 }
 
-$dbKITnewsletterProcess = new dbKITnewsletterProcess(true);
+$dbKITnewsletterProcess = new dbKITnewsletterProcess();
 if ($dbKITnewsletterProcess->sqlTableExists()) {
 	if (!$dbKITnewsletterProcess->sqlDeleteTable()) {
 		$error .= sprintf('<p>[Delete Table] %s</p>', $dbKITnewsletterProcess->getError());
 	}
 }
 
-$dbCronjobData = new dbCronjobData(true);
+$dbCronjobData = new dbCronjobData();
 if ($dbCronjobData->sqlTableExists()) {
 	if (!$dbCronjobData->sqlDeleteTable()) {
 		$error .= sprintf('<p>[Delete Table] %s</p>', $dbCronjobData->getError());
 	}
 }
 
-$dbCronjobNewsletterLog = new dbCronjobNewsletterLog(true);
+$dbCronjobNewsletterLog = new dbCronjobNewsletterLog();
 if ($dbCronjobNewsletterLog->sqlTableExists()) {
 	if (!$dbCronjobNewsletterLog->sqlDeleteTable()) {
 		$error .= sprintf('<p>[Delete Table] %s</p>', $dbCronjobNewsletterLog->getError());
 	}
 }
 
-$dbCronjobErrorLog = new dbCronjobErrorLog(true);
+$dbCronjobErrorLog = new dbCronjobErrorLog();
 if ($dbCronjobErrorLog->sqlTableExists()) {
 	if (!$dbCronjobErrorLog->sqlDeleteTable()) {
 		$error .= sprintf('<p>[Delete Table] %s</p>', $dbCronjobErrorLog->getError());
+	}
+}
+
+$dbNewsletterLinks = new dbKITnewsletterLinks();
+if ($dbNewsletterLinks->sqlTableExists()) {
+	if (!$dbNewsletterLinks->sqlDeleteTable()) {
+		$error .= sprintf('<p>[Delete Table] %s</p>', $dbNewsletterLinks->getError());
 	}
 }
 
