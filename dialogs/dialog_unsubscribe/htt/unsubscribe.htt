@@ -1,0 +1,12 @@
+<!-- $Id$ -->
+<div class="kit_unsub_dlg">
+  <form name="unsub" action="{$form_action}" method="post">
+    <input type="hidden" name="{$action_name}" value="{$action_value}" />
+    <input type="hidden" name="{$link_name}" value="{$link_value}" />
+    <div class="kit_unsub_text">{$text}</div>
+    <div class="kit_unsub_submit">
+      <input type="submit" value="{$btn_yes}" />&nbsp;
+      <input type="button" value="{$btn_no}" onclick="javascript: window.location = '{$abort_location}'; return false;" />
+    </div>
+  </form>
+</div>

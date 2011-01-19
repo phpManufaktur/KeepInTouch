@@ -23,6 +23,7 @@ if (!defined('WB_PATH')) die('invalid call of '.$_SERVER['SCRIPT_NAME']);
 
 require_once(WB_PATH.'/modules/'.basename(dirname(__FILE__)).'/initialize.php');
 require_once(WB_PATH.'/modules/'.basename(dirname(__FILE__)).'/class.newsletter.php');
+require_once(WB_PATH.'/modules/'.basename(dirname(__FILE__)).'/class.newsletter.link.php');
 
 if (DEBUG_MODE) {
 	ini_set('display_errors', 1);
@@ -264,6 +265,7 @@ else {
 	 */
 	public function action() { 
 		global $tools;
+		global $dbNewsletterLinks;
 		
 		isset($_REQUEST[self::request_action]) ? $action = $_REQUEST[self::request_action] : $action = self::action_none;
 		$this->response_url = $this->getResponseUrl();
@@ -275,7 +277,7 @@ else {
 		$ignore_keys = array('__utma', '__utmz', $wb_settings['app_name'].'_session_id');
 		foreach ($_REQUEST as $key => $value) {
 			if (!in_array($key, $ignore_keys)) {
-				$_SESSION['kit7543_'.$key] = $value;
+				$_SESSION[KIT_SESSION_ID.$key] = $value;
 			}
 		}
 		
@@ -298,24 +300,56 @@ else {
 		case self::action_link:
 			// Action Handler fuer Links ausfuehren
 			if (!isset($_REQUEST[self::request_link])) {
-				$_SESSION['kit7543_'.self::request_action] = self::action_error;
-				$_SESSION['kit7543_'.self::request_message] = kit_error_request_link_invalid;
+				$_SESSION[KIT_SESSION_ID.self::request_action] = self::action_error;
+				$_SESSION[KIT_SESSION_ID.self::request_message] = kit_error_request_link_invalid;
 				header("Location: ".$this->response_url);
 				exit();
 			}
-			$this->actionLinks();
+			// pruefen, welche Aktion ausgefuehrt werden soll
+			$where = array(
+				dbKITnewsletterLinks::field_link_value => $_REQUEST[self::request_link]
+			);
+			$link = array();
+			if (!$dbNewsletterLinks->sqlSelectRecord($where, $link)) {
+				$_SESSION[KIT_SESSION_ID.self::request_action] = self::action_error;
+				$_SESSION[KIT_SESSION_ID.self::request_message] = sprintf('[%s - %s] %s', __METHOD__, __LINE__, $dbNewsletterLinks->getError());	
+				header("Location: ".$this->response_url);
+				exit();	
+			}
+			if (count($link) > 0) {
+				// ok - got entry, check action
+				switch ($link[0][dbKITnewsletterLinks::field_type]):
+				case dbKITnewsletterLinks::type_link_unsubscribe:
+					// show dialog for unsubscribe
+					header("Location: ".$this->response_url);
+					exit();
+					break;
+				default:
+					$_SESSION[KIT_SESSION_ID.self::request_action] = self::action_error;
+					$_SESSION[KIT_SESSION_ID.self::request_message] = sprintf(kit_error_request_link_action_unknown, $link[0][dbKITnewsletterLinks::field_type]);	
+					header("Location: ".$this->response_url);
+					exit();
+				endswitch;
+			}
+			else {
+				// entry does not exist
+				$_SESSION[KIT_SESSION_ID.self::request_action] = self::action_error;
+				$_SESSION[KIT_SESSION_ID.self::request_message] = sprintf(kit_error_request_link_unknown, $_REQUEST[self::request_link]);	
+				header("Location: ".$this->response_url);
+				exit();
+			}
 			break;
-		case self::action_none:
+		case self::action_none: 
 			// keine Aktion angefordert
-			$_SESSION['kit7543_'.self::request_action] = self::action_error;
-			$_SESSION['kit7543_'.self::request_message] = kit_error_request_no_action;	
+			$_SESSION[KIT_SESSION_ID.self::request_action] = self::action_error;
+			$_SESSION[KIT_SESSION_ID.self::request_message] = kit_error_request_no_action;	
 			header("Location: ".$this->response_url);
 			exit();
 			break;
-		default:
+		default: 
 			// ungueltige Aktion
-			$_SESSION['kit7543_'.self::request_action] = self::action_error;
-			$_SESSION['kit7543_'.self::request_message] = sprintf(kit_error_request_invalid_action, self::request_action, $action);	
+			$_SESSION[KIT_SESSION_ID.self::request_action] = self::action_error;
+			$_SESSION[KIT_SESSION_ID.self::request_message] = sprintf(kit_error_request_invalid_action, self::request_action, $action);	
 			header("Location: ".$this->response_url);
 			exit();
 		endswitch;
@@ -323,7 +357,8 @@ else {
 	} // action()
 	
 	public function actionLinks() {
-		global $db
+		global $dbNewsletterLinks;
+		
 		$link = $_REQUEST[self::request_link];
 		
 	} // actionLinks()

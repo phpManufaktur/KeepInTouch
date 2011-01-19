@@ -249,7 +249,7 @@ class cronjob {
 		
 		foreach ($addresses as $address) {
 			// E-Mail Programm starten
-    	$kitMail = new kitMail();
+    	$kitMail = new kitMail($provider[dbKITprovider::field_id]);
     	// HTML body generieren
 			$html = utf8_encode($newsletter[dbKITnewsletterArchive::field_html]);
 			if ($newsletterCommands->parseCommands($html, '', $address[dbKITregister::field_contact_id], $newsletter)) {
@@ -261,7 +261,7 @@ class cronjob {
 			}
 			else {
 				$this->setError(sprintf('[%s - %s] %s', __METHOD__, __LINE__, $newsletterCommands->getError()));
-				exit($this->getError());
+				exit($this->getError()); 
 			}
 
 			// TEXT body generieren
@@ -283,7 +283,7 @@ class cronjob {
         $this->writeNewsletterLog($cronjob[dbKITnewsletterProcess::field_id], 
         													$address[dbKITregister::field_email], 
         													$address[dbKITregister::field_contact_id], 
-        													dbCronjobNewsletterLog::status_simulation,
+        													dbCronjobNewsletterLog::status_simulation, 
         													'');
       }
       else {
@@ -420,7 +420,7 @@ class cronjob {
 		
 		foreach ($addresses as $address) {
 			// E-Mail Programm starten
-    	$kitMail = new kitMail();
+    	$kitMail = new kitMail($provider[dbKITprovider::field_id]);
     	// HTML body generieren
 			$html = utf8_encode($newsletter[dbKITnewsletterArchive::field_html]);
 			if ($newsletterCommands->parseCommands($html, '', $address[dbKITcontact::field_id], $newsletter)) {

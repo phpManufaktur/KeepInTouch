@@ -2086,7 +2086,7 @@ class kitNewsletterDialog {
      * Newsletter durchlaufen
      */
     if (!empty($nl_groups)) {
-			foreach ($nl_groups as $nl) { echo "durchlauf $nl";
+			foreach ($nl_groups as $nl) { 
 				// get contact ID's from selected newsletter...
 				// First read only ONE row from the table and COUNT the ROWs
 	    	$SQL = sprintf(	$QUERY,

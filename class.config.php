@@ -25,6 +25,7 @@ require_once(WB_PATH.'/modules/'.basename(dirname(__FILE__)).'/initialize.php');
 
 $dbCfg = new dbKITcfg();
 define('USE_CUSTOM_FILES', $dbCfg->getValue(dbKITcfg::cfgUseCustomFiles));
+define('KIT_SESSION_ID', $dbCfg->getValue(dbKITcfg::cfgSessionID));
 
 class dbKITcfg extends dbConnectLE {
 	
@@ -73,11 +74,13 @@ class dbKITcfg extends dbConnectLE {
   const cfgUseCustomFiles		= 'cfgUseCustomFiles';
   const cfgRegisterDlgNL		= 'cfgRegisterDlgNL';
   const cfgRegisterDlgACC		= 'cfgRegisterDlgACC';
+  const cfgRegisterDlgUSUB	= 'cfgRegisterDlgUSUB';
   const cfgKITRequestLink		= 'cfgKITRequestLink';
   const cfgMaxInvalidLogin	= 'cfgMaxInvalidLogin';
   const cfgAddAppTab				= 'cfgAddAppTab';
   const cfgLicenseKey				= 'cfgLicenseKey';
   const cfgCronjobKey				= 'cfgCronjobKey';
+  const cfgSessionID				= 'cfgSessionID';
 
   public $config_array = array(
   	array('kit_label_cfg_google_maps_api_key', self::cfgGoogleMapsAPIkey, self::type_string, '', 'kit_desc_cfg_google_maps_api_key'),
@@ -90,7 +93,9 @@ class dbKITcfg extends dbConnectLE {
   	array('kit_label_cfg_max_invalid_login', self::cfgMaxInvalidLogin, self::type_integer, '10', 'kit_desc_cfg_max_invalid_login'),
   	array('kit_label_cfg_add_app_tab', self::cfgAddAppTab, self::type_array, '', 'kit_desc_cfg_add_app_tab'),
   	array('kit_label_cfg_license_key', self::cfgLicenseKey, self::type_string, '', 'kit_desc_cfg_license_key'),
-  	array('kit_label_cfg_cronjob_key', self::cfgCronjobKey, self::type_string, '', 'kit_desc_cfg_cronjob_key')
+  	array('kit_label_cfg_cronjob_key', self::cfgCronjobKey, self::type_string, '', 'kit_desc_cfg_cronjob_key'),
+  	array('kit_label_cfg_register_dlg_unsubscribe', self::cfgRegisterDlgUSUB, self::type_string, 'dialog_unsubscribe', 'kit_desc_cfg_register_dlg_unsubscribe'),
+  	array('kit_label_cfg_session_id', self::cfgSessionID, self::type_string, 'kit7543_', 'kit_desc_cfg_session_id')
   );  
   
   public function __construct($createTables = false) {

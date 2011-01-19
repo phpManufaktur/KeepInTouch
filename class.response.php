@@ -24,6 +24,7 @@ if (!defined('WB_PATH')) die('invalid call of '.$_SERVER['SCRIPT_NAME']);
 require_once(WB_PATH.'/modules/'.basename(dirname(__FILE__)).'/initialize.php');
 require_once(WB_PATH.'/modules/'.basename(dirname(__FILE__)).'/class.dialogs.php');
 require_once(WB_PATH.'/modules/'.basename(dirname(__FILE__)).'/class.request.php');
+require_once(WB_PATH.'/modules/'.basename(dirname(__FILE__)).'/class.newsletter.link.php');
 
 if (DEBUG_MODE) {
 	ini_set('display_errors', 1);
@@ -35,7 +36,12 @@ else {
 }
 
 global $parser;
+global $dbNewsletterLinks;
+global $dbCfg;
+
 if (!is_object($parser)) $parser = new Dwoo();
+if (!is_object($dbNewsletterLinks)) $dbNewsletterLinks = new dbKITnewsletterLinks();
+if (!is_object($dbCfg)) $dbCfg = new dbKITcfg();
 
 class kitResponse {
 	
@@ -43,8 +49,9 @@ class kitResponse {
 	private $img_url;
 	
 	function __construct() {
+		global $dbCfg;
 		$this->template_path = WB_PATH . '/modules/' . basename(dirname(__FILE__)) . '/htt/' ;
-		$this->img_url = WB_URL.'/modules/'.basename(dirname(__FILE__)).'/img/';		
+		$this->img_url = WB_URL.'/modules/'.basename(dirname(__FILE__)).'/img/';
 	} // __construct()
 		
   /**
@@ -52,61 +59,24 @@ class kitResponse {
    */
   public function action() { 	
   	
+  	global $dbNewsletterLinks;
+  	
   	// Important: get $_REQUEST vars from $_SESSION...
   	foreach ($_SESSION as $key => $value) {
-  		if (strpos($key, 'kit7543_') !== false) {
-  			$new_key = str_replace('kit7543_', '', $key);
+  		if (strpos($key, KIT_SESSION_ID) !== false) {
+  			$new_key = str_replace(KIT_SESSION_ID, '', $key);
   			$_REQUEST[$new_key] = $value;
   			unset($_SESSION[$key]);
   		}
   	}
- 		// use $_GET!
 		isset($_REQUEST[kitRequest::request_action]) ? $action = $_REQUEST[kitRequest::request_action] : $action = kitRequest::action_none; 
+
 		switch($action):
   	case kitRequest::action_login:
   	case kitRequest::action_unsubscribe:	
   	case kitRequest::action_activate_key:
   		// Dialog zur Aktivierung anzeigen
-  		$config = new dbKITcfg();
-  		$registerDataDlg = $config->getValue(dbKITcfg::cfgRegisterDlgACC);
-  		
-  		$dbDlgRegister = new dbKITdialogsRegister();
-  		$where = array();
-  		$where[dbKITdialogsRegister::field_name] = $registerDataDlg;
-  		$dialog = array();
-  		if (!$dbDlgRegister->sqlSelectRecord($where, $dialog)) {
-  			$this->promptError(sprintf('[%s - %s] %s', __METHOD__, __LINE__, $dbDlgRegister->getError()));
-  			break;
-  		}
-  		if (count($dialog) < 1) {
-  			// Dialog nicht in der Datenbank gefunden
-  			if (file_exists(WB_PATH.'/modules/'.basename(dirname(__FILE__)).'/dialogs/'.strtolower($registerDataDlg).'/'.strtolower($registerDataDlg).'.php')) {
-  				$dialog = array();
-  				$dialog[dbKITdialogsRegister::field_name] = $registerDataDlg;
-  				$dialog_id = -1;
-  				if (!$dbDlgRegister->sqlInsertRecord($dialog, $dialog_id)) {
-  					$this->promptError(sprintf('[%s - %s] %s', __METHOD__, __LINE__, $dbDlgRegister->getError()));
-  					break;
-  				}
-  				$dialog[dbKITdialogsRegister::field_id] = $dialog_id;
-  			}
-  			else {
-  				$this->promptError(sprintf(kit_error_request_dlg_invalid_name, $registerDataDlg));
-  				break;
-  			}
-  		}
-  		else {
-  			$dialog = $dialog[0];
-  		}
-  		if (file_exists(WB_PATH.'/modules/'.basename(dirname(__FILE__)).'/dialogs/'.strtolower($dialog[dbKITdialogsRegister::field_name]).'/'.strtolower($dialog[dbKITdialogsRegister::field_name]).'.php')) {
-  			require_once(WB_PATH.'/modules/'.basename(dirname(__FILE__)).'/dialogs/'.strtolower($dialog[dbKITdialogsRegister::field_name]).'/'.strtolower($dialog[dbKITdialogsRegister::field_name]).'.php');
-				$callDialog = new $dialog[dbKITdialogsRegister::field_name];
-				$callDialog->setDlgID((int) $dialog[dbKITdialogsRegister::field_id]);
-				$callDialog->action();
-			}
-			else {
-				$this->promptError(sprintf(kit_error_dlg_missing, $dialog[dbKITdialogsRegister::field_name]));
-			}
+  		$this->execDialog(dbKITcfg::cfgRegisterDlgACC);
   		break;
   	case kitRequest::action_dialog:
   		// Dialog anzeigen
@@ -140,6 +110,36 @@ class kitResponse {
 				$this->promptError(sprintf(kit_error_dlg_missing, $dialog));
 			}
   		break;
+  	case kitRequest::action_link: 
+  		// Link in einen Befehl umwandeln
+  		if (!isset($_REQUEST[kitRequest::request_link])) {
+  			$this->promptError(kit_error_request_link_invalid);
+  			break;
+  		}
+  		$link_value = $_REQUEST[kitRequest::request_link];
+  		$where = array(
+  			dbKITnewsletterLinks::field_link_value => $link_value
+  		);
+			$link = array();
+			if (!$dbNewsletterLinks->sqlSelectRecord($where, $link)) {
+				$this->promptError(sprintf('[%s - %s] %s', __METHOD__, __LINE__, $dbNewsletterLinks->getError()));
+				break;
+			}  		
+			if (count($link) < 1) {
+				$this->promptError(sprintf(kit_error_request_link_unknown, $link_value));
+				break;
+			}
+			switch ($link[0][dbKITnewsletterLinks::field_type]):
+  		case dbKITnewsletterLinks::type_link_unsubscribe:
+  			// Dialog zur Abmeldung vom Newsletter anzeigen
+  			$this->execDialog(dbKITcfg::cfgRegisterDlgUSUB);  			
+  			break;
+  		default:
+  			// keine Aktion festgelegt...
+  			$this->promptError(sprintf(kit_error_request_link_action_unknown, $link[0][dbKITnewsletterLinks::field_type]));
+  			break; 
+			endswitch;
+  		break;
   	case kitRequest::action_error: 
   		// Fehlermeldung ausgeben
   		$this->promptError($_REQUEST[kitRequest::request_message]);
@@ -150,6 +150,52 @@ class kitResponse {
   		break;
   	endswitch;
   }
+  
+  public function execDialog($dialog_id) {
+  	// Dialog mit der ID  $dialog_id anzeigen
+  	$config = new dbKITcfg();
+  	$registerDataDlg = $config->getValue($dialog_id);
+  		
+  	$dbDlgRegister = new dbKITdialogsRegister();
+  	$where = array();
+  	$where[dbKITdialogsRegister::field_name] = $registerDataDlg;
+  	$dialog = array();
+  	if (!$dbDlgRegister->sqlSelectRecord($where, $dialog)) {
+  		$this->promptError(sprintf('[%s - %s] %s', __METHOD__, __LINE__, $dbDlgRegister->getError()));
+  		return false;
+  	}
+  	if (count($dialog) < 1) {
+  		// Dialog nicht in der Datenbank gefunden
+  		if (file_exists(WB_PATH.'/modules/'.basename(dirname(__FILE__)).'/dialogs/'.strtolower($registerDataDlg).'/'.strtolower($registerDataDlg).'.php')) {
+  			$dialog = array();
+  			$dialog[dbKITdialogsRegister::field_name] = $registerDataDlg;
+  			$dialog_id = -1;
+  			if (!$dbDlgRegister->sqlInsertRecord($dialog, $dialog_id)) {
+  				$this->promptError(sprintf('[%s - %s] %s', __METHOD__, __LINE__, $dbDlgRegister->getError()));
+  				return false;
+  			}
+  			$dialog[dbKITdialogsRegister::field_id] = $dialog_id;
+  		}
+  		else {
+  			$this->promptError(sprintf(kit_error_request_dlg_invalid_name, $registerDataDlg));
+  			return false;
+  		}
+  	}
+  	else {
+  		$dialog = $dialog[0];
+  	}
+  	if (file_exists(WB_PATH.'/modules/'.basename(dirname(__FILE__)).'/dialogs/'.strtolower($dialog[dbKITdialogsRegister::field_name]).'/'.strtolower($dialog[dbKITdialogsRegister::field_name]).'.php')) {
+  		require_once(WB_PATH.'/modules/'.basename(dirname(__FILE__)).'/dialogs/'.strtolower($dialog[dbKITdialogsRegister::field_name]).'/'.strtolower($dialog[dbKITdialogsRegister::field_name]).'.php');
+			$callDialog = new $dialog[dbKITdialogsRegister::field_name];
+			$callDialog->setDlgID((int) $dialog[dbKITdialogsRegister::field_id]);
+			$callDialog->action();
+			return true;
+		}
+		else {
+			$this->promptError(sprintf(kit_error_dlg_missing, $dialog[dbKITdialogsRegister::field_name]));
+			return false;
+		}	  		
+  } // execDialog()
   
   public function promptError($message) {
   	global $parser;

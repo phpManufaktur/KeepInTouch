@@ -41,7 +41,8 @@
   vertical-align:top;
 }
 .kit_acc_error,
-.kit_nl_error {
+.kit_nl_error,
+.kit_unsub_error {
   margin: 20px;
   padding: 30px;
   border: 1px solid maroon;

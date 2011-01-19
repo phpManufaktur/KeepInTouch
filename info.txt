@@ -3,10 +3,14 @@ KeepInTouch - Contact management for WebsiteBaker
 http://phpManufaktur.de - info@phpManufaktur.de
 
 Release 0.30
-xxxx-xx-xx
+2011-01-19
 - fixed: improper display of distribution lists in contact dialog
 - fixed: bug in data handling in class.request.php and class.response.php
 - added: history, now you may reload previous newsletters and handle them again
+- fixed: changing provider has not changed smtp access
+- changed: processing group mail is now using bcc for sending, but logging each email
+- changed: kitCommand {$newsletter_unsubscribe} now generate an individual link for easy unsubscribing
+- added: dialog_unsubscribe for easy unsubscribing from newsletter and/or distribution lists 
 
 Release 0.29
 2010-11-28

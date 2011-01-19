@@ -272,11 +272,6 @@ class kitBackend {
   	case self::action_cfg_save_general:
   		$this->show(self::action_cfg, $this->saveConfigGeneral());
   		break;
-/*  		
-  	case self::action_cfg_save_array:
-  		$this->show(self::action_cfg, $this->saveConfigArray());
-  		break;
-*/
   	case self::action_contact:
   		$this->show(self::action_contact, $this->dlgContact());
   		break;
@@ -1316,7 +1311,8 @@ class kitBackend {
 		$where[dbKITprotocol::field_contact_id] = $item[dbKITcontact::field_id];
 		$where[dbKITprotocol::field_status] = dbKITprotocol::status_active;
 		$protocol_data = array(); 
-		if (!$dbProtocol->sqlSelectRecord($where, $protocol_data)) {
+		$order = array(dbKITprotocol::field_date);
+		if (!$dbProtocol->sqlSelectRecordOrderBy($where, $protocol_data, $order, false)) {
 			$this->setError(sprintf('[%s - %s] %s', __METHOD__, __LINE__, $dbProtocol->getError()));
 			return false;
 		} 
@@ -3193,7 +3189,7 @@ class kitBackend {
 			'header_help'				=> kit_header_help_documentation,
 			'btn_send'					=> kit_btn_send,
 			'btn_abort'					=> kit_btn_abort,
-			'abort_location'		=> $this->page_link,
+			'abort_location'		=> $this->page_link
 		);
 		return $parser->get($this->template_path.'backend.email.dlg.htt', $data);
 	} // dlgEMail()
@@ -3303,19 +3299,25 @@ class kitBackend {
 		$transmitted = 0;
 		// sending mails...
 		$error = '';
+
+		$kitMail = new kitMail($provider[dbKITprovider::field_id]);
+		$receiver_array = array($provider[dbKITprovider::field_email] => $provider[dbKITprovider::field_name]);
+		(bool) $is_html ? $text = $data[dbKITmail::field_html] : $text = $data[dbKITmail::field_text];
+		$bcc_array = array();
 		foreach ($to_array as $to_id) {
-			$kitMail = new kitMail();
-			$to_email = $dbContact->getStandardEMailByID($to_id);
-			$to_array = array($to_email => '');
-			(bool) $is_html ? $text = $data[dbKITmail::field_html] : $text = $data[dbKITmail::field_text];
-			// send as HTML
-			if ($kitMail->mail(	$data[dbKITmail::field_subject],
-												  $text,
-													$data[dbKITmail::field_from_email],
-													$data[dbKITmail::field_from_name],
-													$to_array,
-													(bool) $is_html)) {
-				// success
+			$bcc_array[] = $dbContact->getStandardEMailByID($to_id);
+		}
+		if ($kitMail->mail(	$data[dbKITmail::field_subject],
+											  $text,
+												$provider[dbKITprovider::field_email],
+												$provider[dbKITprovider::field_name],
+												$receiver_array,
+												(bool) $is_html,
+												array(),
+												$bcc_array)) {
+			// success
+			
+			foreach ($to_array as $to_id) {
 				$note = array();
 				$note[dbKITprotocol::field_contact_id] = $to_id;
 				$note[dbKITprotocol::field_type] = dbKITprotocol::type_email;
@@ -3331,17 +3333,15 @@ class kitBackend {
 				}
 				$transmitted++;
 			}
-			else {
-				// error
-				$error .= sprintf('<p>[%s] %s</p>', $to_email, $kitMail->getMailError());
-			}
-			//$kitMail->to = array();
-			usleep(1000);
-		} // foreach
+			
+		}
+		else {
+			// error
+			$error .= sprintf('<p>[%s] %s</p>', $provider[dbKITprovider::field_email], $kitMail->getMailError());
+		}
 		$message = sprintf(kit_msg_mails_send_success, $transmitted);
 		if (!empty($error)) {
-			// @todo der Zaehler fuer die aufgetretenen Fehler fehlt noch, deshalb -1...
-			$message .= sprintf(kit_msg_mails_send_errors, -1, $error);
+			$message .= sprintf(kit_msg_mails_send_errors, 1, $error);
 		}
 		$this->setMessage($message); 
 		return $this->dlgStart();

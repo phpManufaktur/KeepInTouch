@@ -46,11 +46,13 @@ define('kit_btn_import',													'Importieren');
 define('kit_btn_mail_bcc',												'BCC Empfänger:');
 define('kit_btn_mail_from',												'Von:');
 define('kit_btn_mail_to',													'An:');
+define('kit_btn_no',															'Nein');
 define('kit_btn_ok',															'Übernehmen');
 define('kit_btn_preview',													'Vorschau');
 define('kit_btn_register',                        'Registrieren');
 define('kit_btn_save',														'Speichern');
 define('kit_btn_send',														'Abschicken');
+define('kit_btn_yes',															'Ja');
 
 define('kit_cfg_date_str',                        'd.m.Y');
 define('kit_cfg_date_time_str',                   'd.m.Y - H:i:s');
@@ -155,9 +157,11 @@ define('kit_desc_cfg_nl_salutation',							'Sie können 10 unterschiedliche Gru�
 define('kit_desc_cfg_nl_simulate',                'Durchläuft die vollständige Versandabwicklung der Newsletter <b>ohne</b> die Mails tatsächlich zu versenden (0=AUS, 1=AN).');
 define('kit_desc_cfg_register_data_dlg',					'Dialog, der den Besuchern die Verwaltung ihrer Daten ermöglicht');
 define('kit_desc_cfg_register_dlg',								'Dialog, der aufgerufen wird, wenn sich Besucher registrieren oder einen Newsletter bestellen möchten');
+define('kit_desc_cfg_register_dlg_unsubscribe',		'Dialog, der aufgerufen wird, wenn sich ein Abonnent von einem Newsletter oder mehreren Newslettern abmelden möchte');
+define('kit_desc_cfg_session_id',									'ID zur eindeutigen Kennzeichnung von Session Variablen die durch KeepInTouch verwendet werden.'); 
 define('kit_desc_cfg_use_captcha', 								'Legen Sie fest, ob die Dialoge im Frontend CAPTCHA zum Schutz vor Spam verwenden sollen');
 define('kit_desc_cfg_use_custom_files',						'Falls gesetzt, können Sie individuell angepasste Templates und Sprachdateien verwenden. Den Dateien wird "custom." vorangestellt, z.B. "custom.DE.php", diese Dateien werden bei einem Update nicht überschrieben.');
-
+ 
 define('kit_error_blank_title',										'<p>Die Seite muss einen Titel enthalten!</p>');
 define('kit_error_cfg_id',												'<p>Der Konfigurationsdatensatz mit der <b>ID %05d</b> konnte nicht ausgelesen werden!</p>');
 define('kit_error_cfg_name',											'<p>Zu dem Bezeichner <b>%s</b> wurde kein Konfigurationsdatensatz gefunden!</p>');
@@ -179,7 +183,10 @@ define('kit_error_preview_id_missing',						'<p>Es wurde keine Preview ID angege
 define('kit_error_request_dlg_invalid_id',				'<p>[kitRequest] Der Dialog mit der <b>ID %03d</b> wurde nicht gefunden, Vorgang abgebrochen!</p>');
 define('kit_error_request_dlg_invalid_name',			'<p>[kitRequest] Der Dialog mit der Klassenbezeichnung <b>%s</b> wurde nicht gefunden, Vorgang abgebrochen!</p>');
 define('kit_error_request_invalid_action',				'<p>[kitRequest] Der Parameter <b>%s=%s</b> ist ungültig, Vorgang abgebrochen!</p>');
+define('kit_error_request_link_action_unknown',		'<p>[kitRequest] Für den Link Typ <b>%s</b> ist keine Aktion festgelegt!</p>');
 define('kit_error_request_link_invalid',					'<p>[kitRequest] Es wurde kein gültiger Link übergeben!</p>');
+define('kit_error_request_link_type',							'<p>Der Link Typ <b>%s</b> kann von diesem Prozess nicht verarbeitet werden.</p>');
+define('kit_error_request_link_unknown',					'<p>[kitRequest] Der Link "<b>%s</b>" ist leider nicht verknüpft!</p>');
 define('kit_error_request_missing_parameter',			'<p>[kitRequest] Der Parameter <b>%s</b> wurde nicht angegeben, Vorgang abgebrochen!</p>');
 define('kit_error_request_no_action',							'<p>[kitRequest] Es wurden keine geeigneten Parameter übergeben!</p><p><b>Hinweis:</b> Diese Fehlermeldung wird auch dann angezeigt, wenn Sie versucht haben, einen Dialog erneut zu laden (<i>Reload Sperre</i>).</p>');
 define('kit_error_request_parameter_incomplete',	'<p>[kitRequest] Die übergebenen Parameter sind nicht vollständig, der Befehl konnte nicht ausgeführt werden.</p>');
@@ -255,6 +262,8 @@ define('kit_label_cfg_nl_set_time_limit',         'Max. Ausführungsdauer');
 define('kit_label_cfg_nl_simulate',								'Versand simulieren');
 define('kit_label_cfg_register_data_dlg',					'Benutzer, Datenverwalten');
 define('kit_label_cfg_register_dlg',							'Benutzer, Registrierung');
+define('kit_label_cfg_register_dlg_unsubscribe',	'Benutzer, Newsletter Abmeldung');
+define('kit_label_cfg_session_id',								'Session Kennung');
 define('kit_label_cfg_use_captcha',								'CAPTCHA verwenden');
 define('kit_label_cfg_use_custom_files',					'Angepasste Dateien zulassen');
 define('kit_label_checksum',											'Prüfsumme');

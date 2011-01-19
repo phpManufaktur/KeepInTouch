@@ -35,14 +35,15 @@ class kitMail extends xPHPMailer {
 	private $mailError = '';
 	private $mailMessage = '';
 	
-	function __construct() {
-		
+	function __construct($provider_id = -1) {
+		global $dbProvider;
+		/*
 		// set mailer defaults (PHP mail function)
 		$db_wbmailer_routine = "phpmail";
 		$db_wbmailer_smtp_host = "";
 		$db_wbmailer_default_sendername = "WB Mailer";
 		$db_server_email = SERVER_EMAIL;
-		
+		*/
 		$tools = new kitTools();
 		// get settings from WB database
 		$settings = array();
@@ -56,6 +57,32 @@ class kitMail extends xPHPMailer {
 			$db_wbmailer_default_sendername = $settings['wbmailer_default_sendername'];
 			$db_server_email								= $settings['server_email'];
 				
+			if ($provider_id != -1) {
+				$where = array(
+					dbKITprovider::field_id => $provider_id,
+					dbKITprovider::field_status => dbKITprovider::status_active
+				);	
+				$provider = array();
+				if (!$dbProvider->sqlSelectRecord($where, $provider)) {
+					$this->setMailError(sprintf('[%s - %s] %s', __METHOD__, __LINE__, $dbProvider->getError()));
+					return false;
+				}
+				if (count($provider) < 1) {
+					$this->setMailError(sprintf('[%s - %s] %s', __METHOD__, __LINE__, sprintf(kit_error_item_id, $provider_id)));
+					return false;
+				}
+				$provider = $provider[0];
+				if ($provider[dbKITprovider::field_smtp_auth] == 1) {
+					$db_wbmailer_routine 						= 'smtp';
+					$db_wbmailer_smtp_auth					= true;
+					$db_wbmailer_smtp_host					=	$provider[dbKITprovider::field_smtp_host];
+					$db_wbmailer_smtp_username			= $provider[dbKITprovider::field_smtp_user];
+					$db_wbmailer_smtp_password			= $provider[dbKITprovider::field_smtp_pass];
+					$db_wbmailer_default_sendername	= $provider[dbKITprovider::field_name];
+					$db_server_email								= $provider[dbKITprovider::field_email];
+				}
+			}
+			
 			// set method to send out emails
 			if ($db_wbmailer_routine == "smtp" && strlen($db_wbmailer_smtp_host) > 5) {
 				// use SMTP for all outgoing mails send by Website Baker
@@ -85,7 +112,7 @@ class kitMail extends xPHPMailer {
 			else {
 				$this->CharSet='utf-8';
 			}
-	
+	/*
 			// set default sender name
 			if ($this->FromName == 'Root User') {
 				if (isset($_SESSION['DISPLAY_NAME'])) {
@@ -95,7 +122,8 @@ class kitMail extends xPHPMailer {
 					$this->FromName = $db_wbmailer_default_sendername;			// FROM NAME: set default name
 				}
 			}
-	
+*/
+			$this->FromName = $db_wbmailer_default_sendername;	
 			/* 
 				some mail provider (lets say mail.com) reject mails send out by foreign mail 
 				relays but using the providers domain in the from mail address (e.g. myname@mail.com)
@@ -212,7 +240,7 @@ class kitMail extends xPHPMailer {
   	}
   	
   	// VERSTECKTE BCC Empfaenger
-  	foreach ($bcc_array as $email => $name) {
+  	foreach ($bcc_array as $email) {
   		$this->AddBCC($email);
   	}
   	
@@ -282,7 +310,7 @@ class kitMail extends xPHPMailer {
     // check if there are any send mail errors, otherwise say successful
     if (!$this->Send()) {
     	$this->setMailError($this->ErrorInfo);
-      return false;
+      return false; 
     } 
     else {
       return true;
