@@ -2,6 +2,10 @@ KeepInTouch - Contact management for WebsiteBaker
 (c) 2010 by phpManufaktur, Berlin (Germany)
 http://phpManufaktur.de - info@phpManufaktur.de
 
+Release 0.31
+xxxx-xx-xx
+- added: option for config the default sorting of the contact list
+
 Release 0.30
 2011-01-19
 - fixed: improper display of distribution lists in contact dialog

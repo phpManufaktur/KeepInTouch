@@ -432,8 +432,11 @@ class kitNewsletterCommands {
 		
 		// unsubscribe link
 		if ($contact_id < 1) {
+			// Preview Modus - "Scheinlink" setzen
 			$unsubscribe_link = sprintf('%s&%s=%s',
 																	$request_link,
+																	kitRequest::request_action,
+																	kitRequest::action_link,
 																	kitRequest::request_link,
 																	0);
 		}

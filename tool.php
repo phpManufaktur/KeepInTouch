@@ -75,14 +75,16 @@ class kitBackend {
 	const action_cfg_tab_import			= 'cfti';
 	const action_cfg_tab_provider		= 'cftp';
 	const action_cfg_tab_provider_save	= 'cfgsp';
-	const action_list_lastname			= 'lln';
-	const action_list_firstname			= 'lfn';
-	const action_list_company				=	'lcom';
-	const action_list_city					= 'lcit';
-	const action_list_street				= 'lstr';
-	const action_list_email					=	'lem';
-	const action_list_phone					= 'lp';
-	const action_list_unsorted			= 'lun';
+	const action_list_company				=	2; 
+	const action_list_city					= 5; 
+	const action_list_deleted				= 9;
+	const action_list_email					=	1; 
+	const action_list_firstname			= 7; 
+	const action_list_lastname			= 3; // attention: don't change action_list_ sort values! They are also used by config!
+	const action_list_locked				= 8;
+	const action_list_phone					= 4; 
+	const action_list_street				= 6; 
+	const action_list_unsorted			= 0; 
 	const action_newsletter					= 'nl';
 	const action_import_massmail		= 'impmm';
 	const action_email							= 'mail';
@@ -90,14 +92,17 @@ class kitBackend {
 	const action_start							= 'start';
 	
 	public $list_sort_array = array(
-		self::action_list_lastname			=> kit_list_sort_lastname,
-		self::action_list_firstname			=> kit_list_sort_firstname,
-		self::action_list_company				=> kit_list_sort_company,
+		// list will be sorted automatically !
 		self::action_list_city					=> kit_list_sort_city,
-		self::action_list_street				=> kit_list_sort_street,
+		self::action_list_company				=> kit_list_sort_company,
+		self::action_list_deleted				=> kit_list_sort_deleted,
 		self::action_list_email					=> kit_list_sort_email,
+		self::action_list_firstname			=> kit_list_sort_firstname,
+		self::action_list_lastname			=> kit_list_sort_lastname,
+		self::action_list_locked				=> kit_list_sort_locked,
 		self::action_list_phone					=> kit_list_sort_phone,
-		self::action_list_unsorted			=> kit_list_sort_unsorted
+		self::action_list_street				=> kit_list_sort_street,
+		self::action_list_unsorted			=> kit_list_sort_unsorted		
 	);
 	
 	private $tab_navigation_array = array(
@@ -394,15 +399,20 @@ class kitBackend {
 		global $dbContact;
 		global $dbContactAddress;
 		global $parser;
+		global $dbCfg;
 		
 		$form_name = 'contact_list';
 		(isset($_REQUEST[self::request_sub_action])) ? $sub_action = $_REQUEST[self::request_sub_action] : $sub_action = self::action_list_unsorted;
+		// wenn Liste nicht sortiert ist, pruefen ob eine Sortierung ueber die Konfiguration vorgegeben ist
+		if ($sub_action == self::action_list_unsorted) {
+			$sub_action = $dbCfg->getValue(dbKITcfg::cfgSortContactList);
+		}
 		// Sortierauswahl anzeigen
 		$option = '';
 		natcasesort($this->list_sort_array);
 		foreach ($this->list_sort_array as $key => $value) {
 			($key == $sub_action) ? $selected = ' selected="selected"' : $selected = '';
-			$option .= sprintf('<option value="%s"%s>%s</option>', $key, $selected, $value);
+			$option .= sprintf('<option value="%s"%s>[%02d] %s</option>', $key, $selected, $key, $value);
 		}
 		$select_sort = sprintf(	'<div class="%s">%s <select id="%s" name="%s" onchange="%s">%s</select></div>', 
 														self::request_sub_action, 
@@ -616,6 +626,76 @@ class kitBackend {
 				$this->setError(sprintf('[%s - %s] %s', __METHOD__, __LINE__, $dbContact->getError()));
 				return false;
 			}
+			break;
+		case self::action_list_locked:
+			// gesperrte Eintraege anzeigen
+			$SQL = sprintf(	"SELECT %s.%s,%s,%s,%s,%s,%s,%s,%s,%s FROM %s WHERE %s='%s'", 
+											$dbContact->getTableName(),
+											dbKITcontact::field_id,
+											dbKITcontact::field_person_last_name,
+											dbKITcontact::field_person_first_name,
+											dbKITcontact::field_company_name,
+											dbKITcontact::field_address_standard,
+											dbKITcontact::field_email,
+											dbKITcontact::field_email_standard,
+											dbKITcontact::field_phone,
+											dbKITcontact::field_phone_standard,
+											$dbContact->getTableName(),
+											dbKITcontact::field_status,
+											dbKITcontact::status_locked);
+			$contact_array = array();
+			if (!$dbContact->sqlExec($SQL, $contact_array)) {
+				$this->setError(sprintf('[%s - %s] %s', __METHOD__, __LINE__, $dbContact->getError()));
+				return false;
+			}
+			// E-Mail Adressen ermitteln und in ein Array schreiben
+			$email_array = array();
+			foreach ($contact_array as $contact) {
+				$e_array = explode(';', $contact[dbKITcontact::field_email]);
+				$e_item = explode('|', $e_array[$contact[dbKITcontact::field_email_standard]]);
+				$email_array[] = $e_item[1];
+			}
+			// Array sortieren
+			natcasesort($email_array);
+			$list_array = array();
+			foreach ($email_array as $id => $email) {
+				$list_array[] = $contact_array[$id];
+			}			
+			break;
+		case self::action_list_deleted:
+			// geloeschte Eintraege anzeigen
+			$SQL = sprintf(	"SELECT %s.%s,%s,%s,%s,%s,%s,%s,%s,%s FROM %s WHERE %s='%s'", 
+											$dbContact->getTableName(),
+											dbKITcontact::field_id,
+											dbKITcontact::field_person_last_name,
+											dbKITcontact::field_person_first_name,
+											dbKITcontact::field_company_name,
+											dbKITcontact::field_address_standard,
+											dbKITcontact::field_email,
+											dbKITcontact::field_email_standard,
+											dbKITcontact::field_phone,
+											dbKITcontact::field_phone_standard,
+											$dbContact->getTableName(),
+											dbKITcontact::field_status,
+											dbKITcontact::status_deleted);
+			$contact_array = array();
+			if (!$dbContact->sqlExec($SQL, $contact_array)) {
+				$this->setError(sprintf('[%s - %s] %s', __METHOD__, __LINE__, $dbContact->getError()));
+				return false;
+			}
+			// E-Mail Adressen ermitteln und in ein Array schreiben
+			$email_array = array();
+			foreach ($contact_array as $contact) {
+				$e_array = explode(';', $contact[dbKITcontact::field_email]);
+				$e_item = explode('|', $e_array[$contact[dbKITcontact::field_email_standard]]);
+				$email_array[] = $e_item[1];
+			}
+			// Array sortieren
+			natcasesort($email_array);
+			$list_array = array();
+			foreach ($email_array as $id => $email) {
+				$list_array[] = $contact_array[$id];
+			}			
 			break;
 		case self::action_list_unsorted:	
 		default:

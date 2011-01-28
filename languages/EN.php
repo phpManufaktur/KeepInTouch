@@ -159,6 +159,7 @@ define('kit_desc_cfg_register_data_dlg',					'Dialog, der den Besuchern die Verw
 define('kit_desc_cfg_register_dlg',								'Dialog, der aufgerufen wird, wenn sich Besucher registrieren oder einen Newsletter bestellen möchten');
 define('kit_desc_cfg_register_dlg_unsubscribe',		'Dialog, der aufgerufen wird, wenn sich ein Abonnent von einem Newsletter abmelden möchte');
 define('kit_desc_cfg_session_id',									'ID zur eindeutigen Kennzeichnung von Session Variablen die von KeepInTouch verwendet werden.');
+define('kit_desc_cfg_sort_contact_list',					'Voreinstellung für die Sortierung der Kontakt Liste: 0=unsortiert, 1=E-Mail, 2=Firma, 3=Nachname, 4=Rufnummer, 5=Stadt, 6=Straße, 7=Vorname'); 
 define('kit_desc_cfg_use_captcha', 								'Legen Sie fest, ob die Dialoge im Frontend CAPTCHA zum Schutz vor Spam verwenden sollen');
 define('kit_desc_cfg_use_custom_files',						'Falls gesetzt, können Sie individuell angepasste Templates und Sprachdateien verwenden. Den Dateien wird "custom." vorangestellt, z.B. "custom.DE.php", diese Dateien werden bei einem Update nicht überschrieben.');
 
@@ -264,6 +265,7 @@ define('kit_label_cfg_register_data_dlg',					'Benutzer, Datenverwalten');
 define('kit_label_cfg_register_dlg',							'Benutzer Registrierung');
 define('kit_label_cfg_register_dlg_unsubscribe',	'Benutzer, Newsletter Abmeldung');
 define('kit_label_cfg_session_id',								'Session Kennung');
+define('kit_label_cfg_sort_contact_list',					'Kontakt Liste sortieren');
 define('kit_label_cfg_use_captcha',								'CAPTCHA verwenden');
 define('kit_label_cfg_use_custom_files',					'Angepasste Dateien zulassen');
 define('kit_label_checksum',											'Prüfsumme');
@@ -346,9 +348,11 @@ define('kit_label_value',													'Value');
 
 define('kit_list_sort_city',											'City');
 define('kit_list_sort_company',										'Company');
+define('kit_list_sort_deleted',										'gelöschte Einträge');
 define('kit_list_sort_email',											'E-Mail');
 define('kit_list_sort_firstname',									'First Name');
 define('kit_list_sort_lastname',									'Last Name');
+define('kit_list_sort_locked',										'Gesperrte Einträge');
 define('kit_list_sort_phone',											'Telephone');
 define('kit_list_sort_street',										'Street');
 define('kit_list_sort_unsorted',									'- unsorted -');
