@@ -328,7 +328,11 @@ textarea[name=mail_text] {
   height:300px;
 }
 .sub {
-  margin: 20px 0;
+  margin: 20px 0 0 0;
+}
+.pg {
+  margin: 5px 0 10px 0;
+  text-align:right;
 }
 .flip tr {
   background-color: #ffffdd;

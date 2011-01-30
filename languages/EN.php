@@ -149,6 +149,7 @@ define('kit_desc_cfg_google_maps_api_key',				'For the use and announcement of t
 define('kit_desc_cfg_kit_request_link',						'<b>kit.php</b> nimmt alle Anfragen entgegen, gibt Daten zurück oder ruft Dialoge auf. Die Datei befindet sich im Verzeichnis /modules/kit, sie kann aber auch an eine andere Stelle kopiert werden, z.B. in das Root-Verzeichnis');
 define('kit_desc_cfg_kit_response_page', 					'KIT benötigt für die Anzeige von Dialogen und Hinweisen eine eigene Seite');
 define('kit_desc_cfg_license_key',                'Um KeepInTouch in vollem Umfang nutzen zu können benötigen Sie einen Lizenzschlüssel, dieser wird hier gesichert');
+define('kit_desc_cfg_limit_contact_list',					'Legen Sie fest, wieviele Einträge in der Kontaktliste pro Seite angezeigt werden sollen.');
 define('kit_desc_cfg_max_invalid_login',					'Maximale Anzahl von fehlerhaften Login Versuchen von Anwendern, bevor das Konto gesperrt wird.');
 define('kit_desc_cfg_nl_adjust_register',         'Gleicht beim Aufruf des Newsletter Dialog die Tabelle kit_register mit kit_contact ab (Verwenden Sie diese Einstellung nur nach Aufforderung durch den Support!).');
 define('kit_desc_cfg_nl_max_package_size',        'Legt die max. Anzahl von Adressaten pro Paket während des Newsletterversand fest. Die einzelnen Pakete werden von einem Cronjob nach und nach abgearbeitet, der höchste zulässige Wert ist 100.');
@@ -255,6 +256,7 @@ define('kit_label_cfg_google_maps_api_key',				'Google Maps API Key');
 define('kit_label_cfg_kit_request_link',					'KIT Request Link');
 define('kit_label_cfg_kit_reponse_page',					'KIT Antwortseite');
 define('kit_label_cfg_license_key',               'Lizenzschlüssel');
+define('kit_label_cfg_limit_contact_list',				'max. Einträge Kontaktliste');
 define('kit_label_cfg_max_invalid_login',					'Maximale Loginversuche');
 define('kit_label_cfg_nl_adjust_register',        'kit_register abgleichen');
 define('kit_label_cfg_nl_max_package_size',       'Max. Paketgröße');

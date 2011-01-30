@@ -3,8 +3,10 @@ KeepInTouch - Contact management for WebsiteBaker
 http://phpManufaktur.de - info@phpManufaktur.de
 
 Release 0.31
-xxxx-xx-xx
+2011-01-30
 - added: option for config the default sorting of the contact list
+- added: additional filters for sorting the contact list
+- added: splitting the contact list in multiple pages, size of pages can be set by options
 
 Release 0.30
 2011-01-19

@@ -60,6 +60,10 @@ class kitBackend {
 	const request_basket_add				= 'basadd';
 	const request_cfg_tab						= 'ctab';
 	const request_import						= 'imp';
+	const request_last_action				= 'lact';
+	const request_limit_start				= 'lims';
+	const request_limit_end					= 'lime';
+	const request_page							= 'pg';
 	
 	const action_default						= 'def';
 	const action_help								= 'hlp';
@@ -404,8 +408,22 @@ class kitBackend {
 		$form_name = 'contact_list';
 		(isset($_REQUEST[self::request_sub_action])) ? $sub_action = $_REQUEST[self::request_sub_action] : $sub_action = self::action_list_unsorted;
 		// wenn Liste nicht sortiert ist, pruefen ob eine Sortierung ueber die Konfiguration vorgegeben ist
-		if ($sub_action == self::action_list_unsorted) {
+		if (!isset($_REQUEST[self::request_sub_action])) {
 			$sub_action = $dbCfg->getValue(dbKITcfg::cfgSortContactList);
+		}
+		// letzte Aktion
+		isset($_REQUEST[self::request_last_action]) ? $last_action = $_REQUEST[self::request_last_action] : $last_action = $sub_action;
+		
+		// max. Eintraege pro Seite
+		$max_entries = $dbCfg->getValue(dbKITcfg::cfgLimitContactList);
+		
+		if ($last_action != $sub_action) {
+			// Filter geaendert, Seiteneinstellungen zuruecksetzen!
+			$actual_page = 1;
+		}
+		else {
+			// Seite
+			(isset($_REQUEST[self::request_page])) ? $actual_page = $_REQUEST[self::request_page] : $actual_page = 1;
 		}
 		// Sortierauswahl anzeigen
 		$option = '';
@@ -481,7 +499,7 @@ class kitBackend {
 			}
 			break;
 		case self::action_list_email:
-			// Liste mit E-Mail Adressen auslesen
+			// Liste mit E-Mail Adressen auslesen			
 			$SQL = sprintf(	"SELECT %s.%s,%s,%s,%s,%s,%s,%s,%s,%s FROM %s WHERE %s!='%s' AND %s!=''", 
 											$dbContact->getTableName(),
 											dbKITcontact::field_id,
@@ -722,6 +740,53 @@ class kitBackend {
 			break; 
 		endswitch;
 		
+		// Liste aufteilen und nur Ausschnitt anzeigen
+		$list_entries = count($list_array);
+		$max_pages = ceil($list_entries/$max_entries);
+		$offset = ($actual_page*$max_entries)-$max_entries;
+		$length = $max_entries-1; 
+		$list_array = array_slice($list_array, $offset, $length, true);
+			
+		$start_page_min = $actual_page-3;
+		if ($start_page_min < 1) $start_page_min = 1;
+		$start_page_max = $actual_page+3;
+		if ($start_page_max > $max_pages) $start_page_max = $max_pages; 
+		
+		$ps_link = sprintf(	'%s&%s=%s&%s=%s&%s=', 
+												$this->page_link, 
+												self::request_action, 
+												self::action_list,
+												self::request_sub_action,
+												$sub_action,
+												self::request_page);
+    // Sprung zur ersten Seite												
+		$ps = sprintf('<a href="%s%d">&laquo;&nbsp;&nbsp;</a>', $ps_link, 1);
+		if ($start_page_min > 1) $ps .= '...&nbsp;&nbsp;';
+		// aktuelle und umschliessende Seiten zur Auswahl anzeigen
+		for ($i=$start_page_min; $i < $start_page_max+1; $i++) {
+			if ($i != $start_page_min) $ps .= ', ';
+			if ($i == $actual_page) {
+				$ps .= sprintf('<b>%d</b>', $i);
+			}
+			else {
+				$ps .= sprintf('<a href="%s%d">%d</a>', $ps_link, $i, $i);
+			}
+		}
+		// letzte Seiten anzeigen
+		if ($i < $max_pages) {
+			$end_page_start = $max_pages-2;
+			if ($end_page_start <= $start_page_max) $end_page_start = $start_page_max+1;
+			($end_page_start > $start_page_max+1) ?	$ps .= '  ...  ' : $ps .= ', ';
+			for ($x=$end_page_start; $x < $max_pages+1; $x++) {
+				if ($x != $end_page_start) $ps .= ', ';
+				$ps .= sprintf('<a href="%s%d">%d</a>', $ps_link, $x, $x);
+			}	
+		}
+		// Sprung zur letzten Seite
+		$ps .= sprintf('<a href="%s%d">&nbsp;&nbsp;&raquo;', $ps_link, $max_pages);
+		
+		$page_select = sprintf('<div class="%s">%s</div>', self::request_page, $ps);
+		
 		$row = new Dwoo_Template_File($this->template_path.'backend.contact.list.row.htt');
 		$rows = '';
 		$flipflop = true;
@@ -811,9 +876,12 @@ class kitBackend {
 			'formaction'				=> $this->page_link,
 			'action_name'				=> self::request_action,
 			'action_value'			=> self::action_list,
+			'last_action_name'	=> self::request_last_action,
+			'last_action_value'	=> $sub_action,
 			'header'						=> kit_header_contact_list,
 			'intro'							=> $intro,
 			'list_sort'					=> $select_sort,
+			'page_select'				=> $page_select,
 			'header_select'			=> '',
 			'header_edit'				=> '',
 			'header_lastname'		=> kit_label_person_last_name,

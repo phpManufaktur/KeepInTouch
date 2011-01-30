@@ -82,6 +82,7 @@ class dbKITcfg extends dbConnectLE {
   const cfgCronjobKey				= 'cfgCronjobKey';
   const cfgSessionID				= 'cfgSessionID';
   const cfgSortContactList	= 'cfgSortContactList';
+  const cfgLimitContactList	= 'cfgLimitContactList';
 
   public $config_array = array(
   	array('kit_label_cfg_google_maps_api_key', self::cfgGoogleMapsAPIkey, self::type_string, '', 'kit_desc_cfg_google_maps_api_key'),
@@ -97,7 +98,8 @@ class dbKITcfg extends dbConnectLE {
   	array('kit_label_cfg_cronjob_key', self::cfgCronjobKey, self::type_string, '', 'kit_desc_cfg_cronjob_key'),
   	array('kit_label_cfg_register_dlg_unsubscribe', self::cfgRegisterDlgUSUB, self::type_string, 'dialog_unsubscribe', 'kit_desc_cfg_register_dlg_unsubscribe'),
   	array('kit_label_cfg_session_id', self::cfgSessionID, self::type_string, 'kit7543_', 'kit_desc_cfg_session_id'),
-  	array('kit_label_cfg_sort_contact_list', self::cfgSortContactList, self::type_integer, '0', 'kit_desc_cfg_sort_contact_list')
+  	array('kit_label_cfg_sort_contact_list', self::cfgSortContactList, self::type_integer, '0', 'kit_desc_cfg_sort_contact_list'),
+  	array('kit_label_cfg_limit_contact_list', self::cfgLimitContactList, self::type_integer, '50', 'kit_desc_cfg_limit_contact_list')
   );  
   
   public function __construct($createTables = false) {

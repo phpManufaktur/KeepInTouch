@@ -2,9 +2,11 @@
 <div class="contact_list">
   <form name="{$form_name}" action="{$form_action}" method="post">
     <input type="hidden" name="{$action_name}" value="{$action_value}" />
+    <input type="hidden" name="{$last_action_name}" value="{$last_action_value}" />
     <h2>{$header}</h2>
     {$intro|default: ''}
     {$list_sort|default: ''}
+    {$page_select|default: ''}
     <table width="99%">
       <colgroup>
         <col width="2%" />
@@ -34,5 +36,6 @@
       </tr>
       {$rows}
     </table>
+    {$page_select|default: ''}
   </form>
 </div>
