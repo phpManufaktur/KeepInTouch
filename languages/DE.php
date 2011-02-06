@@ -145,7 +145,7 @@ define('kit_country_undefined',										'');
 define('kit_desc_cfg_add_app_tab',								'Zusätzliche TAB\'s einfügen, um einfach zu anderen Add-ons wechseln zu können. TAB\'s mit Komma trennen, Aufbau BEZEICHNER|URL');
 define('kit_desc_cfg_cronjob_key',                'Um zu verhindern, dass Cronjobs durch einen einfachen Aufruf der <b>cronjob.php</b> ausgeführt werden, muss der angegebene Schlüssel als Parameter übergeben werden. Der Aufruf der Datei lautet <b>cronjob.php?key=<i>SCHLÜSSEL</i></b>.');
 define('kit_desc_cfg_developer_mode',							'Ermöglicht dem Programmierer das Hinzufügen von Konfigurationsparametern.');
-define('kit_desc_cfg_google_maps_api_key',				'Für die Verwendung und Anzeige der Karten benötigen Sie einen Google Maps API Key.');
+define('kit_desc_cfg_google_maps_api_key',				'Für die Verwendung und Anzeige der Karten benötigen Sie einen <a href="http://code.google.com/intl/de-DE/apis/maps/signup.html" target="_blank">Google Maps API Key</a>.');
 define('kit_desc_cfg_kit_request_link',						'<b>kit.php</b> nimmt alle Anfragen entgegen, gibt Daten zurück oder ruft Dialoge auf. Die Datei befindet sich im Verzeichnis /modules/kit, sie kann aber auch an eine andere Stelle kopiert werden, z.B. in das Root-Verzeichnis');
 define('kit_desc_cfg_kit_response_page', 					'KIT benötigt für die Anzeige von Dialogen und Hinweisen eine eigene Seite');
 define('kit_desc_cfg_license_key',                'Um KeepInTouch in vollem Umfang nutzen zu können benötigen Sie einen Lizenzschlüssel, dieser wird hier gesichert');

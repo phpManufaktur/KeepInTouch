@@ -2,6 +2,11 @@ KeepInTouch - Contact management for WebsiteBaker
 (c) 2010 by phpManufaktur, Berlin (Germany)
 http://phpManufaktur.de - info@phpManufaktur.de
 
+Release 0.32
+xxxx-xx-xx
+- added: link for Google Maps API key
+- fixed: problem checking empty email field in class.contact.php
+
 Release 0.31
 2011-01-30
 - added: option for config the default sorting of the contact list

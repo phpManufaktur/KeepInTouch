@@ -2042,28 +2042,7 @@ class kitBackend {
 		 * Check Categories
 		 * - nothing to do ... -
 		 */
-		
-/*		
-		$SQL = sprintf(	"UPDATE %s SET %s='%s', %s='%s', %s='%s' WHERE %s='%s' AND %s='%s' AND %s!='%s'",
-										$dbAccount->getTableName(),
-										dbKITregister::field_newsletter,
-										$this->contact_array[dbKITcontact::field_newsletter],
-										dbKITregister::field_update_by,
-										$tools->getDisplayName(),
-										dbKITregister::field_update_when,
-										date('Y-m-d H:i:s'),
-										dbKITregister::field_contact_id,
-										$this->contact_array[dbKITcontact::field_id],
-										dbKITregister::field_status,
-										dbKITregister::status_active,
-										dbKITregister::field_newsletter,
-										$this->contact_array[dbKITcontact::field_newsletter]);
-		$result = array();
-		if (!$dbAccount->sqlExec($SQL, $result)) {
-			$this->setError(sprintf('[%s - %s] %s', __METHOD__, __LINE__, $dbAccount->getError()));
-			return false;
-		}
-*/		
+
 		/**
 		 * Check Identifier 
 		 */
@@ -2526,27 +2505,19 @@ class kitBackend {
 				$this->setError(sprintf('[%s - %s] %s', __METHOD__, __LINE__, $dbMassmailGroups->getError()));
 				return false;
 			}
+			
 			$option = '';
 			foreach ($group_array as $group) {
 				$option .= sprintf('<option value="%s">%s</option>', $group[dbMassmailGroups::field_group_id], utf8_decode($group[dbMassmailGroups::field_group_name]));
 			}
 			$select_massmail_group = sprintf('<select name="%s">%s</select>', dbMassmailGroups::field_group_name, $option);
 			
-			/*
-			$option = '';
-			foreach ($dbContact->category_array as $key => $value) {
-				$option .= sprintf('<option value="%s">%s</option>', $key, $value);
-			}
-			$select_kit_category = sprintf('<select name="%s">%s</select>', dbKITcontact::field_category, $option);
-			*/
-			
 			$option = '';
 			foreach ($dbContact->newsletter_array as $key => $value) {
 				$option .= sprintf('<option value="%s">%s</option>', $key, $value);
 			}
 			$select_kit_newsletter = sprintf('<select name="%s">%s</select>', dbKITcontact::field_newsletter, $option);
-			
-			
+
 			$option = '';
 			foreach ($dbContact->email_array as $key => $value) {
 				$option .= sprintf('<option value="%s">%s</option>', $key, $value);
@@ -2701,6 +2672,12 @@ class kitBackend {
 			$result = $this->saveConfigArray();
 			break;
 		case self::action_cfg_tab_import:
+			$kitImportDlg = new kitImportDialog();
+			$result = $kitImportDlg->action();
+			break;
+			/*
+			 * Massmail Import wird nicht laenger verwendet!
+			 * 
 			(isset($_REQUEST[self::request_import])) ? $import = $_REQUEST[self::request_import] : $import = '';
 			switch ($import):
 			case self::action_import_massmail:
@@ -2711,6 +2688,7 @@ class kitBackend {
 				break;
 			endswitch;
 			break;
+			*/
 		case self::action_cfg_tab_provider:
 			$result = $this->dlgConfigProvider();	
 			break; 

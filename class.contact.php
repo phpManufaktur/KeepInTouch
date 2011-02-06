@@ -395,6 +395,7 @@ class dbKITcontact extends dbConnectLE {
 		(!empty($addr[dbKITcontact::field_email_standard])) ? $standard = $addr[dbKITcontact::field_email_standard] : $standard = 0; 
 		$email_array = explode(';', $addr[dbKITcontact::field_email]);
 		if (count($email_array) < 1) return false;
+		if (strpos($email_array[$standard], '|') === false) return false;
 		$standard_mail = explode('|', $email_array[$standard]);
 		return $standard_mail[1];		
 	} // getStandardEMailByID()
