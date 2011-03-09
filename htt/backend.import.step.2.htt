@@ -1,0 +1,38 @@
+<!-- $Id$ -->
+<div class="kit_import">
+  <form name="{$form_name}" action="{$form_action}" method="post" enctype="multipart/form-data">
+    <input type="hidden" name="{$action_name}" value="{$action_value}" />
+    <input type="hidden" name="{$count_name}" value="{$count_value}" />
+    <input type="hidden" name="{$id_name}" value="{$id_value}" />
+    <table>
+      <colgroup>
+        <col width="*" />
+        <col width="200" />
+      </colgroup>
+      <tr>
+        <td class="help_intro">
+          <h2>{$header}</h2>
+          {$intro|default:''}
+        </td>
+        <td class="help_help">
+          <div class="help_help_txt">{$help|default:'Oooops, keine Hilfe verfügbar...'}</div>
+        </td>
+      </tr>
+    </table>
+    <table width="99%">
+      <colgroup>
+        <col width="30%" />
+        <col width="30%" />
+        <col width="40%" />
+      </colgroup>
+      {$items}
+      <tr><td colspan="3">&nbsp;</td></tr>
+      <tr>
+        <td colspan="3">
+          <input type="submit" value="{$btn_next_step}" />&nbsp;
+          <input type="button" value="{$btn_abort}" onclick="javascript: window.location = '{$abort_location}'; return false;" />
+        </td>
+      </tr>
+    </table>
+  </form>
+</div>

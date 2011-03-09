@@ -30,6 +30,9 @@ global $dbCountries;
 global $dbContactArrayCfg;
 global $dbContactAddress;
 global $dbContact;
+global $dbWBusers;
+global $dbWBgroups;
+global $dbCfg;
 
 if (!is_object($tools)) $tools = new kitTools();
 if (!is_object($dbRegister)) $dbRegister = new dbKITregister();
@@ -39,6 +42,8 @@ if (!is_object($dbMemos)) $dbMemos = new dbKITmemos();
 if (!is_object($dbCountries)) $dbCountries = new dbKITcountries();
 if (!is_object($dbContactArrayCfg)) $dbContactArrayCfg = new dbKITcontactArrayCfg();
 if (!is_object($dbContactAddress)) $dbContactAddress = new dbKITcontactAddress();
+if (!is_object($dbWBusers)) $dbWBusers = new dbWBusers();
+if (!is_object($dbWBgroups)) $dbWBgroups = new dbWBgroups();
 if (!is_object($dbContact)) $dbContact = new dbKITcontact();
 
 /**
@@ -257,6 +262,8 @@ class dbKITcontact extends dbConnectLE {
 		}
 		// init arrays
 		$this->initArrays();
+		// balance WB users...
+		$this->checkWBusers();
 	} // __construct
 	
 	
@@ -487,6 +494,166 @@ class dbKITcontact extends dbConnectLE {
 		$address = $address[0];
 		return true;
 	} // getAddressByID()
+	
+	/**
+	 * Connect to WB users and balance Users with Contacts
+	 * @return BOOL
+	 */
+	public function checkWBusers() {
+		global $dbCfg;
+		global $dbWBusers;
+		global $dbRegister;
+		global $dbWBgroups;
+		global $tools;
+		
+		if ($dbCfg->getValue(dbKITcfg::cfgConnectWBusers)) {
+			$SQL = sprintf(	"SELECT %s.* FROM %s LEFT JOIN %s ON %s.%s = %s.%s WHERE %s.%s!='1' AND %s.%s='1' AND %s.%s IS NULL",
+											$dbWBusers->getTableName(),
+											$dbWBusers->getTableName(),
+											$dbRegister->getTableName(),
+											$dbWBusers->getTableName(),
+											dbWBusers::field_email,
+											$dbRegister->getTableName(),
+											dbKITregister::field_email,
+											$dbWBusers->getTableName(),
+											dbWBusers::field_group_id,
+											$dbWBusers->getTableName(),
+											dbWBusers::field_active,
+											$dbRegister->getTableName(),
+											dbKITregister::field_email);
+			if (!$dbRegister->sqlExec($SQL, $users)) {
+				$this->setError(sprintf('[%s - %s] %s', __METHOD__, __LINE__, $dbRegister->getError()));
+				return false;
+			}
+			
+			foreach ($users as $user) {
+				// WB User in KIT einfuegen...
+				$data = array(
+					dbKITcontact::field_category							=> dbKITcontact::category_wb_user,
+					dbKITcontact::field_email									=> sprintf('%s|%s', dbKITcontact::email_business, strtolower($user[dbWBusers::field_email])),
+					dbKITcontact::field_email_standard				=> 0,
+					dbKITcontact::field_person_title					=> dbKITcontact::person_title_mister,
+					dbKITcontact::field_person_title_academic	=> dbKITcontact::person_title_academic_none,
+					dbKITcontact::field_company_title					=> dbKITcontact::company_title_none,
+					dbKITcontact::field_contact_identifier		=> $user[dbWBusers::field_display_name],
+					dbKITcontact::field_update_by							=> 'SYSTEM',
+					dbKITcontact::field_update_when						=> date('Y-m-d H:i:s')
+				);
+				$id = -1;
+				if (!$this->sqlInsertRecord($data, $id)) {
+					$this->setError(sprintf('[%s - %s] %s', __METHOD__, __LINE__, $this->getError()));
+					return false;
+				}
+				$this->addSystemNotice($id, sprintf(kit_protocol_import_wb_user, $user[dbWBusers::field_display_name]));
+				// WB User in REGISTER einfuegen
+				$data = array(
+					dbKITregister::field_contact_id						=> $id,
+					dbKITregister::field_email								=> strtolower($user[dbWBusers::field_email]),
+					dbKITregister::field_username							=> $user[dbWBusers::field_username],
+					dbKITregister::field_password							=> $user[dbWBusers::field_password],
+					dbKITregister::field_status								=> dbKITregister::status_active,
+					dbKITregister::field_register_date				=> date('Y-m-d H:i:s'),
+					dbKITregister::field_register_confirmed		=> date('Y-m-d H:i:s'),
+					dbKITregister::field_register_key					=> $tools->createGUID(),
+					dbKITregister::field_update_by						=> 'SYSTEM',
+					dbKITregister::field_update_when					=> date('Y-m-d H:i:s')
+				);
+				if (!$dbRegister->sqlInsertRecord($data)) {
+					$this->setError(sprintf('[%s - %s] %s', __METHOD__, __LINE__, $dbRegister->getError()));
+					return false;
+				}			
+			}
+			
+			$SQL = sprintf(	"SELECT * FROM %s WHERE %s='%s' AND ((%s LIKE '%s') OR (%s LIKE '%s,%%') OR (%s LIKE '%%,%s') OR (%s LIKE '%%%s,%%'))",
+											$this->getTableName(),
+											dbKITcontact::field_status,
+											dbKITcontact::status_active,
+											dbKITcontact::field_category,
+											dbKITcontact::category_wb_user,
+											dbKITcontact::field_category,
+											dbKITcontact::category_wb_user,
+											dbKITcontact::field_category,
+											dbKITcontact::category_wb_user,
+											dbKITcontact::field_category,
+											dbKITcontact::category_wb_user );
+			if (!$this->sqlExec($SQL, $contacts)) {
+				$this->setError(sprintf('[%s - %s] %s', __METHOD__, ____LINE__, $this->getError()));
+				return false;
+			}
+			
+			// pruefen ob eine WB Gruppe fuer KIT existiert 
+			$where = array(dbWBgroups::field_name => dbWBgroups::kitWBgoup);
+			$groups = array();
+			if (!$dbWBgroups->sqlSelectRecord($where, $groups)) {
+				$this->setError(sprintf('[%s - %s] %s', __METHOD__, __LINE__, $dbWBgroups->getError()));
+				return false;
+			}
+			if (count($groups) < 1) {
+				// Gruppe existiert noch nicht, anlegen!
+				$data = array(dbWBgroups::field_name => dbWBgroups::kitWBgoup);
+				$kit_group_id = -1;
+				if (!$dbWBgroups->sqlInsertRecord($data, $kit_group_id)) {
+					$this->setError(sprintf('[%s - %s] %s', __METHOD__, __LINE__, $dbWBgroups->getError()));
+					return false;
+				}
+			}
+			else {
+				$kit_group_id = $groups[0][dbWBgroups::field_group_id];
+			}
+			
+			foreach ($contacts as $contact) {
+				if (!empty($contact[dbKITcontact::field_email])) {
+					$emails = explode(',', $contact[dbKITcontact::field_email]);
+					if (strpos($emails[0], '|') !== false) {
+						list($type, $email) = explode('|', $emails[0]);
+						$is_user = false;
+						foreach ($users as $user) {
+							if (strtolower($user[dbWBusers::field_email]) == strtolower($email)) {
+								$is_user = true;
+								break;
+							}
+						}
+						if (!$is_user) {
+							// vorsichtshalber pruefen ob die E-Mail Adresse einem Admin gehoert...
+							$where = array(dbWBusers::field_email => $email);
+							$users = array();
+							if (!$dbWBusers->sqlSelectRecord($where, $users)) {
+								$this->setError(sprintf('[%s - %s] %s', __METHOD__, __LINE__, $dbWBusers->getError()));
+								return false;
+							}
+							if (count($users) == 0) {
+								// Datensatz anlegen
+								$register = array();
+								$where = array(dbKITregister::field_email => $email);
+								if (!$dbRegister->sqlSelectRecord($where, $register)) {
+									$this->setError(sprintf('[%s - %s] %s', __METHOD__, __LINE__, $dbRegister->getError()));
+									return false;
+								}
+								if (count($register) < 1) {
+									$this->setError(sprintf('[%s - %s] %s', __METHOD__, __LINE__, sprintf(kit_error_invalid_id, $email)));
+									return false;
+								}
+								$data = array(
+									dbWBusers::field_active 			=> 1,
+									dbWBusers::field_display_name => $contact[dbKITcontact::field_contact_identifier],
+									dbWBusers::field_email 				=> $email,
+									dbWBusers::field_group_id 		=> $kit_group_id,
+									dbWBusers::field_groups_id 		=> $kit_group_id,
+									dbWBusers::field_password			=> $register[0][dbKITregister::field_password],
+									dbWBusers::field_username			=> $email
+								);
+								if (!$dbWBusers->sqlInsertRecord($data)) {
+									$this->setError(sprintf('[%s - %s] %s', __METHOD__, __LINE__, $dbWBusers->getError()));
+									return false;
+								}
+							}
+						}
+					}
+				}
+			}
+		}
+		return true;
+	} // checkWBusers()
 	
 } // class dbKITcontact
 
@@ -1047,4 +1214,99 @@ class dbKITregister extends dbConnectLE {
 	
 	
 } // dbKITregister
+
+class dbWBusers extends dbConnectLE {
+	
+	const field_user_id								= 'user_id';
+	const field_group_id							= 'group_id';
+	const field_groups_id							= 'groups_id';
+	const field_active								= 'active';
+	const field_username							= 'username';
+	const field_password							= 'password';
+	const field_remember_key					= 'remember_key';
+	const field_last_reset						= 'last_reset';
+	const field_display_name					= 'display_name';
+	const field_email									= 'email';
+	const field_timezone							= 'timezone';
+	const field_date_format						= 'date_format';
+	const field_time_format						= 'time_format';
+	const field_language							= 'language';
+	const field_home_folder						= 'home_folder';
+	const field_login_when						= 'login_when';
+	const field_login_ip							= 'login_ip';
+	
+	const status_active								= 1;
+	const status_inactive							= 0;
+	
+	public function __construct() {
+		parent::__construct();
+		$this->setTableName('users');
+		$this->addFieldDefinition(self::field_user_id, "INT NOT NULL AUTO_INCREMENT", true);
+		$this->addFieldDefinition(self::field_group_id, "INT(11) NOT NULL DEFAULT '0'");
+		$this->addFieldDefinition(self::field_groups_id, "VARCHAR(255) NOT NULL DEFAULT '0'");
+		$this->addFieldDefinition(self::field_active, "INT(11) NOT NULL DEFAULT '0'");
+		$this->addFieldDefinition(self::field_username, "VARCHAR(255) NOT NULL DEFAULT ''");
+		$this->addFieldDefinition(self::field_password, "VARCHAR(255) NOT NULL DEFAULT ''");
+		$this->addFieldDefinition(self::field_remember_key, "VARCHAR(255) NOT NULL DEFAULT ''");
+		$this->addFieldDefinition(self::field_last_reset, "INT(11) NOT NULL DEFAULT '0'");
+		$this->addFieldDefinition(self::field_display_name, "VARCHAR(255) NOT NULL DEFAULT ''");
+		$this->addFieldDefinition(self::field_email, "TEXT NOT NULL DEFAULT ''");
+		$this->addFieldDefinition(self::field_timezone, "INT(11) NOT NULL DEFAULT ''");
+		$this->addFieldDefinition(self::field_date_format, "VARCHAR(255) NOT NULL DEFAULT ''");
+		$this->addFieldDefinition(self::field_time_format, "VARCHAR(255) NOT NULL DEFAULT ''");
+		$this->addFieldDefinition(self::field_language, "VARCHAR(5) NOT NULL DEFAULT ''");
+		$this->addFieldDefinition(self::field_home_folder, "TEXT NOT NULL DEFAULT ''");
+		$this->addFieldDefinition(self::field_login_when, "INT(11) NOT NULL DEFAULT '0'");
+		$this->addFieldDefinition(self::field_login_ip, "VARCHAR(15) NOT NULL DEFAULT ''");
+		// check field definitions
+		$this->checkFieldDefinitions();
+	} // __construct()
+	
+	public function sqlCreateTable() {
+		$this->setError('Function not implemented for this table!');
+		return false;
+	}
+	
+	public function sqlDeleteTable() {
+		$this->setError('Function not implemented for this table!');
+		return false;
+	}
+	
+} // class dbWBusers
+
+
+class dbWBgroups extends dbConnectLE {
+	
+	const field_group_id							= 'group_id';
+	const field_name									= 'name';
+	const field_system_permissions		= 'system_permissions';
+	const field_module_permissions		= 'module_permissions';
+	const field_template_permissions	= 'template_permissions';
+	
+	const kitWBgoup										= 'kitContact';
+	
+	public function __construct() {
+		parent::__construct();
+		$this->setTableName('groups');
+		$this->addFieldDefinition(self::field_group_id, "INT NOT NULL AUTO_INCREMENT", true);
+		$this->addFieldDefinition(self::field_name, "VARCHAR(255) NOT NULL DEFAULT ''");
+		$this->addFieldDefinition(self::field_system_permissions, "TEXT NOT NULL DEFAULT ''");
+		$this->addFieldDefinition(self::field_module_permissions, "TEXT NOT NULL DEFAULT ''");
+		$this->addFieldDefinition(self::field_template_permissions, "TEXT NOT NULL DEFAULT ''");
+		// check field definitions
+		$this->checkFieldDefinitions();
+	} // __construct()
+
+	public function sqlCreateTable() {
+		$this->setError('Function not implemented for this table!');
+		return false;
+	}
+	
+	public function sqlDeleteTable() {
+		$this->setError('Function not implemented for this table!');
+		return false;
+	}
+	
+} // class dbWBgroups
+
 ?>

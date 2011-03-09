@@ -34,7 +34,7 @@ else {
 
 // include language file
 if(!file_exists(WB_PATH .'/modules/'.basename(dirname(__FILE__)).'/languages/' .LANGUAGE .'.php')) {
-	require_once(WB_PATH .'/modules/'.basename(dirname(__FILE__)).'/languages/EN.php'); 
+	require_once(WB_PATH .'/modules/'.basename(dirname(__FILE__)).'/languages/DE.php'); 
 }
 else {
 	require_once(WB_PATH .'/modules/'.basename(dirname(__FILE__)).'/languages/' .LANGUAGE .'.php'); 
@@ -44,8 +44,8 @@ else {
 if (!class_exists('dbConnectLE')) require_once(WB_PATH.'/modules/dbconnect_le/include.php');
 if (!class_exists('Dwoo')) require_once(WB_PATH.'/modules/dwoo/include.php');
 require_once(WB_PATH.'/modules/'.basename(dirname(__FILE__)).'/class.tools.php');
-require_once(WB_PATH.'/modules/'.basename(dirname(__FILE__)).'/class.contact.php');
 require_once(WB_PATH.'/modules/'.basename(dirname(__FILE__)).'/class.config.php');
+require_once(WB_PATH.'/modules/'.basename(dirname(__FILE__)).'/class.contact.php');
 require_once(WB_PATH.'/framework/class.wb.php');
 require_once(WB_PATH.'/framework/class.admin.php');
 

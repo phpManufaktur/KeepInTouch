@@ -121,9 +121,10 @@ class kitBackend {
 	
 	private $tab_config_array = array(
 		self::action_cfg_tab_general	=> kit_tab_cfg_general,
+		self::action_cfg_tab_provider	=> kit_tab_cfg_provider,
 		self::action_cfg_tab_array		=> kit_tab_cfg_array,
-		self::action_cfg_tab_import		=> kit_tab_cfg_import,
-		self::action_cfg_tab_provider	=> kit_tab_cfg_provider
+		//self::action_cfg_tab_import		=> kit_tab_cfg_import,
+		//self::action_cfg_tab_export		=> kit_tab_cfg_export
 	);
 	
 	private $page_link 							= '';
@@ -706,7 +707,7 @@ class kitBackend {
 			foreach ($contact_array as $contact) {
 				$e_array = explode(';', $contact[dbKITcontact::field_email]);
 				$e_item = explode('|', $e_array[$contact[dbKITcontact::field_email_standard]]);
-				$email_array[] = $e_item[1];
+				if (isset($e_item[1])) $email_array[] = $e_item[1];
 			}
 			// Array sortieren
 			natcasesort($email_array);
@@ -1719,6 +1720,8 @@ class kitBackend {
 		global $tools;
 		global $dbProtocol;
 		global $dbContactAddress;
+		global $dbRegister;
+		global $dbWBusers;
 		
 		$message = $this->getMessage();
 		if ($this->contact_array[dbKITcontact::field_id] != -1) {
@@ -2042,7 +2045,23 @@ class kitBackend {
 		 * Check Categories
 		 * - nothing to do ... -
 		 */
-
+		if (!empty($old_data[dbKITcontact::field_category])) {
+			$new_cats = explode(',', $this->contact_array[dbKITcontact::field_category]);
+			$categories = explode(',', $old_data[dbKITcontact::field_category]);
+			if (!in_array(dbKITcontact::category_wb_user, $new_cats) && in_array(dbKITcontact::category_wb_user, $categories)) {
+				// Kontakt wurde aus der WB User Gruppe entfernt...
+				$emails = explode(',', $this->contact_array[dbKITcontact::field_email]);
+				list($type, $email) = explode('|', $emails[$this->contact_array[dbKITcontact::field_email_standard]]);
+				$where = array(dbWBusers::field_email => $email);
+				$data = array(dbWBusers::field_active => dbWBusers::status_inactive);
+				if (!$dbWBusers->sqlUpdateRecord($data, $where)) {
+					$this->setError(sprintf('[%s - %s] %s', __METHOD__, __LINE__, $dbWBusers->getError()));
+					return false;
+				}
+			}
+			
+		}
+		
 		/**
 		 * Check Identifier 
 		 */
@@ -2109,6 +2128,34 @@ class kitBackend {
 			}
 			$message .= kit_msg_protocol_updated;
 		} // check Protocol
+		
+		/*
+		 * STATUS
+		 */
+		if (isset($old_data[dbKITcontact::field_status]) && ($old_data[dbKITcontact::field_status] != $this->contact_array[dbKITcontact::field_status])) {
+			// Status hat sich geaendert - pruefen ob ein Eintrag in dbKITregister existiert!
+			$where = array(
+				dbKITregister::field_contact_id => $this->contact_array[dbKITcontact::field_id]
+			);
+			$reg = array();
+			if (!$dbRegister->sqlSelectRecord($where, $reg)) {
+				$this->setError(sprintf('[%s - %s] %s', __METHOD__, __LINE__, $dbRegister->getError()));
+				return false;
+			}
+			if (count($reg) > 0) {
+				// es existiert ein Datensatz, dbKITregister anpassen
+				$data = array(
+					dbKITregister::field_status				=> $this->contact_array[dbKITcontact::field_status],
+					dbKITregister::field_update_when 	=> date('Y-m-d H:i:s'),
+					dbKITregister::field_update_by		=> $tools->getDisplayName()
+				);
+				if (!$dbRegister->sqlUpdateRecord($data, $where)) {
+					$this->setError(sprintf('[%s - %s] %s', __METHOD__, __LINE__, $dbRegister->getError()));
+					return false;
+				}
+				$message .= kit_msg_register_status_updated;
+			}
+		}
 		
 		$this->setMessage($message);
 		return true;

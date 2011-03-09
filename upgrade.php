@@ -28,6 +28,7 @@ require_once(WB_PATH.'/modules/'.basename(dirname(__FILE__)).'/class.droplets.ph
 require_once(WB_PATH.'/modules/'.basename(dirname(__FILE__)).'/class.newsletter.php');
 require_once(WB_PATH.'/modules/'.basename(dirname(__FILE__)).'/class.cronjob.php');
 require_once(WB_PATH.'/modules/'.basename(dirname(__FILE__)).'/class.newsletter.link.php');
+require_once(WB_PATH.'/modules/'.basename(dirname(__FILE__)).'/class.import.php');
 
 global $admin;
 
@@ -155,6 +156,14 @@ if (!$dbNewsletterLinks->sqlTableExists()) {
 		$error .= sprintf('<p>[Upgrade] %s</p>', $dbNewsletterLinks->getError());
 	}
 }
+
+$dbImport = new dbKITimport();
+if (!$dbImport->sqlTableExists()) {
+	if (!$dbImport->sqlCreateTable()) {
+		$error .= sprintf('<p>[Upgrade] %s</p>', $dbImport->getError());
+	}
+}
+
 
 // Install Droplets
 $droplets = new checkDroplets();

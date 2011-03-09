@@ -46,6 +46,7 @@ define('kit_btn_import',													'Importieren');
 define('kit_btn_mail_bcc',												'BCC Empfänger:');
 define('kit_btn_mail_from',												'Von:');
 define('kit_btn_mail_to',													'An:');
+define('kit_btn_next_step',												'Nächster Schritt');
 define('kit_btn_no',															'Nein');
 define('kit_btn_ok',															'Übernehmen');
 define('kit_btn_preview',													'Vorschau');
@@ -143,6 +144,7 @@ define('kit_country_suisse',											'Schweiz');
 define('kit_country_undefined',										'');
 
 define('kit_desc_cfg_add_app_tab',								'Zusätzliche TAB\'s einfügen, um einfach zu anderen Add-ons wechseln zu können. TAB\'s mit Komma trennen, Aufbau BEZEICHNER|URL');
+define('kit_desc_cfg_connect_wb_users',						'Sie können KIT mit der WB Benutzerverwaltung verbinden. Wenn gesetzt, übernimmt KIT automatisch neu angelegte Benutzer und sperrt in KIT in der Benutzerverwaltung gesperrte oder gelöschte Benutzer. Kontakte, denen Sie in KIT die Kategorie <b>catWBUser</b> zuordnen werden in der WB Benutzerverwaltung mit der Gruppe <b>kitContact</b> angelegt, entfernen Sie die Zuordnung werden die Kontakte in der Benutzerverwaltung gesperrt. <i>Administratoren</i> können aus Sicherheitsgründen nicht mit KIT verbunden werden.');
 define('kit_desc_cfg_cronjob_key',                'Um zu verhindern, dass Cronjobs durch einen einfachen Aufruf der <b>cronjob.php</b> ausgeführt werden, muss der angegebene Schlüssel als Parameter übergeben werden. Der Aufruf der Datei lautet <b>cronjob.php?key=<i>SCHLÜSSEL</i></b>.');
 define('kit_desc_cfg_developer_mode',							'Ermöglicht dem Programmierer das Hinzufügen von Konfigurationsparametern.');
 define('kit_desc_cfg_google_maps_api_key',				'Für die Verwendung und Anzeige der Karten benötigen Sie einen <a href="http://code.google.com/intl/de-DE/apis/maps/signup.html" target="_blank">Google Maps API Key</a>.');
@@ -167,17 +169,22 @@ define('kit_desc_cfg_use_custom_files',						'Falls gesetzt, können Sie individ
 define('kit_error_blank_title',										'<p>Die Seite muss einen Titel enthalten!</p>');
 define('kit_error_cfg_id',												'<p>Der Konfigurationsdatensatz mit der <b>ID %05d</b> konnte nicht ausgelesen werden!</p>');
 define('kit_error_cfg_name',											'<p>Zu dem Bezeichner <b>%s</b> wurde kein Konfigurationsdatensatz gefunden!</p>');
+define('kit_error_create_dir',										'<p>Das Verzeichnis<br /><b>%s</b><br />konnte nicht angelegt werden!');
 define('kit_error_delete_access_file',						'<p>Die Zugriffsseite <b>%s</b> konnte nicht gelöscht werden!</p>');
 define('kit_error_dlg_missing',										'<p>Der angeforderte Dialog <b>%s</b> wurde nicht gefunden!</p>');
+define('kit_error_get_csv',												'<p>Fehler beim Einlesen der CSV Datei!</p>');
 define('kit_error_google_maps_api_key_missing',		'<p>Karte kann nicht angezeigt werden, es ist kein Google Maps API Key definiert!</p>');
 define('kit_error_import_massmail_grp_missing',		'<p>Die Tabelle mit den MassMail Gruppen wurde nicht gefunden!</p>');
 define('kit_error_import_massmail_missing_vars',	'<p>Es wurden nicht alle benötigten Variablen zum Import von Massmail Daten übergeben.</p>');
+define('kit_error_invalid_id',										'<p>Es wurde keine gültige ID übergeben!</p>');
 define('kit_error_item_id',												'<p>Der Datensatz mit der <b>ID %s</b> wurde nicht gefunden!</p>');
 define('kit_error_mail_init_settings',						'<p>Die WebsiteBaker Einstellungen für die Mailkonfiguration konnten nicht geladen werden.</p>');
 define('kit_error_map_address_invalid',						'<p>Die Adresse <b>%s</b> wurde nicht gefunden!</p>');
+define('kit_error_move_csv_file',									'<p>Die temporäre Datei <b>%s</b> konnte nicht in das Zielverzeichnis verschoben werden!</p>');
 define('kit_error_newsletter_tpl_id_invalid',			'<p>Das Newsletter Template mit der <b>ID %03d</b> wurde nicht gefunden!</p>');
 define('kit_error_no_provider_defined',						'<p>Sie haben noch keinen Dienstleister definiert. Legen Sie diesen zunächst über "Einstellungen" und "Dienstleister" fest.</p>');
 define('kit_error_insufficient_permissions',			'<p>Sie haben keine Berechtigung, diese Seite zu ändern!</p>');
+define('kit_error_open_file',											'<p>Die Datei <b>%s</b> konnte nicht geöffnet werden!</p>');
 define('kit_error_page_exists',										'<p>Die Seite mit der Grundbezeichnung <b>%s</b> existiert bereits!</p>');
 define('kit_error_page_not_found',								'<p>Die Seite mit der PAGE_ID <b>%d</b> wurde nicht gefunden!</p>');
 define('kit_error_preview_id_invalid',						'<p>Die Preview mit der <b>ID %05d</b> wurde nicht gefunden!');
@@ -210,6 +217,8 @@ define('kit_header_contact_list',									'Kontaktliste');
 define('kit_header_email',												'E-Mail versenden');
 define('kit_header_error',												'KeepInTouch (KIT) Fehlermeldung');
 define('kit_header_help_documentation',						'Hilfe & Dokumentation');
+define('kit_header_import_step_1',								'Kontaktdaten importieren');
+define('kit_header_import_step_2',								'Importierte Felder zuordnen');
 define('kit_header_nl_cronjob_protocol_list',     'Ausgeführte Jobs');
 define('kit_header_nl_cronjob_active_list',       'Noch nicht ausgeführte Jobs');
 define('kit_header_preview',											'Vorschau');
@@ -217,7 +226,41 @@ define('kit_header_protocol',											'Protokoll');
 define('kit_header_provider',											'Dienstleister');
 define('kit_header_template',											'Templates bearbeiten');
 
+define('kit_help_import_step_1',									'Nutzen Sie die online Dokumentation um mehr über den <a href="http://phpmanufaktur.de/kit/help/import" target="_blank">Datenimport von KIT</a> zu erfahren.');
+define('kit_help_import_step_2',  								'Nutzen Sie die online Dokumentation um mehr über den <a href="http://phpmanufaktur.de/kit/help/import" target="_blank">Datenimport von KIT</a> zu erfahren.');
+
 define('kit_hint_error_msg',											'<p>Wenn Sie diese Fehlermeldung mehrfach angezeigt bekommen oder vermuten, dass es sich hierbei um eine Fehlfunktion handelt, nehmen Sie bitte Verbindung mit dem Systemadministrator auf!</p>');
+
+define('kit_imp_con_pers_title',									'Person: Anrede (Herr, Frau)');
+define('kit_imp_con_pers_title_academic',					'Person: Titel (Dr., Prof.)');
+define('kit_imp_con_pers_first_name',							'Person: Vorname(n)');
+define('kit_imp_con_pers_last_name',							'Person: Nachname');
+define('kit_imp_con_pers_function',								'Person: Funktion, Tätigkeit');
+define('kit_imp_con_pers_addr_street',						'Person: Straße');
+define('kit_imp_con_pers_addr_zip',								'Person: Postleitzahl');
+define('kit_imp_con_pers_addr_city',							'Person: Stadt');
+define('kit_imp_con_pers_addr_country',						'Person: Land');
+define('kit_imp_con_pers_email_1',								'Person: E-Mail 1');
+define('kit_imp_con_pers_email_2',								'Person: E-Mail 2');
+define('kit_imp_con_pers_phone',									'Person: Telefon');
+define('kit_imp_con_pers_handy',									'Person: Handy');
+define('kit_imp_con_pers_fax',										'Person: Fax');
+
+define('kit_imp_con_comp_name',										'Firma: Name');
+define('kit_imp_con_comp_department',							'Firma: Abteilung');
+define('kit_imp_con_comp_additional',							'Firma: Adresszusatz');
+define('kit_imp_con_comp_addr_street',						'Firma: Straße');
+define('kit_imp_con_comp_addr_zip',								'Firma: Postleitzahl');
+define('kit_imp_con_comp_addr_city',							'Firma: Stadt');
+define('kit_imp_con_comp_addr_country',						'Firma: Land');
+define('kit_imp_con_comp_email_1',								'Firma: E-Mail 1');
+define('kit_imp_con_comp_email_2',								'Firma: E-Mail 2');
+define('kit_imp_con_comp_phone',									'Firma: Telefon');
+define('kit_imp_con_comp_handy',									'Firma: Handy');
+define('kit_imp_con_comp_fax',										'Firma: Fax');
+
+define('kit_imp_con_www',													'Kontakt: Internet');
+define('kit_imp_no_selection',										'- nicht zugeordnet -');
 
 define('kit_info',																'<a href="http://phpmanufaktur.de/kit" target="_blank">KeepInTouch (KIT)</a>, Release %s - Open Source CRM for WebsiteBaker - (c) 2010 by <a href="http://phpmanufaktur.de" target="_blank">phpManufaktur</a>');
 
@@ -230,6 +273,8 @@ define('kit_intro_contact',												'<p>Mit diesem Dialog bearbeiten Sie die 
 define('kit_intro_contact_list',									'<p>Diese Liste zeigt Ihnen die verfügbaren Kontakte je nach ausgewählter Sortierung an.</p>');
 define('kit_intro_cronjobs',                      '<p>KeepInTouch (KIT) benötigt für den Versand der Newsletter einen Cronjob der in regelmäßigen Abständen, z.B. alle 5 Minuten die Steuerdatei <b>/modules/kit/cronjob.php</b> aufruft.</p><p>Auf diese Weise wird sichergestellt, dass KIT eine grosse Anzahl von Newslettern kontinuierlich in kleineren Paketen versendet. Durch den maßvollen Versand wird außerdem verhindert, dass Ihre Aussendung von Ihrem Provider als kritisches Massenmailing klassifiziert wird.</p><p>Sollte Ihnen auf Ihrem Webserver die Möglichkeit fehlen Cronjobs auszuführen, verwenden Sie einfach einen kostenlosen Dienstleister, wie <a href="http://www.cronjob.de" target="_blank">cronjob.de</a> für die Ansteuerung von KIT.</p></p>');
 define('kit_intro_email',													'<p>Mit diesem Dialog können Sie E-Mails erstellen und versenden.</p>');
+define('kit_intro_import_fields',									'<p>Ordnen Sie den Feldern aus der CSV Datei die entsprechenden Felder in KeepInTouch zu.</p><p>Sie müssen nicht alle Felder zuordnen/verwenden.</p>');
+define('kit_intro_import_start',									'<p>Sie können Kontaktdaten aus anderen Anwendungen im <i><b>C</b>omma-<b>S</b>eparated <b>V</b>alues</i> (CSV) Format in KeepInTouch importieren.</p><p>Dieser Dialog führt sie in mehreren Schritten durch den Import Vorgang.</p>');
 define('kit_intro_newsletter_cfg',								'<p>Bearbeiten Sie die speziellen Einstellungen für das Newsletter Modul von KeepInTouch.</p>');
 define('kit_intro_newsletter_create',							'<p>Erstellen Sie einen Newsletter und versenden Sie ihn an ihre Abonnenten.</p>');
 define('kit_intro_newsletter_commands',						'<p>Befehle und Variablen werden zur Laufzeit ausgeführt und in das Template eingefügt.</p><p>Ein einfacher Klick genügt um den jeweiligen Befehl an der Cursor Position in den <b>HTML Code</b> einzufügen.</p>');
@@ -250,6 +295,7 @@ define('kit_label_birthday',											'Geburtstag');
 define('kit_label_categories',										'Intern'); // anstatt Kategorie
 define('kit_label_cfg_add_app_tab',								'Zusätzliche TAB\'s einfügen');
 define('kit_label_cfg_array_add_items',						'Fügen Sie weitere Einträge hinzu:');
+define('kit_label_cfg_connect_wb_users',					'Mit WB Benutzern verbinden');
 define('kit_label_cfg_cronjob_key',               'Schlüssel für Cronjobs');
 define('kit_label_cfg_developer_mode',						'Developer Mode');
 define('kit_label_cfg_google_maps_api_key',				'Google Maps API Key');
@@ -292,7 +338,10 @@ define('kit_label_id',														'ID');
 define('kit_label_identifier',										'Bezeichner');
 define('kit_label_image',													'Bild');
 define('kit_label_import_action',									'');
+define('kit_label_import_charset',								'Zeichensatz');
+define('kit_label_import_csv_file',								'CSV Datei');
 define('kit_label_import_from',										'Import');
+define('kit_label_import_separator',							'Trennzeichen');
 define('kit_label_job_id',                        'Job ID');
 define('kit_label_job_created',                   'Beauftragt');
 define('kit_label_job_process',                   'Prozess');
@@ -377,6 +426,10 @@ define('kit_msg_contact_insert',									'<p>Der Kontakt mit der <b>ID %05d</b> 
 define('kit_msg_contact_minimum_failed',					'<p>Der <b>Datensatz kann nicht gesichert werden</b>, da die minimalen Anforderungen nicht erfüllt sind.<br />Bitte geben Sie <i>mindestens</i> entweder eine E-Mail Adresse <i>oder</i> einen Firmennamen und eine Stadt <i>oder</i> einen Firmennamen und eine Telefonnummer <i>oder</i> einen Nachnamen und eine Stadt <i>oder</i> einen Nachnamen und eine Telefonnummer an.</p>');
 define('kit_msg_contact_update',									'<p>Der Kontakt mit der <b>ID %05d</b> wurde erfolgreich aktualisiert.</p>');
 define('kit_msg_cronjob_last_call',               '<p>Es stehen keine aktuellen Jobs an.</p><p>Die Cronjob Steuerdatei wurde zuletzt am <b>%s</b> aufgerufen.</p>');
+define('kit_msg_csv_file_moved',									'<p>Die CSV Datei <b>%s</b> wurde im Importverzeichnis als <b>%s</b> gesichert.');
+define('kit_msg_csv_first_row_empty',							'<p>Die erste Zeile der CSV Datei <b>%s</b> ist leer. Es wurden dort die Spaltenbezeichner erwartet.</p>');
+define('kit_msg_csv_no_cols',											'<p>Die CSV Datei <b>%s</b> enthält keine Spalten! Bitte prüfen Sie die Datei.</p>');
+define('kit_msg_csv_no_file_transmitted',					'<p>Es wurde keine CSV Datei übermittelt.</p>');
 define('kit_msg_email_added',											'<p>Die E-Mail Adresse <b>%s</b> wurde hinzugefügt.</p>');
 define('kit_msg_email_changed',										'<p>Die E-Mail Adresse <i>%s</i> wurde in <b>%s</b> geändert.</p>');
 define('kit_msg_email_deleted',										'<p>Die E-Mail Adresse <b>%s</b> wurde gelöscht.</p>');
@@ -388,6 +441,7 @@ define('kit_msg_internet_deleted',								'<p>Die Internetadresse <b>%s</b> wurd
 define('kit_msg_internet_invalid',								'<p>Die Internetadresse <b>%s</b> ist nicht gültig, bitte prüfen Sie Ihre Eingabe.</p>');
 define('kit_msg_internet_type_changed',						'<p>Der Typ für die Internetadresse <b>%s</b> wurde geändert.</p>');
 define('kit_msg_invalid_email',										'<p>Die E-Mail Adresse <b>%s</b> ist nicht gültig, bitte prüfen Sie Ihre Eingabe.</p>');
+define('kit_msg_invalid_id',											'<p>Es wurde keine gültige ID übergeben!</p>');
 define('kit_msg_mail_incomplete',									'<p>Die Angaben sind unvollständig: E-Mail Absender, E-Mail Empfänger, Auswahl einer Kategorie, Betreff und Text müssen gesetzt sein.</p>');
 define('kit_msg_mail_send_error',									'<p>Die E-Mail konnte nicht versendet werden, es sind insgesamt <b>%d Fehler</b> aufgetreten, die Fehlermeldung lautet:<br /><b>%s</b></p>');
 define('kit_msg_mail_send_success',								'<p>Die E-Mail wurde erfolgreich versendet.</p>');
@@ -426,6 +480,7 @@ define('kit_msg_provider_check_auth',							'<p>Sie haben keine SMTP Authentifiz
 define('kit_msg_provider_inserted',								'<p>Der Dienstleister <b>%s</b> wurde neu angelegt.</p>');
 define('kit_msg_provider_minum_failed',						'<p>Die Angaben zum Dienstleister reichen nicht aus. Sie müssen mindestens angeben: Name und E-Mail Adresse und - falls der Mailserver eine SMTP Authentifizierung erfordert - SMTP Host, SMTP Benutzername und das Passwort.</p>');
 define('kit_msg_provider_updated',								'<p>Der Dienstleister <b>%s</b> wurde aktualisiert.</p>');
+define('kit_msg_register_status_updated',					'<p>Der Status für <b>dbKITregister</b> wurde aktualisiert.</p>');
 define('kit_msg_service_invalid_user_name',       '<p>Bitte geben Sie einen gültigen Vor- und Nachnamen an.</p>');
 define('kit_msg_service_license_beta_evaluate',   '<p><b>Diese KeepInTouch Installation ist nicht registriert.</b></p><p><a href="%s">Registrieren Sie diese BETA Version</a> unentgeltlich um eine uneingeschränkte Produktunterstützung für KeepInTouch zu erhalten!</p>');
 define('kit_msg_service_license_beta_registered', '<p<b>KeepInTouch BETA</b><br /><i>%s</i><br />Produktunterstützung bis zum %s, registriert für <i>%s %s</i>.</p>');
@@ -433,6 +488,7 @@ define('kit_msg_service_no_connect',              '<p>Der Updateserver konnte ni
 
 define('kit_protocol_create_contact',							'%s: Datensatz angelegt.');
 define('kit_protocol_create_contact_massmail',		'Datensatz durch Import der E-Mail Adresse %s aus Massmail angelegt.');
+define('kit_protocol_import_wb_user',							'WB Benutzer <b>%s</b> in KeepInTouch übernommen.');
 define('kit_protocol_send_newsletter_success',    'Newsletter <i>"%s"</i> um <b>%s</b> Uhr an <b>%s</b> versendet.');
 define('kit_protocol_send_newsletter_fail',       'Newsletter <i>"%s"</i> konnte um <b>%s</b> Uhr <b>nicht</b> an <b>%s</b> versendet werden.<br><b>Fehler:</b> %s.');
 define('kit_protocol_simulate_send_newsletter',   '<p>SIMULATION: Der Newsletter wurde an <b>%s</b> versendet!</p>');
@@ -447,10 +503,18 @@ define('kit_start_help',                          '<h2>Hilfe & Dokumentation</h2
 define('kit_status_ok',                           'OK');
 define('kit_status_error',                        'ERROR');
 define('kit_status_simulation',                   'SIMULATION');
+define('kit_status_start',												'START');
+define('kit_status_step_1',												'STEP 1');
+define('kit_status_step_2',												'STEP 2');
+define('kit_status_step_3',												'STEP 3');
+define('kit_status_step_4',												'STEP 4');
+define('kit_status_step_5',												'STEP 5');
+define('kit_status_success',											'SUCCESS');
 
 define('kit_tab_cfg_array',												'Listen anpassen');
+define('kit_tab_cfg_export',											'Export');
 define('kit_tab_cfg_general',											'Allgemein');
-define('kit_tab_cfg_import',											'Import/Export');
+define('kit_tab_cfg_import',											'Import');
 define('kit_tab_cfg_provider',										'Dienstleister');
 define('kit_tab_config',													'Einstellungen');
 define('kit_tab_contact',													'Kontakt bearbeiten');
@@ -467,12 +531,17 @@ define('kit_tab_start',														'Start');
 define('kit_text_as_email_type',									'als E-Mail Typ:');
 define('kit_text_calendar_delete',								'Datum löschen');
 define('kit_text_calendar_select',								'Datum auswählen');
+define('kit_text_colon_separated',								'mit Doppelpunkt getrennt');
+define('kit_text_comma_separated',								'mit Komma getrennt');
 define('kit_text_from_massmail_group',						'Gruppe importieren:');
 define('kit_text_new_id',													'- neu -');
+define('kit_text_pipe_separated',									'mit | (Pipe) getrennt');
 define('kit_text_please_select',									'- bitte auswählen -');
 define('kit_text_process_execute',                '<b>ausführen</b>');
 define('kit_text_process_simulate',               '<i>simulieren</i>');
 define('kit_text_records',												'Datensätze');
+define('kit_text_semicolon_separated',						'mit Semikolon getrennt');
+define('kit_text_tabulator_separated',						'mit Tabulator getrennt');
 define('kit_text_to_category',										'in den KIT Newsletter:');
 define('kit_text_unknown',                        '- unbekannt -');
 

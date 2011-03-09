@@ -150,6 +150,11 @@ class dialog_account extends kitDialogFrame {
   				if (!$this->isError()) $result = $this->dlgAccount();
   				break;
   			default:
+  				if (isset($_SESSION['KIT_REDIRECT'])) {
+  					$url = $_SESSION['KIT_REDIRECT'];
+  					unset($_SESSION['KIT_REDIRECT']);
+  					header("Location: $url");
+  				}
   				$result = $this->dlgAccount();
   				break;
   			endswitch;
@@ -450,7 +455,7 @@ class dialog_account extends kitDialogFrame {
 				return false;  	
 			}
 			if (count($provider) < 1) {
-				$this->setError(kit_dialog_nl_error_no_provider);
+				$this->setError(kit_error_no_provider_defined);
 				return false;
 			}
 			// ersten Datensatz auswaehlen

@@ -1599,8 +1599,8 @@ class kitNewsletterDialog {
       } // cfgAdjustRegister
       else {
         // Newsletter Adressaten ermitteln...
-        $SQL = sprintf(	'SELECT count(%1$s) FROM %2$s WHERE %3$s=\'%4$s\' AND ((%5$s LIKE \'%6$s\') OR (%5$s LIKE \'%6$s,%%\') OR (%5$s LIKE \'%%,%6$s\') OR (%5$s LIKE \'%%%6$s,%%\'))',
-                        dbKITregister::field_id, // 1
+        $SQL = sprintf(	'SELECT %1$s FROM %2$s WHERE %3$s=\'%4$s\' AND ((%5$s LIKE \'%6$s\') OR (%5$s LIKE \'%6$s,%%\') OR (%5$s LIKE \'%%,%6$s\') OR (%5$s LIKE \'%%%6$s,%%\'))',
+                        dbKITregister::field_contact_id, // 1
                         $dbRegister->getTableName(), // 2
                         dbKITregister::field_status, // 3
                         dbKITregister::status_active, // 4
@@ -1611,7 +1611,8 @@ class kitNewsletterDialog {
           $this->setError(sprintf('[%s - %s] %s', __METHOD__, __LINE__, $dbRegister->getError()));
           return false;
         }        
-        $count = $result[0][sprintf('count(%s)', dbKITregister::field_id)];
+        //$count = $result[0][sprintf('count(%s)', dbKITregister::field_id)];
+        $count = count($result);        
       }
       
 			(in_array($news_item[dbKITcontactArrayCfg::field_identifier], $news_val)) ? $checked=' checked="checked"' : $checked = '';

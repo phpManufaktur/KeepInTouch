@@ -27,6 +27,7 @@ require_once(WB_PATH.'/modules/'.basename(dirname(__FILE__)).'/class.dialogs.php
 require_once(WB_PATH.'/modules/'.basename(dirname(__FILE__)).'/class.newsletter.php');
 require_once(WB_PATH.'/modules/'.basename(dirname(__FILE__)).'/class.cronjob.php');
 require_once(WB_PATH.'/modules/'.basename(dirname(__FILE__)).'/class.newsletter.link.php');
+require_once(WB_PATH.'/modules/'.basename(dirname(__FILE__)).'/class.import.php');
 
 global $admin;
 
@@ -169,6 +170,13 @@ $dbNewsletterLinks = new dbKITnewsletterLinks();
 if ($dbNewsletterLinks->sqlTableExists()) {
 	if (!$dbNewsletterLinks->sqlDeleteTable()) {
 		$error .= sprintf('<p>[Delete Table] %s</p>', $dbNewsletterLinks->getError());
+	}
+}
+
+$dbImport = new dbKITimport();
+if ($dbImport->sqlTableExists()) {
+	if (!$dbImport->sqlDeleteTable()) {
+		$error .= sprintf('<p>[Delete Table] %s</p>', $dbImport->getError());
 	}
 }
 

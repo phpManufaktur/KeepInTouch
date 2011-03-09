@@ -1,11 +1,16 @@
-KeepInTouch - Contact management for WebsiteBaker
-(c) 2010 by phpManufaktur, Berlin (Germany)
-http://phpManufaktur.de - info@phpManufaktur.de
+KeepInTouch - Customer Relationship Management (CRM)
+(c) 2010, 2011 by phpManufaktur
+Ralf Hertsch, Stockholmer Str. 31, 13359 Berlin (Germany)
+http://phpManufaktur.de - ralf.hertsch@phpManufaktur.de
 
 Release 0.32
-xxxx-xx-xx
-- added: link for Google Maps API key
-- fixed: problem checking empty email field in class.contact.php
+2011-03-09
+- added: link for Google Maps API Key at the configuration dialog
+- fixed: problem checking empty e-mail fields in class.contact.php
+- changed: language files for EN and NO are no longer supported because they are outdated since a couple of releases!
+- fixed: changing the status of dbKITcontact was not looped through dbKITregister and caused an error processing newsletters
+- added: now you can redirect from login dialog with $_SESSION['KIT_REDIRECT'] to any URL 
+- added: connection between WB USERS and KIT
 
 Release 0.31
 2011-01-30

@@ -382,7 +382,7 @@ textarea[name=mail_text] {
   border: 1px solid #000000;
   color: #000000;
   background-color: #ffffdd;
-  margin: 20px 0 10px 0;
+  margin: 20px 30px 10px 0;
   padding: 10px;
   font-size: 8pt;
 }
@@ -391,7 +391,7 @@ textarea[name=mail_text] {
   border: 1px solid #0000CC;
   color: #000;
   background-color: #FFFFCC;
-  margin: 20px 0 10px 0;
+  margin: 20px 30px 10px 0;
   padding: 10px;
   font-size: 8pt;
 }
@@ -400,7 +400,7 @@ textarea[name=mail_text] {
  border: 1px solid #ff0000;
  color: #ff0000;
  background-color: #ffdddd;
- margin: 20px 0 10px 0;
+ margin: 20px 30px 10px 0;
  padding: 10px;
  font-size: 8pt;
 }
@@ -435,6 +435,29 @@ textarea[name=mail_text] {
   text-align: left;
 }
 
+td.help_help {
+  width: 200px;
+  min-height: 150px;
+  margin: 0;
+  padding: 0;
+  vertical-align: top;
+  background-image: url(img/kit-help-200.jpg);
+  background-position: top left;
+  background-repeat: no-repeat;
+  color: #000;
+  background-color: transparent;
+  font-size: 8pt;
+}
+
+.help_help_txt {
+  width: 180px;
+  height: auto;
+  margin: 125px 0 0 0;
+  padding: 10px;
+  font-size: 8pt;
+  color: #000;
+  background-color: transparent;
+}
 /**
   JQuery
 **/

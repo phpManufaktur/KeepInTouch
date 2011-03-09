@@ -1,0 +1,5 @@
+<tr>
+  <th>{$label|default:''}</th>
+  <th>{$input|default:''}</th>
+  <th>{$help|default:''}</th>
+</tr>
