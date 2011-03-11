@@ -35,6 +35,7 @@ global $dbWBgroups;
 global $dbCfg;
 
 if (!is_object($tools)) $tools = new kitTools();
+if (!is_object($dbCfg)) $dbCfg = new dbKITcfg();
 if (!is_object($dbRegister)) $dbRegister = new dbKITregister();
 if (!is_object($dbProvider)) $dbProvider = new dbKITprovider();
 if (!is_object($dbProtocol)) $dbProtocol = new dbKITprotocol();
@@ -505,7 +506,6 @@ class dbKITcontact extends dbConnectLE {
 		global $dbRegister;
 		global $dbWBgroups;
 		global $tools;
-		
 		if ($dbCfg->getValue(dbKITcfg::cfgConnectWBusers)) {
 			$SQL = sprintf(	"SELECT %s.* FROM %s LEFT JOIN %s ON %s.%s = %s.%s WHERE %s.%s!='1' AND %s.%s='1' AND %s.%s IS NULL",
 											$dbWBusers->getTableName(),
