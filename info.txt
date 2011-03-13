@@ -3,6 +3,11 @@ KeepInTouch - Customer Relationship Management (CRM)
 Ralf Hertsch, Stockholmer Str. 31, 13359 Berlin (Germany)
 http://phpManufaktur.de - ralf.hertsch@phpManufaktur.de
 
+Release 0.34
+2011-0313
+- fixed: when deleting a contact a new entry in dbKITregister will be added (security leak)
+- added: KIT Admins can be defined at the configuration dialog
+
 Release 0.33
 2011-03-09
 - fixed: class.config.php may be initialized too late if class.contact.php is called directly

@@ -2269,7 +2269,7 @@ class kitBackend {
 			$this->setError(sprintf('[%s - %s] %s', __METHOD__, __LINE__, $dbRegister->getError()));
 			return false;
 		}
-		if (count($result) < 1) {
+		if ((count($result) < 1) && ($this->contact_array[dbKITcontact::field_status] == dbKITcontact::status_active)) {
 			// Datensatz existiert nicht
 			$data = array();
 			$data[dbKITregister::field_contact_id] = $id;
@@ -2289,7 +2289,7 @@ class kitBackend {
 				return false;
 			}
 		}
-		else {
+		elseif ($this->contact_array[dbKITcontact::field_status] == dbKITcontact::status_active) {
 			$where = array();
 			$where[dbKITregister::field_id] = $result[0][dbKITregister::field_id];
 			$data = array();
@@ -3534,7 +3534,7 @@ class kitBackend {
 	} // dlgStart()
 	
 	public function dlgAbout() {
-		global $parser;
+ 	 global $parser;
 		$data = array(
 			'version'								=> sprintf('%01.2f', $this->getVersion()),
 			'img_url'								=> WB_URL.'/modules/'.basename(dirname(__FILE__)).'/img/logo-keep-in-touch.jpg',

@@ -86,8 +86,7 @@ class kitResponse {
   			break;
   		}
   		$dbDlgRegister = new dbKITdialogsRegister();
-  		$where = array();
-  		$where[dbKITdialogsRegister::field_id] = (int) $_REQUEST[kitRequest::request_dialog];
+  		$where = array(dbKITdialogsRegister::field_id => (int) $_REQUEST[kitRequest::request_dialog]);
   		$dialog = array();
   		if (!$dbDlgRegister->sqlSelectRecord($where, $dialog)) {
   			$this->promptError(sprintf('[%s - %s] %s', __METHOD__, __LINE__, $dbDlgRegister->getError()));

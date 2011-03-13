@@ -655,6 +655,17 @@ class dbKITcontact extends dbConnectLE {
 		return true;
 	} // checkWBusers()
 	
+	/**
+	 * Get the primary E-Mail adresses of the defined admins	 
+	 * @param REFERENCE $primary_emails
+	 * @return BOOL if Admins are defined
+	 */
+	public function getAdmins(&$primary_emails= array()) {
+		global $dbCfg;
+		$primary_emails = $dbCfg->getValue(dbKITcfg::cfgKITadmins);
+		return (count($primary_emails) < 1) ? false : true;
+	} // getAdmins()
+	
 } // class dbKITcontact
 
 
@@ -1212,6 +1223,10 @@ class dbKITregister extends dbConnectLE {
 		return true;
 	} // initTables()
 	
+	public function getAdmins(&$primary_emails = array()) {
+		global $dbContact;
+		return $dbContact->getAdmins($primary_emails);
+	} // getAdmins()
 	
 } // dbKITregister
 

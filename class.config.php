@@ -78,12 +78,12 @@ class dbKITcfg extends dbConnectLE {
   const cfgKITRequestLink		= 'cfgKITRequestLink';
   const cfgMaxInvalidLogin	= 'cfgMaxInvalidLogin';
   const cfgAddAppTab				= 'cfgAddAppTab';
-  const cfgLicenseKey				= 'cfgLicenseKey';
   const cfgCronjobKey				= 'cfgCronjobKey';
   const cfgSessionID				= 'cfgSessionID';
   const cfgSortContactList	= 'cfgSortContactList';
   const cfgLimitContactList	= 'cfgLimitContactList';
   const cfgConnectWBusers		= 'cfgConnectWBusers';
+  const cfgKITadmins				= 'cfgKITadmins';
 
   public $config_array = array(
   	array('kit_label_cfg_google_maps_api_key', self::cfgGoogleMapsAPIkey, self::type_string, '', 'kit_desc_cfg_google_maps_api_key'),
@@ -95,14 +95,14 @@ class dbKITcfg extends dbConnectLE {
   	array('kit_label_cfg_register_data_dlg', self::cfgRegisterDlgACC, self::type_string, 'dialog_account', 'kit_desc_cfg_register_data_dlg'),
   	array('kit_label_cfg_max_invalid_login', self::cfgMaxInvalidLogin, self::type_integer, '10', 'kit_desc_cfg_max_invalid_login'),
   	array('kit_label_cfg_add_app_tab', self::cfgAddAppTab, self::type_array, '', 'kit_desc_cfg_add_app_tab'),
-  	array('kit_label_cfg_license_key', self::cfgLicenseKey, self::type_string, '', 'kit_desc_cfg_license_key'),
   	array('kit_label_cfg_cronjob_key', self::cfgCronjobKey, self::type_string, '', 'kit_desc_cfg_cronjob_key'),
   	array('kit_label_cfg_register_dlg_unsubscribe', self::cfgRegisterDlgUSUB, self::type_string, 'dialog_unsubscribe', 'kit_desc_cfg_register_dlg_unsubscribe'),
   	array('kit_label_cfg_session_id', self::cfgSessionID, self::type_string, 'kit7543_', 'kit_desc_cfg_session_id'),
   	array('kit_label_cfg_sort_contact_list', self::cfgSortContactList, self::type_integer, '0', 'kit_desc_cfg_sort_contact_list'),
   	array('kit_label_cfg_limit_contact_list', self::cfgLimitContactList, self::type_integer, '50', 'kit_desc_cfg_limit_contact_list'),
-  	array('kit_label_cfg_connect_wb_users', self::cfgConnectWBusers, self::type_boolean, '0', 'kit_desc_cfg_connect_wb_users')
-  );  
+  	array('kit_label_cfg_connect_wb_users', self::cfgConnectWBusers, self::type_boolean, '0', 'kit_desc_cfg_connect_wb_users'),
+  	array('kit_label_cfg_kit_admins', self::cfgKITadmins, self::type_array, '', 'kit_desc_cfg_kit_admins')
+  );   
   
   public function __construct($createTables = false) {
   	$this->createTables = $createTables;

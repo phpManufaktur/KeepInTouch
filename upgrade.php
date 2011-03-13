@@ -29,6 +29,8 @@ require_once(WB_PATH.'/modules/'.basename(dirname(__FILE__)).'/class.newsletter.
 require_once(WB_PATH.'/modules/'.basename(dirname(__FILE__)).'/class.cronjob.php');
 require_once(WB_PATH.'/modules/'.basename(dirname(__FILE__)).'/class.newsletter.link.php');
 require_once(WB_PATH.'/modules/'.basename(dirname(__FILE__)).'/class.import.php');
+require_once(WB_PATH.'/modules/'.basename(dirname(__FILE__)).'/class.config.php');
+
 
 global $admin;
 
@@ -164,6 +166,64 @@ if (!$dbImport->sqlTableExists()) {
 	}
 }
 
+/**
+ * BUGFIX correct a problem of KIT < 0.34 with duplicate active entries for the same e-mail address within dbKITregister  
+ */
+$SQL = sprintf("SELECT %s, %s, COUNT(*) AS cnt FROM %s WHERE %s='%s' GROUP BY %s HAVING cnt>1",
+								dbKITregister::field_contact_id,
+								dbKITregister::field_id,
+								$dbRegister->getTableName(),
+								dbKITregister::field_status,
+								dbKITregister::status_active,
+								dbKITregister::field_email);
+if (!$dbKITregister->sqlExec($SQL, $registers)) {
+	$error .= sprintf('<p>[BUGFIX] %s</p>', $dbKITregister->getError());
+}
+else {
+	foreach ($registers as $register) {
+		$SQL = sprintf( "SELECT %s FROM %s WHERE %s='%s' AND %s='%s'",
+										dbKITcontact::field_id,
+										$dbContact->getTableName(),
+										dbKITcontact::field_id,
+										$register[dbKITregister::field_contact_id],
+										dbKITcontact::field_status,
+										dbKITcontact::status_deleted);
+		$contacts = array();
+		if (!$dbKITcontact->sqlExec($SQL, $contacts)) {
+			$error .= sprintf('[BUGFIX] %s', __METHOD__, __LINE__, $dbKITcontact->getError());
+		}
+		else {
+			if (count($contacts) > 0) {
+				$where = array(dbKITregister::field_id => $register[dbKITregister::field_id]);
+				$data = array(
+					dbKITregister::field_status 			=> dbKITregister::status_deleted,
+					dbKITregister::field_update_by		=> 'UPDATE FIXUP',
+					dbKITregister::field_update_when	=> date('Y-m-d H:i:s')
+				);
+				if (!$dbKITregister->sqlUpdateRecord($data, $where)) {
+					$error .= sprintf('[BUGFIX] %s', $dbKITregister->getError());
+				}
+			}
+		}
+	}
+}
+
+/**
+ * Remove no longer needed entries in dbKITcfg
+ */
+$dbKITconfig = new dbKITcfg();
+$where = array(dbKITcfg::field_name => 'cfgLicenseKey');
+$entries = array();
+if (!$dbKITconfig->sqlSelectRecord($where, $entries)) {
+	$error .= sprintf('[UPGRADE] %s', $dbKITconfig->getError());
+}
+else {
+	if (count($entries) > 0) {
+		if (!$dbKITconfig->sqlDeleteRecord($where)) {
+			$error .= sprintf('[UPGRADE] %s', $dbKITconfig->getError());
+		}
+	}
+}
 
 // Install Droplets
 $droplets = new checkDroplets();
