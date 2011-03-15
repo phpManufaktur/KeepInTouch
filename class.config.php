@@ -23,7 +23,9 @@ if (!defined('WB_PATH')) die('invalid call of '.$_SERVER['SCRIPT_NAME']);
 
 require_once(WB_PATH.'/modules/'.basename(dirname(__FILE__)).'/initialize.php');
 
-$dbCfg = new dbKITcfg();
+global $dbCfg;
+if (!is_object($dbCfg)) $dbCfg = new dbKITcfg();
+
 define('USE_CUSTOM_FILES', $dbCfg->getValue(dbKITcfg::cfgUseCustomFiles));
 define('KIT_SESSION_ID', $dbCfg->getValue(dbKITcfg::cfgSessionID));
 
@@ -84,6 +86,7 @@ class dbKITcfg extends dbConnectLE {
   const cfgLimitContactList	= 'cfgLimitContactList';
   const cfgConnectWBusers		= 'cfgConnectWBusers';
   const cfgKITadmins				= 'cfgKITadmins';
+  const cfgMinPwdLen				= 'cfgMinPwdLen';
 
   public $config_array = array(
   	array('kit_label_cfg_google_maps_api_key', self::cfgGoogleMapsAPIkey, self::type_string, '', 'kit_desc_cfg_google_maps_api_key'),
@@ -101,7 +104,8 @@ class dbKITcfg extends dbConnectLE {
   	array('kit_label_cfg_sort_contact_list', self::cfgSortContactList, self::type_integer, '0', 'kit_desc_cfg_sort_contact_list'),
   	array('kit_label_cfg_limit_contact_list', self::cfgLimitContactList, self::type_integer, '50', 'kit_desc_cfg_limit_contact_list'),
   	array('kit_label_cfg_connect_wb_users', self::cfgConnectWBusers, self::type_boolean, '0', 'kit_desc_cfg_connect_wb_users'),
-  	array('kit_label_cfg_kit_admins', self::cfgKITadmins, self::type_array, '', 'kit_desc_cfg_kit_admins')
+  	array('kit_label_cfg_kit_admins', self::cfgKITadmins, self::type_array, '', 'kit_desc_cfg_kit_admins'),
+  	array('kit_label_cfg_min_pwd_len', self::cfgMinPwdLen, self::type_integer, 7, 'kit_desc_cfg_min_pwd_len')
   );   
   
   public function __construct($createTables = false) {

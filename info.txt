@@ -3,8 +3,14 @@ KeepInTouch - Customer Relationship Management (CRM)
 Ralf Hertsch, Stockholmer Str. 31, 13359 Berlin (Germany)
 http://phpManufaktur.de - ralf.hertsch@phpManufaktur.de
 
+Release 0.35
+2011-03-15
+- fixed: user can no longer change e-mail adress (dialog_account)
+- added: user can change password (dialog_account)
+- added: user must change default password (dialog_account)
+
 Release 0.34
-2011-0313
+2011-03-13
 - fixed: when deleting a contact a new entry in dbKITregister will be added (security leak)
 - added: KIT Admins can be defined at the configuration dialog
 

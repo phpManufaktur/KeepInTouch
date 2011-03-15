@@ -37,10 +37,12 @@ else {
 global $tools;
 global $dbRegister;
 global $dbContact;
+global $dbDialogsRegister;
 
 if (!is_object($tools)) $tools = new kitTools();
 if (!is_object($dbRegister)) $dbRegister = new dbKITregister();
 if (!is_object($dbContact)) $dbContact = new dbKITcontact();
+if (!is_object($dbDialogsRegister)) $dbDialogsRegister = new dbKITdialogsRegister();
 		
 /**
  * ABSTRACT class kitDialogFrame

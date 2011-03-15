@@ -62,5 +62,7 @@ define('kit_dialog_acc_account_update_success',			'Der Datensatz wurde erfolgrei
 define('kit_dialog_acc_account_update_skipped',			'Es wurden keine Daten verändert.');
 define('kit_dialog_acc_unsubscribe_invalid',				'Der übermittelte Deaktivierungsbefehl ist unvollständig und wurde ignoriert.');
 define('kit_dialog_acc_unsubscribe_success',				'Sie wurden erfolgreich aus dem Newsletter Abonnement <b>%s</b> entfernt.');
+define('kit_dialog_acc_intro_change_password',			'Aus Sicherheitsgründen müssen Sie Ihr Passwort ändern. Bitte legen Sie ein neues Passwort fest!');
+define('kit_dialog_acc_log_password_changed',				'Der Benutzer hat das Passwort geändert.');
 
 ?>

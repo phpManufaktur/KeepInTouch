@@ -43,17 +43,22 @@ else {
 
 class dialog_account extends kitDialogFrame {
 	
-	const request_action 				= 'acc_act';
+	const request_action 					= 'acc_act';
+	const request_password_new		= 'acc_pw_new';
+	const	request_password_retype = 'acc_pw_rt';
 	
-	const action_check_login		= 'cl';
-	const action_default				= 'def';
-	const action_need_password	= 'np';
-	const action_send_password	= 'sp';
-	const action_check_account	= 'ca';
-	const action_logout					= 'out';
+	const action_check_login			= 'cl';
+	const action_default					= 'def';
+	const action_need_password		= 'np';
+	const action_send_password		= 'sp';
+	const action_check_account		= 'ca';
+	const action_logout						= 'out';
+	const action_change_password	= 'chg';
+	const action_check_password		= 'chp';
 	
-	const session_kit_aid			= 'kit_aid';
-	const session_kit_key			= 'kit_key';
+	const session_kit_aid					= 'kit_aid';
+	const session_kit_key					= 'kit_key';
+	const session_must_change_pwd = 'kit_mcp';
 	
 	private $password					= '';
 	
@@ -111,7 +116,9 @@ class dialog_account extends kitDialogFrame {
   		
   		if ($action == self::action_check_login && !$authenticated) {
   			// LOGIN PRUEFEN
-  			if ($this->checkLogin()) $authenticated = true;
+  			if ($this->checkLogin()) {
+  				$authenticated = true;
+  			}
   		}
   		
   		if (!$authenticated) {
@@ -137,8 +144,11 @@ class dialog_account extends kitDialogFrame {
   				$result = $this->dlgLogin();
   			endswitch;  			
   		}
-  		else {
+  		else { 
   			// USER IST EINGELOGGT
+  			if (isset($_SESSION[self::session_must_change_pwd]) && ($_SESSION[self::session_must_change_pwd] == true)) {
+  				$action = self::action_change_password;
+  			}
   			switch ($action):
   			case self::action_logout:
   				unset($_SESSION[self::session_kit_aid]);
@@ -149,7 +159,24 @@ class dialog_account extends kitDialogFrame {
   				$this->checkAccount();
   				if (!$this->isError()) $result = $this->dlgAccount();
   				break;
-  			default:
+  			case self::action_change_password:
+  				unset($_SESSION[self::session_must_change_pwd]);
+  				$result = $this->dlgChangePassword();
+  				break;
+  			case self::action_check_password:
+  				if ($this->checkChangedPassword()) {
+  					if (isset($_SESSION['KIT_REDIRECT'])) {
+	  					$url = $_SESSION['KIT_REDIRECT'];
+	  					unset($_SESSION['KIT_REDIRECT']);
+	  					header("Location: $url");
+	  				}
+	  				$result = $this->dlgAccount();	
+  				}
+  				else {
+  					$result = $this->dlgChangePassword();
+  				}
+  				break;
+  			default: 
   				if (isset($_SESSION['KIT_REDIRECT'])) {
   					$url = $_SESSION['KIT_REDIRECT'];
   					unset($_SESSION['KIT_REDIRECT']);
@@ -172,6 +199,82 @@ class dialog_account extends kitDialogFrame {
   	}
 	} // action()
 	
+	public function dlgChangePassword() {
+		// Account auslesen
+		$dbAccount = new dbKITregister();
+		$where = array();
+		$where[dbKITregister::field_id] = $_SESSION[self::session_kit_aid];
+		$account = array();
+		if (!$dbAccount->sqlSelectRecord($where, $account)) {
+			$this->setError(sprintf('[%s - %s] %s', __METHOD__, __LINE__, $dbAccount->getError()));
+			return false;
+		}
+		if (count($account) < 1) {
+			$this->setError(sprintf(kit_dialog_acc_error_account_id, $_SESSION[self::session_kit_aid]));
+			return false;
+		}
+		$account = $account[0];
+		$template = new Dwoo();
+		$data = array(
+			'form_action'							=> $this->getDlgLink(),
+			'action_name'							=> self::request_action,
+			'action_value'						=> self::action_check_password,
+			'logout'									=> sprintf(	'<a href="%s&%s=%s">%s</a>', 
+																			$this->getDlgLink(), 
+																			self::request_action, 
+																			self::action_logout,
+																			kit_dialog_acc_label_logout),
+			'intro'										=> $this->isMessage() ? $this->getMessage() : kit_dialog_acc_intro_change_password,
+			'password_new_label'			=> kit_label_password_new,
+			'password_new_name'				=> self::request_password_new,
+			'password_confirm_label'	=> kit_label_password_retype,
+			'password_confirm_name'		=> self::request_password_retype,
+			'btn_submit'							=> kit_btn_ok
+		);
+		return $template->get($this->getTemplateFile('account.password.change.htt'), $data);
+	} // dlgChangePassword()
+	
+	public function checkChangedPassword() {
+		global $dbCfg;
+		global $dbContact;
+		$minPwdLen = $dbCfg->getValue(dbKITcfg::cfgMinPwdLen);
+		$checked = false;
+		if (strlen($_REQUEST[self::request_password_new]) >= $minPwdLen) {
+			if ($_REQUEST[self::request_password_new] == $_REQUEST[self::request_password_retype]) {
+				// set new password
+				$this->setMessage(kit_msg_password_changed);
+				$checked = true;	
+			}
+			else {
+				// passwords mismatch
+				$this->setMessage(kit_msg_passwords_mismatch);
+			}
+		}
+		elseif (!empty($_REQUEST[self::request_password_new]) && (strlen($_REQUEST[self::request_password_new]) < $minPwdLen)) {
+			// password is to short
+			$this->setMessage(sprintf(kit_msg_password_too_short, $minPwdLen));
+		}
+		if ($checked) {
+			$dbAccount = new dbKITregister();
+			$where = array(dbKITregister::field_id => $_SESSION[self::session_kit_aid]);
+			$account = array();
+			if (!$dbAccount->sqlSelectRecord($where, $account)) {
+				$this->setError(sprintf('[%s - %s] %s', __METHOD__, __LINE__, $dbAccount->getError()));
+				return false;
+			}
+			$account = $account[0];
+			$account[dbKITregister::field_password] = md5($_REQUEST[self::request_password_new]);
+			$account[dbKITregister::field_update_by] = $account[dbKITregister::field_email];
+			$account[dbKITregister::field_update_when] = date('Y-m-d H:i:s');
+			if (!$dbAccount->sqlUpdateRecord($account, $where)) {
+				$this->setError(sprintf('[%s - %s] %s', __METHOD__, __LINE__, $dbAccount->getError()));
+				return false;
+			}
+			$dbContact->addSystemNotice($account[dbKITregister::field_contact_id], kit_dialog_acc_log_password_changed);
+			return true;
+		}
+		return false;
+	} // checkChangedPassword()
 	
 	public function checkUnsubscribeKey() {
 		if (!isset($_REQUEST[kitRequest::request_key]) || !isset($_REQUEST[kitRequest::request_newsletter])) {
@@ -237,8 +340,10 @@ class dialog_account extends kitDialogFrame {
 	 * 
 	 * @return BOOL
 	 */
-	public function checkAccount() { 
+	public function checkAccount() {
+		global $dbCfg; 
 		$tools = new kitTools();
+		$message = '';
 		if (empty($_REQUEST[dbKITregister::field_email]) || 
 				!$tools->validateEMail($_REQUEST[dbKITregister::field_email])) {
 			$this->setMessage(kit_dialog_acc_mail_invalid);
@@ -292,6 +397,22 @@ class dialog_account extends kitDialogFrame {
 		if ($contact[dbKITcontact::field_person_last_name] != $_REQUEST[dbKITcontact::field_person_last_name]) {
 			$data_contact[dbKITcontact::field_person_last_name] = $_REQUEST[dbKITcontact::field_person_last_name];
 		}
+		$minPwdLen = $dbCfg->getValue(dbKITcfg::cfgMinPwdLen);
+		if (strlen($_REQUEST[self::request_password_new]) >= $minPwdLen) {
+			if ($_REQUEST[self::request_password_new] == $_REQUEST[self::request_password_retype]) {
+				// set new password
+				$data_account[dbKITregister::field_password] = md5($_REQUEST[self::request_password_new]);
+				$message .= kit_msg_password_changed;	
+			}
+			else {
+				// passwords mismatch
+				$message .= kit_msg_passwords_mismatch;
+			}
+		}
+		elseif (!empty($_REQUEST[self::request_password_new]) && (strlen($_REQUEST[self::request_password_new]) < $minPwdLen)) {
+			// password is to short
+			$message .= sprintf(kit_msg_password_too_short, $minPwdLen);
+		}
 		$update = false;
 		if (count($data_account) > 0) {
 			$where = array();
@@ -313,15 +434,17 @@ class dialog_account extends kitDialogFrame {
 		}
 		if ($update) {
 			$dbContact->addSystemNotice($account[dbKITregister::field_contact_id], kit_dialog_acc_log_account_update);
-			$this->setMessage(kit_dialog_acc_account_update_success);
+			$message .= kit_dialog_acc_account_update_success;
+			$this->setMessage($message);
 		}
 		else {
-			$this->setMessage(kit_dialog_acc_account_update_skipped);
+			$message .= kit_dialog_acc_account_update_skipped;
+			$this->setMessage($message);
 		}
 		return true;
 	} // checkAccount()
 	
-	public function dlgAccount() {
+	public function dlgAccount() { 
 		// Account auslesen
 		$dbAccount = new dbKITregister();
 		$where = array();
@@ -370,32 +493,47 @@ class dialog_account extends kitDialogFrame {
 															$value);
 		}
 		
+		if (isset($_SESSION['KIT_EXTENSION']) && isset($_SESSION['KIT_EXTENSION']['link']) && isset($_SESSION['KIT_EXTENSION']['name'])) {
+			$logout = sprintf(	'<a href="%s">%s</a> &bull; <a href="%s&%s=%s">%s</a>',
+													$_SESSION['KIT_EXTENSION']['link'],
+													$_SESSION['KIT_EXTENSION']['name'], 
+													$this->getDlgLink(), 
+													self::request_action, 
+													self::action_logout,
+													kit_dialog_acc_label_logout);
+		}
+		else {
+			$logout = sprintf(	'<a href="%s&%s=%s">%s</a>', 
+													$this->getDlgLink(), 
+													self::request_action, 
+													self::action_logout,
+													kit_dialog_acc_label_logout);
+		}
 		
 		$template = new Dwoo();
 		$data = array(
-			'form_action'				=> $this->getDlgLink(),
-			'action_name'				=> self::request_action,
-			'action_value'			=> self::action_check_account,
-			'logout'						=> sprintf(	'<a href="%s&%s=%s">%s</a>', 
-																			$this->getDlgLink(), 
-																			self::request_action, 
-																			self::action_logout,
-																			kit_dialog_acc_label_logout),
-			'intro'							=> $this->isMessage() ? $this->getMessage() : kit_dialog_acc_intro_account,
-			'title_label'				=> kit_label_person_title,
-			'title_value'				=> $title_value,
-			'firstname_label'		=> kit_label_person_first_name,
-			'firstname_name'		=> dbKITcontact::field_person_first_name,
-			'firstname_value'		=> $contact[dbKITcontact::field_person_first_name],
-			'lastname_label'		=> kit_label_person_last_name,
-			'lastname_name'			=> dbKITcontact::field_person_last_name,
-			'lastname_value'		=> $contact[dbKITcontact::field_person_last_name],
-			'email_label'				=> kit_label_contact_email,
-			'email_name'				=> dbKITregister::field_email,
-			'email_value'				=> $account[dbKITregister::field_email],
-			'newsletter_label'	=> kit_label_newsletter,
-			'newsletter_value'	=> $newsletter,
-			'btn_submit'				=> kit_btn_ok
+			'form_action'							=> $this->getDlgLink(),
+			'action_name'							=> self::request_action,
+			'action_value'						=> self::action_check_account,
+			'logout'									=> $logout,
+			'intro'										=> $this->isMessage() ? $this->getMessage() : kit_dialog_acc_intro_account,
+			'title_label'							=> kit_label_person_title,
+			'title_value'							=> $title_value,
+			'firstname_label'					=> kit_label_person_first_name,
+			'firstname_name'					=> dbKITcontact::field_person_first_name,
+			'firstname_value'					=> $contact[dbKITcontact::field_person_first_name],
+			'lastname_label'					=> kit_label_person_last_name,
+			'lastname_name'						=> dbKITcontact::field_person_last_name,
+			'lastname_value'					=> $contact[dbKITcontact::field_person_last_name],
+			'email_name'							=> dbKITregister::field_email,
+			'email_value'							=> $account[dbKITregister::field_email],
+			'password_new_label'			=> kit_label_password_new,
+			'password_new_name'				=> self::request_password_new,
+			'password_confirm_label'	=> kit_label_password_retype,
+			'password_confirm_name'		=> self::request_password_retype,
+			'newsletter_label'				=> kit_label_newsletter,
+			'newsletter_value'				=> $newsletter,
+			'btn_submit'							=> kit_btn_ok
 		);
 		return $template->get($this->getTemplateFile('account.data.htt'), $data);
 	} // dlgAccount()
@@ -557,6 +695,10 @@ class dialog_account extends kitDialogFrame {
 			}
 			if (md5($_REQUEST[dbKITregister::field_password]) == $account[dbKITregister::field_password]) {
 				// OK - LOGIN erfolgreich
+				if (strtolower($_REQUEST[dbKITregister::field_password]) == strtolower($account[dbKITregister::field_email])) {
+					// special: initial password is identical with email address and must be changed
+					$_SESSION[self::session_must_change_pwd] = true;
+				}				
 				$_SESSION[self::session_kit_aid] = $account[dbKITregister::field_id];
 				$_SESSION[self::session_kit_key] = $account[dbKITregister::field_register_key];
 				return true;
