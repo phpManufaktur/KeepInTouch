@@ -440,7 +440,7 @@ class dbKITcontact extends dbConnectLE {
 	 * @return boolean
 	 */
 	public function getContactByID($id=-1, &$contact=array(), $isDeleted=false) {
-		$isDeleted ? $check_deleted = '=' : $check_deleted = '!=';
+		$check_deleted = $isDeleted ? '=' : '!='; 
 		// search for contact id
 		$SQL = sprintf(	"SELECT * FROM %s WHERE %s='%s' AND %s%s'%s'",
 										$this->getTableName(),
@@ -473,7 +473,7 @@ class dbKITcontact extends dbConnectLE {
 	 */
 	public function getAddressByID($address_id=-1, &$address=array(), $isDeleted=false) {
 		global $dbContactAddress;
-		$isDeleted ? $check_deleted = '=' : $check_deleted = '!=';
+		$check_deleted = $isDeleted ? '=' : '!=';
 		// search for address_id
 		$SQL = sprintf(	"SELECT * FROM %s WHERE %s='%s' AND %s%s'%s'",
 										$dbContactAddress->getTableName(),
@@ -1042,7 +1042,7 @@ class dbKITprotocol extends dbConnectLE {
 		$this->addFieldDefinition(self::field_contact_id, "INT NOT NULL DEFAULT '-1'");
 		$this->addFieldDefinition(self::field_date, "DATETIME NOT NULL DEFAULT '0000-00-00 00:00:00'");
 		$this->addFieldDefinition(self::field_type, "VARCHAR(30) NOT NULL DEFAULT '-1'");
-		$this->addFieldDefinition(self::field_memo, "TEXT NOT NULL DEFAULT ''");
+		$this->addFieldDefinition(self::field_memo, "TEXT NOT NULL DEFAULT ''", false, false, true);
 		$this->addFieldDefinition(self::field_members, "TEXT NOT NULL DEFAULT ''");
 		$this->addFieldDefinition(self::field_status, "VARCHAR(30) NOT NULL DEFAULT '".self::status_active."'");
 		$this->addFieldDefinition(self::field_update_by, "VARCHAR(30) NOT NULL DEFAULT 'SYSTEM'");

@@ -279,6 +279,19 @@ select[name=protocol_type] {
   height: 200px;
   overflow: auto;
 }
+.protocol_list a:link,
+.protocol_list a:visited {
+  text-decoration: none;
+  color: maroon;
+  background-color: transparent;
+}
+.protocol_list a:hover,
+.protocol_list a:active {
+  text-decoration: underline;
+  color: maroon;
+  background-color: transparent;
+}
+
 .protocol_list table {
   width: 99%;
 }

@@ -268,7 +268,7 @@ class kitBackend {
 	
   public function action() {
   	// fields with HTML code
-  	$html_allowed = array(dbKITmail::field_html, dbKITnewsletterTemplates::field_html, dbKITnewsletterPreview::field_view, dbKITnewsletterArchive::field_html);
+  	$html_allowed = array(dbKITmail::field_html, dbKITnewsletterTemplates::field_html, dbKITnewsletterPreview::field_view, dbKITnewsletterArchive::field_html, dbKITprotocol::field_memo);
   	foreach ($_REQUEST as $key => $value) {
   		if (!in_array($key, $html_allowed)) {
   			$_REQUEST[$key] = $this->xssPrevent($value);

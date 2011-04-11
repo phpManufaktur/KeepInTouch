@@ -173,6 +173,7 @@ define('kit_error_cfg_name',											'<p>Zu dem Bezeichner <b>%s</b> wurde kei
 define('kit_error_create_dir',										'<p>Das Verzeichnis<br /><b>%s</b><br />konnte nicht angelegt werden!');
 define('kit_error_delete_access_file',						'<p>Die Zugriffsseite <b>%s</b> konnte nicht gelöscht werden!</p>');
 define('kit_error_dlg_missing',										'<p>Der angeforderte Dialog <b>%s</b> wurde nicht gefunden!</p>');
+define('kit_error_email_missing',									'<p>Es wurde keine E-Mail Adresse übergeben!</p>');
 define('kit_error_get_csv',												'<p>Fehler beim Einlesen der CSV Datei!</p>');
 define('kit_error_google_maps_api_key_missing',		'<p>Karte kann nicht angezeigt werden, es ist kein Google Maps API Key definiert!</p>');
 define('kit_error_import_massmail_grp_missing',		'<p>Die Tabelle mit den MassMail Gruppen wurde nicht gefunden!</p>');
@@ -190,6 +191,7 @@ define('kit_error_page_exists',										'<p>Die Seite mit der Grundbezeichnung 
 define('kit_error_page_not_found',								'<p>Die Seite mit der PAGE_ID <b>%d</b> wurde nicht gefunden!</p>');
 define('kit_error_preview_id_invalid',						'<p>Die Preview mit der <b>ID %05d</b> wurde nicht gefunden!');
 define('kit_error_preview_id_missing',						'<p>Es wurde keine Preview ID angegeben!</p>');
+define('kit_error_record_for_email_exists',				'<p>Es existiert bereits ein Datensatz mit der <b>ID %03d</b> für die E-Mail Adresse <b>%s</b>, bitte aktualisieren Sie diesen Datensatz anstatt einen neuen anzulegen!</p>');
 define('kit_error_request_dlg_invalid_id',				'<p>[kitRequest] Der Dialog mit der <b>ID %03d</b> wurde nicht gefunden, Vorgang abgebrochen!</p>');
 define('kit_error_request_dlg_invalid_name',			'<p>[kitRequest] Der Dialog mit der Klassenbezeichnung <b>%s</b> wurde nicht gefunden, Vorgang abgebrochen!</p>');
 define('kit_error_request_invalid_action',				'<p>[kitRequest] Der Parameter <b>%s=%s</b> ist ungültig, Vorgang abgebrochen!</p>');
@@ -499,6 +501,10 @@ define('kit_msg_service_no_connect',              '<p>Der Updateserver konnte ni
 define('kit_protocol_create_contact',							'%s: Datensatz angelegt.');
 define('kit_protocol_create_contact_massmail',		'Datensatz durch Import der E-Mail Adresse %s aus Massmail angelegt.');
 define('kit_protocol_import_wb_user',							'WB Benutzer <b>%s</b> in KeepInTouch übernommen.');
+define('kit_protocol_ki_address_added',						'[kitInterface] Es wurde die Adresse %s, %s %s hinzugefügt.');
+define('kit_protocol_ki_address_updated',					'[kitInterface] Die Adresse %s, %s %s wurde aktualisiert.');
+define('kit_protocol_ki_contact_created',					'[kitInterface] Datensatz angelegt.');
+define('kit_protocol_ki_contact_updated',					'[kitInterface] Die Kontaktdaten wurden aktualisiert.');
 define('kit_protocol_send_newsletter_success',    'Newsletter <i>"%s"</i> um <b>%s</b> Uhr an <b>%s</b> versendet.');
 define('kit_protocol_send_newsletter_fail',       'Newsletter <i>"%s"</i> konnte um <b>%s</b> Uhr <b>nicht</b> an <b>%s</b> versendet werden.<br><b>Fehler:</b> %s.');
 define('kit_protocol_simulate_send_newsletter',   '<p>SIMULATION: Der Newsletter wurde an <b>%s</b> versendet!</p>');
