@@ -25,6 +25,7 @@ class kitContactInterface {
 	const kit_first_name					= 'kit_first_name';
 	const kit_last_name						= 'kit_last_name';
 	const kit_company							= 'kit_company';
+	const kit_country							= 'kit_country';
 	const kit_department					= 'kit_department';
 	const kit_address_type				= 'kit_address_type';
 	const kit_street							= 'kit_street';
@@ -36,6 +37,8 @@ class kitContactInterface {
 	const kit_fax									= 'kit_fax';
 	const kit_email								= 'kit_email';
 	const kit_newsletter					= 'kit_newsletter';
+	const kit_password						= 'kit_password';
+	const kit_password_retype			= 'kit_password_retype';
 	
 	public $field_array = array(
 		self::kit_title							=> kit_label_person_title,
@@ -43,6 +46,7 @@ class kitContactInterface {
 		self::kit_first_name				=> kit_label_person_first_name,
 		self::kit_last_name					=> kit_label_person_last_name,
 		self::kit_company						=> kit_label_company_name,
+		self::kit_country						=> kit_label_country,
 		self::kit_department				=> kit_label_company_department,
 		self::kit_address_type			=> kit_label_address_type,
 		self::kit_street						=> kit_label_address_street,
@@ -53,7 +57,9 @@ class kitContactInterface {
 		self::kit_phone_mobile			=> kit_label_contact_phone_mobile,
 		self::kit_fax								=> kit_label_contact_fax,
 		self::kit_email							=> kit_label_contact_email,
-		self::kit_newsletter				=> kit_label_newsletter
+		self::kit_newsletter				=> kit_label_newsletter,
+		self::kit_password					=> kit_label_password,
+		self::kit_password_retype		=> kit_label_password_retype
 	);
 	
 	private $field_assign = array(
@@ -74,6 +80,7 @@ class kitContactInterface {
 		self::kit_first_name				=> 12,
 		self::kit_last_name					=> 13,
 		self::kit_company						=> 14,
+		self::kit_country						=> 26,
 		self::kit_department				=> 15,
 		self::kit_address_type			=> 16,
 		self::kit_street						=> 17,
@@ -84,7 +91,9 @@ class kitContactInterface {
 		self::kit_phone_mobile			=> 22,
 		self::kit_fax								=> 23,
 		self::kit_email							=> 24,
-		self::kit_newsletter				=> 25
+		self::kit_newsletter				=> 25,
+		self::kit_password					=> 27,
+		self::kit_password_retype		=> 28
 	);
 	
 	const address_type_private		= 'private';
@@ -96,6 +105,12 @@ class kitContactInterface {
 	);
 	
 	private $error 				= ''; 
+	private $message			= '';
+	
+	const session_kit_aid					= 'kit_aid';
+	const session_kit_key					= 'kit_key';
+	const session_must_change_pwd = 'kit_mcp';
+	
 	
 	/**
     * Set $this->error to $error
@@ -126,6 +141,32 @@ class kitContactInterface {
     return (bool) !empty($this->error);
   } // isError
 	
+  /** Set $this->message to $message
+    * 
+    * @param STR $message
+    */
+  public function setMessage($message) {
+    $this->message = $message;
+  } // setMessage()
+
+  /**
+    * Get Message from $this->message;
+    * 
+    * @return STR $this->message
+    */
+  public function getMessage() {
+    return $this->message;
+  } // getMessage()
+
+  /**
+    * Check if $this->message is empty
+    * 
+    * @return BOOL
+    */
+  public function isMessage() {
+    return (bool) !empty($this->message);
+  } // isMessage
+  
 	/**
 	 * Return the person title array (Mr., Mrs., ...) for usage in kitForm
 	 * @param REFERENCE ARRAY $title_array
@@ -624,6 +665,82 @@ class kitContactInterface {
 		}
 		return true;
 	} // getContact()
+	
+	public function checkLogin($email, $password, &$contact=array(), &$groups=array(), &$must_change_password=false) {
+		global $dbRegister;
+		global $dbContact;
+		global $dbCfg;
+		
+		$where = array(
+			dbKITregister::field_email 	=> $email
+		);
+		$register = array();
+		if (!$dbRegister->sqlSelectRecord($where, $register)) {
+			$this->setError(sprintf('[%s - %s] %s', __METHOD__, __LINE__, $dbRegister->getError()));
+			return false;
+		}
+		if (count($register) < 1) {
+			// Benutzer ist nicht bekannt
+			$this->setMessage(sprintf(kit_msg_login_user_unknown, $email));
+			return false;
+		}
+		$register = $register[0];
+		if ($register[dbKITregister::field_status] !== dbKITregister::status_active) {
+			// Konto ist nicht aktiv
+			$this->setMessage(sprintf(kit_msg_login_status_fail, $email));
+			return false;
+		}
+		$max_login = $dbCfg->getValue(dbKITcfg::cfgMaxInvalidLogin);
+		if ($register[dbKITregister::field_login_locked] == 1) {
+			// Konto gesperrt, zuviele Fehlversuche
+			$this->setMessage(sprintf(kit_msg_login_locked, $email));
+			return false;
+		}
+		if (md5($password) !== $register[dbKITregister::field_password]) {
+			// Passwort stimmt nicht, Zaehler fuer Fehlversuche hochsetzen...
+			$where = array();
+			$where[dbKITregister::field_id] = $register[dbKITregister::field_id];
+			$data = array(
+				dbKITregister::field_login_failures => $register[dbKITregister::field_login_failures]+1,
+				dbKITregister::field_login_locked 	=> (($register[dbKITregister::field_login_failures]+1) > $max_login) ? 1 : 0,
+				dbKITregister::field_update_by			=> 'INTERFACE',
+				dbKITregister::field_update_when		=> date('Y-m-d H:i:s')
+			);
+			if (!$dbRegister->sqlUpdateRecord($data, $where)) {
+				$this->setError(sprintf('[%s - %s] %s', __METHOD__, __LINE__, $dbRegister->getError()));
+				return false;
+			}
+			if ($data[dbKITregister::field_login_locked] == 1) {
+				// Konto ist gesperrt, Systemlog aktualisieren
+				$dbContact->addSystemNotice($register[dbKITregister::field_contact_id], kit_protocol_login_locked);
+				$this->setMessage(kit_msg_login_locked);
+				return false;
+			}
+			$this->setMessage(kit_msg_login_password_invalid);
+			return false;
+		}
+		else {
+			// OK - LOGIN erfolgreich
+			if (strtolower($_REQUEST[dbKITregister::field_password]) == strtolower($account[dbKITregister::field_email])) {
+				// special: initial password is identical with email address and must be changed
+				$_SESSION[self::session_must_change_pwd] = true;
+				$must_change_password = true;
+			}				 
+			$_SESSION[self::session_kit_aid] = $register[dbKITregister::field_id];
+			$_SESSION[self::session_kit_key] = $register[dbKITregister::field_register_key];
+			
+			// Kontaktdaten uebergeben
+			$this->getContact($register[dbKITregister::field_contact_id], $contact);
+			
+			// Gruppen auslesen
+			$c = explode(',', $contact[dbKITcontact::field_category]);
+			$d = explode(',', $contact[dbKITcontact::field_distribution]);
+			$n = explode(',', $contact[dbKITcontact::field_newsletter]);
+			$groups = array_merge($c, $d, $n);
+			 
+			return true;
+		}
+	} // checkLogin()
 	
 } // class kitContactInterface
 

@@ -339,6 +339,7 @@ define('kit_label_contact_identifier',						'Kontakt Bezeichner');
 define('kit_label_company_name',									'Firma');
 define('kit_label_company_title',									'Anrede');
 define('kit_label_contact_type',									'Kontakt Typ');
+define('kit_label_country',												'Land'); 
 define('kit_label_csv_export',										'CSV Export');
 define('kit_label_csv_import',										'CSV Import');
 define('kit_label_distribution',                  'Verteiler');
@@ -452,6 +453,10 @@ define('kit_msg_internet_invalid',								'<p>Die Internetadresse <b>%s</b> ist 
 define('kit_msg_internet_type_changed',						'<p>Der Typ für die Internetadresse <b>%s</b> wurde geändert.</p>');
 define('kit_msg_invalid_email',										'<p>Die E-Mail Adresse <b>%s</b> ist nicht gültig, bitte prüfen Sie Ihre Eingabe.</p>');
 define('kit_msg_invalid_id',											'<p>Es wurde keine gültige ID übergeben!</p>');
+define('kit_msg_login_locked',										'<p>Das Konto für den Benutzer <b>%s</b> weist zu viele fehlerhafte Login-Versuche auf und ist gesperrt. Bitte wenden Sie sich an den Webmaster.</p>');
+define('kit_msg_login_password_invalid',					'<p>Das Passwort stimmt nicht.</p>'); 
+define('kit_msg_login_status_fail',								'<p>Das Konto für den Benutzer <b>%s</b> ist nicht aktiv. Bitte wenden Sie sich an den Webmaster.</p>');
+define('kit_msg_login_user_unknown',							'<p>Der Benutzer <b>%s</b> ist nicht bekannt oder das Konto ist nicht für eine Anmeldung freigeschaltet.</p>');
 define('kit_msg_mail_incomplete',									'<p>Die Angaben sind unvollständig: E-Mail Absender, E-Mail Empfänger, Auswahl einer Kategorie, Betreff und Text müssen gesetzt sein.</p>');
 define('kit_msg_mail_send_error',									'<p>Die E-Mail konnte nicht versendet werden, es sind insgesamt <b>%d Fehler</b> aufgetreten, die Fehlermeldung lautet:<br /><b>%s</b></p>');
 define('kit_msg_mail_send_success',								'<p>Die E-Mail wurde erfolgreich versendet.</p>');
@@ -505,6 +510,7 @@ define('kit_protocol_ki_address_added',						'[kitInterface] Es wurde die Adress
 define('kit_protocol_ki_address_updated',					'[kitInterface] Die Adresse %s, %s %s wurde aktualisiert.');
 define('kit_protocol_ki_contact_created',					'[kitInterface] Datensatz angelegt.');
 define('kit_protocol_ki_contact_updated',					'[kitInterface] Die Kontaktdaten wurden aktualisiert.');
+define('kit_protocol_login_locked',								'KONTO GESPERRT, der Benutzer hat zuviele fehlerhafte Login Versuche unternommen.');
 define('kit_protocol_send_newsletter_success',    'Newsletter <i>"%s"</i> um <b>%s</b> Uhr an <b>%s</b> versendet.');
 define('kit_protocol_send_newsletter_fail',       'Newsletter <i>"%s"</i> konnte um <b>%s</b> Uhr <b>nicht</b> an <b>%s</b> versendet werden.<br><b>Fehler:</b> %s.');
 define('kit_protocol_simulate_send_newsletter',   '<p>SIMULATION: Der Newsletter wurde an <b>%s</b> versendet!</p>');
