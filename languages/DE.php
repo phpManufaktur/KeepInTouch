@@ -192,6 +192,7 @@ define('kit_error_page_not_found',								'<p>Die Seite mit der PAGE_ID <b>%d</b
 define('kit_error_preview_id_invalid',						'<p>Die Preview mit der <b>ID %05d</b> wurde nicht gefunden!');
 define('kit_error_preview_id_missing',						'<p>Es wurde keine Preview ID angegeben!</p>');
 define('kit_error_record_for_email_exists',				'<p>Es existiert bereits ein Datensatz mit der <b>ID %03d</b> für die E-Mail Adresse <b>%s</b>, bitte aktualisieren Sie diesen Datensatz anstatt einen neuen anzulegen!</p>');
+define('kit_error_register_email_already_exists',	'<p>Fataler Fehler: Es existiert bereits ein Registrierdatensatz für die E-Mail Adresse <b>%s</b>.</p>');
 define('kit_error_request_dlg_invalid_id',				'<p>[kitRequest] Der Dialog mit der <b>ID %03d</b> wurde nicht gefunden, Vorgang abgebrochen!</p>');
 define('kit_error_request_dlg_invalid_name',			'<p>[kitRequest] Der Dialog mit der Klassenbezeichnung <b>%s</b> wurde nicht gefunden, Vorgang abgebrochen!</p>');
 define('kit_error_request_invalid_action',				'<p>[kitRequest] Der Parameter <b>%s=%s</b> ist ungültig, Vorgang abgebrochen!</p>');
@@ -419,6 +420,9 @@ define('kit_list_sort_phone',											'Rufnummer');
 define('kit_list_sort_street',										'Straße');
 define('kit_list_sort_unsorted',									'- unsortiert -');
 
+define('kit_msg_activation_key_invalid',					'<p>Der übergebene Aktiverungskey ist ungültig!</p>');
+define('kit_msg_activation_key_used',							'<p>Der Aktivierungskey wurde bereits verwendet und ist ungültig.</p>');
+define('kit_msg_account_locked',									'<p>Dieses Konto ist gesperrt. Bitte wenden Sie sich an den Service.</p>');
 define('kit_msg_address_deleted',									'<p>Ein Adressdatensatz zu dem Kontakt mit der <b>ID %05d</b> wurde gelöscht.</p>');
 define('kit_msg_address_insert',									'<p>Zu dem Kontakt wurde eine neue Adresse hinzugefügt.</p>');
 define('kit_msg_address_invalid',									'<p>Die Adresse kann nicht übernommen werden, die Angaben sind nicht ausreichend.<br />Bitte geben Sie <i>Straße, PLZ und Stadt</i> oder <i>Straße und Stadt</i> oder nur <i>Stadt</i> an.</p>');
@@ -467,6 +471,8 @@ define('kit_msg_massmail_group_no_data',					'<p>Die MassMail Gruppe mit der <b>
 define('kit_msg_massmail_email_skipped',					'<p>Die folgenden E-Mail Adressen werden in den angegebenen KIT Datensätzen bereits verwendet und wurden deshalb <b>ignoriert</b>: %s</p>');
 define('kit_msg_massmail_no_emails_imported',			'<p><b>Es wurden keine E-Mail Adressen übernommen!</b></p>');
 define('kit_msg_massmail_emails_imported',				'<p>Es wurden insgesamt <b>%d E-Mail Adressen</b> als eigenständige Datensätze übernommen: %s</p>');
+define('kit_msg_newsletter_account_not_activated','<p>Für die E-Mail Adresse <b>%s</b> existiert bereits ein Konto, das noch nicht aktivert wurde. Bitte aktivieren Sie zunächst dieses Konto!</p>');
+define('kit_msg_newsletter_account_locked',				'<p>Das Konto für die E-Mail Adresse <b>%s</b> ist z.Zt. gesperrt, bitte wenden Sie sich an den Service.</p>');
 define('kit_msg_newsletter_adjust_register',      '<p>Der Befehl <b>cfgAdjustRegister</b> wurde für <b>%s</b> ausgeführt!</p>');
 define('kit_msg_newsletter_new_no_groups',				'<p>Bitte wählen Sie eine oder mehrere <b>Newsletter Gruppen</b> oder <b>Verteiler Gruppen</b> aus!</p>');
 define('kit_msg_newsletter_new_no_html',					'<p>Bitte geben Sie den Newsletter Text im <b>HTML Format</b> an!</p>');
@@ -475,6 +481,7 @@ define('kit_msg_newsletter_new_no_subject',				'<p>Bitte geben Sie einen Betreff
 define('kit_msg_newsletter_new_no_template',			'<p>Bitte wählen Sie ein <b>Template</b> für den Versand des Newsletters aus!</p>');
 define('kit_msg_newsletter_new_no_text',					'<p>Das <b>NUR TEXT</b> Format wurde automatisch generiert, bitte pruefen Sie die Ausgabe!</p>');
 define('kit_msg_newsletter_new_packages_created', '<p>Es wurden insgesamt <b>%d Pakete</b> für den Versand vorbereitet.</p>');
+define('kit_msg_newsletter_no_abonnement',				'<p>Es wurden keine Newsletter für die E-Mail Adresse <b>%s</b> bestellt!</p>');
 define('kit_msg_newsletter_simulate_mailing',     '<p><b>SIMULATIONSMODUS AKTIV</b> - es werden keine Newsletter versendet!</p>');
 define('kit_msg_newsletter_tpl_added',						'<p>Das Template <b>%s</b> wurde hinzugefügt.</p>');
 define('kit_msg_newsletter_tpl_changed',					'<p>Das Template <b>%s</b> wurde aktualisiert.</p>');
@@ -483,6 +490,7 @@ define('kit_msg_newsletter_tpl_minimum_failed',		'<p>Datensatz nicht gesichert, 
 define('kit_msg_newsletter_tpl_missing',					'<p><b>Sie haben noch kein Template für den Versand von Newslettern angelegt.</b></p><p>Bitte legen Sie zunächst ein Template an, bevor Sie einen Newsletter erstellen.</p>');
 define('kit_msg_newsletter_tpl_text_inserted',		'<p>Die <b>NUR TEXT</b> Ausgabe des Templates wurde automatisch generiert, bitte prüfen Sie die Ausgabe.</p>');
 define('kit_msg_newsletter_tpl_unchanged',				'<p>Das Template mit der <b>ID %05d</b> wurde nicht geändert.</p>');
+define('kit_msg_newsletter_user_not_registered',	'<p>Die E-Mail Adresse <b>%s</b> befindet sich nicht im Verteiler!</p>');
 define('kit_msg_password_changed',								'<p>Das Passwort wurde erfolgreich geändert!</p>');
 define('kit_msg_password_needed',									'<p>Bitte geben Sie das Passwort an!</p>');
 define('kit_msg_passwords_mismatch',							'<p>Die angegebenen Passwörter stimmen nicht überein!</p>');
@@ -506,10 +514,13 @@ define('kit_msg_service_no_connect',              '<p>Der Updateserver konnte ni
 define('kit_protocol_create_contact',							'%s: Datensatz angelegt.');
 define('kit_protocol_create_contact_massmail',		'Datensatz durch Import der E-Mail Adresse %s aus Massmail angelegt.');
 define('kit_protocol_import_wb_user',							'WB Benutzer <b>%s</b> in KeepInTouch übernommen.');
+define('kit_protocol_ki_account_activated',				'Das Konto wurde bestätigt und aktiviert');
 define('kit_protocol_ki_address_added',						'[kitInterface] Es wurde die Adresse %s, %s %s hinzugefügt.');
 define('kit_protocol_ki_address_updated',					'[kitInterface] Die Adresse %s, %s %s wurde aktualisiert.');
 define('kit_protocol_ki_contact_created',					'[kitInterface] Datensatz angelegt.');
 define('kit_protocol_ki_contact_updated',					'[kitInterface] Die Kontaktdaten wurden aktualisiert.');
+define('kit_protocol_ki_newsletter_updated',			'[kitInterface] Das Newsletter Abonnement wurde aktualisiert.');
+define('kit_protocol_ki_password_changed',				'[kitInterface] Das Passwort wurde geändert.');
 define('kit_protocol_login_locked',								'KONTO GESPERRT, der Benutzer hat zuviele fehlerhafte Login Versuche unternommen.');
 define('kit_protocol_send_newsletter_success',    'Newsletter <i>"%s"</i> um <b>%s</b> Uhr an <b>%s</b> versendet.');
 define('kit_protocol_send_newsletter_fail',       'Newsletter <i>"%s"</i> konnte um <b>%s</b> Uhr <b>nicht</b> an <b>%s</b> versendet werden.<br><b>Fehler:</b> %s.');

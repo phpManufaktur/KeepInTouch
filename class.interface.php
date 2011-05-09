@@ -20,25 +20,28 @@ if (!is_object($kitContactInterface)) $kitContactInterface = new kitContactInter
 
 class kitContactInterface {
 	
-	const kit_title								= 'kit_title';
-	const kit_title_academic			= 'kit_title_academic';
-	const kit_first_name					= 'kit_first_name';
-	const kit_last_name						= 'kit_last_name';
-	const kit_company							= 'kit_company';
-	const kit_country							= 'kit_country';
-	const kit_department					= 'kit_department';
-	const kit_address_type				= 'kit_address_type';
-	const kit_street							= 'kit_street';
-	const kit_zip									= 'kit_zip';
-	const kit_city								= 'kit_city';
-	const kit_zip_city						= 'kit_zip_city';
-	const kit_phone								= 'kit_phone';
-	const kit_phone_mobile				= 'kit_phone_mobile';
-	const kit_fax									= 'kit_fax';
-	const kit_email								= 'kit_email';
-	const kit_newsletter					= 'kit_newsletter';
-	const kit_password						= 'kit_password';
-	const kit_password_retype			= 'kit_password_retype';
+	const kit_title									= 'kit_title';
+	const kit_title_academic				= 'kit_title_academic';
+	const kit_first_name						= 'kit_first_name';
+	const kit_last_name							= 'kit_last_name';
+	const kit_company								= 'kit_company';
+	const kit_country								= 'kit_country';
+	const kit_department						= 'kit_department';
+	const kit_address_type					= 'kit_address_type';
+	const kit_street								= 'kit_street';
+	const kit_zip										= 'kit_zip';
+	const kit_city									= 'kit_city';
+	const kit_zip_city							= 'kit_zip_city';
+	const kit_phone									= 'kit_phone';
+	const kit_phone_mobile					= 'kit_phone_mobile';
+	const kit_fax										= 'kit_fax';
+	const kit_email									= 'kit_email';
+	const kit_newsletter						= 'kit_newsletter';
+	const kit_password							= 'kit_password';
+	const kit_password_retype				= 'kit_password_retype';
+	const kit_categories						= 'kit_categories';							// reines Info-Feld - wird nicht in die Feldliste aufgenommen!
+	const kit_intern								= 'kit_intern'; 								// interner Verteiler, für Gruppenzuordnungen von Shops etc.
+	const kit_newsletter_subscribe	= 'kit_newsletter_subscribe';		// BOOL - fuer die An- und Abmeldung von Newslettern
 	
 	public $field_array = array(
 		self::kit_title							=> kit_label_person_title,
@@ -59,7 +62,7 @@ class kitContactInterface {
 		self::kit_email							=> kit_label_contact_email,
 		self::kit_newsletter				=> kit_label_newsletter,
 		self::kit_password					=> kit_label_password,
-		self::kit_password_retype		=> kit_label_password_retype
+		self::kit_password_retype		=> kit_label_password_retype,
 	);
 	
 	private $field_assign = array(
@@ -110,6 +113,7 @@ class kitContactInterface {
 	const session_kit_aid					= 'kit_aid';
 	const session_kit_key					= 'kit_key';
 	const session_must_change_pwd = 'kit_mcp';
+	const session_kit_contact_id	= 'kit_cid';
 	
 	
 	/**
@@ -166,6 +170,37 @@ class kitContactInterface {
   public function isMessage() {
     return (bool) !empty($this->message);
   } // isMessage
+  
+  /**
+   * Check if the user is authenticated
+   * @return BOOL
+   */
+  public function isAuthenticated() {
+  	$result = (isset($_SESSION[self::session_kit_aid]) && isset($_SESSION[self::session_kit_key]) && isset($_SESSION[self::session_kit_contact_id])) ? true : false;
+  	return $result;
+  } // isAuthenticated()
+  
+  /**
+   * LOGOUT the user and unsets all specific $_SESSION vars
+   * @return BOOL
+   */
+  public function logout() {
+  	unset($_SESSION[self::session_kit_aid]);
+  	unset($_SESSION[self::session_kit_key]);
+  	unset($_SESSION[self::session_kit_contact_id]);
+  	unset($_SESSION[self::session_must_change_pwd]);
+  	return true;
+  } // logout()
+  
+  /**
+   * Return the KIT Contact ID if the user is logged in, otherwise -1
+   * 
+   * @return INT
+   */
+  public function getContactID() {
+  	$contact_id = (isset($_SESSION[self::session_kit_contact_id])) ? $_SESSION[self::session_kit_contact_id] : -1;
+  	return $contact_id;
+  }
   
 	/**
 	 * Return the person title array (Mr., Mrs., ...) for usage in kitForm
@@ -295,6 +330,8 @@ class kitContactInterface {
 	public function updateContact($contact_id, &$contact_array=array()) {
 		global $dbContact;
 		global $dbContactAddress;
+		global $dbRegister;
+		
 		if ($dbContact->getContactByID($contact_id, $contact)) { 
 			// Adresse existiert, Daten vergleichen
 			$address = $dbContactAddress->getFields();
@@ -361,16 +398,25 @@ class kitContactInterface {
 					}
 					break;
 				case self::kit_newsletter:
-					if (isset($contact_array[$field]) && !empty($contact_array[$field])) {
-						$new_newsletters = explode(',', $contact_array[$field]);
-						$newsletters = explode(',', $contact[dbKITcontact::field_newsletter]);
-						foreach ($new_newsletters as $new_newsletter) {
-							if (!in_array($new_newsletter, $newsletters)) {
-								$newsletters[] = $new_newsletter;
-								$contact_changed = true;
+					if (isset($contact_array[$field])) {
+						if ($contact_array[$field] != $contact[dbKITcontact::field_newsletter]) {
+							$contact[dbKITcontact::field_newsletter] = $contact_array[$field];
+							$contact_changed = true;
+							// Newsletter auch in dbKITregister aktualisieren!
+							$where = array(
+								dbKITregister::field_contact_id => $contact_id,
+								dbKITregister::field_status => dbKITregister::status_active
+							);
+							$data = array(
+								dbKITregister::field_newsletter 	=> $contact_array[$field],
+								dbKITregister::field_update_by		=> 'INTERFACE',
+								dbKITregister::field_update_when	=> date('Y-m-d H:i:s')
+							);
+							if (!$dbRegister->sqlUpdateRecord($data, $where)) {
+								$this->setError(sprintf('[%s - %s] %s', __METHOD__, __LINE__, $dbRegister->getError()));
+								return false;
 							}
 						}
-						$contact[dbKITcontact::field_newsletter] = implode(',', $newsletters);
 					}
 					break;
 				endswitch;
@@ -433,6 +479,19 @@ class kitContactInterface {
 			return false;
 		}
 	} // updateContact()
+	
+	/**
+	 * Fuegt eine Notiz zu der angegebenen Contact ID hinzu
+	 * 
+	 * @param INT $contact_id
+	 * @param STR $notice
+	 * @return BOOL
+	 */
+	public function addNotice($contact_id, $notice) {
+		global $dbContact;
+		$dbContact->addSystemNotice($contact_id, $notice);
+		return true;
+	} // addNotice()
 
 	/**
 	 * Fuegt einen neuen Kontakt Datensatz ein
@@ -441,9 +500,11 @@ class kitContactInterface {
 	 * @return BOOL
 	 * @todo Die Laenderkennung wird momentan immer auf 'DE' gesetzt!
 	 */
-	public function addContact($contact_array=array(), &$contact_id=-1) {
+	public function addContact($contact_array=array(), &$contact_id=-1, &$register_array=array()) { 
 		global $dbContact;
 		global $dbContactAddress;
+		global $dbRegister;
+		global $tools;
 		
 		if (!isset($contact_array[self::kit_email])) {
 			// es wurde keine E-Mail Adresse uebergeben
@@ -453,10 +514,9 @@ class kitContactInterface {
 		$contact_email = strtolower($contact_array[self::kit_email]);
 		if ($this->isEMailRegistered($contact_email, $contact_id)) {
 			// es existiert bereits ein Datensatz fuer die angegebene E-Mail Adresse
-			$this->setError('[%s - %s] %s', __METHOD__, __LINE__, sprintf(kit_error_record_for_email_exists, $contact_id, $contact_email));
+			$this->setError(sprintf('[%s - %s] %s', __METHOD__, __LINE__, sprintf(kit_error_record_for_email_exists, $contact_id, $contact_email)));
 			return false;
 		}
-		
 		// neuen Datensatz anlegen
 		$contact = $dbContact->getFields();
 		foreach ($contact as $key => $value) {
@@ -490,6 +550,9 @@ class kitContactInterface {
 			case dbKITcontact::field_email_standard:
 				$contact[$key] = 0;
 				break;
+			case dbKITcontact::field_category:
+				$contact[$key] = (isset($contact_array[self::kit_intern])) ? $contact_array[self::kit_intern] : '';
+				break;
 			case dbKITcontact::field_newsletter:
 				$contact[$key] = (isset($contact_array[self::kit_newsletter])) ? $contact_array[self::kit_newsletter] : '';
 				break;
@@ -522,7 +585,7 @@ class kitContactInterface {
 			endswitch;
 		}
 		
-		$contact[dbKITcontact::field_update_by] = 'SYSTEM';
+		$contact[dbKITcontact::field_update_by] = 'INTERFACE';
 		$contact[dbKITcontact::field_update_when] = date('Y-m-d H:i:s');
 		
 		if (!$dbContact->sqlInsertRecord($contact, $contact_id)) {
@@ -564,6 +627,43 @@ class kitContactInterface {
 																												$address[dbKITcontactAddress::field_zip],
 																												$address[dbKITcontactAddress::field_city]));		
 		}
+		
+		// Registrierung pruefen und anlegen
+		$SQL = sprintf( "SELECT * FROM %s WHERE %s='%s' AND %s!='%s'",
+										$dbRegister->getTableName(),
+										dbKITregister::field_email,
+										$contact_array[self::kit_email],
+										dbKITregister::field_status,
+										dbKITregister::status_deleted);
+		$register_array = array();
+		if (!$dbRegister->sqlExec($SQL, $register_array)) {
+			$this->setError(sprintf('[%s - %s] %s', __METHOD__, __LINE__, $dbRegister->getError()));
+			return false;
+		}
+		if (count($register_array) > 0) {
+			$this->setError(sprintf(kit_error_register_email_already_exists, $contact_array[self::kit_email]));
+			return false;
+		}
+		$register_array = array(
+			dbKITregister::field_contact_id						=> $contact_id,
+			dbKITregister::field_email								=> $contact_array[self::kit_email],
+			dbKITregister::field_login_failures				=> 0,
+			dbKITregister::field_login_locked					=> 0,
+			dbKITregister::field_newsletter						=> $contact[dbKITcontact::field_newsletter],
+			dbKITregister::field_password							=> md5($contact_array[self::kit_email]),
+			dbKITregister::field_register_confirmed		=> '0000-00-00 00:00:00',
+			dbKITregister::field_register_date				=> date('Y-m-d H:i:s'),
+			dbKITregister::field_register_key					=> $tools->createGUID(),
+			dbKITregister::field_status								=> dbKITregister::status_key_created,
+			dbKITregister::field_username							=> $contact_array[self::kit_email],
+			dbKITregister::field_update_by						=> 'INTERFACE',
+			dbKITregister::field_update_when					=> date('Y-m-d H:i:s')
+		);
+		if (!$dbRegister->sqlInsertRecord($register_array, $register_id)) {
+			$this->setError(sprintf('[%s - %s] %s', __METHOD__, __LINE__, $dbRegister->getError()));
+			return false;
+		}
+		$register_array[dbKITregister::field_id] = $register_id;
 		
 		return true;
 	} // insertContact()
@@ -663,10 +763,24 @@ class kitContactInterface {
 				break;
 			endswitch;
 		}
+		
+		// Gruppen des Kontakts auslesen und in einem Array ablegen
+		$ga = array(dbKITcontact::field_category, dbKITcontact::field_distribution, dbKITcontact::field_newsletter);
+		$groups = array();
+		foreach ($ga as $grp) {
+			if (!empty($grp)) {
+				$x = explode(',', $contact[$grp]);
+				foreach ($x as $i) {
+					if (!empty($i))  $groups[] = $i; 
+				}
+			}
+		}
+		$contact_array[self::kit_categories] = $groups;
+		
 		return true;
 	} // getContact()
 	
-	public function checkLogin($email, $password, &$contact=array(), &$groups=array(), &$must_change_password=false) {
+	public function checkLogin($email, $password, &$contact=array(), &$must_change_password=false) {
 		global $dbRegister;
 		global $dbContact;
 		global $dbCfg;
@@ -721,26 +835,285 @@ class kitContactInterface {
 		}
 		else {
 			// OK - LOGIN erfolgreich
-			if (strtolower($_REQUEST[dbKITregister::field_password]) == strtolower($account[dbKITregister::field_email])) {
+			if (strtolower($password) == strtolower($register[dbKITregister::field_email])) {
 				// special: initial password is identical with email address and must be changed
 				$_SESSION[self::session_must_change_pwd] = true;
 				$must_change_password = true;
 			}				 
 			$_SESSION[self::session_kit_aid] = $register[dbKITregister::field_id];
 			$_SESSION[self::session_kit_key] = $register[dbKITregister::field_register_key];
+			$_SESSION[self::session_kit_contact_id] = $register[dbKITregister::field_contact_id];
 			
 			// Kontaktdaten uebergeben
-			$this->getContact($register[dbKITregister::field_contact_id], $contact);
+			$this->getContact($register[dbKITregister::field_contact_id], $contact); 
 			
-			// Gruppen auslesen
-			$c = explode(',', $contact[dbKITcontact::field_category]);
-			$d = explode(',', $contact[dbKITcontact::field_distribution]);
-			$n = explode(',', $contact[dbKITcontact::field_newsletter]);
-			$groups = array_merge($c, $d, $n);
-			 
 			return true;
 		}
 	} // checkLogin()
+	
+	/**
+	 * Neues Passwort fuer den Kontakt erzeugen
+	 * 
+	 * @param STR $email
+	 * @param STR $newPassword
+	 * @return BOOL
+	 */
+	public function generateNewPassword($email, &$newPassword) {
+		global $dbRegister;
+		global $tools;
+		global $dbCfg;
+		
+		$where = array(
+			dbKITregister::field_email 	=> $email
+		);
+		$register = array();
+		if (!$dbRegister->sqlSelectRecord($where, $register)) {
+			$this->setError(sprintf('[%s - %s] %s', __METHOD__, __LINE__, $dbRegister->getError()));
+			return false;
+		}
+		if (count($register) < 1) {
+			// Benutzer ist nicht bekannt
+			$this->setMessage(sprintf(kit_msg_login_user_unknown, $email));
+			return false;
+		}
+		$register = $register[0];
+		if ($register[dbKITregister::field_status] !== dbKITregister::status_active) {
+			// Konto ist nicht aktiv
+			$this->setMessage(sprintf(kit_msg_login_status_fail, $email));
+			return false;
+		}
+		// neues Passwort erzeugen
+		$newPassword = $tools->generatePassword($dbCfg->getValue(dbKITcfg::cfgMinPwdLen));
+		
+		$data = array(
+			dbKITregister::field_password => md5($newPassword),
+			dbKITregister::field_login_failures	=> 0,
+			dbKITregister::field_login_locked => 0,
+			dbKITregister::field_update_by => 'INTERFACE',
+			dbKITRegister::field_update_when => date('Y-m-d H:i:s')
+		);
+		
+		if (!$dbRegister->sqlUpdateRecord($data, $where)) {
+			$this->setError(sprintf('[%s - %s] %s', __METHOD__, __LINE__, $dbRegister->getError()));
+			return false;
+		}
+		return true;
+	} // generateNewPassword()
+	
+	public function checkActivationKey($key, &$register_array=array(), &$contact_array=array(), &$password='') {
+		global $dbRegister;
+		global $tools;
+		global $dbCfg;
+		
+		$SQL = sprintf( "SELECT * FROM %s WHERE %s='%s' AND %s!='%s'",
+										$dbRegister->getTableName(),
+										dbKITregister::field_register_key,
+										$key,
+										dbKITregister::field_status,
+										dbKITregister::status_deleted);
+		$register = array();
+		if (!$dbRegister->sqlExec($SQL, $register)) {
+			$this->setError(sprintf('[%s - %s] %s', __METHOD__, __LINE__, $dbRegister->getError()));
+			return false;
+		}		
+		if (count($register) < 1) {
+			$this->setMessage(kit_msg_activation_key_invalid);
+			return false;
+		}
+		$register = $register[0];
+		if (($register[dbKITregister::field_status] == dbKITregister::status_key_created) || ($register[dbKITregister::field_status] == dbKITregister::status_key_send)) {
+			// ok - Aktiverungskey wurde versendet und noch nicht verwendet
+			$password = $tools->generatePassword($dbCfg->getValue(dbKITcfg::cfgMinPwdLen));
+			$where = array(
+				dbKITregister::field_id	=> $register[dbKITregister::field_id]
+			);
+			$data = array(
+				dbKITregister::field_register_confirmed		=> date('Y-m-d H:i:s'),
+				dbKITregister::field_password							=> md5($password),
+				dbKITregister::field_status								=> dbKITregister::status_active,
+				dbKITregister::field_update_by						=> 'INTERFACE',
+				dbKITregister::field_update_when					=> date('Y-m-d H:i:s')
+			);
+			if (!$dbRegister->sqlUpdateRecord($data, $where)) {
+				$this->setError(sprintf('[%s - %s] %s', __METHOD__, __LINE__, $dbRegister->getError()));
+				return false;
+			}
+			// Notiz hinzufuegen
+			$this->addNotice($register[dbKITregister::field_contact_id], kit_protocol_ki_account_activated);
+			if (!$this->getContact($register[dbKITregister::field_contact_id], $contact_array)) {
+				$this->setError(sprintf('[%s - %s] %s', __METHOD__, __LINE__, $this->getError()));
+				return false;
+			}
+			return true;
+		}
+		elseif ($register[dbKITregister::field_status] == dbKITregister::status_locked) {
+			// Konto ist gesperrt
+			$this->setMessage(kit_msg_account_locked);
+			return false;
+		}
+		else {
+			// Aktivierungskey wurde bereits verwendet
+			$this->setMessage(kit_msg_activation_key_used);
+			return false;
+		}
+	} // checkActivationKey()
+	
+	public function changePassword($register_id, $contact_id, $new_password, $new_password_retype) {
+		global $dbCfg;
+		global $dbRegister;
+		
+		if ($new_password != $new_password_retype) {
+			$this->setMessage(kit_msg_passwords_mismatch);
+			return false;
+		}
+		$min_length = $dbCfg->getValue(dbKITcfg::cfgMinPwdLen);
+		if (strlen($new_password) < $min_length) {
+			$this->setMessage(sprintf(kit_msg_password_too_short, $min_length));
+			return false;
+		}
+		$data = array(
+			dbKITregister::field_password				=> md5($new_password),
+			dbKITregister::field_login_failures	=> 0,
+			dbKITregister::field_login_locked		=> 0,
+			dbKITregister::field_update_by			=> 'INTERFACE',
+			dbKITregister::field_update_when		=> date('Y-m-d H:i:s')	
+		);
+		$where = array(
+			dbKITregister::field_id => $register_id
+		);
+		if (!$dbRegister->sqlUpdateRecord($data, $where)) {
+			$this->setError(sprintf('[%s - %s] %s', __METHOD__, __LINE__, $dbRegister->getError()));
+			return false;
+		}
+		$this->setMessage(kit_msg_password_changed);
+		$this->addNotice($contact_id, kit_protocol_ki_password_changed);
+		return true;
+	} // changePassword()
+	
+	public function subscribeNewsletter($email, $newsletter, $subscribe=true, $use_subscribe=false, &$register=array(), &$contact=array(), &$send_activation=false) {
+		global $dbRegister;
+		global $dbContact;
+		global $tools;
+		
+		if (!$tools->validateEMail($email)) {
+			// E-Mail Adresse ist ungueltig
+			$this->setMessage(sprintf(kit_msg_email_invalid, $email));
+			return false;
+		}
+		
+		// pruefen, ob bereits ein Datensatz existiert		
+		$SQL = sprintf(	"SELECT * FROM %s WHERE %s='%s' AND %s!='%s'",
+										$dbRegister->getTableName(),
+										dbKITregister::field_email,
+										$email,
+										dbKITregister::field_status,
+										dbKITregister::status_deleted);
+		$register = array();
+		if (!$dbRegister->sqlExec($SQL, $register)) {
+			$this->setError(sprintf('[%s - %s] %s', __METHOD__, __LINE__, $dbRegister->getError()));
+			return false;
+		}
+		if (count($register) > 0) {
+			// Anwender ist bereits registriert
+			$register = $register[0];
+			if ($register[dbKITregister::field_status] != dbKITregister::status_active) {
+				// Registrierung ist nicht aktiv
+				if (($register[dbKITregister::field_status] == dbKITregister::status_key_created) ||
+						($register[dbKITregister::field_status] == dbKITregister::status_key_send)) {
+					// Benutzer ist registriert aber noch nicht bestaetigt
+					$send_activation = true;
+					if (!$this->getContact($register[dbKITregister::field_contact_id], $contact)) {
+						$this->setError(sprintf('[%s - %s] %s', __METHOD__, __LINE__, $this->getError()));
+						return false;
+					}		
+					$this->setMessage(sprintf(kit_msg_newsletter_account_not_activated, $email));
+					return true;
+				}
+				else {
+					// Konto ist gesperrt
+					$this->setMessage(sprintf(kit_msg_newsletter_account_locked, $email));
+					return false;
+				}
+			}
+			$newsletter_array = explode(',', $register[dbKITregister::field_newsletter]);
+			$new_array = explode(',', $newsletter);
+			if (($use_subscribe == true) && ($subscribe == true)) {
+				// angegebene Newsletter anmelden
+				foreach ($new_array as $new) {
+					if (!in_array($new, $newsletter_array)) $newsletter_array[] = $new;
+				}
+			}
+			elseif (($use_subscribe == true) && ($subscribe == false)) {
+				// angegebene Newsletter abmelden
+				foreach ($new_array as $new) {
+					if (false !== ($key = array_search($new, $newsletter_array))) {
+						unset($newsletter_array[$key]);
+					}
+				}
+			}
+			else {
+				// Newsletter 1:1 uebernehmen
+				$newsletter_array = $new_array;
+			}
+			// Registrierung aktualisieren
+			$data = array(
+				dbKITregister::field_newsletter			=> implode(',', $newsletter_array),
+				dbKITregister::field_update_by			=> 'INTERFACE',
+				dbKITregister::field_update_when		=> date('Y-m-d H:i:s')
+			);
+			$where = array(
+				dbKITregister::field_id => $register[dbKITregister::field_id]
+			);
+			if (!$dbRegister->sqlUpdateRecord($data, $where)) {
+				$this->setError(sprintf('[%s - %s] %s', __METHOD__, __LINE__, $dbRegister->getError()));
+				return false;
+			}
+			// Kontaktdatensatz aktualisieren
+			$where = array(
+				dbKITcontact::field_id => $register[dbKITregister::field_contact_id]
+			);
+			$data = array(
+				dbKITcontact::field_newsletter			=> implode(',', $newsletter_array),
+				dbKITcontact::field_update_by				=> 'INTERFACE',
+				dbKITcontact::field_update_when			=> date('Y-m-d H:i:s')
+			);
+			if (!$dbContact->sqlUpdateRecord($data, $where)) {
+				$this->setError(sprintf('[%s - %s] %s', __METHOD__, __LINE__, $dbContact->getError()));
+				return false;
+			}
+			// Kontaktdaten auslesen
+			if (!$this->getContact($register[dbKITregister::field_contact_id], $contact)) {
+				$this->setError(sprintf('[%s - %s] %s', __METHOD__, __LINE__, $this->getError()));
+				return false;
+			}
+			// LOG Eintrag...
+			$this->addNotice($register[dbKITregister::field_contact_id], kit_protocol_ki_newsletter_updated);
+			return true;
+		}
+		else {
+			// neue Anmeldung
+			if (($use_subscribe == true) && ($subscribe == false)) {
+				// Benutzer kann keine Newsletter abmelden, da er nicht registriert ist
+				$this->setMessage(sprintf(kit_msg_newsletter_user_not_registered, $email));
+				return false;
+			}
+			if (empty($newsletter)) {
+				$this->setMessage(sprintf(kit_msg_newsletter_no_abonnement, $email));
+				return false;
+			}
+			// neuen Benutzer anlegen
+			$contact = array(
+				self::kit_email				=> $email,
+				self::kit_newsletter	=> $newsletter
+			);
+			if (!$this->addContact($contact, $contact_id, $register)) {
+				$this->setError(sprintf('[%s - %s] %s', __METHOD__, __LINE__, $this->getError()));
+				return false;
+			}
+			$send_activation = true;
+			return true;
+		}		
+	} // subscribeNewsletter
 	
 } // class kitContactInterface
 
