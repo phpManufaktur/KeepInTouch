@@ -3,6 +3,10 @@ KeepInTouch - Customer Relationship Management (CRM)
 Ralf Hertsch, Stockholmer Str. 31, 13359 Berlin (Germany)
 http://phpManufaktur.de - ralf.hertsch@phpManufaktur.de
 
+Release 0.37
+2011-05-12
+- extended: class.interface.php for interaction with other programs
+
 Release 0.36
 2011-04-10
 - added: interface for easy access to KIT database

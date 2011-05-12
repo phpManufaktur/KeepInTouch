@@ -322,6 +322,7 @@ define('kit_label_cfg_register_dlg',							'Benutzer, Registrierung');
 define('kit_label_cfg_register_dlg_unsubscribe',	'Benutzer, Newsletter Abmeldung');
 define('kit_label_cfg_session_id',								'Session Kennung');
 define('kit_label_cfg_sort_contact_list',					'Kontakt Liste sortieren');
+define('kit_label_cfg_temp_dir',									'Temporäres Verzeichnis');
 define('kit_label_cfg_use_captcha',								'CAPTCHA verwenden');
 define('kit_label_cfg_use_custom_files',					'Angepasste Dateien zulassen');
 define('kit_label_checksum',											'Prüfsumme');

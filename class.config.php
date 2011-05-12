@@ -105,7 +105,7 @@ class dbKITcfg extends dbConnectLE {
   	array('kit_label_cfg_limit_contact_list', self::cfgLimitContactList, self::type_integer, '50', 'kit_desc_cfg_limit_contact_list'),
   	array('kit_label_cfg_connect_wb_users', self::cfgConnectWBusers, self::type_boolean, '0', 'kit_desc_cfg_connect_wb_users'),
   	array('kit_label_cfg_kit_admins', self::cfgKITadmins, self::type_array, '', 'kit_desc_cfg_kit_admins'),
-  	array('kit_label_cfg_min_pwd_len', self::cfgMinPwdLen, self::type_integer, 7, 'kit_desc_cfg_min_pwd_len')
+  	array('kit_label_cfg_min_pwd_len', self::cfgMinPwdLen, self::type_integer, 7, 'kit_desc_cfg_min_pwd_len'),
   );   
   
   public function __construct($createTables = false) {

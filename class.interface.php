@@ -110,11 +110,16 @@ class kitContactInterface {
 	private $error 				= ''; 
 	private $message			= '';
 	
+	// SESSION Konstanten
 	const session_kit_aid					= 'kit_aid';
 	const session_kit_key					= 'kit_key';
 	const session_must_change_pwd = 'kit_mcp';
 	const session_kit_contact_id	= 'kit_cid';
 	
+	// KATEGORIEN
+	const category_type_intern				= dbKITcontactArrayCfg::type_category;
+	const category_type_newsletter		= dbKITcontactArrayCfg::type_newsletter;
+	const category_type_distribution	= dbKITcontactArrayCfg::type_distribution;
 	
 	/**
     * Set $this->error to $error
@@ -191,6 +196,17 @@ class kitContactInterface {
   	unset($_SESSION[self::session_must_change_pwd]);
   	return true;
   } // logout()
+  
+  /**
+   * Gibt den PFAD auf das temporaere Verzeichnis fuer KIT Daten zurueck
+   */
+  public function getTempDir() {
+  	$tmp = WB_PATH.MEDIA_DIRECTORY.'/kit_temp/';
+  	if (!file_exists($tmp)) {
+  		if (!mkdir($tmp, 0777, true)) return false;
+  	}
+  	return $tmp;
+  } // getTempDir()
   
   /**
    * Return the KIT Contact ID if the user is logged in, otherwise -1
@@ -780,6 +796,86 @@ class kitContactInterface {
 		return true;
 	} // getContact()
 	
+	/**
+	 * Kategorien fuer den angegebenen Kontakt auslesen
+	 * 
+	 * @param INT $contact_id
+	 * @param ARRAY $categories
+	 * @return BOOL
+	 */
+	public function getCategories($contact_id, &$categories=array()) {
+		global $dbContact;
+		
+		$SQL = sprintf( "SELECT %s,%s,%s FROM %s WHERE %s='%s' AND %s='%s'",
+										dbKITcontact::field_category,
+										dbKITcontact::field_distribution,
+										dbKITcontact::field_newsletter,
+										$dbContact->getTableName(),
+										dbKITcontact::field_id,
+										$contact_id,
+										dbKITcontact::field_status,
+										dbKITcontact::status_active);
+		$cats = array();
+		if (!$dbContact->sqlExec($SQL, $cats)) {
+			$this->setError(sprintf('[%s - %s] %s', __METHOD__, __LINE__, $dbContact->getError()));
+			return false;
+		}
+		$categories = array();
+		if (count($cats) < 1) {
+			// kein Treffer, leeres Array zurueckliefern
+			return true;
+		}
+		$cats = $cats[0];
+		$ga = array(dbKITcontact::field_category, dbKITcontact::field_distribution, dbKITcontact::field_newsletter);
+		foreach ($ga as $grp) {
+			$x = explode(',', $cats[$grp]);
+			foreach ($x as $i) {
+				if (!empty($i))  $categories[] = $i; 
+			}
+		}
+		return true;		
+	} // getCategories()
+	
+	/**
+	 * Ueberprueft ob fuer den angegebenen $category_type:
+	 * category_type_intern, category_type_newsletter, category_type_distribution
+	 * ein Eintrag mit dem Bezeichner $category_identifier existiert.
+	 *  
+	 * @param CONST $category_type
+	 * @param STR $category_identifier
+	 * @return BOOL
+	 */
+	public function existsCategory($category_type, $category_identifier) {
+		global $dbContactArrayCfg;
+		
+		$where = array(
+			dbKITcontactArrayCfg::field_type	=> $category_type,
+			dbKITcontactArrayCfg::field_identifier => $category_identifier,
+			dbKITcontactArrayCfg::field_status => dbKITcontactArrayCfg::status_active
+		);
+		$categories = array();
+		if (!$dbContactArrayCfg->sqlSelectRecord($where, $categories)) {
+			$this->setError(sprintf('[%s - %s] %s', __METHOD__, __LINE__, $dbContactArrayCfg->getError()));
+			return false;
+		}
+		$result = (count($categories) > 0) ? true: false;
+		return $result;
+	} // existsCategory()
+	
+	/**
+	 * Fuegt fuer die angegebene Kategorie $category_type einen Bezeichner 
+	 * $category_identifier mit dem Wert $category_value ein
+	 * 
+	 * @param CONST $category_type
+	 * @param STR $category_identifier
+	 * @param STR $category_value
+	 * @return BOOL 
+	 */
+	public function addCategory($category_type, $category_identifier, $category_value) {
+		global $dbContactArrayCfg;
+		return $dbContactArrayCfg->checkArray($category_type, $category_identifier, $category_value);
+	} // addCategory()
+	
 	public function checkLogin($email, $password, &$contact=array(), &$must_change_password=false) {
 		global $dbRegister;
 		global $dbContact;
@@ -852,7 +948,7 @@ class kitContactInterface {
 	} // checkLogin()
 	
 	/**
-	 * Neues Passwort fuer den Kontakt erzeugen
+	 * Neues Passwort fuer den Kontakt mit der E-Mail $email erzeugen
 	 * 
 	 * @param STR $email
 	 * @param STR $newPassword
