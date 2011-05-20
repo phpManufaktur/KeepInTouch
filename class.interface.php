@@ -684,6 +684,13 @@ class kitContactInterface {
 		return true;
 	} // insertContact()
 	
+	/**
+	 * Liefert die Kontaktdaten zu der angegebenen $contact_id
+	 * 
+	 * @param INT $contact_id
+	 * @param ARRAY REFERENCE $contact_array
+	 * @return BOOL
+	 */
 	public function getContact($contact_id, &$contact_array=array()) {
 		global $dbContact;
 		global $dbContactAddress;
@@ -727,7 +734,7 @@ class kitContactInterface {
 		foreach ($this->field_array as $kit_field => $label) {
 			switch ($kit_field):
 			case self::kit_title:
-				$contact_array[$kit_field] = $dbContact->person_title_array[$contact[dbKITcontact::field_person_title]];
+				$contact_array[$kit_field] = $contact[dbKITcontact::field_person_title]; //$dbContact->person_title_array[$contact[dbKITcontact::field_person_title]];
 				break;
 			case self::kit_title_academic:
 				$contact_array[$kit_field] = $dbContact->person_title_academic_array[$contact[dbKITcontact::field_person_title_academic]];
@@ -768,11 +775,14 @@ class kitContactInterface {
 				break;
 			case self::kit_newsletter:
 				$news = array();
+				$contact_array[$kit_field] = explode(',', $contact[dbKITcontact::field_newsletter]);
+				/*
 				$news_array = explode(',', $contact[dbKITcontact::field_newsletter]);
 				foreach ($news_array as $nl) {
 					if (!empty($nl)) $news[] = $dbContact->newsletter_array[$nl];
 				}
 				$contact_array[$kit_field] = $news;
+				*/
 				break;
 			default:
 				// nothing to do...
