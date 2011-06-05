@@ -1029,7 +1029,7 @@ class kitContactInterface {
 		$register = $register[0];
 		if (($register[dbKITregister::field_status] == dbKITregister::status_key_created) || ($register[dbKITregister::field_status] == dbKITregister::status_key_send)) {
 			// ok - Aktiverungskey wurde versendet und noch nicht verwendet
-			$password = $tools->generatePassword($dbCfg->getValue(dbKITcfg::cfgMinPwdLen));
+			$password = $tools->generatePassword($dbCfg->getValue(dbKITcfg::cfgMinPwdLen)); 
 			$where = array(
 				dbKITregister::field_id	=> $register[dbKITregister::field_id]
 			);
@@ -1057,7 +1057,17 @@ class kitContactInterface {
 			$this->setMessage(kit_msg_account_locked);
 			return false;
 		}
-		else {
+		elseif ($register[dbKITregister::field_status] == dbKITregister::status_active) {
+			// Konto ist aktiv und freigeschaltet, nix tun...
+			if (!$this->getContact($register[dbKITregister::field_contact_id], $contact_array)) {
+				$this->setError(sprintf('[%s - %s] %s', __METHOD__, __LINE__, $this->getError()));
+				return false;
+			}
+			// Passwort auf -1 setzen
+			$password = -1;
+			return true;
+		}
+		else { ;
 			// Aktivierungskey wurde bereits verwendet
 			$this->setMessage(kit_msg_activation_key_used);
 			return false;
