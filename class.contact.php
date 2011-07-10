@@ -21,31 +21,33 @@
 // prevent this file from being accessed directly
 if (!defined('WB_PATH')) die('invalid call of '.$_SERVER['SCRIPT_NAME']);
 
-global $tools;
-global $dbRegister;
-global $dbProvider;
-global $dbProtocol;
-global $dbMemos;
-global $dbCountries;
-global $dbContactArrayCfg;
-global $dbContactAddress;
-global $dbContact;
-global $dbWBusers;
-global $dbWBgroups;
-global $dbCfg;
-
-if (!is_object($tools)) $tools = new kitTools();
-if (!is_object($dbCfg)) $dbCfg = new dbKITcfg();
-if (!is_object($dbRegister)) $dbRegister = new dbKITregister();
-if (!is_object($dbProvider)) $dbProvider = new dbKITprovider();
-if (!is_object($dbProtocol)) $dbProtocol = new dbKITprotocol();
-if (!is_object($dbMemos)) $dbMemos = new dbKITmemos();
-if (!is_object($dbCountries)) $dbCountries = new dbKITcountries();
-if (!is_object($dbContactArrayCfg)) $dbContactArrayCfg = new dbKITcontactArrayCfg();
-if (!is_object($dbContactAddress)) $dbContactAddress = new dbKITcontactAddress();
-if (!is_object($dbWBusers)) $dbWBusers = new dbWBusers();
-if (!is_object($dbWBgroups)) $dbWBgroups = new dbWBgroups();
-if (!is_object($dbContact)) $dbContact = new dbKITcontact();
+if (!defined('KIT_INSTALL_RUNNING')) {
+	global $tools;
+	global $dbRegister;
+	global $dbProvider;
+	global $dbProtocol;
+	global $dbMemos;
+	global $dbCountries;
+	global $dbContactArrayCfg;
+	global $dbContactAddress;
+	global $dbContact;
+	global $dbWBusers;
+	global $dbWBgroups;
+	global $dbCfg;
+	
+	if (!is_object($tools)) $tools = new kitTools();
+	if (!is_object($dbCfg)) $dbCfg = new dbKITcfg();
+	if (!is_object($dbRegister)) $dbRegister = new dbKITregister();
+	if (!is_object($dbProvider)) $dbProvider = new dbKITprovider();
+	if (!is_object($dbProtocol)) $dbProtocol = new dbKITprotocol();
+	if (!is_object($dbMemos)) $dbMemos = new dbKITmemos();
+	if (!is_object($dbCountries)) $dbCountries = new dbKITcountries();
+	if (!is_object($dbContactArrayCfg)) $dbContactArrayCfg = new dbKITcontactArrayCfg();
+	if (!is_object($dbContactAddress)) $dbContactAddress = new dbKITcontactAddress();
+	if (!is_object($dbWBusers)) $dbWBusers = new dbWBusers();
+	if (!is_object($dbWBgroups)) $dbWBgroups = new dbWBgroups();
+	if (!is_object($dbContact)) $dbContact = new dbKITcontact();
+}
 
 /**
  * General data container for all contacts
@@ -261,10 +263,12 @@ class dbKITcontact extends dbConnectLE {
 		if ($this->create_tables) {
 			$this->initTables();
 		}
-		// init arrays
-		$this->initArrays();
-		// balance WB users...
-		$this->checkWBusers();
+		if (!defined('KIT_INSTALL_RUNNING')) {
+			// init arrays
+			$this->initArrays();
+			// balance WB users...
+			$this->checkWBusers();
+		}
 	} // __construct
 	
 	
@@ -863,7 +867,9 @@ class dbKITcontactAddress extends dbConnectLE {
 		if ($this->create_tables) {
 			$this->initTables();
 		}
-		$this->initArrays();
+		if (!defined('KIT_INSTALL_RUNNING')) {
+			$this->initArrays();
+		}
 	} // __construct()
 	
 	public function initTables() {
@@ -876,6 +882,7 @@ class dbKITcontactAddress extends dbConnectLE {
 			}
 		}
 		// init country table
+		if (!is_object($dbCountries)) $dbCountries = new dbKITcountries(true);
 		if (!$dbCountries->initTables()) {
 			$this->setError(sprintf('[%s - %s] %s', __METHOD__, __LINE__, $dbCountries->getError()));
 			return false;

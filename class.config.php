@@ -23,11 +23,13 @@ if (!defined('WB_PATH')) die('invalid call of '.$_SERVER['SCRIPT_NAME']);
 
 require_once(WB_PATH.'/modules/'.basename(dirname(__FILE__)).'/initialize.php');
 
-global $dbCfg;
-if (!is_object($dbCfg)) $dbCfg = new dbKITcfg();
-
-define('USE_CUSTOM_FILES', $dbCfg->getValue(dbKITcfg::cfgUseCustomFiles));
-define('KIT_SESSION_ID', $dbCfg->getValue(dbKITcfg::cfgSessionID));
+if (!defined('KIT_INSTALL_RUNNING')) {
+	global $dbCfg;
+	if (!is_object($dbCfg)) $dbCfg = new dbKITcfg();
+	
+	define('USE_CUSTOM_FILES', $dbCfg->getValue(dbKITcfg::cfgUseCustomFiles));
+	define('KIT_SESSION_ID', $dbCfg->getValue(dbKITcfg::cfgSessionID));
+}
 
 class dbKITcfg extends dbConnectLE {
 	

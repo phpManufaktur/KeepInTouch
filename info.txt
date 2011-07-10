@@ -6,6 +6,7 @@ http://phpManufaktur.de - ralf.hertsch@phpManufaktur.de
 Release 0.39
 
 - extended: class.interface for interaction, some small bugfixes and cleanup
+- compatibillity: adapted installation for Lepton, changed PHP Mailer inclusion
 
 Release 0.38
 2011-05-20
