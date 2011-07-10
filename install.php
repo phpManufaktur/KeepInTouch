@@ -20,6 +20,8 @@
 // prevent this file from being accessed directly
 if (!defined('WB_PATH')) die('invalid call of '.$_SERVER['SCRIPT_NAME']);
 
+define('KIT_INSTALL_RUNNING', true);
+
 require_once(WB_PATH.'/modules/'.basename(dirname(__FILE__)).'/initialize.php');
 require_once(WB_PATH.'/modules/'.basename(dirname(__FILE__)).'/class.mail.php');
 require_once(WB_PATH.'/modules/'.basename(dirname(__FILE__)).'/class.dialogs.php');

@@ -134,9 +134,11 @@ class dbKITcfg extends dbConnectLE {
   			}
   		}
   	}
-  	// Default Werte garantieren
-  	if ($this->sqlTableExists()) {
-  		$this->checkConfig();
+  	if (!defined('KIT_INSTALL_RUNNING')) {
+	  	// Default Werte garantieren
+	  	if ($this->sqlTableExists()) {
+	  		$this->checkConfig();
+	  	}
   	}
   } // __construct()
   
