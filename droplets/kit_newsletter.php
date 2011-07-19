@@ -2,7 +2,7 @@
 //:Usage: [[kit_newsletter]]
 /**
  * KeepInTouch, Newsletter Dialog
- * (c) 2010 by Ralf Hertsch
+ * (c) 2011 by Ralf Hertsch
  * ralf.hertsch@phpmanufaktur.de - http://phpManufaktur.de
  *
  * $Id$

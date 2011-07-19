@@ -1,34 +1,34 @@
 <?php
 
 /**
-  Module developed for the Open Source Content Management System Website Baker 
-  (http://websitebaker.org)
+ * KeepInTouch (KIT)
+ * 
+ * @author Ralf Hertsch (ralf.hertsch@phpmanufaktur.de)
+ * @link http://phpmanufaktur.de
+ * @copyright 2011
+ * @license GNU GPL (http://www.gnu.org/licenses/gpl.html)
+ * @version $Id$
+ * 
+ * FOR VERSION- AND RELEASE NOTES PLEASE LOOK AT INFO.TXT!
+ */
 
-  Copyright (c) 2010, Ralf Hertsch
-  Contact me: ralf.hertsch@phpManufaktur.de, http://phpManufaktur.de
-
-  This module is free software. You can redistribute it and/or modify it
-  under the terms of the GNU General Public License  - version 2 or later,
-  as published by the Free Software Foundation: http://www.gnu.org/licenses/gpl.html.
-
-  This module is distributed in the hope that it will be useful,
-  but WITHOUT ANY WARRANTY; without even the implied warranty of
-  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-  GNU General Public License for more details.
-  
-  $Id$
-
-	IMPORTANT NOTE:
-
-  If you are editing this file or creating a new language file
-  you must ensure that you SAVE THIS FILE UTF-8 ENCODED.
-  Otherwise all special chars will be destroyed and displayed improper!
-
-	It is NOT NECESSARY to mask special chars as HTML entities!
-
-	Translated to German (Original Source) by Ralf Hertsch
-  
-**/
+// try to include LEPTON class.secure.php to protect this file and the whole CMS!
+if (defined('WB_PATH')) {	
+	if (defined('LEPTON_VERSION')) include(WB_PATH.'/framework/class.secure.php');
+} elseif (file_exists($_SERVER['DOCUMENT_ROOT'].'/framework/class.secure.php')) {
+	include($_SERVER['DOCUMENT_ROOT'].'/framework/class.secure.php'); 
+} else {
+	$subs = explode('/', dirname($_SERVER['SCRIPT_NAME']));	$dir = $_SERVER['DOCUMENT_ROOT'];
+	$inc = false;
+	foreach ($subs as $sub) {
+		if (empty($sub)) continue; $dir .= '/'.$sub;
+		if (file_exists($dir.'/framework/class.secure.php')) { 
+			include($dir.'/framework/class.secure.php'); $inc = true;	break; 
+		} 
+	}
+	if (!$inc) trigger_error(sprintf("[ <b>%s</b> ] Can't include LEPTON class.secure.php!", $_SERVER['SCRIPT_NAME']), E_USER_ERROR);
+}
+// end include LEPTON class.secure.php
 
 define('kit_dialog_acc_key_no_longer_valid',				'<p>Der Aktivierungskey für die E-Mail Adresse <b>%s</b> wurde bereits verwendet und ist ungültig.</p><p>Bitte melden Sie sich an Ihrem Benutzerkonto an, um Einstellungen zu ändern.</p>');
 define('kit_dialog_acc_key_invalid',								'<p>Der übermittelte Aktivierungskey ist ungültig.</p>');
