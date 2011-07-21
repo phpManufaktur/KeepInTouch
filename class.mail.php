@@ -257,7 +257,7 @@ if (!defined('LEPTON_VERSION')) {
 	    }
 			
 	    // check if there are any send mail errors, otherwise say successful
-	    if (!$this->Send()) {
+	    if (false === $this->Send()) {
 	    	$this->setMailError($this->ErrorInfo);
 	      return false;
 	    } 

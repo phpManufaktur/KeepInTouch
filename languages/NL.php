@@ -500,8 +500,10 @@ define('kit_msg_phone_invalid',										'<p>Het Telefoonnummer <b>%s</b> is nie
 define('kit_msg_phone_type_changed',							'<p>Het Type voor het Telefoonnummer <b>%s</b> wordt gewijzigd.</p>');
 define('kit_msg_protocol_updated',								'<p>HEt Protocol wordt geactualisseerd.</p>');
 define('kit_msg_provider_check_auth',							'<p>U heeft geen SMTP Authenticatie opgegeven maar alleen een SMTP Host en Naam, controleer uw ingave!</p>');
+define('kit_msg_provider_id_invalid',							'<p>Es existiert kein aktiver Datensatz für einen Provider mit der <b>ID %05d</b>!');
 define('kit_msg_provider_inserted',								'<p>De Dienstverlener <b>%s</b> wordt nieuw aangemaakt.</p>');
 define('kit_msg_provider_minum_failed',						'<p>De ingegeven informatie over de dienstverlener is niet voldoende. U moet in ieder geval het volgende opgeven: Naam en  E-Mail Adres en - als uw e-mail server een SMTP-verificatie vereist - SMTP Host, SMTP gebruikersnaam en het wachtwoord.</p>');
+define('kit_msg_provider_missing',								'<p>Es ist kein aktiver Dienstleister vorhanden, definieren Sie in KIT --> Einstellungen --> Dienstleister bitte einen Dienstleister!</p>');
 define('kit_msg_provider_updated',								'<p>De Dienstverlener <b>%s</b> wordt geactualisseerd.</p>');
 define('kit_msg_register_status_updated',					'<p>De Status voor <b>dbKITregister</b> wordt geactualisseerd.</p>');
 define('kit_msg_service_invalid_user_name',       '<p>Vul een geldige voor-en achternaam in.</p>');

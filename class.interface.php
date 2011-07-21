@@ -1249,6 +1249,86 @@ class kitContactInterface {
 		}		
 	} // subscribeNewsletter
 	
+	/**
+	 * Return an assoziative array of all active
+	 * service providers defined in KIT settings
+	 * 
+	 * @param REFERENCE ARRAY $service_provider
+	 * @return BOOL
+	 */
+	public function getServiceProviderList(&$service_provider) {
+		global $dbProvider;
+		$SQL = sprintf(	"SELECT * FROM %s WHERE %s='%s'", 
+										$dbProvider->getTableName(),
+										dbKITprovider::field_status,
+										dbKITprovider::status_active);
+		if (!$dbProvider->sqlExec($SQL, $providers)) {
+			$this->setError(sprintf('[%s - %s] %s', __METHOD__, __LINE__, $dbProvider->getError()));
+			return false;
+		}
+		if (count($providers) < 1) {
+			$this->setMessage(kit_msg_provider_missing);
+			return false;
+		}
+		$service_provider = array();
+		foreach ($providers as $provider) {
+			$service_provider[] = array(
+				'id'					=> $provider[dbKITprovider::field_id],
+				'name'				=> $provider[dbKITprovider::field_name],
+				'email'				=> $provider[dbKITprovider::field_email],
+				'identifier'	=> $provider[dbKITprovider::field_identifier],
+				'remark'			=> $provider[dbKITprovider::field_remark],
+				'smtp_auth'		=> $provider[dbKITprovider::field_smtp_auth],
+				'smtp_host'		=> $provider[dbKITprovider::field_smtp_host],
+				'smtp_user'		=> $provider[dbKITprovider::field_smtp_user],
+				'smtp_pass'		=> $provider[dbKITprovider::field_smtp_pass],
+				'status'			=> $provider[dbKITprovider::field_status],
+				'update_by'		=> $provider[dbKITprovider::field_update_by],
+				'update_when'	=> $provider[dbKITprovider::field_update_when]
+			);
+		}
+		return true;
+	} // getServiceProviderList()
+	
+	/**
+	 * Return all data for the provider with the assigned
+	 * $provider_id - the provider must be active
+	 * 
+	 * @param INT $provider_id
+	 * @param REFERENCE ARRAY $provider_data
+	 * @return BOOL
+	 */
+	public function getServiceProviderByID($provider_id, &$provider_data) {
+		global $dbProvider;
+		$where = array(dbKITprovider::field_id => $provider_id, dbKITprovider::field_status => dbKITprovider::status_active);
+		$provider = array();
+		$provider_data = array();
+		if (!$dbProvider->sqlSelectRecord($where, $provider)) {
+			$this->setError(sprintf('[%s - %s] %s', __METHOD__, __LINE__, $dbProvider->getError()));
+			return false;
+		}
+		if (count($provider) < 1) {
+			$this->setMessage(sprintf(kit_msg_provider_id_invalid, $provider_id));
+			return false;
+		}
+		$provider = $provider[0];
+		$provider_data = array(
+			'id'					=> $provider[dbKITprovider::field_id],
+			'name'				=> $provider[dbKITprovider::field_name],
+			'email'				=> $provider[dbKITprovider::field_email],
+			'identifier'	=> $provider[dbKITprovider::field_identifier],
+			'remark'			=> $provider[dbKITprovider::field_remark],
+			'smtp_auth'		=> $provider[dbKITprovider::field_smtp_auth],
+			'smtp_host'		=> $provider[dbKITprovider::field_smtp_host],
+			'smtp_user'		=> $provider[dbKITprovider::field_smtp_user],
+			'smtp_pass'		=> $provider[dbKITprovider::field_smtp_pass],
+			'status'			=> $provider[dbKITprovider::field_status],
+			'update_by'		=> $provider[dbKITprovider::field_update_by],
+			'update_when'	=> $provider[dbKITprovider::field_update_when]
+		);
+		return true;
+	} // getServiceProviderByID()
+	
 } // class kitContactInterface
 
 ?>

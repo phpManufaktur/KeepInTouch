@@ -3,10 +3,19 @@ KeepInTouch - Customer Relationship Management (CRM)
 Ralf Hertsch, Stockholmer Str. 31, 13359 Berlin (Germany)
 http://phpManufaktur.de - ralf.hertsch@phpManufaktur.de
 
-Release 0.39
+Release 0.41
+2011-07-21
+- extended: class.interface.php supports now service provider (list and data)
+- fixed: some minor bugs
 
+Release 0.40
+2011-07-11
+- added: NL language files - many thanks to Frank Bos for translation!
 - extended: class.interface for interaction, some small bugfixes and cleanup
 - compatibillity: adapted installation for Lepton, changed PHP Mailer inclusion
+
+Release 0.39
+- not published -
 
 Release 0.38
 2011-05-20
