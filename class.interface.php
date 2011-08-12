@@ -361,6 +361,14 @@ class kitContactInterface {
 		return false;
 	} // isEMailRegistered()
 	
+	/**
+	 * Aktualisiert den angegebenen Kontakt $contact_id und gibt eine Referenz
+	 * auf ein Array mit den gespeicherten Kontaktdaten zurueck
+	 * 
+	 * @param INT contact_id
+	 * @param REFERENCE ARRAY $contact_array
+	 * @return BOOL 
+	 */
 	public function updateContact($contact_id, &$contact_array=array()) {
 		global $dbContact;
 		global $dbContactAddress;
@@ -392,7 +400,7 @@ class kitContactInterface {
 				case self::kit_last_name:
 				case self::kit_company:
 				case self::kit_department:
-					if (isset($contact_array[$field]) && !empty($contact_array[$field]) && ($contact_array[$field] !== $contact[$this->field_assign[$field]])) {
+					if (isset($contact_array[$field]) && !empty($contact_array[$field]) && ($contact_array[$field] != $contact[$this->field_assign[$field]])) {
 						$contact[$this->field_assign[$field]] = $contact_array[$field];
 						$contact_changed = true;
 					}
@@ -529,6 +537,7 @@ class kitContactInterface {
 
 	/**
 	 * Fuegt einen neuen Kontakt Datensatz ein
+	 * 
 	 * @param ARRAY $contact_array
 	 * @param REFERENCE INT $contact_id
 	 * @return BOOL
@@ -542,7 +551,7 @@ class kitContactInterface {
 		
 		if (!isset($contact_array[self::kit_email])) {
 			// es wurde keine E-Mail Adresse uebergeben
-			$this->setError('[%s - %s] %s', __METHOD__, __LINE__, kit_error_email_missing);
+			$this->setError(sprintf('[%s - %s] %s', __METHOD__, __LINE__, kit_error_email_missing));
 			return false;
 		}
 		$contact_email = strtolower($contact_array[self::kit_email]);
@@ -1203,16 +1212,17 @@ class kitContactInterface {
 				return false;
 			}
 			// Kontaktdatensatz aktualisieren
-			$where = array(
-				dbKITcontact::field_id => $register[dbKITregister::field_contact_id]
-			);
-			$data = array(
-				dbKITcontact::field_newsletter			=> implode(',', $newsletter_array),
-				dbKITcontact::field_update_by				=> 'INTERFACE',
-				dbKITcontact::field_update_when			=> date('Y-m-d H:i:s')
-			);
-			if (!$dbContact->sqlUpdateRecord($data, $where)) {
-				$this->setError(sprintf('[%s - %s] %s', __METHOD__, __LINE__, $dbContact->getError()));
+			$contact = array();
+			foreach ($this->field_array as $key => $value) {
+				switch ($key):
+				case self::kit_newsletter:
+					$contact[$key] = implode(',', $newsletter_array); break;
+				default:
+					if (isset($_REQUEST[$key])) $contact[$key] = $_REQUEST[$key]; 
+				endswitch;  
+			}
+			if (!$this->updateContact($register[dbKITregister::field_contact_id], $contact)) {
+				$this->setError(sprintf('[%s - %s] %s', __METHOD__, __LINE__, $this->getError()));
 				return false;
 			}
 			// Kontaktdaten auslesen
@@ -1236,10 +1246,17 @@ class kitContactInterface {
 				return false;
 			}
 			// neuen Benutzer anlegen
-			$contact = array(
-				self::kit_email				=> $email,
-				self::kit_newsletter	=> $newsletter
-			);
+			$contact = array();
+			foreach ($this->field_array as $key => $value) {
+				switch ($key):
+				case self::kit_email:
+					$contact[$key] = $email; break;
+				case self::kit_newsletter:
+					$contact[$key] = $newsletter; break;
+				default:
+					if (isset($_REQUEST[$key])) $contact[$key] = $_REQUEST[$key]; 
+				endswitch;  
+			}
 			if (!$this->addContact($contact, $contact_id, $register)) {
 				$this->setError(sprintf('[%s - %s] %s', __METHOD__, __LINE__, $this->getError()));
 				return false;
