@@ -3,6 +3,10 @@ KeepInTouch - Customer Relationship Management (CRM)
 Ralf Hertsch, Stockholmer Str. 31, 13359 Berlin (Germany)
 http://phpManufaktur.de - ralf.hertsch@phpManufaktur.de
 
+Release 0.43
+2011-08-29
+- removed: class.newsletter.link.php
+
 Release 0.42
 2011-08-12
 - fixed: class.interface.php - improper data check and incomplete contact update on subscribe/unsubscribe newsletter

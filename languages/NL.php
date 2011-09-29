@@ -168,6 +168,7 @@ define('kit_error_blank_title',										'<p>De pagina moet een titel hebben!</p
 define('kit_error_cfg_id',												'<p>De configuratie opgenomen met het ID <b>% 05D </ b> kon niet worden gelezen!</p>');
 define('kit_error_cfg_name',											'<p>Als u de aanduiding <b>% s </ b> heeft zijn geen configuratie gegevens gevonden!</p>');
 define('kit_error_create_dir',										'<p>De map <br />% s </ b> <br /> kon niet worden aangemaakt!');
+define('kit_error_create_file',										'<p>Die Datei <b>%s</b> konnte nicht angelegt werden.</p>');
 define('kit_error_delete_access_file',						'<p>De toegang <b>% s </ b> kon niet worden verwijderd!</p>');
 define('kit_error_dlg_missing',										'<p>De gevraagde dialoog <b>% s </ b> is niet gevonden!</p>');
 define('kit_error_email_missing',									'<p>Er was geen e-mail adres doorgegeven!</p>');
@@ -177,6 +178,7 @@ define('kit_error_import_massmail_grp_missing',		'<p>De tabel massmail is niet g
 define('kit_error_import_massmail_missing_vars',	'<p>Niet alle vereiste variabelen zijn geimporteerd vanuit MassMail.</p>');
 define('kit_error_invalid_id',										'<p>Er wordt geen geldige ID doorgegeven!</p>');
 define('kit_error_item_id',												'<p>Het record met het ID <b>% s </ b> is niet gevonden!</p>');
+define('kit_error_lepton_user_connection_inactive','<p>Die Verbindung von KeepInTouch (KIT) zur LEPTON Benutzerverwaltung ist nicht aktiv. Bitte prüfen Sie die KIT Einstellungen und aktivieren Sie den Schalter "Mit LEPTON Benutzern verbinden".</p>');
 define('kit_error_mail_init_settings',						'<p>De WebsiteBaker configuratie-instellingen voor de e-mail kunnen niet worden geladen.</p>');
 define('kit_error_map_address_invalid',						'<p>Het adres <b>% s </ b> is niet gevonden!</p>');
 define('kit_error_move_csv_file',									'<p>Het tijdelijke bestand <b>% s </ b> kon niet worden verplaatst naar de doelmap!</p>');
@@ -190,6 +192,7 @@ define('kit_error_preview_id_invalid',						'<p>De preview van de <b> ID% 05D </
 define('kit_error_preview_id_missing',						'<p>Er wordt geen preview ID gegeven!</p>');
 define('kit_error_record_for_email_exists',				'<p>Er bestaat al een record met de ID <b>% 03D </ b> voor het e-mailadres <b>% s </ b>, update dit record in plaats van het creeren van een nieuw record!</p>');
 define('kit_error_register_email_already_exists',	'<p>Fatal error: Er is al een registratie record voor de e-mail adres <b>%s</b>.</p>');
+define('kit_error_register_contact_id_invalid',		'<p>Die KIT ID <b>%s</b> wurde in der Registrierung nicht gefunden - die ID existiert nicht oder ist gesperrt.</p>');
 define('kit_error_request_dlg_invalid_id',				'<p>[kitRequest] De dialoog met de <b> ID% 03D </b> is niet gevonden, de werking wordt afgebroken!</p>');
 define('kit_error_request_dlg_invalid_name',			'<p>[kitRequest] De dialoog met de class naam <b>%s</b> is niet gevonden, de werking wordt afgebroken!</p>');
 define('kit_error_request_invalid_action',				'<p>[kitRequest] De parameter <b>%s=%s</b> is ongeldig, bediening wordt afgebroken!</p>');
@@ -519,6 +522,8 @@ define('kit_protocol_ki_address_added',						'[kitInterface] Adres %s, %s %s wor
 define('kit_protocol_ki_address_updated',					'[kitInterface] Adres %s, %s %s wordt geactualisseerd.');
 define('kit_protocol_ki_contact_created',					'[kitInterface] Gegevensbestand aangemaakt.');
 define('kit_protocol_ki_contact_updated',					'[kitInterface] De Contactgegevens worden geactualisseerd.');
+define('kit_protocol_ki_added_as_lepton_user',		'[kitInterface] Der Kontakt wurde der LEPTON Benutzer hinzugefügt.');
+define('kit_protocol_ki_lepton_user_group_added',	'[kitInterface] Dem LEPTON Benutzer wurde die Gruppe %s hinzugefügt.');
 define('kit_protocol_ki_newsletter_updated',			'[kitInterface] Het nieuwsbrief Abonnement wordt geactualisseerd.');
 define('kit_protocol_ki_password_changed',				'[kitInterface] HEt wachtwoord wordt veranderd.');
 define('kit_protocol_login_locked',								'ACCOUNT GEBLOKKEERD, de gebruiker heeft teveel foutieve login pogingen uitgevoerd.');

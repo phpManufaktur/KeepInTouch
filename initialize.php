@@ -51,15 +51,29 @@ else {
 
 // include dbConnect
 if (!class_exists('dbConnectLE')) require_once(WB_PATH.'/modules/dbconnect_le/include.php');
-if (!class_exists('Dwoo')) require_once(WB_PATH.'/modules/dwoo/include.php');
+
 require_once(WB_PATH.'/modules/'.basename(dirname(__FILE__)).'/class.tools.php');
 require_once(WB_PATH.'/modules/'.basename(dirname(__FILE__)).'/class.config.php');
 require_once(WB_PATH.'/modules/'.basename(dirname(__FILE__)).'/class.contact.php');
 require_once(WB_PATH.'/framework/class.wb.php');
 require_once(WB_PATH.'/framework/class.admin.php');
 
+// initialize Dwoo
 global $parser;
  
-if (!is_object($parser)) $parser = new Dwoo();
+if (!is_object($parser)) {
+	require_once WB_PATH.'/framework/addon.precheck.inc.php';
+	if (!defined('LEPTON_VERSION')) {
+		if (!class_exists('Dwoo')) require_once(WB_PATH.'/modules/dwoo/include.php');
+	} 
+	elseif (versionCompare(LEPTON_VERSION, '1.2.0', '<')) {
+		if (!class_exists('Dwoo')) require_once(WB_PATH.'/modules/dwoo/include.php');
+	}
+	else {
+		if (!class_exists('Dwoo')) require_once(WB_PATH.'/modules/lib_dwoo/library.php');
+	}
+	$parser = new Dwoo();
+}
+
 
 ?>

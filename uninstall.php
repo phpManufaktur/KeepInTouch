@@ -177,12 +177,14 @@ if ($dbCronjobErrorLog->sqlTableExists()) {
 	}
 }
 
+/*
 $dbNewsletterLinks = new dbKITnewsletterLinks();
 if ($dbNewsletterLinks->sqlTableExists()) {
 	if (!$dbNewsletterLinks->sqlDeleteTable()) {
 		$error .= sprintf('<p>[Delete Table] %s</p>', $dbNewsletterLinks->getError());
 	}
 }
+*/
 
 $dbImport = new dbKITimport();
 if ($dbImport->sqlTableExists()) {

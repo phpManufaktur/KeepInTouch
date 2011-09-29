@@ -33,10 +33,10 @@ if (defined('WB_PATH')) {
 require_once(WB_PATH.'/modules/'.basename(dirname(__FILE__)).'/initialize.php');
 require_once(WB_PATH.'/modules/'.basename(dirname(__FILE__)).'/class.mail.php');
 require_once(WB_PATH.'/modules/'.basename(dirname(__FILE__)).'/class.editor.php');
-require_once(WB_PATH.'/modules/'.basename(dirname(__FILE__)).'/class.request.php');
+//require_once(WB_PATH.'/modules/'.basename(dirname(__FILE__)).'/class.request.php');
 require_once(WB_PATH.'/modules/'.basename(dirname(__FILE__)).'/class.newsletter.cfg.php');
 require_once(WB_PATH.'/modules/'.basename(dirname(__FILE__)).'/class.cronjob.php');
-require_once(WB_PATH.'/modules/'.basename(dirname(__FILE__)).'/class.newsletter.link.php');
+//require_once(WB_PATH.'/modules/'.basename(dirname(__FILE__)).'/class.newsletter.link.php');
 
 if (DEBUG_MODE) {
 	ini_set('display_errors', 1);
@@ -65,7 +65,7 @@ if (!is_object($dbNewsletterProcess)) $dbNewsletterProcess = new dbKITnewsletter
 if (!is_object($dbCronjobData)) $dbCronjobData = new dbCronjobData();
 if (!is_object($dbCronjobErrorLog)) $dbCronjobErrorLog = new dbCronjobErrorLog();
 if (!is_object($dbCronjobNewsletterLog)) $dbCronjobNewsletterLog = new dbCronjobNewsletterLog();
-if (!is_object($dbNewsletterLinks)) $dbNewsletterLinks = new dbKITnewsletterLinks();
+//if (!is_object($dbNewsletterLinks)) $dbNewsletterLinks = new dbKITnewsletterLinks();
 
 class dbKITnewsletterTemplates extends dbConnectLE {
 	
@@ -362,7 +362,7 @@ class kitNewsletterCommands {
 	public function parseCommands(&$template, $content='', $contact_id=-1, $newsletter_archive = array()) {
 		global $dbContact;
 		global $dbRegister; 
-		global $kitRequest;
+		//global $kitRequest;
 		global $parser;
 
 		if ($contact_id == -1) {
@@ -420,7 +420,8 @@ class kitNewsletterCommands {
 		}
 		
 		// Login Dialog
-		$request_link = $kitRequest->getRequestLink();
+		//$request_link = $kitRequest->getRequestLink();
+		$request_link = WB_URL;
 		
 		// Newsletter
 		$news_array = explode(',', $contact[dbKITregister::field_newsletter]);
@@ -442,12 +443,15 @@ class kitNewsletterCommands {
 		// unsubscribe link
 		if ($contact_id < 1) {
 			// Preview Modus - "Scheinlink" setzen
+			/*
 			$unsubscribe_link = sprintf('%s&%s=%s',
 																	$request_link,
 																	kitRequest::request_action,
 																	kitRequest::action_link,
 																	kitRequest::request_link,
 																	0);
+			*/
+			$unsubscribe_link = WB_URL;
 		}
 		else {
 			$unsubscribe_link = $this->getUnsubscribeLink($contact_id, $newsletter_archive);
@@ -459,11 +463,13 @@ class kitNewsletterCommands {
 			$this->extractCommand(self::cmd_account_first_name)				=> $contact[dbKITcontact::field_person_first_name],
 			$this->extractCommand(self::cmd_account_id)								=> $contact[dbKITregister::field_id],
 			$this->extractCommand(self::cmd_account_last_name)				=> $contact[dbKITcontact::field_person_last_name],
+			/*
 			$this->extractCommand(self::cmd_account_login)						=> sprintf(	'%s&%s=%s',
 																																						$request_link,
 																																						kitRequest::request_action,
 																																						kitRequest::action_login),
 			$this->extractCommand(self::cmd_account_newsletter)				=> $newsletter,
+			*/
 			$this->extractCommand(self::cmd_account_register_key)			=> $contact[dbKITregister::field_register_key],
 			$this->extractCommand(self::cmd_account_title)						=> $dbContact->person_title_array[$contact[dbKITcontact::field_person_title]],
 			$this->extractCommand(self::cmd_account_title_academic)		=> @$dbContact->person_title_academic_array[$contact[dbKITcontact::field_person_title_academic]],
@@ -535,6 +541,12 @@ class kitNewsletterCommands {
 		return $result; 
 	} // getSalutationStr()
 	
+	
+	public function getUnsubscribeLink($contact_id, $newsletter_archive) {
+		return WB_URL;
+	} // getUnsubsribeLink
+	
+	/*
 	public function getUnsubscribeLink($contact_id, $newsletter_archive) {
 		global $dbNewsletterLinks;
 		global $kitRequest;
@@ -598,6 +610,7 @@ class kitNewsletterCommands {
 												$base);
 		return $result;	
 	} // getUnsubscribeLink()
+	*/
 	
 	/**
    * Return Version of KIT
@@ -655,6 +668,7 @@ class kitNewsletterDialog {
 	private $page_link 							= '';
 	private $img_url								= '';
 	private $template_path					= '';
+	private $temp_path							= '';
 	private $help_path							= '';
 	private $error									= '';
 	private $message								= '';
@@ -667,6 +681,7 @@ class kitNewsletterDialog {
 		$this->template_path = WB_PATH . '/modules/' . basename(dirname(__FILE__)) . '/htt/' ;
 		$this->help_path = WB_PATH . '/modules/' . basename(dirname(__FILE__)) . '/languages/' ;
 		$this->img_url = WB_URL.'/modules/'.basename(dirname(__FILE__)).'/img/';
+		$this->temp_path = WB_PATH.'/temp/kit/newsletter/';
 	} // __construct()
 	
 	
@@ -1014,7 +1029,6 @@ class kitNewsletterDialog {
   public function checkTemplate() {
   	global $dbNewsletterPreview;
   	global $dbNewsletterTemplates;
-  	
   	// Mindesanforderungen pruefen
   	if (empty($_REQUEST[dbKITnewsletterTemplates::field_name]) || empty($_REQUEST[dbKITnewsletterTemplates::field_html])) {
   		$this->setMessage(kit_msg_newsletter_tpl_minimum_failed);
@@ -1049,7 +1063,7 @@ class kitNewsletterDialog {
   			return false;
   		}
   	}
-  	
+   	
   	$view = array();
   	foreach ($dbNewsletterTemplates->getFields() as $key => $value) {
   		if (isset($_REQUEST[$key])) {
@@ -1067,23 +1081,85 @@ class kitNewsletterDialog {
   		return false;
   	}
   	$_REQUEST[dbKITnewsletterPreview::field_id] = $pid;
-  	return $this->dlgCheckTemplatePreview();
+  	return $this->dlgCheckTemplatePreview($pid);
   } // checkTemplate()
   
-  public function dlgCheckTemplatePreview() {
+  public function createTemplatePreview($preview_id, $is_html=true) {
+		global $dbNewsletterPreview;
+		global $newsletterCommands;
+echo "OK!";		
+		$where = array();
+		$where[dbKITnewsletterPreview::field_id] = $preview_id;
+		$preview = array();
+		if (!$dbNewsletterPreview->sqlSelectRecord($where, $preview)) {
+			 $this->setError(sprintf('[%s - %s] %s', __METHOD__, __LINE__, $dbNewsletterPreview->getError()));
+			 return false;
+		}
+		if (count($preview) < 1) {
+			// Datensatz nicht gefunden
+			$this->setError('[%s - %s] %s', __METHOD__, __LINE__, sprintf(kit_error_item_id, $preview_id));
+			return false;
+		}
+		$prev_array = explode(dbKITnewsletterPreview::array_separator, $preview[0][dbKITnewsletterPreview::field_view]);
+		$prev = array();
+		foreach ($prev_array as $item) {
+			list($key, $value) = explode(dbKITnewsletterPreview::array_separator_value, $item);
+			$prev[$key] = $value;
+		}
+		$template = '';
+		if ($is_html) {
+			$template = stripcslashes($prev[dbKITnewsletterTemplates::field_html]);
+		}
+		else {
+			$template = $prev[dbKITnewsletterTemplates::field_text];
+		}
+		if (!file_exists($this->temp_path)) {
+			if (!mkdir($this->temp_path, 0755, true)) {
+				$this->setError(sprintf('[%s - %s] %s', __METHOD__, __LINE__, sprintf(kit_error_create_dir, substr($this->temp_path, strlen(WB_PATH)))));
+				return false;
+			}
+		}
+		if ($newsletterCommands->parseCommands($template, '', -1)) {
+			if (!$is_html) {
+				// NUR TEXT
+				if (!file_put_contents($this->temp_path.'nl-preview.txt', strip_tags($template))) {
+					$this->setError(sprintf('[%s - %s] %s', __METHOD__, __LINE__, sprintf(kit_error_create_file, 'nl-preview.txt')));
+					return false;
+				}
+			}
+			else {
+				// HTML
+				if (!file_put_contents($this->temp_path.'nl-preview.html', $template)) {
+					$this->setError(sprintf('[%s - %s] %s', __METHOD__, __LINE__, sprintf(kit_error_create_file, 'nl-preview.html')));
+					return false;
+				}
+			}				
+		}
+		else {
+			$this->setError(sprintf('[%s - %s] %s', __METHOD__, __LINE__, $newsletterCommands->getError()));
+			return false;
+		}
+		return true;
+	} // createTemplatePreview()
+  
+  
+  /**
+   * Show the template previews for HTML and TEXT
+   * 
+   * @return STR Dialog Preview
+   */
+  public function dlgCheckTemplatePreview($preview_id) {
   	global $dbCfg;
   	global $parser;
   	
-  	if (!isset($_REQUEST[dbKITnewsletterPreview::field_id])) {
-  		$this->setError(kit_error_preview_id_missing);
-  		return false;
-  	}
-  	$request_link = $dbCfg->getValue(dbKITcfg::cfgKITRequestLink);
+  	if (!$this->createTemplatePreview($preview_id, true)) return false;
+  	if (!$this->createTemplatePreview($preview_id, false)) return false;
   	
   	$data = array(
 			'header_preview'						=> kit_header_preview,
 			'intro'											=> kit_intro_preview,
 			'html_label'								=> kit_label_newsletter_tpl_html,
+  		/*
 			'html_source'								=> sprintf(	'%s?%s=%s&%s=%s&%s=%s',
 																							$request_link,
 																							kitRequest::request_action,
@@ -1092,7 +1168,10 @@ class kitNewsletterDialog {
 																							$_REQUEST[dbKITnewsletterPreview::field_id],
 																							kitRequest::request_type,
 																							kitRequest::action_type_html),
+			*/
+  		'html_source'								=> sprintf(	'%snl-preview.html', str_replace(WB_PATH, WB_URL, $this->temp_path)), 
 			'text_label'								=> kit_label_newsletter_tpl_text_preview,
+  		/*
 			'text_source'								=> sprintf(	'%s?%s=%s&%s=%s&%s=%s',
 																							$request_link,
 																							kitRequest::request_action,
@@ -1100,12 +1179,14 @@ class kitNewsletterDialog {
 																							kitRequest::request_id,
 																							$_REQUEST[dbKITnewsletterPreview::field_id],
 																							kitRequest::request_type,
-																							kitRequest::action_type_text),		
+																							kitRequest::action_type_text),
+			*/
+  	  'text_source'								=> sprintf(	'%snl-preview.txt', str_replace(WB_PATH, WB_URL, $this->temp_path)),
 			'form_action'								=> $this->page_link,
 			'action_name'								=> self::request_action,
 			'action_save_value'					=> self::action_template_save,
 			'preview_name'							=> dbKITnewsletterPreview::field_id,
-			'preview_value'							=> $_REQUEST[dbKITnewsletterPreview::field_id],
+			'preview_value'							=> $preview_id,
 			'btn_save'									=> kit_btn_save,
 			'action_edit_value'					=> self::action_template,
 			'btn_edit'									=> kit_btn_edit,
@@ -1775,7 +1856,6 @@ class kitNewsletterDialog {
   public function checkNewsletter() {
   	global $dbNewsletterPreview;
   	global $dbNewsletterArchive;
-  	
   	// check provider
   	if ($_REQUEST[dbKITnewsletterArchive::field_provider] == -1) {
   		$this->setMessage(kit_msg_newsletter_new_no_provider);
@@ -1850,7 +1930,6 @@ class kitNewsletterDialog {
   public function dlgCheckNewsletterPreview() {
   	global $dbCfg;
   	global $parser;
-  	
   	if (!isset($_REQUEST[dbKITnewsletterPreview::field_id])) {
   		$this->setError(kit_error_preview_id_missing);
   		return false;

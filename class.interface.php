@@ -338,7 +338,8 @@ class kitContactInterface {
 										dbKITcontact::status_deleted);
 		$result = array();
 		if (!$dbContact->sqlExec($SQL, $result)) {
-			$this->setError(sprintf('[%s - %s] %s', __METHOD__, __LINE__, $dbContact->getError())); return false;
+			$this->setError(sprintf('[%s - %s] %s', __METHOD__, __LINE__, $dbContact->getError())); 
+			return false;
 		}
 		if (count($result) > 0) {
 			// Treffer
@@ -913,16 +914,42 @@ class kitContactInterface {
 		return $dbContactArrayCfg->checkArray($category_type, $category_identifier, $category_value);
 	} // addCategory()
 	
+	/**
+	 * Check the user login and set the KIT SESSION variables on success.
+	 * Return a reference array with the &$contact on success.
+	 * Set &$must_change_password to TRUE if the user must change the default password
+	 * 
+	 * @param STR $email
+	 * @param STR $password
+	 * @param REFERENCE ARRAY $contact
+	 * @param REFERENCE BOOL $must_change_password
+	 * @return BOOL TRUE on success and BOOL FALSE on fail or error - set $message or $error
+	 */
 	public function checkLogin($email, $password, &$contact=array(), &$must_change_password=false) {
 		global $dbRegister;
 		global $dbContact;
 		global $dbCfg;
 		
+		/* this method will cause trouble if the email was deleteted and is now reactivated!
 		$where = array(
-			dbKITregister::field_email 	=> $email
+			dbKITregister::field_email 	=> $email,
 		);
 		$register = array();
 		if (!$dbRegister->sqlSelectRecord($where, $register)) {
+			$this->setError(sprintf('[%s - %s] %s', __METHOD__, __LINE__, $dbRegister->getError()));
+			return false;
+		}
+		*/
+		// avoid conflict if email was already registered but is deleted, select only the last record!
+		$SQL = sprintf(	"SELECT * FROM %s WHERE %s='%s' AND %s!='%s' ORDER BY %s DESC LIMIT 1",
+										$dbRegister->getTableName(),
+										dbKITregister::field_email,
+										$email,
+										dbKITregister::field_status,
+										dbKITregister::status_deleted,
+										dbKITregister::field_update_when);
+		$register = array();
+		if (!$dbRegister->sqlExec($SQL, $register)) {
 			$this->setError(sprintf('[%s - %s] %s', __METHOD__, __LINE__, $dbRegister->getError()));
 			return false;
 		}
@@ -1033,11 +1060,19 @@ class kitContactInterface {
 		return true;
 	} // generateNewPassword()
 	
-	public function checkActivationKey($key, &$register_array=array(), &$contact_array=array(), &$password='') {
+	/**
+	 * Check the send Activation Key and if ok change status to Active and generate a password
+	 * 
+	 * @param STR $key - Activation Key
+	 * @param REFERENCE ARRAY $register_array - registration record of the user
+	 * @param REFERENCE ARRAY $contact_array - contact record of the user
+	 * @param REFERENCE STR $password - the generated password
+	 */
+	public function checkActivationKey($key, &$register=array(), &$contact_array=array(), &$password='') {
 		global $dbRegister;
 		global $tools;
 		global $dbCfg;
-		
+
 		$SQL = sprintf( "SELECT * FROM %s WHERE %s='%s' AND %s!='%s'",
 										$dbRegister->getTableName(),
 										dbKITregister::field_register_key,
@@ -1057,12 +1092,13 @@ class kitContactInterface {
 		if (($register[dbKITregister::field_status] == dbKITregister::status_key_created) || ($register[dbKITregister::field_status] == dbKITregister::status_key_send)) {
 			// ok - Aktiverungskey wurde versendet und noch nicht verwendet
 			$password = $tools->generatePassword($dbCfg->getValue(dbKITcfg::cfgMinPwdLen)); 
+			$md5_password = md5($password);
 			$where = array(
 				dbKITregister::field_id	=> $register[dbKITregister::field_id]
 			);
 			$data = array(
 				dbKITregister::field_register_confirmed		=> date('Y-m-d H:i:s'),
-				dbKITregister::field_password							=> md5($password),
+				dbKITregister::field_password							=> $md5_password,
 				dbKITregister::field_status								=> dbKITregister::status_active,
 				dbKITregister::field_update_by						=> 'INTERFACE',
 				dbKITregister::field_update_when					=> date('Y-m-d H:i:s')
@@ -1077,6 +1113,20 @@ class kitContactInterface {
 				$this->setError(sprintf('[%s - %s] %s', __METHOD__, __LINE__, $this->getError()));
 				return false;
 			}
+			// check if user should added as LEPTON user
+			$this->addContactAsLeptonUser($register[dbKITregister::field_contact_id], $register[dbKITregister::field_email], $md5_password);
+			if ($this->isError()) {
+				$this->setError(sprintf('[%s - %s] %s', __METHOD__, __LINE__, $this->getError()));
+				return false;
+			}
+			// get the actual register record
+			$where = array(dbKITregister::field_id => $register[dbKITregister::field_id]);
+			$register_array = array();
+			if (!$dbRegister->sqlSelectRecord($where, $register_array)) {
+				$this->setError(sprintf('[%s - %s] %s', __METHOD__, __LINE__, $dbRegister->getError()));
+				return false;
+			}
+			$register = $register_array[0];
 			return true;
 		}
 		elseif ($register[dbKITregister::field_status] == dbKITregister::status_locked) {
@@ -1100,6 +1150,96 @@ class kitContactInterface {
 			return false;
 		}
 	} // checkActivationKey()
+	
+	public function addContactAsLeptonUser($contact_id, $email, $password) {
+		global $dbRegister;
+		global $dbCfg;
+		global $dbWBusers;
+		global $dbWBgroups; 
+		global $dbContact;
+		
+		// get the KIT categories of the user
+		$SQL = sprintf( "SELECT %s FROM %s WHERE %s='%s'", dbKITcontact::field_category, $dbContact->getTableName(), dbKITcontact::field_id, $contact_id);
+		$contact = array();
+		if (!$dbContact->sqlExec($SQL, $contact)) {
+			$this->setError(sprintf('[%s - %s] %s', __METHOD__, __LINE__, $dbContact->getError()));
+			return false;
+		}
+		if (count($contact) < 1) {
+			$this->setError(sprintf('[%s - %s] %s', __METHOD__, __LINE__, sprintf(kit_error_invalid_id, $contact_id)));
+			return false;
+		}
+		$groups = explode(',', $contact[0][dbKITcontact::field_category]);
+		if (!in_array(dbKITcontact::category_wb_user, $groups)) {
+			// nothing to do - user is not member of the group catWBUser
+			return false; 
+		}
+		
+		if (!$dbCfg->getValue(dbKITcfg::cfgConnectWBusers)) {
+			// The KIT connection to LEPTON Users is not active
+			$this->setError(sprintf('[%s - %s] %s', __METHOD__, __LINE__, kit_error_lepton_user_connection_inactive));
+			return false;
+		}
+		
+		// check if a LEPTON group exists for KIT ... 
+		$where = array(dbWBgroups::field_name => dbWBgroups::kitWBgoup);
+		$groups = array();
+		if (!$dbWBgroups->sqlSelectRecord($where, $groups)) {
+			$this->setError(sprintf('[%s - %s] %s', __METHOD__, __LINE__, $dbWBgroups->getError()));
+			return false;
+		}
+		if (count($groups) < 1) {
+			// the group does not exist and must be created
+			$data = array(dbWBgroups::field_name => dbWBgroups::kitWBgoup);
+			$kit_group_id = -1;
+			if (!$dbWBgroups->sqlInsertRecord($data, $kit_group_id)) {
+				$this->setError(sprintf('[%s - %s] %s', __METHOD__, __LINE__, $dbWBgroups->getError()));
+				return false;
+			}
+		}
+		else {
+			$kit_group_id = $groups[0][dbWBgroups::field_group_id];
+		}
+		
+		// check if the KIT contact is LEPTON user
+		$SQL = sprintf( "SELECT * FROM %s WHERE %s='%s' AND %s='%s'", $dbWBusers->getTableName(), dbWBusers::field_email, $email, dbWBusers::field_active, dbWBusers::status_active);
+		if (!$dbWBusers->sqlExec($SQL, $user)) {
+			$this->setError(sprintf('[%s - %s] %s', __METHOD__, __LINE__, $dbWBusers->getError()));
+			return false;
+		}
+		if (count($user) == 0) {
+			// user does not exists, add contact
+			$data = array(
+				dbWBusers::field_active 			=> dbWBusers::status_active,
+				dbWBusers::field_display_name => $email,
+				dbWBusers::field_email 				=> $email,
+				dbWBusers::field_group_id 		=> $kit_group_id,
+				dbWBusers::field_groups_id 		=> $kit_group_id,
+				dbWBusers::field_password			=> $password,
+				dbWBusers::field_username			=> $email
+			);
+			if (!$dbWBusers->sqlInsertRecord($data)) {
+				$this->setError(sprintf('[%s - %s] %s', __METHOD__, __LINE__, $dbWBusers->getError()));
+				return false;
+			}
+			$this->addNotice($contact_id, kit_protocol_ki_added_as_lepton_user);
+		}
+		else {
+			// user exists, check groups
+			$groups = explode(',', $user[0][dbWBusers::field_groups_id]);
+			if (!in_array(array(1, $kit_group_id), $groups)) {
+				$groups[] = $kit_group_id;
+				$data = array(dbWBusers::field_groups_id => implode(',', $groups));
+				$where = array(dbWBusers::field_user_id => $user[0][dbWBusers::field_user_id]);
+				if (!$dbWBusers->sqlUpdateRecord($data, $where)) {
+					$this->setError(sprintf('[%s - %s] %s', __METHOD__, __LINE__, $dbWBusers->getError()));
+					return false;
+				}
+				$this->addNotice($contact_id, sprintf(kit_protocol_ki_lepton_user_group_added, dbWBgroups::kitWBgoup));
+			}
+		}
+		return true;
+	} // addContactAsLeptonUser()
 	
 	public function changePassword($register_id, $contact_id, $new_password, $new_password_retype) {
 		global $dbCfg;

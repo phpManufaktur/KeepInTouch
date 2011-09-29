@@ -637,14 +637,19 @@ class dbKITcontact extends dbConnectLE {
 							if (count($users) == 0) {
 								// Datensatz anlegen
 								$register = array();
-								$where = array(dbKITregister::field_email => $email);
+								$where = array(	dbKITregister::field_email => $email,
+																dbKITregister::field_status => dbKITregister::status_active);
 								if (!$dbRegister->sqlSelectRecord($where, $register)) {
 									$this->setError(sprintf('[%s - %s] %s', __METHOD__, __LINE__, $dbRegister->getError()));
 									return false;
 								}
 								if (count($register) < 1) {
+									// no entry - but dont prompt error, probably is an registration running ...
+									continue;
+									/*
 									$this->setError(sprintf('[%s - %s] %s', __METHOD__, __LINE__, sprintf(kit_error_invalid_id, $email)));
 									return false;
+									*/
 								}
 								$data = array(
 									dbWBusers::field_active 			=> 1,

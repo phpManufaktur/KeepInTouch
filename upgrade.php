@@ -36,11 +36,13 @@ require_once(WB_PATH.'/modules/'.basename(dirname(__FILE__)).'/class.mail.php');
 require_once(WB_PATH.'/modules/'.basename(dirname(__FILE__)).'/class.droplets.php');
 require_once(WB_PATH.'/modules/'.basename(dirname(__FILE__)).'/class.newsletter.php');
 require_once(WB_PATH.'/modules/'.basename(dirname(__FILE__)).'/class.cronjob.php');
-require_once(WB_PATH.'/modules/'.basename(dirname(__FILE__)).'/class.newsletter.link.php');
+//require_once(WB_PATH.'/modules/'.basename(dirname(__FILE__)).'/class.newsletter.link.php');
 require_once(WB_PATH.'/modules/'.basename(dirname(__FILE__)).'/class.import.php');
 require_once(WB_PATH.'/modules/'.basename(dirname(__FILE__)).'/class.config.php');
 
+require_once(WB_PATH.'/framework/functions.php');
 
+global $database;
 global $admin;
 
 $error = '';
@@ -199,7 +201,7 @@ else {
 										dbKITcontact::status_deleted);
 		$contacts = array();
 		if (!$dbKITcontact->sqlExec($SQL, $contacts)) {
-			$error .= sprintf('[BUGFIX] %s', __METHOD__, __LINE__, $dbKITcontact->getError());
+			$error .= sprintf('<p>[BUGFIX] %s</p>', __METHOD__, __LINE__, $dbKITcontact->getError());
 		}
 		else {
 			if (count($contacts) > 0) {
@@ -210,7 +212,7 @@ else {
 					dbKITregister::field_update_when	=> date('Y-m-d H:i:s')
 				);
 				if (!$dbKITregister->sqlUpdateRecord($data, $where)) {
-					$error .= sprintf('[BUGFIX] %s', $dbKITregister->getError());
+					$error .= sprintf('<p>[BUGFIX] %s</p>', $dbKITregister->getError());
 				}
 			}
 		}
@@ -218,21 +220,43 @@ else {
 }
 
 /**
- * Remove no longer needed entries in dbKITcfg
+ * Release 0.43
+ * Remove /dialogs, /droplets, kit.php, class.request.php and class.repsonse.php and use kitForms instead 
  */
-$dbKITconfig = new dbKITcfg();
-$where = array(dbKITcfg::field_name => 'cfgLicenseKey');
-$entries = array();
-if (!$dbKITconfig->sqlSelectRecord($where, $entries)) {
-	$error .= sprintf('[UPGRADE] %s', $dbKITconfig->getError());
+
+// remove mod_kit_newsletter_links
+$SQL = sprintf("DROP TABLE IF EXISTS %smod_kit_newsletter_links", TABLE_PREFIX);
+$database->query($SQL);
+if ($database->is_error()) {
+	$error .= sprintf('<p>[DROP TABLE mod_kit_newsletter_links] %s</p>', $database->get_error());
 }
-else {
-	if (count($entries) > 0) {
-		if (!$dbKITconfig->sqlDeleteRecord($where)) {
-			$error .= sprintf('[UPGRADE] %s', $dbKITconfig->getError());
+
+// remove Droplet kit_newsletter
+$SQL = sprintf("DELETE FROM %smod_droplets WHERE name='kit_newsletter'", TABLE_PREFIX);
+$database->query($SQL);
+if ($database->is_error()) {
+	$error .= sprintf('<p>[DELETE DROPLET kit_newsletter] %s</p>', $database->get_error());
+}
+
+// delete no longer needed entries from mod_kit_config
+$SQL = sprintf("DELETE FROM %smod_kit_config WHERE cfg_name IN ('cfgLicenseKey','cfgKITResponsePage','cfgUseCaptcha','cfgUseCustomFiles','cfgRegisterDlgNL','cfgRegisterDlgACC','cfgRegisterDlgUSUB','cfgKITRequestLink','cfgMaxInvalidLogin','cfgMinPwdLen')", TABLE_PREFIX);
+$database->query($SQL);
+if ($database->is_error()) {
+	$error .= sprintf('<p>[DELETE ENTRIES FROM mod_kit_config] %s</p>', $database->get_error());
+}
+
+// delete no longer needed files and directories
+$delete_array = array('kit.php', 'class.newsletter.link.php', 'class.response.php', 'class.request.php', 'droplets', 'class.droplets.php', 'class.dialogs.php', 'dialogs');
+foreach ($delete_array as $item) {
+	if (file_exists(WB_PATH.'/modules/kit/'.$item)) {
+		if (!rm_full_dir(WB_PATH.'/modules/kit/'.$item)) {
+			$error .= sprintf('<p>[DELETE FILES/DIRECTORIES] Can\'t delete /modules/kit/%s</p>', $item);
 		}
 	}
 }
+
+/**
+ * The Droplet kit_newsletter is since Release 0.43 no longer used!
 
 // Install Droplets
 $droplets = new checkDroplets();
@@ -245,6 +269,8 @@ else {
 if ($message != "") {
   echo '<script language="javascript">alert ("'.$message.'");</script>';
 }
+
+*/
 
 // Prompt Errors
 if (!empty($error)) {

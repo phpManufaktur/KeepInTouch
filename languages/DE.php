@@ -168,6 +168,7 @@ define('kit_error_blank_title',										'<p>Die Seite muss einen Titel enthalte
 define('kit_error_cfg_id',												'<p>Der Konfigurationsdatensatz mit der <b>ID %05d</b> konnte nicht ausgelesen werden!</p>');
 define('kit_error_cfg_name',											'<p>Zu dem Bezeichner <b>%s</b> wurde kein Konfigurationsdatensatz gefunden!</p>');
 define('kit_error_create_dir',										'<p>Das Verzeichnis<br /><b>%s</b><br />konnte nicht angelegt werden!');
+define('kit_error_create_file',										'<p>Die Datei <b>%s</b> konnte nicht angelegt werden.</p>');
 define('kit_error_delete_access_file',						'<p>Die Zugriffsseite <b>%s</b> konnte nicht gelöscht werden!</p>');
 define('kit_error_dlg_missing',										'<p>Der angeforderte Dialog <b>%s</b> wurde nicht gefunden!</p>');
 define('kit_error_email_missing',									'<p>Es wurde keine E-Mail Adresse übergeben!</p>');
@@ -177,6 +178,7 @@ define('kit_error_import_massmail_grp_missing',		'<p>Die Tabelle mit den MassMai
 define('kit_error_import_massmail_missing_vars',	'<p>Es wurden nicht alle benötigten Variablen zum Import von Massmail Daten übergeben.</p>');
 define('kit_error_invalid_id',										'<p>Es wurde keine gültige ID übergeben!</p>');
 define('kit_error_item_id',												'<p>Der Datensatz mit der <b>ID %s</b> wurde nicht gefunden!</p>');
+define('kit_error_lepton_user_connection_inactive','<p>Die Verbindung von KeepInTouch (KIT) zur LEPTON Benutzerverwaltung ist nicht aktiv. Bitte prüfen Sie die KIT Einstellungen und aktivieren Sie den Schalter "Mit LEPTON Benutzern verbinden".</p>');
 define('kit_error_mail_init_settings',						'<p>Die WebsiteBaker Einstellungen für die Mailkonfiguration konnten nicht geladen werden.</p>');
 define('kit_error_map_address_invalid',						'<p>Die Adresse <b>%s</b> wurde nicht gefunden!</p>');
 define('kit_error_move_csv_file',									'<p>Die temporäre Datei <b>%s</b> konnte nicht in das Zielverzeichnis verschoben werden!</p>');
@@ -190,6 +192,7 @@ define('kit_error_preview_id_invalid',						'<p>Die Preview mit der <b>ID %05d</
 define('kit_error_preview_id_missing',						'<p>Es wurde keine Preview ID angegeben!</p>');
 define('kit_error_record_for_email_exists',				'<p>Es existiert bereits ein Datensatz mit der <b>ID %03d</b> für die E-Mail Adresse <b>%s</b>, bitte aktualisieren Sie diesen Datensatz anstatt einen neuen anzulegen!</p>');
 define('kit_error_register_email_already_exists',	'<p>Fataler Fehler: Es existiert bereits ein Registrierdatensatz für die E-Mail Adresse <b>%s</b>.</p>');
+define('kit_error_register_contact_id_invalid',		'<p>Die KIT ID <b>%s</b> wurde in der Registrierung nicht gefunden - die ID existiert nicht oder ist gesperrt.</p>');
 define('kit_error_request_dlg_invalid_id',				'<p>[kitRequest] Der Dialog mit der <b>ID %03d</b> wurde nicht gefunden, Vorgang abgebrochen!</p>');
 define('kit_error_request_dlg_invalid_name',			'<p>[kitRequest] Der Dialog mit der Klassenbezeichnung <b>%s</b> wurde nicht gefunden, Vorgang abgebrochen!</p>');
 define('kit_error_request_invalid_action',				'<p>[kitRequest] Der Parameter <b>%s=%s</b> ist ungültig, Vorgang abgebrochen!</p>');
@@ -519,6 +522,8 @@ define('kit_protocol_ki_address_added',						'[kitInterface] Es wurde die Adress
 define('kit_protocol_ki_address_updated',					'[kitInterface] Die Adresse %s, %s %s wurde aktualisiert.');
 define('kit_protocol_ki_contact_created',					'[kitInterface] Datensatz angelegt.');
 define('kit_protocol_ki_contact_updated',					'[kitInterface] Die Kontaktdaten wurden aktualisiert.');
+define('kit_protocol_ki_added_as_lepton_user',		'[kitInterface] Der Kontakt wurde als LEPTON Benutzer hinzugefügt.');
+define('kit_protocol_ki_lepton_user_group_added',	'[kitInterface] Dem LEPTON Benutzer wurde die Gruppe %s hinzugefügt.'); 
 define('kit_protocol_ki_newsletter_updated',			'[kitInterface] Das Newsletter Abonnement wurde aktualisiert.');
 define('kit_protocol_ki_password_changed',				'[kitInterface] Das Passwort wurde geändert.');
 define('kit_protocol_login_locked',								'KONTO GESPERRT, der Benutzer hat zuviele fehlerhafte Login Versuche unternommen.');

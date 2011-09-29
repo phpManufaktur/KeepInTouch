@@ -31,13 +31,24 @@ if (defined('WB_PATH')) {
 // end include LEPTON class.secure.php
 
 // Checking Requirements
-
-$PRECHECK['WB_VERSION'] = array('VERSION' => '2.8', 'OPERATOR' => '>=');
-$PRECHECK['PHP_VERSION'] = array('VERSION' => '5.2.0', 'OPERATOR' => '>=');
-$PRECHECK['WB_ADDONS'] = array(
-	'dbconnect_le'	=> array('VERSION' => '0.64', 'OPERATOR' => '>='),
-	'dwoo' => array('VERSION' => '0.10', 'OPERATOR' => '>=')
-);
+if (defined('LEPTON_VERSION')) {
+	// LEPTON
+	require_once WB_PATH.'/framework/addon.precheck.inc.php';
+	$PRECHECK['PHP_VERSION'] = array('VERSION' => '5.2.0', 'OPERATOR' => '>=');
+	$PRECHECK['WB_ADDONS']['dbconnect_le'] = array('VERSION' => '0.64', 'OPERATOR' => '>=');
+	if (versionCompare(LEPTON_VERSION, '1.2.0', '<')) {
+		$PRECHECK['WB_ADDONS']['dwoo'] = array('VERSION' => '0.11', 'OPERATOR' => '>=');
+	}
+}
+else {
+	// WebsiteBaker
+	$PRECHECK['WB_VERSION'] = array('VERSION' => '2.8', 'OPERATOR' => '>=');
+	$PRECHECK['PHP_VERSION'] = array('VERSION' => '5.2.0', 'OPERATOR' => '>=');
+	$PRECHECK['WB_ADDONS'] = array(
+		'dbconnect_le'	=> array('VERSION' => '0.64', 'OPERATOR' => '>='),
+		'dwoo' => array('VERSION' => '0.10', 'OPERATOR' => '>=')
+	);
+}
 
 global $database;
 $sql = "SELECT * FROM ".TABLE_PREFIX."settings WHERE name='default_charset'";
