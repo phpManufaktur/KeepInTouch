@@ -1,6 +1,0 @@
-<!-- $Id$ -->
-<div class="kit_nl_dlg">
-  <h1>{$header}</h1>
-  <div class="kit_nl_message">{$message}</div>
-  <div class="kit_nl_service">{$service}</div>
-</div>

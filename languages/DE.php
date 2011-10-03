@@ -167,7 +167,7 @@ define('kit_desc_cfg_use_custom_files',						'Falls gesetzt, können Sie individ
 define('kit_error_blank_title',										'<p>Die Seite muss einen Titel enthalten!</p>');
 define('kit_error_cfg_id',												'<p>Der Konfigurationsdatensatz mit der <b>ID %05d</b> konnte nicht ausgelesen werden!</p>');
 define('kit_error_cfg_name',											'<p>Zu dem Bezeichner <b>%s</b> wurde kein Konfigurationsdatensatz gefunden!</p>');
-define('kit_error_create_dir',										'<p>Das Verzeichnis<br /><b>%s</b><br />konnte nicht angelegt werden!');
+define('kit_error_create_dir',										'<p>Das Verzeichnis<br /><b>%s</b><br />konnte nicht angelegt werden!</p>');
 define('kit_error_create_file',										'<p>Die Datei <b>%s</b> konnte nicht angelegt werden.</p>');
 define('kit_error_delete_access_file',						'<p>Die Zugriffsseite <b>%s</b> konnte nicht gelöscht werden!</p>');
 define('kit_error_dlg_missing',										'<p>Der angeforderte Dialog <b>%s</b> wurde nicht gefunden!</p>');

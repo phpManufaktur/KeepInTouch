@@ -34,11 +34,8 @@ define('KIT_INSTALL_RUNNING', true);
 
 require_once(WB_PATH.'/modules/'.basename(dirname(__FILE__)).'/initialize.php');
 require_once(WB_PATH.'/modules/'.basename(dirname(__FILE__)).'/class.mail.php');
-require_once(WB_PATH.'/modules/'.basename(dirname(__FILE__)).'/class.dialogs.php');
-require_once(WB_PATH.'/modules/'.basename(dirname(__FILE__)).'/class.droplets.php');
 require_once(WB_PATH.'/modules/'.basename(dirname(__FILE__)).'/class.newsletter.php');
 require_once(WB_PATH.'/modules/'.basename(dirname(__FILE__)).'/class.cronjob.php');
-//require_once(WB_PATH.'/modules/'.basename(dirname(__FILE__)).'/class.newsletter.link.php');
 require_once(WB_PATH.'/modules/'.basename(dirname(__FILE__)).'/class.import.php');
 global $admin;
 
@@ -68,11 +65,6 @@ if ($dbKITprovider->isError()) {
 $dbKITmail = new dbKITmail(true);
 if ($dbKITmail->isError()) {
 	$error .= sprintf('<p>[Installation] %s</p>', $dbKITmail->getError());
-}
-
-$dbKITdlgRegister = new dbKITdialogsRegister(true);
-if ($dbKITdlgRegister->isError()) {
-	$error .= sprintf('<p>[Installation] %s</p>', $dbKITdlgRegister->getError());
 }
 
 $dbKITregister = new dbKITregister(true);
@@ -130,34 +122,11 @@ if ($dbCronjobErrorLog->isError()) {
 	$error .= sprintf('<p>[Installation] %s</p>', $dbCronjobErrorLog->getError());
 }
 
-/*
-$dbNewsletterLinks = new dbKITnewsletterLinks(true);
-if ($dbNewsletterLinks->isError()) {
-	$error .= sprintf('<p>[Installation] %s</p>', $dbNewsletterLinks->getError());
-}
-*/
-
 $dbImport = new dbKITimport(true);
 if ($dbImport->isError()) {
 	$error .= sprintf('<p>[Installation] %s</p>', $dbImport->getError());
 }
 
-/**
- * The Droplet kit_newsletter is since Release 0.43 no longer used!
-
-// Install Droplets
-$droplets = new checkDroplets();
-if ($droplets->insertDropletsIntoTable()) {
-  $message = 'The Droplets for dbKeepInTouch where successfully installed! Please look at the Help for further informations.';
-}
-else {
-  $message = 'The installation of the Droplets for KeepInTouch failed. Error: '. $droplets->getError();
-}
-if ($message != "") {
-  echo '<script language="javascript">alert ("'.$message.'");</script>';
-}
-*/
-	
 // Prompt Errors
 if (!empty($error)) {
 	$admin->print_error($error);

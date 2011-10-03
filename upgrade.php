@@ -31,12 +31,9 @@ if (defined('WB_PATH')) {
 // end include LEPTON class.secure.php
 
 require_once(WB_PATH.'/modules/'.basename(dirname(__FILE__)).'/initialize.php');
-require_once(WB_PATH.'/modules/'.basename(dirname(__FILE__)).'/class.dialogs.php');
 require_once(WB_PATH.'/modules/'.basename(dirname(__FILE__)).'/class.mail.php');
-require_once(WB_PATH.'/modules/'.basename(dirname(__FILE__)).'/class.droplets.php');
 require_once(WB_PATH.'/modules/'.basename(dirname(__FILE__)).'/class.newsletter.php');
 require_once(WB_PATH.'/modules/'.basename(dirname(__FILE__)).'/class.cronjob.php');
-//require_once(WB_PATH.'/modules/'.basename(dirname(__FILE__)).'/class.newsletter.link.php');
 require_once(WB_PATH.'/modules/'.basename(dirname(__FILE__)).'/class.import.php');
 require_once(WB_PATH.'/modules/'.basename(dirname(__FILE__)).'/class.config.php');
 
@@ -46,13 +43,6 @@ global $database;
 global $admin;
 
 $error = '';
-
-$dbKITdlgRegister = new dbKITdialogsRegister();
-if (!$dbKITdlgRegister->sqlTableExists()) {
-	if (!$dbKITdlgRegister->sqlCreateTable()) {
-		$error .= sprintf('<p>[Upgrade] %s </p>', $dbKITdlgRegister->getError());
-	}
-}
 
 $dbKITregister = new dbKITregister();
 if (!$dbKITregister->sqlTableExists()) {
@@ -163,12 +153,14 @@ if (!$dbCronjobErrorLog->sqlTableExists()) {
 	}
 }
 
+/*
 $dbNewsletterLinks = new dbKITnewsletterLinks();
 if (!$dbNewsletterLinks->sqlTableExists()) {
 	if (!$dbNewsletterLinks->sqlCreateTable()) {
 		$error .= sprintf('<p>[Upgrade] %s</p>', $dbNewsletterLinks->getError());
 	}
 }
+*/
 
 $dbImport = new dbKITimport();
 if (!$dbImport->sqlTableExists()) {

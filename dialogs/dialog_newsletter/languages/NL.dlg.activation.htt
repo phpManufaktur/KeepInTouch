@@ -1,8 +1,0 @@
-<div class="kit_dlg">
-  <h1>Activeringslink verstuurd</h1>
-  <p>Beste bezoeker,<br />
-  Hartelijk dank voor het aanmelden voor onze nieuwsbrief-service.</p>
-  <p>Ter bescherming tegen misbruik, hebben we u een email met daarin een activatie link naar uw e-mail adres <b>{$email}</b> gestuurd.</p>
-  <p>Controleer uw ontvangen e-mail en bevestig de registratie.</p>
-  <p>Met vriendelijke groeten<br /><i>Het {$website} Team</i></p>
-</div>

@@ -541,77 +541,7 @@ class kitNewsletterCommands {
 		return $result; 
 	} // getSalutationStr()
 	
-	
-	public function getUnsubscribeLink($contact_id, $newsletter_archive) {
-		return WB_URL;
-	} // getUnsubsribeLink
-	
-	/*
-	public function getUnsubscribeLink($contact_id, $newsletter_archive) {
-		global $dbNewsletterLinks;
-		global $kitRequest;
 		
-		$where = array();
-		$where[dbKITnewsletterLinks::field_kit_id] = $contact_id;
-		$where[dbKITnewsletterLinks::field_type] = dbKITnewsletterLinks::type_link_unsubscribe;
-		$links = array();
-		if (!$dbNewsletterLinks->sqlSelectRecord($where, $links)) {
-			$this->setError(sprintf('[%s - %s] %s', __METHOD__, __LINE__, $dbNewsletterLinks->getError()));
-			return false;
-		}
-		if (count($links) > 0) {
-			// Eintrag existiert bereits
-			$links = $links[0];
-			if ($links[dbKITnewsletterLinks::field_archive_id] !== $newsletter_archive[dbKITnewsletterArchive::field_id]) {
-				// Newsletter Archive ID aktualisieren
-				$links[dbKITnewsletterLinks::field_archive_id] = $newsletter_archive[dbKITnewsletterArchive::field_id];
-				$links[dbKITnewsletterLinks::field_newsletter_grps] = $newsletter_archive[dbKITnewsletterArchive::field_groups];
-				if (!$dbNewsletterLinks->sqlUpdateRecord($links, array(dbKITnewsletterLinks::field_id => $links[dbKITnewsletterLinks::field_id]))) {
-					$this->setError(sprintf('[%s - %s] %s', __METHOD__, __LINE__, $dbNewsletterLinks->getError()));
-					return false;
-				}
-			}
-			$result = sprintf('%s&%s=%s&%s=%s',
-												$kitRequest->getRequestLink(),
-												kitRequest::request_action,
-												kitRequest::action_link,
-												kitRequest::request_link,
-												$links[dbKITnewsletterLinks::field_link_value]);
-			return $result;	
-		}
-		// neuen Eintrag anlegen
-		$links = array(
-			dbKITnewsletterLinks::field_archive_id			=> $newsletter_archive[dbKITnewsletterArchive::field_id],
-			dbKITnewsletterLinks::field_type						=> dbKITnewsletterLinks::type_link_unsubscribe,
-			dbKITnewsletterLinks::field_count						=> 0,
-			dbKITnewsletterLinks::field_kit_id					=> $contact_id,
-			dbKITnewsletterLinks::field_newsletter_grps	=> $newsletter_archive[dbKITnewsletterArchive::field_groups],
-			dbKITnewsletterLinks::field_option					=> '',
-			dbKITnewsletterLinks::field_origin					=> ''
-		);
-		$id = -1;
-		if (!$dbNewsletterLinks->sqlInsertRecord($links, $id)) {
-			$this->setError(sprintf('[%s - %s] %s', __METHOD__, __LINE__, $dbNewsletterLinks->getError()));
-			return false;
-		}
-		$base = base_convert($id, 10, 36);
-		$links = array(
-			dbKITnewsletterLinks::field_link_value			=> $base
-		);
-		if (!$dbNewsletterLinks->sqlUpdateRecord($links, array(dbKITnewsletterLinks::field_id => $id))) {
-			$this->setError(sprintf('[%s - %s] %s', __METHOD__, __LINE__, $dbNewsletterLinks->getError()));
-			return false;
-		}
-		$result = sprintf('%s&%s=%s&%s=%s',
-												$kitRequest->getRequestLink(),
-												kitRequest::request_action,
-												kitRequest::action_link,
-												kitRequest::request_link,
-												$base);
-		return $result;	
-	} // getUnsubscribeLink()
-	*/
-	
 	/**
    * Return Version of KIT
    *
@@ -915,13 +845,16 @@ class kitNewsletterDialog {
 																	$selected, 
 																	$item[dbKITnewsletterTemplates::field_name]);
   	}
-  	$template_select = sprintf(	'<select name="%s" onchange="document.body.style.cursor=\'wait\';window.location=\'%s\'+this.value; return false;">%s</select>', 
+  	$template_select = sprintf(	'<select id="%s" name="%s" onchange="javascript:addSelectToLink(\'%s\',\'%s\');">%s</select>', 
   															dbKITnewsletterTemplates::field_id, 
-  															sprintf('%s&%s=%s&%s=',
+  															dbKITnewsletterTemplates::field_id, 
+  															sprintf('%s&amp;%s=%s%s&amp;%s=',
 																				$this->page_link,
 																				self::request_action,
 																				self::action_template,
+																				(defined('LEPTON_VERSION') && isset($_GET['leptoken'])) ? sprintf('&amp;leptoken=%s', $_GET['leptoken']) : '',
 																				dbKITnewsletterTemplates::field_id), 
+															  dbKITnewsletterTemplates::field_id,
   															$template_select);
   	
   	if ($template_id != -1) {
@@ -1084,10 +1017,16 @@ class kitNewsletterDialog {
   	return $this->dlgCheckTemplatePreview($pid);
   } // checkTemplate()
   
+  /**
+   * Create a TEXT or HTML preview file in /temp directory for the template preview 
+   * 
+   * @param INT $preview_id
+   * @param BOOL $is_html
+   */
   public function createTemplatePreview($preview_id, $is_html=true) {
 		global $dbNewsletterPreview;
 		global $newsletterCommands;
-echo "OK!";		
+		
 		$where = array();
 		$where[dbKITnewsletterPreview::field_id] = $preview_id;
 		$preview = array();
@@ -1143,6 +1082,87 @@ echo "OK!";
 	} // createTemplatePreview()
   
   
+	public function createNewsletterPreview($preview_id, $is_HTML=true) {
+		global $dbNewsletterPreview;
+		global $newsletterCommands;
+		global $dbNewsletterTemplates;
+		
+		$where = array();
+		$where[dbKITnewsletterPreview::field_id] = $preview_id;
+		$preview = array();
+		if (!$dbNewsletterPreview->sqlSelectRecord($where, $preview)) {
+			 $this->setError(sprintf('[%s - %s] %s', __METHOD__, __LINE__, $dbNewsletterPreview->getError()));
+			 return false;
+		}
+		if (count($preview) < 1) {
+			// Datensatz nicht gefunden
+			$this->setError(sprintf('[%s - %s] %s', __METHOD__, __LINE__, sprintf(kit_error_item_id, $_REQUEST[self::request_id])));
+			return false;
+		}
+		$prev_array = explode(dbKITnewsletterPreview::array_separator, $preview[0][dbKITnewsletterPreview::field_view]);
+		$prev = array();
+		foreach ($prev_array as $item) {
+			list($key, $value) = explode(dbKITnewsletterPreview::array_separator_value, $item);
+			$prev[$key] = $value;
+		}
+		if ($is_HTML) {
+			$content = $prev[dbKITnewsletterArchive::field_html];
+		}
+		else {
+			$content = $prev[dbKITnewsletterArchive::field_text];
+		}
+		// Template auslesen
+		$where = array();
+		$where[dbKITnewsletterTemplates::field_id] = $prev[dbKITnewsletterArchive::field_template];
+		$template = array();
+		if (!$dbNewsletterTemplates->sqlSelectRecord($where, $template)) {
+			echo sprintf('[%s - %s] %s', __METHOD__, __LINE__, $dbNewsletterTemplates->getError());
+			return false;
+		}
+		if (count($template) < 1) {
+			echo sprintf('[%s - %s] %s', __METHOD__, __LINE__, sprintf(kit_error_item_id, $prev[dbKITnewsletterArchive::field_template]));
+			return false;
+		}
+		$template = $template[0];
+		
+		if ($newsletterCommands->parseCommands($content, '', -1)) {
+			if (!$is_HTML) {
+				// NUR TEXT
+				$tpl = $template[dbKITnewsletterTemplates::field_text];
+				if (!$newsletterCommands->parseCommands($tpl, $content, -1)) {
+					$this->setError(sprintf('[%s - %s] %s', __METHOD__, __LINE__, $newsletterCommands->getError()));
+					return false;					
+				}
+				if (!file_put_contents($this->temp_path.'nl-preview.txt', $tpl)) {
+					$this->setError(sprintf('[%s - %s] %s', __METHOD__, __LINE__, sprintf(kit_error_create_file, 'nl-preview.txt')));
+					return false;
+				}
+				if (!file_put_contents($this->temp_path.'nl-preview.txt', $tpl)) {
+					$this->setError(sprintf('[%s - %s] %s', __METHOD__, __LINE__, sprintf(kit_error_create_file, 'nl-preview.txt')));
+					return false;
+				}
+			}
+			else {
+				// HTML
+				$tpl = $template[dbKITnewsletterTemplates::field_html];
+				if (!$newsletterCommands->parseCommands($tpl, $content, -1)) {
+					$this->setError(sprintf('[%s - %s] %s', __METHOD__, __LINE__, sprintf(kit_error_create_file, 'nl-preview.html')));
+					return false;
+				}
+				if (!file_put_contents($this->temp_path.'nl-preview.html', $tpl)) {
+					$this->setError(sprintf('[%s - %s] %s', __METHOD__, __LINE__, sprintf(kit_error_create_file, 'nl-preview.html')));
+					return false;
+				}
+			}				
+		}
+		else {
+			$this->setError(sprintf('[%s - %s] %s', __METHOD__, __LINE__, $newsletterCommands->getError()));
+			return false;
+		}	
+		return true;
+	} // createNewsletterPreview()
+	
+	
   /**
    * Show the template previews for HTML and TEXT
    * 
@@ -1159,28 +1179,8 @@ echo "OK!";
 			'header_preview'						=> kit_header_preview,
 			'intro'											=> kit_intro_preview,
 			'html_label'								=> kit_label_newsletter_tpl_html,
-  		/*
-			'html_source'								=> sprintf(	'%s?%s=%s&%s=%s&%s=%s',
-																							$request_link,
-																							kitRequest::request_action,
-																							kitRequest::action_preview_template,
-																							kitRequest::request_id,
-																							$_REQUEST[dbKITnewsletterPreview::field_id],
-																							kitRequest::request_type,
-																							kitRequest::action_type_html),
-			*/
   		'html_source'								=> sprintf(	'%snl-preview.html', str_replace(WB_PATH, WB_URL, $this->temp_path)), 
 			'text_label'								=> kit_label_newsletter_tpl_text_preview,
-  		/*
-			'text_source'								=> sprintf(	'%s?%s=%s&%s=%s&%s=%s',
-																							$request_link,
-																							kitRequest::request_action,
-																							kitRequest::action_preview_template,
-																							kitRequest::request_id,
-																							$_REQUEST[dbKITnewsletterPreview::field_id],
-																							kitRequest::request_type,
-																							kitRequest::action_type_text),
-			*/
   	  'text_source'								=> sprintf(	'%snl-preview.txt', str_replace(WB_PATH, WB_URL, $this->temp_path)),
 			'form_action'								=> $this->page_link,
 			'action_name'								=> self::request_action,
@@ -1558,13 +1558,16 @@ echo "OK!";
   													date(kit_cfg_date_time_str, strtotime($item[dbKITnewsletterArchive::field_update_when])),
   													$item[dbKITnewsletterArchive::field_subject]);
   		}
-  		$archive = sprintf(	'<select name="%s" onchange="javascript: window.location = \'%s\' + this.value; return false;">%s</select>', 
+  		$archive = sprintf(	'<select id="%s" name="%s" onchange="javascript:addSelectToLink(\'%s\',\'%s\');">%s</select>', 
   												dbKITnewsletterArchive::field_id,
-  												sprintf('%s&%s=%s&%s=',
+  												dbKITnewsletterArchive::field_id,
+  												sprintf('%s&amp;%s=%s%s&amp;%s=',
   																$this->page_link,
   																self::request_action,
   																self::action_newsletter,
-  																dbKITnewsletterArchive::field_id ), 
+  																(defined('LEPTON_VERSION') && isset($_GET['leptoken'])) ? sprintf('&amp;leptoken=%s', $_GET['leptoken']) : '', 
+  																dbKITnewsletterArchive::field_id),
+  												dbKITnewsletterArchive::field_id, 
   												$option);
   		$items .= $parser->get($row, array('label' => sprintf('<i>%s</i>', kit_label_newsletter_archive_select), 'value' => $archive));
   		$items .= $parser->get($row, array('label' => '', 'value' => '<hr />'));
@@ -1934,29 +1937,22 @@ echo "OK!";
   		$this->setError(kit_error_preview_id_missing);
   		return false;
   	}
-  	$request_link = $dbCfg->getValue(dbKITcfg::cfgKITRequestLink);
   	
+  	if (!$this->createNewsletterPreview($_REQUEST[dbKITnewsletterPreview::field_id], true)) {
+  		$this->setError(sprintf('[%s - %s] %s', __METHOD__, __LINE__, $this->getError()));
+  		return false;
+  	}
+  	if (!$this->createNewsletterPreview($_REQUEST[dbKITnewsletterPreview::field_id], false)) {
+  		$this->setError(sprintf('[%s - %s] %s', __METHOD__, __LINE__, $this->getError()));
+  		return false;
+  	}
   	$data = array(
 			'header_preview'						=> kit_header_preview,
 			'intro'											=> kit_intro_preview,
 			'html_label'								=> kit_label_newsletter_tpl_html,
-			'html_source'								=> sprintf(	'%s?%s=%s&%s=%s&%s=%s',
-																							$request_link,
-																							kitRequest::request_action,
-																							kitRequest::action_preview_newsletter,
-																							kitRequest::request_id,
-																							$_REQUEST[dbKITnewsletterPreview::field_id],
-																							kitRequest::request_type,
-																							kitRequest::action_type_html),
+  	  'html_source'								=> sprintf(	'%snl-preview.html', str_replace(WB_PATH, WB_URL, $this->temp_path)),																							
 			'text_label'								=> kit_label_newsletter_tpl_text_preview,
-			'text_source'								=> sprintf(	'%s?%s=%s&%s=%s&%s=%s',
-																							$request_link,
-																							kitRequest::request_action,
-																							kitRequest::action_preview_newsletter,
-																							kitRequest::request_id,
-																							$_REQUEST[dbKITnewsletterPreview::field_id],
-																							kitRequest::request_type,
-																							kitRequest::action_type_text),		
+  	  'text_source'								=> sprintf(	'%snl-preview.txt', str_replace(WB_PATH, WB_URL, $this->temp_path)),
 			'form_action'								=> $this->page_link,
 			'action_name'								=> self::request_action,
 			'action_save_value'					=> self::action_newsletter_save,

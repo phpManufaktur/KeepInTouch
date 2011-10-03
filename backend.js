@@ -18,20 +18,20 @@
 **/
 
 
-function contactListChangeSorting(target_url, select_id) {
-	var x;
-	x = target_url + document.getElementById(select_id).value;
-	window.location = x;
-	return false;
+function addSelectToLink(target_url, select_id) {
+  var x;
+  x = target_url + document.getElementById(select_id).value;
+  document.body.style.cursor='wait';
+  window.location = x;
+  return false;	
 }
 
 function insert(eid, aTag, eTag) {
-  //var input = document.forms['template_form'].elements['nl_tpl_html'];
   var input = document.getElementById('nl_tpl_html');
   input.focus();
-  /* f�r Internet Explorer */
+  /* fuer Internet Explorer */
   if(typeof document.selection != 'undefined') {
-    /* Einf�gen des Formatierungscodes */
+    /* Einfuegen des Formatierungscodes */
     var range = document.selection.createRange();
     var insText = range.text;
     range.text = aTag + insText + eTag;
@@ -44,10 +44,10 @@ function insert(eid, aTag, eTag) {
     }
     range.select();
   }
-  /* f�r neuere auf Gecko basierende Browser */
+  /* fuer neuere auf Gecko basierende Browser */
   else if(typeof input.selectionStart != 'undefined')
   {
-    /* Einf�gen des Formatierungscodes */
+    /* Einfuegen des Formatierungscodes */
     var start = input.selectionStart;
     var end = input.selectionEnd;
     var insText = input.value.substring(start, end);
@@ -62,19 +62,19 @@ function insert(eid, aTag, eTag) {
     input.selectionStart = pos;
     input.selectionEnd = pos;
   }
-  /* f�r die �brigen Browser */
+  /* fuer die uebrigen Browser */
   else
   {
-    /* Abfrage der Einf�geposition */
+    /* Abfrage der Einfuegeposition */
     var pos;
     var re = new RegExp('^[0-9]{0,3}$');
     while(!re.test(pos)) {
-      pos = prompt("Einf�gen an Position (0.." + input.value.length + "):", "0");
+      pos = prompt("Einfuegen an Position (0.." + input.value.length + "):", "0");
     }
     if(pos > input.value.length) {
       pos = input.value.length;
     }
-    /* Einf�gen des Formatierungscodes */
+    /* Einfuegen des Formatierungscodes */
     var insText = prompt("Bitte geben Sie den zu formatierenden Text ein:");
     input.value = input.value.substr(0, pos) + aTag + insText + eTag + input.value.substr(pos);
   }

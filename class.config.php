@@ -89,7 +89,7 @@ class dbKITcfg extends dbConnectLE {
   //const cfgRegisterDlgACC		= 'cfgRegisterDlgACC';
   //const cfgRegisterDlgUSUB	= 'cfgRegisterDlgUSUB';
   //const cfgKITRequestLink		= 'cfgKITRequestLink';
-  //const cfgMaxInvalidLogin	= 'cfgMaxInvalidLogin';
+  const cfgMaxInvalidLogin	= 'cfgMaxInvalidLogin';
   const cfgAddAppTab				= 'cfgAddAppTab';
   const cfgCronjobKey				= 'cfgCronjobKey';
   const cfgSessionID				= 'cfgSessionID';
@@ -97,7 +97,7 @@ class dbKITcfg extends dbConnectLE {
   const cfgLimitContactList	= 'cfgLimitContactList';
   const cfgConnectWBusers		= 'cfgConnectWBusers';
   const cfgKITadmins				= 'cfgKITadmins';
-  //const cfgMinPwdLen				= 'cfgMinPwdLen';
+  const cfgMinPwdLen				= 'cfgMinPwdLen';
 
   public $config_array = array(
   	array('kit_label_cfg_google_maps_api_key', self::cfgGoogleMapsAPIkey, self::type_string, '', 'kit_desc_cfg_google_maps_api_key'),
@@ -107,7 +107,7 @@ class dbKITcfg extends dbConnectLE {
   	//array('kit_label_cfg_use_custom_files', self::cfgUseCustomFiles, self::type_boolean, '0', 'kit_desc_cfg_use_custom_files'),
   	//array('kit_label_cfg_register_dlg', self::cfgRegisterDlgNL, self::type_string, 'dialog_newsletter', 'kit_desc_cfg_register_dlg'),
   	//array('kit_label_cfg_register_data_dlg', self::cfgRegisterDlgACC, self::type_string, 'dialog_account', 'kit_desc_cfg_register_data_dlg'),
-  	//array('kit_label_cfg_max_invalid_login', self::cfgMaxInvalidLogin, self::type_integer, '10', 'kit_desc_cfg_max_invalid_login'),
+  	array('kit_label_cfg_max_invalid_login', self::cfgMaxInvalidLogin, self::type_integer, '10', 'kit_desc_cfg_max_invalid_login'),
   	array('kit_label_cfg_add_app_tab', self::cfgAddAppTab, self::type_array, '', 'kit_desc_cfg_add_app_tab'),
   	array('kit_label_cfg_cronjob_key', self::cfgCronjobKey, self::type_string, '', 'kit_desc_cfg_cronjob_key'),
   	//array('kit_label_cfg_register_dlg_unsubscribe', self::cfgRegisterDlgUSUB, self::type_string, 'dialog_unsubscribe', 'kit_desc_cfg_register_dlg_unsubscribe'),
@@ -116,7 +116,7 @@ class dbKITcfg extends dbConnectLE {
   	array('kit_label_cfg_limit_contact_list', self::cfgLimitContactList, self::type_integer, '50', 'kit_desc_cfg_limit_contact_list'),
   	array('kit_label_cfg_connect_wb_users', self::cfgConnectWBusers, self::type_boolean, '0', 'kit_desc_cfg_connect_wb_users'),
   	array('kit_label_cfg_kit_admins', self::cfgKITadmins, self::type_array, '', 'kit_desc_cfg_kit_admins'),
-  	//array('kit_label_cfg_min_pwd_len', self::cfgMinPwdLen, self::type_integer, 7, 'kit_desc_cfg_min_pwd_len'),
+  	array('kit_label_cfg_min_pwd_len', self::cfgMinPwdLen, self::type_integer, 7, 'kit_desc_cfg_min_pwd_len'),
   );   
   
   public function __construct($createTables = false) {

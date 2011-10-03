@@ -447,10 +447,11 @@ class kitBackend {
 														kit_label_list_sort, 
 														self::request_sub_action, 
 														self::request_sub_action,
-														sprintf("javascript:contactListChangeSorting('%s&amp;%s=%s&amp;%s=','%s'); return false;" , 
+														sprintf("javascript:addSelectToLink('%s&amp;%s=%s%s&amp;%s=','%s'); return false;" , 
 																		$this->page_link, 
 																		self::request_action, 
 																		self::action_list,
+																		(defined('LEPTON_VERSION') && isset($_GET['leptoken'])) ? sprintf('&amp;leptoken=%s', $_GET['leptoken']) : '', 
 																		self::request_sub_action,
 																		self::request_sub_action), 
 														$option);
@@ -883,7 +884,7 @@ class kitBackend {
 		}		
 		$data = array(
 			'form_name'					=> $form_name,
-			'formaction'				=> $this->page_link,
+			'form_action'				=> $this->page_link,
 			'action_name'				=> self::request_action,
 			'action_value'			=> self::action_list,
 			'last_action_name'	=> self::request_last_action,
@@ -3009,15 +3010,18 @@ class kitBackend {
 				($item[dbKITprovider::field_id] == $provider[dbKITprovider::field_id]) ? $selected = ' selected="selected"' : $selected = '';
 				$option .= sprintf('<option value="%s"%s>%s</option>', $item[dbKITprovider::field_id], $selected, $item[dbKITprovider::field_name]);
 	  }
-		$value[dbKITprovider::field_id] = sprintf('<select name="%s" onchange="document.body.style.cursor=\'wait\';window.location=\'%s\'+this.value; return false;">%s</select>', 
+		$value[dbKITprovider::field_id] = sprintf('<select id="%s" name="%s" onchange="javascript:addSelectToLink(\'%s\',\'%s\');">%s</select>', 
 																							dbKITprovider::field_id,
-																							sprintf('%s&%s=%s&%s=%s&%s=',
+																							dbKITprovider::field_id,
+																							sprintf('%s&amp;%s=%s&amp;%s=%s%s&amp;%s=',
 																											$this->page_link,
 																											self::request_action,
 																											self::action_cfg,
 																											self::request_cfg_tab,
 																											self::action_cfg_tab_provider,
-																											dbKITprovider::field_id), 
+																											(defined('LEPTON_VERSION') && isset($_GET['leptoken'])) ? sprintf('&amp;leptoken=%s', $_GET['leptoken']) : '',
+																											dbKITprovider::field_id),
+																							dbKITprovider::field_id, 
 																							$option);
 		$worker = array(dbKITprovider::field_name, 
 										dbKITprovider::field_identifier,
@@ -3147,13 +3151,6 @@ class kitBackend {
 			$this->setMessage(sprintf(kit_msg_email_invalid, $_REQUEST[dbKITprovider::field_email]));
 			return $this->dlgConfigProvider();
 		}
-/*
-		// new data set? check password
-		if ($id == -1 && empty($_REQUEST[dbKITprovider::field_smtp_pass])) {
-			$this->setMessage(kit_msg_password_needed);
-			return $this->dlgConfigProvider();
-		}
-*/
 		// checking password(s)
 		if ($id == -1 || (!empty($_REQUEST[dbKITprovider::field_smtp_pass]))) {
 			if ($_REQUEST[dbKITprovider::field_smtp_pass] != $_REQUEST['pass_retype']) {
@@ -3550,12 +3547,7 @@ class kitBackend {
 			'signature'							=> WB_URL.'/modules/'.basename(dirname(__FILE__)).'/img/rh_schriftzug_small.png',
 			'release_notes'					=> file_get_contents(WB_PATH.'/modules/'.basename(dirname(__FILE__)).'/info.txt'),
 		);
-		if (file_exists($this->help_path.LANGUAGE.'.hlp.about.htt')) {
-			return $parser->get($this->help_path.LANGUAGE.'.hlp.about.htt', $data);
-		}
-		else {
-			return $parser->get($this->help_path.'EN.hlp.about.htt', $data);
-		}
+		return $parser->get($this->template_path.'backend.about.htt', $data);
 	} // dlgAbout()
 	
 } // class kitBackend
