@@ -33,7 +33,7 @@ if (defined('WB_PATH')) {
 $module_directory     = 'kit';
 $module_name          = 'KeepInTouch';
 $module_function      = 'tool';
-$module_version       = '0.44';
+$module_version       = '0.45';
 $module_status        = 'beta'; 
 $module_languages			= 'DE';
 $module_platform      = '2.8';

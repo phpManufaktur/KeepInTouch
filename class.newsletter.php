@@ -260,8 +260,8 @@ class kitNewsletterCommands {
 	const cmd_account_first_name				= '{$account_first_name}';
 	const cmd_account_id								= '{$account_id}';
 	const cmd_account_last_name					= '{$account_last_name}';
-	const cmd_account_login							= '{$account_login}';
-	const cmd_account_newsletter				= '{$account_newsletter}';
+	//const cmd_account_login							= '{$account_login}';
+	//const cmd_account_newsletter				= '{$account_newsletter}';
 	const cmd_account_register_key			= '{$account_register_key}';
 	const cmd_account_title							= '{$account_title}';
 	const cmd_account_title_academic		= '{$account_title_academic}';
@@ -270,7 +270,7 @@ class kitNewsletterCommands {
 	const cmd_content										= '{$content}';
 	const cmd_kit_info									= '{$kit_info}';
 	const cmd_kit_release								= '{$kit_release}';					
-	const cmd_newsletter_unsubscribe		= '{$newsletter_unsubscribe}';
+	//const cmd_newsletter_unsubscribe		= '{$newsletter_unsubscribe}';
 	const cmd_salutation_01							= '{$salutation_01}';
 	const cmd_salutation_02							= '{$salutation_02}';
 	const cmd_salutation_03							= '{$salutation_03}';
@@ -287,8 +287,8 @@ class kitNewsletterCommands {
 		self::cmd_account_first_name				=> kit_cmd_nl_account_first_name,
 		self::cmd_account_id								=> kit_cmd_nl_account_id,
 		self::cmd_account_last_name					=> kit_cmd_nl_account_last_name,
-		self::cmd_account_login							=> kit_cmd_nl_account_login,
-		self::cmd_account_newsletter				=> kit_cmd_nl_account_newsletter,
+		//self::cmd_account_login							=> kit_cmd_nl_account_login,
+		//self::cmd_account_newsletter				=> kit_cmd_nl_account_newsletter,
 		self::cmd_account_register_key			=> kit_cmd_nl_account_register_key,
 		self::cmd_account_title							=> kit_cmd_nl_account_title,
 		self::cmd_account_title_academic		=> kit_cmd_nl_account_title_academic,
@@ -297,7 +297,7 @@ class kitNewsletterCommands {
 		self::cmd_content										=> kit_cmd_nl_content,
 		self::cmd_kit_info									=> kit_cmd_nl_kit_info,
 		self::cmd_kit_release								=> kit_cmd_nl_kit_release,
-		self::cmd_newsletter_unsubscribe		=> kit_cmd_nl_newsletter_unsubscribe,
+		//self::cmd_newsletter_unsubscribe		=> kit_cmd_nl_newsletter_unsubscribe,
 		self::cmd_salutation_01							=> kit_cmd_nl_salutation,
 		self::cmd_salutation_02							=> kit_cmd_nl_salutation,
 		self::cmd_salutation_03							=> kit_cmd_nl_salutation,
@@ -421,7 +421,7 @@ class kitNewsletterCommands {
 		
 		// Login Dialog
 		//$request_link = $kitRequest->getRequestLink();
-		$request_link = WB_URL;
+		//$request_link = WB_URL;
 		
 		// Newsletter
 		$news_array = explode(',', $contact[dbKITregister::field_newsletter]);
@@ -441,21 +441,23 @@ class kitNewsletterCommands {
 		}	
 		
 		// unsubscribe link
+		/*
 		if ($contact_id < 1) {
 			// Preview Modus - "Scheinlink" setzen
-			/*
+			
 			$unsubscribe_link = sprintf('%s&%s=%s',
 																	$request_link,
 																	kitRequest::request_action,
 																	kitRequest::action_link,
 																	kitRequest::request_link,
 																	0);
-			*/
-			$unsubscribe_link = WB_URL;
+			
+			//$unsubscribe_link = WB_URL;
 		}
 		else {
 			$unsubscribe_link = $this->getUnsubscribeLink($contact_id, $newsletter_archive);
 		}
+		*/
 		
 		// Daten zusammenstellen
 		$data = array(
@@ -484,7 +486,7 @@ class kitNewsletterCommands {
 																																						kitRequest::request_action,
 																																						kitRequest::action_login),
 			*/																																	
-			$this->extractCommand(self::cmd_newsletter_unsubscribe)		=> $unsubscribe_link,					
+			//$this->extractCommand(self::cmd_newsletter_unsubscribe)		=> $unsubscribe_link,					
 			$this->extractCommand(self::cmd_salutation_01)						=> $this->getSalutationStr(dbKITnewsletterCfg::cfgSalutation_01, $contact),
 			$this->extractCommand(self::cmd_salutation_02)						=> $this->getSalutationStr(dbKITnewsletterCfg::cfgSalutation_02, $contact),
 			$this->extractCommand(self::cmd_salutation_03)						=> $this->getSalutationStr(dbKITnewsletterCfg::cfgSalutation_03, $contact),

@@ -3,6 +3,11 @@ KeepInTouch - Customer Relationship Management (CRM)
 Ralf Hertsch, Stockholmer Str. 31, 13359 Berlin (Germany)
 http://phpManufaktur.de - ralf.hertsch@phpManufaktur.de
 
+Release 0.45
+2011-1011
+fixed - parseCommands() in class.newsletter.php tried to call the no longer 
+  existing function getUnsubscribeLink()
+
 Release 0.44
 2011-10-03
 changed - KeepInTouch no longer use the internal dialogs for subscribing and
