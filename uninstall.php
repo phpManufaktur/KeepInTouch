@@ -107,12 +107,14 @@ if ($dbKITmail->sqlTableExists()) {
 	}
 }
 
+/*
 $dbKITdlgRegister = new dbKITdialogsRegister();
 if ($dbKITdlgRegister->sqlTableExists()) {
 	if (!$dbKITdlgRegister->sqlDeleteTable()) {
 		$error .= sprintf('<p>[Delete Table] %s </p>', $dbKITdlgRegister->getError());
 	}
 }
+*/
 
 $dbKITregister = new dbKITregister();
 if ($dbKITregister->sqlTableExists()) {

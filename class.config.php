@@ -149,6 +149,7 @@ class dbKITcfg extends dbConnectLE {
 	  		$this->checkConfig();
 	  	}
   	}
+  	date_default_timezone_set(kit_cfg_time_zone);
   } // __construct()
   
   public function setMessage($message) {

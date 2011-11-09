@@ -59,6 +59,7 @@ define('kit_cfg_date_separator',									'.');
 define('kit_cfg_decimal_separator',             	',');
 define('kit_cfg_price',                         	'%s €');
 define('kit_cfg_euro',														'%s EUR');
+define('kit_cfg_time_zone',												'Europe/Berlin');
 
 define('kit_cmd_nl_account_email',								'E-Mail Address');
 define('kit_cmd_nl_account_first_name',						'First Name');
@@ -203,6 +204,7 @@ define('kit_error_request_link_unknown', 					'<p>[kitRequest] The link "<b>%s</
 define('kit_error_request_missing_parameter', 		'<p>[kitRequest] The parameter <b>%s</b> was not specified, operation aborted</p>');
 define('kit_error_request_no_action', 						'<p>[kitRequest] were not passing appropriate parameters</p><p><b>Note:</b> This error message is displayed even if you tried to open a dialogue to reload (Reload <i>Lock </ i >).</p> ');
 define('kit_error_request_parameter_incomplete', 	'<p>[kitRequest] The given parameters are not complete, the command could not be executed.</p>');
+define('kit_error_salutation_definition',					'<p><b>FEHLER:</b> Bitte prüfen Sie die Grußformel <b>%s</b>, sie muss 3 Anreden enthalten: männlich, weiblich und neutral, die jeweils durch eine Pipe "|" getrennt werden.</p>');
 define('kit_error_undefined', 										'<p>There one of undefined error occurred please contact support about your problem.</p>');
 
 define('kit_header_addresses', 										'addresses, map');

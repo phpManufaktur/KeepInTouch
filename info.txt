@@ -3,8 +3,17 @@ KeepInTouch - Customer Relationship Management (CRM)
 Ralf Hertsch, Stockholmer Str. 31, 13359 Berlin (Germany)
 http://phpManufaktur.de - ralf.hertsch@phpManufaktur.de
 
+Release 0.46
+2011-xx-xx
+fixed - avoid duplicate declaration of class kitMail (only WebsiteBaker)
+fixed - uninstall.php tried to delete no longer existing dialogs register class
+fixed - KIT does not perform a check for logical errors in salutation strings
+added - getAdmins() in class.interface.php returns the primary e-mail addresses
+  of the defined KIT administrators
+added - set default timezone in class dbKITcfg
+
 Release 0.45
-2011-1011
+2011-10-11
 fixed - parseCommands() in class.newsletter.php tried to call the no longer 
   existing function getUnsubscribeLink()
 

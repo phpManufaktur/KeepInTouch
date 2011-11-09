@@ -40,7 +40,7 @@ if (defined ( 'WB_PATH' )) {
 
 require_once (WB_PATH . '/modules/' . basename ( dirname ( __FILE__ ) ) . '/initialize.php');
 
-if (! defined ( 'LEPTON_VERSION' )) {
+if (!defined ('LEPTON_VERSION') && !class_exists('kitMail')) {
 	require_once (WB_PATH . '/modules/' . basename ( dirname ( __FILE__ ) ) . '/include/phpmailer/class.phpmailer.php');
 	
 	/**
@@ -49,6 +49,7 @@ if (! defined ( 'LEPTON_VERSION' )) {
 	 * PHPMailer used by WebsiteBaker
 	 *
 	 */
+	
 	class kitMail extends xPHPMailer {
 		
 		private $mailError = '';

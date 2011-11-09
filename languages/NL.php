@@ -59,6 +59,7 @@ define('kit_cfg_date_separator',									'.');
 define('kit_cfg_decimal_separator',               ',');
 define('kit_cfg_price',                           '%s €');
 define('kit_cfg_euro',														'%s EUR');
+define('kit_cfg_time_zone',												'Europe/Berlin');
 
 define('kit_cmd_nl_account_email',								'E-Mail adres abonnee');
 define('kit_cmd_nl_account_first_name',						'Voornaam abonnee');
@@ -203,7 +204,8 @@ define('kit_error_request_link_unknown',					'<p>[kitRequest] De link "<b>%s</b>
 define('kit_error_request_missing_parameter',			'<p>[kitRequest] De parameter <b>% s </ b> is niet gespecificeerd, de werking wordt afgebroken!</p>');
 define('kit_error_request_no_action',							'<p>[kitRequest] De juiste parameters worden niet doorgegeven!</p><p><b>Referentie:</b> Deze foutmelding wordt weergegeven, zelfs als u probeert om een dialoog opnieuw te laden (<i>Reload bariere</i>).</p>');
 define('kit_error_request_parameter_incomplete',	'<p>[kitRequest] De gegeven parameters zijn niet compleet, de opdracht kan niet worden uitgevoerd.</p>');
-define('kit_error_undefined',						'<p>Een onbekende fout is opgetreden, informeer met support over de opgetreden fout.</p>');
+define('kit_error_salutation_definition',					'<p><b>FEHLER:</b> Bitte prüfen Sie die Grußformel <b>%s</b>, sie muss 3 Anreden enthalten: männlich, weiblich und neutral, die jeweils durch eine Pipe "|" getrennt werden.</p>');
+define('kit_error_undefined',											'<p>Een onbekende fout is opgetreden, informeer met support over de opgetreden fout.</p>');
 
 define('kit_header_addresses',										'Adressen, Map');
 define('kit_header_categories',										'Categorien');

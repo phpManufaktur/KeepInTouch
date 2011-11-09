@@ -519,6 +519,9 @@ class kitNewsletterCommands {
 		$salut_str = $dbNewsletterCfg->getValue($salutation);  
 		// keine Aktion bei einem leeren String
 		if (empty($salut_str)) return '';
+		if (substr_count($salut_str, '|') != 2) {
+			return sprintf('[%s - %s] %s', __METHOD__, __LINE__, sprintf(kit_error_salutation_definition, $salut_str));
+		}
 		// Parameterstr aufsplitten
 		list($male, $female, $neutral) = explode('|', $salut_str);
 		if (empty($contact[dbKITcontact::field_person_first_name]) && empty($contact[dbKITcontact::field_person_last_name])) {

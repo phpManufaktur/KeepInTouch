@@ -59,6 +59,7 @@ define('kit_cfg_date_separator',									'.');
 define('kit_cfg_decimal_separator',               ',');
 define('kit_cfg_price',                           '%s €');
 define('kit_cfg_euro',														'%s EUR');
+define('kit_cfg_time_zone',												'Europe/Berlin');
 
 define('kit_cmd_nl_account_email',								'E-Mail Adresse des Abonnenten');
 define('kit_cmd_nl_account_first_name',						'Vorname des Abonnenten');
@@ -203,6 +204,7 @@ define('kit_error_request_link_unknown',					'<p>[kitRequest] Der Link "<b>%s</b
 define('kit_error_request_missing_parameter',			'<p>[kitRequest] Der Parameter <b>%s</b> wurde nicht angegeben, Vorgang abgebrochen!</p>');
 define('kit_error_request_no_action',							'<p>[kitRequest] Es wurden keine geeigneten Parameter übergeben!</p><p><b>Hinweis:</b> Diese Fehlermeldung wird auch dann angezeigt, wenn Sie versucht haben, einen Dialog erneut zu laden (<i>Reload Sperre</i>).</p>');
 define('kit_error_request_parameter_incomplete',	'<p>[kitRequest] Die übergebenen Parameter sind nicht vollständig, der Befehl konnte nicht ausgeführt werden.</p>');
+define('kit_error_salutation_definition',					'<p><b>FEHLER:</b> Bitte prüfen Sie die <i>Grußformel</i> "<b>%s</b>", sie muss 3 Anreden enthalten: männlich, weiblich und neutral, die jeweils durch eine Pipe "|" getrennt werden.</p>');
 define('kit_error_undefined',											'<p>Es ist ein nicht näher definierter Fehler aufgetreten, bitte informieren Sie den Support über das aufgetretene Problem.</p>');
 
 define('kit_header_addresses',										'Adressen, Stadtplan');

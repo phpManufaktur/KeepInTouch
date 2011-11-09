@@ -539,8 +539,9 @@ class kitContactInterface {
 	/**
 	 * Fuegt einen neuen Kontakt Datensatz ein
 	 * 
-	 * @param ARRAY $contact_array
-	 * @param REFERENCE INT $contact_id
+	 * @param array $contact_array
+	 * @param integer reference $contact_id
+	 * @param array reference $register_array
 	 * @return BOOL
 	 * @todo Die Laenderkennung wird momentan immer auf 'DE' gesetzt!
 	 */
@@ -765,7 +766,7 @@ class kitContactInterface {
 				$contact_array[$kit_field] = $contact[dbKITcontact::field_person_title]; //$dbContact->person_title_array[$contact[dbKITcontact::field_person_title]];
 				break;
 			case self::kit_title_academic:
-				$contact_array[$kit_field] = $dbContact->person_title_academic_array[$contact[dbKITcontact::field_person_title_academic]];
+				$contact_array[$kit_field] = $contact[dbKITcontact::field_person_title_academic]; //$dbContact->person_title_academic_array[$contact[dbKITcontact::field_person_title_academic]];
 				break;
 			case self::kit_first_name:
 			case self::kit_last_name:
@@ -1014,9 +1015,9 @@ class kitContactInterface {
 	/**
 	 * Neues Passwort fuer den Kontakt mit der E-Mail $email erzeugen
 	 * 
-	 * @param STR $email
-	 * @param STR $newPassword
-	 * @return BOOL
+	 * @param string $email
+	 * @param string reference $newPassword
+	 * @return boolean
 	 */
 	public function generateNewPassword($email, &$newPassword) {
 		global $dbRegister;
@@ -1273,6 +1274,17 @@ class kitContactInterface {
 		return true;
 	} // changePassword()
 	
+	/**
+	 * Subscribe the $email for one or more newsletters
+	 * 
+	 * @param string $email
+	 * @param string $newsletter
+	 * @param boolean $subscribe
+	 * @param boolean $use_subscribe
+	 * @param array reference $register
+	 * @param array reference $contact
+	 * @param boolean reference $send_activation
+	 */
 	public function subscribeNewsletter($email, $newsletter, $subscribe=true, $use_subscribe=false, &$register=array(), &$contact=array(), &$send_activation=false) {
 		global $dbRegister;
 		global $dbContact;
@@ -1485,6 +1497,18 @@ class kitContactInterface {
 		);
 		return true;
 	} // getServiceProviderByID()
+	
+	/**
+	 * Return the primary E-Mail addresses of the defined KIT admins
+	 * 
+	 * @param REFERENCE ARRAY $emails
+	 * @return BOOL true if admins defined, false if not
+	 */
+	public function getAdmins(&$emails= array()) {
+		global $dbCfg;
+		$emails = $dbCfg->getValue(dbKITcfg::cfgKITadmins);
+		return (count($emails) < 1) ? false : true;
+	} // getAdmins
 	
 } // class kitContactInterface
 
