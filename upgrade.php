@@ -153,15 +153,6 @@ if (!$dbCronjobErrorLog->sqlTableExists()) {
 	}
 }
 
-/*
-$dbNewsletterLinks = new dbKITnewsletterLinks();
-if (!$dbNewsletterLinks->sqlTableExists()) {
-	if (!$dbNewsletterLinks->sqlCreateTable()) {
-		$error .= sprintf('<p>[Upgrade] %s</p>', $dbNewsletterLinks->getError());
-	}
-}
-*/
-
 $dbImport = new dbKITimport();
 if (!$dbImport->sqlTableExists()) {
 	if (!$dbImport->sqlCreateTable()) {
@@ -248,21 +239,13 @@ foreach ($delete_array as $item) {
 }
 
 /**
- * The Droplet kit_newsletter is since Release 0.43 no longer used!
-
-// Install Droplets
-$droplets = new checkDroplets();
-if ($droplets->insertDropletsIntoTable()) {
-  $message = 'The Droplets for dbKeepInTouch where successfully installed! Please look at the Help for further informations.';
-}
-else {
-  $message = 'The installation of the Droplets for dbKeepInTouch failed. Error: '. $droplets->getError();
-}
-if ($message != "") {
-  echo '<script language="javascript">alert ("'.$message.'");</script>';
+ * Release 0.46
+ */
+// change field lenght for values from 80 chars to TEXT
+if (!$dbCronjobData->sqlAlterTableChangeField(dbCronjobData::field_value, dbCronjobData::field_value, "TEXT NOT NULL DEFAULT ''")) {
+    $error .= sprintf('[<p>[ALTER TABLE mod_kit_cronjob_data] %s</p>', $dbCronjobData->getError());
 }
 
-*/
 
 // Prompt Errors
 if (!empty($error)) {

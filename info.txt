@@ -4,13 +4,14 @@ Ralf Hertsch, Stockholmer Str. 31, 13359 Berlin (Germany)
 http://phpManufaktur.de - ralf.hertsch@phpManufaktur.de
 
 Release 0.46
-2011-xx-xx
+2011-11-14
 fixed - avoid duplicate declaration of class kitMail (only WebsiteBaker)
 fixed - uninstall.php tried to delete no longer existing dialogs register class
 fixed - KIT does not perform a check for logical errors in salutation strings
 added - getAdmins() in class.interface.php returns the primary e-mail addresses
   of the defined KIT administrators
 added - set default timezone in class dbKITcfg
+extended - cronjob.php search for additional jobs of kitIdea
 
 Release 0.45
 2011-10-11

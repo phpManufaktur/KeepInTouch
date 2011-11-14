@@ -23,7 +23,7 @@ global $dbCronjobErrorLog;
 if (!is_object($dbCronjobData)) $dbCronjobData = new dbCronjobData();
 if (!is_object($dbCronjobNewsLog)) $dbCronjobNewsLog = new dbCronjobNewsletterLog();
 if (!is_object($dbNewsProcess)) $dbNewsProcess = new dbKITnewsletterProcess();
-if (!is_object($dbCronjobErrorLog)) $dbCronjobErrorLog = new dbCronjobErrorLog(true);
+if (!is_object($dbCronjobErrorLog)) $dbCronjobErrorLog = new dbCronjobErrorLog();
 
 $cronjob = new cronjob();
 $cronjob->action();
@@ -51,13 +51,13 @@ class cronjob {
 	} // getError()
 	
 	private function isError() {
-    return (bool) !empty($this->error);
-  } // isError
+	    return (bool) !empty($this->error);
+	} // isError
 	
-  /**
-   * Action Handler
-   * 
-   */
+	/**
+	 * Action Handler
+	 * 
+	 */
 	public function action() {
 		global $dbCronjobData;
 		global $dbNewsProcess;
@@ -73,9 +73,11 @@ class cronjob {
 		}
 		if (count($data) < 1) {
 			// entry does not exists, create default entries...
-			$datas = array(	array(dbCronjobData::field_item => dbCronjobData::item_last_call, dbCronjobData::field_value => ''), 
-							 array(dbCronjobData::field_item => dbCronjobData::item_last_job, dbCronjobData::field_value => ''),
-							 array(dbCronjobData::field_item => dbCronjobData::item_last_nl_id, dbCronjobData::field_value => ''));
+			$datas = array(
+			        array(dbCronjobData::field_item => dbCronjobData::item_last_call, dbCronjobData::field_value => ''),
+			        array(dbCronjobData::field_item => dbCronjobData::item_last_job, dbCronjobData::field_value => ''),
+			        array(dbCronjobData::field_item => dbCronjobData::item_last_nl_id, dbCronjobData::field_value => '')
+			        );
 			foreach ($datas as $data) {
 				if (!$dbCronjobData->sqlInsertRecord($data)) {
 					$this->setError(sprintf('[%s - %s] %s', __METHOD__, __LINE__, $dbCronjobData->getError()));
@@ -115,16 +117,22 @@ class cronjob {
 			$this->setError(sprintf('[%s - %s] %s', __METHOD__, __LINE__, $dbNewsProcess->getError()));
 			exit($this->getError());
 		}
+		
+		$process_newsletter = false;
+		
 		if (count($cronjob) == 1) {
+		    // processing newsletters has priority!
 			$cronjob = $cronjob[0];				
 			// jobs to do...
 			if (!empty($cronjob[dbKITnewsletterProcess::field_register_ids])) {
 				// process newsletter
 				$this->processNewsletter($cronjob);
+				$process_newsletter = true;
 			}
 			elseif (!empty($cronjob[dbKITnewsletterProcess::field_distribution_ids])) {
 				// process distribution
 				$this->processDistribution($cronjob);
+				$process_newsletter = true;
 			}
 			else {
 				// Error, nothing to do - kill job and prompt error
@@ -142,6 +150,20 @@ class cronjob {
 												sprintf("Neither Newsletter ID's nor Distribution ID's to process in record <b>%d</b>, job killed!", $cronjob[dbKITnewsletterProcess::field_id])));
 				exit($this->getError());
 			}
+		}
+		
+		if (!$process_newsletter) {
+		    // there was no newsletter to process, so look what else is to do...
+		    if (file_exists(WB_PATH.'/modules/kit_idea/class.cronjob.php')) {
+		        require_once WB_PATH.'/modules/kit_idea/class.cronjob.php';
+		        $ideaCronjob = new ideaCronjob();
+		        $result = $ideaCronjob->action();
+		        if ($ideaCronjob->isError()) {
+		            // ideaCronjob logs all errors by itself, so just leave cronjob...
+		            exit($ideaCronjob->getError());
+		        }
+		        exit($result);
+		    } 
 		}
 		exit(0);
 	} // action()
