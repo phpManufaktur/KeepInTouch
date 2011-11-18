@@ -1206,6 +1206,29 @@ class dbKITregister extends dbConnectLE {
 		self::status_deleted			=> kit_contact_status_deleted
 	);
 	
+	public $status_dwoo_array = array(
+	        array(
+	                'value' => self::status_key_created,
+	                'text' => kit_contact_status_key_created
+	                ),
+	        array(
+	                'value' => self::status_key_send,
+	                'text' => kit_contact_status_key_send,
+	                ),
+	        array(
+	                'value' => self::status_active,
+	                'text' => kit_contact_status_active
+	                ),
+	        array(
+	                'value' => self::status_locked,
+	                'text' => kit_contact_status_locked
+	                ),
+	        array(
+	                'value' => self::status_deleted,
+	                'text' => kit_contact_status_deleted
+	                )
+	        );
+	
 	public $create_tables = false;
 	
 	public function __construct($create_tables = false) {

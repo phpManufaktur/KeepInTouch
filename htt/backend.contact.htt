@@ -115,6 +115,39 @@
           <div class="kccp_value">{$value_protocol|default: ''}</div>
         </div>
       </div>
+      {if $administration.active == 1}
+      <div class="accordion_tab"><a href="#">{$administration.title}</a></div>
+      <div>
+        <!-- administration -->
+        <div class="kit_contact_administration">
+          <div class="kccp_label">{$administration.register.date.label}</div>
+          <div class="kccp_value">{$administration.register.date.value}</div>
+          <div class="kccp_label">{$administration.register.confirmed.label}</div>
+          <div class="kccp_value">{$administration.register.confirmed.value}</div>
+          <div class="kccp_label">{$administration.register.key.label}</div>
+          <div class="kccp_value">{$administration.register.key.value}</div>
+          <div class="kccp_label">{$administration.register.status.label}</div>
+          <div class="kccp_value">
+            <select name="{$administration.register.status.name}">
+            {foreach $administration.register.status.options option}
+            <option value="{$option.value}"{if $option.value == $administration.register.status.value} selected="selected"{/if}>{$option.text}</option>
+            {/foreach}
+            </select>
+          </div>
+          <div class="kccp_label">{$administration.register.login.errors.label}</div>
+          <div class="kccp_value">{$administration.register.login.errors.value}</div>
+          <div class="kccp_label">{$administration.register.login.locked.label}</div>
+          <div class="kccp_value">
+            <input type="checkbox" name="{$administration.register.login.locked.name}"{if $administration.register.login.locked.value == 1} checked="checked"{/if} />
+          </div>
+          <div class="kccp_label">{$administration.register.password.change.password_1.label}</div>
+          <div class="kccp_value"><input type="password" name="{$administration.register.password.change.password_1.name}" /></div>
+          <div class="kccp_label">{$administration.register.password.change.password_2.label}</div>
+          <div class="kccp_value"><input type="password" name="{$administration.register.password.change.password_2.name}" /></div>
+          
+        </div>
+      </div>
+      {/if}
       <div class="accordion_tab"><a href="#">{$header_help}</a></div>
       <div>
         <!-- help, documentation -->

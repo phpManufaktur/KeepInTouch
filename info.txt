@@ -3,6 +3,13 @@ KeepInTouch - Customer Relationship Management (CRM)
 Ralf Hertsch, Stockholmer Str. 31, 13359 Berlin (Germany)
 http://phpManufaktur.de - ralf.hertsch@phpManufaktur.de
 
+Release 0.47
+2011-11-18
+added - edting contacts allows now access to the kitRegistry data - to view the
+  date registered, confirmed registration, registration key, failed logins,
+  lock and unlock user, set user to active if registration fail, set new 
+  passwords a.s.o. 
+
 Release 0.46
 2011-11-14
 fixed - avoid duplicate declaration of class kitMail (only WebsiteBaker)
