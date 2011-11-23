@@ -1234,11 +1234,13 @@ class kitBackend {
         foreach ($protocol_data as $pdata) {
             ($flipflop) ? $flipflop = false : $flipflop = true;
             ($flipflop) ? $class = 'flip' : $class = 'flop';
-            $data = array('class' => $class, 
-            'date' => date(DATE_FORMAT, strtotime($pdata[dbKITprotocol::field_date])), 
-            'type' => $dbProtocol->type_array[$pdata[dbKITprotocol::field_type]], 
-            'memo' => $pdata[dbKITprotocol::field_memo], 
-            'members' => $pdata[dbKITprotocol::field_members]);
+            $data = array(
+                    'class' => $class, 
+                    'date' => date(DATE_FORMAT, strtotime($pdata[dbKITprotocol::field_date])), 
+                    'type' => $dbProtocol->type_array[$pdata[dbKITprotocol::field_type]], 
+                    'memo' => $pdata[dbKITprotocol::field_memo], 
+                    'members' => $pdata[dbKITprotocol::field_members]
+                    );
             $rows .= $parser->get($template_row, $data);
         }
         $data = array('header_date' => kit_label_protocol_date, 
