@@ -135,6 +135,7 @@ class dbKITcfg extends dbConnectLE {
   	$this->setIndexFields(array(self::field_name));
   	$this->setAllowedHTMLtags('<a><abbr><acronym><span>');
   	$this->checkFieldDefinitions();
+  	date_default_timezone_set(kit_cfg_time_zone);
   	// Tabelle erstellen
   	if ($this->createTables) {
   		if (!$this->sqlTableExists()) {
@@ -149,7 +150,6 @@ class dbKITcfg extends dbConnectLE {
 	  		$this->checkConfig();
 	  	}
   	}
-  	date_default_timezone_set(kit_cfg_time_zone);
   } // __construct()
   
   public function setMessage($message) {

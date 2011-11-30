@@ -268,6 +268,8 @@ class dbKITcontact extends dbConnectLE {
 		$this->addFieldDefinition(self::field_update_when, "DATETIME NOT NULL DEFAULT '0000-00-00 00:00:00'");
 		// check field definitions
 		$this->checkFieldDefinitions();
+		// set default timezone
+		date_default_timezone_set(kit_cfg_time_zone);
 		// create tables
 		if ($this->create_tables) {
 			$this->initTables();
@@ -534,6 +536,7 @@ class dbKITcontact extends dbConnectLE {
 											dbWBusers::field_active,
 											$dbRegister->getTableName(),
 											dbKITregister::field_email);
+			$users = array();
 			if (!$dbRegister->sqlExec($SQL, $users)) {
 				$this->setError(sprintf('[%s - %s] %s', __METHOD__, __LINE__, $dbRegister->getError()));
 				return false;
@@ -589,6 +592,7 @@ class dbKITcontact extends dbConnectLE {
 											dbKITcontact::category_wb_user,
 											dbKITcontact::field_category,
 											dbKITcontact::category_wb_user );
+			$contacts = array();
 			if (!$this->sqlExec($SQL, $contacts)) {
 				$this->setError(sprintf('[%s - %s] %s', __METHOD__, ____LINE__, $this->getError()));
 				return false;
@@ -750,6 +754,8 @@ class dbKITcontactArrayCfg extends dbConnectLE {
 		$this->addFieldDefinition(self::field_update_when, "DATETIME NOT NULL DEFAULT '0000-00-00 00:00:00'");
 		// check field definitions
 		$this->checkFieldDefinitions();
+		// set default timezone
+		date_default_timezone_set(kit_cfg_time_zone);
 		// create tables
 		if ($this->create_tables) {
 			$this->initTables();
@@ -877,6 +883,8 @@ class dbKITcontactAddress extends dbConnectLE {
 		$this->setIndexFields(array(self::field_contact_id));
 		// check field definitions
 		$this->checkFieldDefinitions();
+		// set default timezone
+		date_default_timezone_set(kit_cfg_time_zone);
 		// create tables
 		if ($this->create_tables) {
 			$this->initTables();
@@ -938,6 +946,8 @@ class dbKITcountries extends dbConnectLE {
 		$this->addFieldDefinition(self::field_land_kfz, "VARCHAR(2) NOT NULL DEFAULT ''");
 		$this->addFieldDefinition(self::field_land_name, "VARCHAR(50) NOT NULL DEFAULT ''");
 		$this->checkFieldDefinitions();
+		// set default timezone
+		date_default_timezone_set(kit_cfg_time_zone);
 		if ($this->create_tables) {
 			$this->initTables();
 		}
@@ -997,6 +1007,8 @@ class dbKITmemos extends dbConnectLE {
 		$this->setIndexFields(array(self::field_contact_id));
 		// check field definitions
 		$this->checkFieldDefinitions();
+		// set default timezone
+		date_default_timezone_set(kit_cfg_time_zone);
 		// create tables
 		if ($this->create_tables) {
 			$this->initTables();
@@ -1071,6 +1083,8 @@ class dbKITprotocol extends dbConnectLE {
 		$this->setIndexFields(array(self::field_contact_id));
 		// check field definitions
 		$this->checkFieldDefinitions();
+		// set default timezone
+		date_default_timezone_set(kit_cfg_time_zone);
 		// create tables
 		if ($this->create_tables) {
 			$this->initTables();
@@ -1156,6 +1170,8 @@ class dbKITprovider extends dbConnectLE {
 		$this->addFieldDefinition(self::field_update_when, "DATETIME NOT NULL DEFAULT '0000-00-00 00:00:00'");
 		// check field definitions
 		$this->checkFieldDefinitions();
+		// set default timezone
+		date_default_timezone_set(kit_cfg_time_zone);
 		// create tables
 		if ($this->create_tables) {
 			$this->initTables();
@@ -1251,6 +1267,8 @@ class dbKITregister extends dbConnectLE {
 		$this->addFieldDefinition(self::field_update_when, "DATETIME NOT NULL DEFAULT '0000-00-00 00:00:00'");
 		// check field definitions
 		$this->checkFieldDefinitions();
+		// set default timezone
+		date_default_timezone_set(kit_cfg_time_zone);
 		// create tables
 		if ($this->create_tables) {
 			$this->initTables();
@@ -1319,6 +1337,9 @@ class dbWBusers extends dbConnectLE {
 		$this->addFieldDefinition(self::field_login_ip, "VARCHAR(15) NOT NULL DEFAULT ''");
 		// check field definitions
 		$this->checkFieldDefinitions();
+		// set default timezone
+		date_default_timezone_set(kit_cfg_time_zone);
+		
 	} // __construct()
 	
 	public function sqlCreateTable() {
@@ -1354,6 +1375,9 @@ class dbWBgroups extends dbConnectLE {
 		$this->addFieldDefinition(self::field_template_permissions, "TEXT NOT NULL DEFAULT ''");
 		// check field definitions
 		$this->checkFieldDefinitions();
+		// set default timezone
+		date_default_timezone_set(kit_cfg_time_zone);
+		
 	} // __construct()
 
 	public function sqlCreateTable() {
