@@ -3,6 +3,13 @@ KeepInTouch - Customer Relationship Management (CRM)
 Ralf Hertsch, Stockholmer Str. 31, 13359 Berlin (Germany)
 http://phpManufaktur.de - ralf.hertsch@phpManufaktur.de
 
+Release 0.48
+2011-12-07
+changed - some typos in class.interface.php
+added - KIT framework for cross compatibillity to kitDirList 
+added - kdl.php (from kitDirList) enables KIT to link to uploaded files from 
+  the user account log
+
 Release 0.47
 2011-11-18
 added - edting contacts allows now access to the kitRegistry data - to view the

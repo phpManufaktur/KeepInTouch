@@ -236,6 +236,7 @@ class kitContactInterface {
   	return $contact_id;
   }
   
+  
 	/**
 	 * Return the person title array (Mr., Mrs., ...) for usage in kitForm
 	 * @param REFERENCE ARRAY $title_array
@@ -254,6 +255,7 @@ class kitContactInterface {
 		}
 		return true;	
 	} // getFormPersonTitleArray()
+	
 	
 	/**
 	 * Return the person acadamic title array (Dr., Prof., ...) for usage in kitForm
@@ -375,6 +377,7 @@ class kitContactInterface {
 		global $dbContactAddress;
 		global $dbRegister;
 		
+		$contact = array();
 		if ($dbContact->getContactByID($contact_id, $contact)) { 
 			// Adresse existiert, Daten vergleichen
 			$address = $dbContactAddress->getFields();
@@ -471,6 +474,7 @@ class kitContactInterface {
 					// Adresstyp festlegen
 					$address[dbKITcontactAddress::field_type] = ((isset($contact_array[self::kit_address_type])) && ($contact_array[self::kit_address_type] == self::address_type_business)) ? dbKITcontactAddress::type_business : dbKITcontactAddress::type_private;
 					// Adresse anlegen
+					$address_id = -1;
 					if (!$dbContactAddress->sqlInsertRecord($address, $address_id)) {
 						$this->setError(sprintf('[%s - %s] %s', __METHOD__, __LINE__, $dbContactAddress->getError()));
 						return false;
@@ -653,6 +657,7 @@ class kitContactInterface {
 				dbKITcontactAddress::field_update_by			=> 'SYSTEM',
 				dbKITcontactAddress::field_update_when		=> date('Y-m-d H:i:s')				
 			);
+			$address_id = -1;
 			if (!$dbContactAddress->sqlInsertRecord($address, $address_id)) {
 				$this->setError(sprintf('[%s - %s] %s', __METHOD__, __LINE__, $dbContactAddress->getError()));
 				return false;
@@ -704,6 +709,7 @@ class kitContactInterface {
 			dbKITregister::field_update_by						=> 'INTERFACE',
 			dbKITregister::field_update_when					=> date('Y-m-d H:i:s')
 		);
+		$register_id = -1;
 		if (!$dbRegister->sqlInsertRecord($register_array, $register_id)) {
 			$this->setError(sprintf('[%s - %s] %s', __METHOD__, __LINE__, $dbRegister->getError()));
 			return false;
@@ -1204,6 +1210,7 @@ class kitContactInterface {
 		
 		// check if the KIT contact is LEPTON user
 		$SQL = sprintf( "SELECT * FROM %s WHERE %s='%s' AND %s='%s'", $dbWBusers->getTableName(), dbWBusers::field_email, $email, dbWBusers::field_active, dbWBusers::status_active);
+		$user = array();
 		if (!$dbWBusers->sqlExec($SQL, $user)) {
 			$this->setError(sprintf('[%s - %s] %s', __METHOD__, __LINE__, $dbWBusers->getError()));
 			return false;
@@ -1409,6 +1416,7 @@ class kitContactInterface {
 					if (isset($_REQUEST[$key])) $contact[$key] = $_REQUEST[$key]; 
 				endswitch;  
 			}
+			$contact_id = -1;
 			if (!$this->addContact($contact, $contact_id, $register)) {
 				$this->setError(sprintf('[%s - %s] %s', __METHOD__, __LINE__, $this->getError()));
 				return false;
@@ -1431,6 +1439,7 @@ class kitContactInterface {
 										$dbProvider->getTableName(),
 										dbKITprovider::field_status,
 										dbKITprovider::status_active);
+		$providers = array();
 		if (!$dbProvider->sqlExec($SQL, $providers)) {
 			$this->setError(sprintf('[%s - %s] %s', __METHOD__, __LINE__, $dbProvider->getError()));
 			return false;

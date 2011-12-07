@@ -33,9 +33,9 @@ if (defined('WB_PATH')) {
 $module_directory     = 'kit';
 $module_name          = 'KeepInTouch';
 $module_function      = 'tool';
-$module_version       = '0.47';
+$module_version       = '0.48';
 $module_status        = 'beta'; 
-$module_languages			= 'DE';
+$module_languages	  = 'DE';
 $module_platform      = '2.8';
 $module_author        = 'phpManufaktur, Berlin (Germany)';
 $module_license       = 'GNU General Public License';

@@ -39,6 +39,9 @@ if (defined('LEPTON_VERSION')) {
 	if (versionCompare(LEPTON_VERSION, '1.2.0', '<')) {
 		$PRECHECK['WB_ADDONS']['dwoo'] = array('VERSION' => '0.11', 'OPERATOR' => '>=');
 	}
+	if (file_exists(WB_PATH.'/modules/kit_dirlist/include.php')) {
+	    $PRECHECK['WB_ADDONS']['kit_dirlist'] = array('VERSION' => '0.27', 'OPERATOR' => '>=');
+	}
 }
 else {
 	// WebsiteBaker
@@ -48,6 +51,9 @@ else {
 		'dbconnect_le'	=> array('VERSION' => '0.64', 'OPERATOR' => '>='),
 		'dwoo' => array('VERSION' => '0.10', 'OPERATOR' => '>=')
 	);
+	if (file_exists(WB_PATH.'/modules/kit_dirlist/include.php')) {
+	    $PRECHECK['WB_ADDONS']['kit_dirlist'] = array('VERSION' => '0.27', 'OPERATOR' => '>=');
+	}
 }
 
 global $database;
@@ -56,8 +62,8 @@ $result = $database->query($sql);
 if ($result) {
 	$data = $result->fetchRow();
 	($data['value'] == 'utf-8') ? $status = true : $status = false;
-	$PRECHECK['CUSTOM_CHECKS'] = array(
-    'Default Charset' => array('REQUIRED' => 'utf-8', 'ACTUAL' => $data['value'], 'STATUS' => $status));
+	$PRECHECK['CUSTOM_CHECKS']['Default Charset'] = array('REQUIRED' => 'utf-8', 'ACTUAL' => $data['value'], 'STATUS' => $status);
 }
+
 
 ?>
