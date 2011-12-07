@@ -2572,6 +2572,7 @@ class kitBackend {
     public function saveConfigGeneral() {
         global $dbCfg;
         global $tools;
+        global $parser;
         
         $message = '';
         // ueberpruefen, ob ein Eintrag geaendert wurde
@@ -2593,6 +2594,22 @@ class kitBackend {
                     }
                     $config = $config[0];
                     if ($config[dbKITcfg::field_value] != $value) {
+                        if (($config[dbKITcfg::field_name] == dbKITcfg::cfgClearCompileDir) && 
+                                ($value == 1)) {
+                            // reset the Dwoo compile directory
+                            $compileDirs = new RecursiveDirectoryIterator($parser->getCompileDir());
+                            $compile = new RecursiveIteratorIterator($compileDirs);
+                            $count = 0;
+                            foreach ($compile as $file) {
+                                if ($compile->isDot() || $compile->isDir()) {
+                                    continue;
+                                }
+                                $count += unlink((string) $file) ? 1 : 0;
+                            }
+                            $message .= sprintf(kit_msg_cfg_clear_compile_dir, $count);
+                            unset($_REQUEST[dbKITcfg::field_value . '_' . $id]);
+                            continue;
+                        }
                         // Wert wurde geaendert
                         if (! $dbCfg->setValue($value, $id) && $dbCfg->isError()) {
                             $this->setError(sprintf('[%s - %s] %s', __METHOD__, __LINE__, $dbCfg->getError()));

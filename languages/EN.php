@@ -142,6 +142,7 @@ define('kit_country_suisse',											'Suisse');
 define('kit_country_undefined',										'');
 
 define('kit_desc_cfg_add_app_tab',								'Additional TAB \'s Add to simply switch to other add-ons can. TAB \'s separated by comma, building identifier | URL');
+define('kit_desc_cfg_clear_compile_dir', 'Sie können die von der Dwoo Template Engine kompilierten Templates zurücksetzen und ein erneutes Schreiben erzwingen. Setzen Sie den Schalter dazu auf 1, KIT setzt den Schalter nach dem Reset automatisch zurück.');
 define('kit_desc_cfg_connect_wb_users',						'KIT You can connect with the WB user management. If set, automatically assumes KIT newly created user and lock in KIT blocked in user administration, or deleted users. Contacts to whom you will assign to the category <b>catWBUser KIT</b> in the user administration with the WB group <b>kitContact</b> Remove created the assignment, the contacts are locked in the user management. <i>administrators</i> can not be associated with KIT for security reasons.');
 define('kit_desc_cfg_cronjob_key',              	'To prevent cronjobs to be executed by a simple call to the <b>cronjob.php</b>, the specified keys passed as parameters. The call of the file is <b>cronjob.php?<i>key=KEY</i></b>.');
 define('kit_desc_cfg_developer_mode',							'Allows the programmer to add configuration parameters.');
@@ -305,6 +306,7 @@ define('kit_label_birthday', 											'birthday');
 define('kit_label_categories', 										'Intern'); // instead of category
 define('kit_label_cfg_add_app_tab', 							'Additional TAB\'s add');
 define('kit_label_cfg_array_add_items', 					'Add more items');
+define('kit_label_cfg_clear_compile_dir', 'Templates zurücksetzen');
 define('kit_label_cfg_connect_wb_users', 					'Connect to WB users');
 define('kit_label_cfg_cronjob_key', 							'key for cronjobs');
 define('kit_label_cfg_developer_mode', 						'Developer Mode');
@@ -446,6 +448,7 @@ define('kit_msg_cfg_add_success',									'<p>The configuration data set with th
 define('kit_msg_cfg_array_item_updated', 					'<p>The entry with the ID <b>%05d</b> has been updated.</p>');
 define('kit_msg_cfg_array_item_add', 							'<p>The entry with the ID <b>%05d</b> added.</p>');
 define('kit_msg_cfg_array_identifier_in_use', 		'<p>The identifier <b>%s</b> is already used by the <b>ID %05d</b> and can not be assumed. Please attach a different set identifier.</p>');
+define('kit_msg_cfg_clear_compile_dir', '<p>Es wurden insgesamt <b>%s</b> kompilierte Templates zurückgesetzt.</p>');
 define('kit_msg_cfg_csv_export', 									'<p>The configuration data as <b>%s</b> saved in / MEDIA directory.</p>');
 define('kit_msg_cfg_id_updated', 									'<p>The configuration data set with the <b>ID #%05d</b> and the identifier <b>%s</b> has been updated</p>');
 define('kit_msg_contact_deleted', 								'<p>Contact with the <b>ID %05d</b> deleted.</p>');

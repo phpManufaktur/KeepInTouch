@@ -142,6 +142,7 @@ define('kit_country_suisse',											'Zwitserland');
 define('kit_country_undefined',										'');
 
 define('kit_desc_cfg_add_app_tab',								'Tabblad Extra toevoegen om eenvoudig naar andere Add-ons wechseln te kunnen wisselen. TAB\'s scheiden middels een comma, Aufbau AANWIJZEN|URL');
+define('kit_desc_cfg_clear_compile_dir', 'Sie können die von der Dwoo Template Engine kompilierten Templates zurücksetzen und ein erneutes Schreiben erzwingen. Setzen Sie den Schalter dazu auf 1, KIT setzt den Schalter nach dem Reset automatisch zurück.');
 define('kit_desc_cfg_connect_wb_users',						'U kunt KIT verbinden met het WB gebruikersbeheer. Als de verbinding tot stand is gekomen dan neemt KIT automatisch nieuw toegevoegde gebruikers over en blokkeert in het gebruikersbeheer van KIT, geblokkeerde of verwijderede gebruikers. Contacten, die in KIT de categorie <b>catWBUser</b> toekent krijgen, worden in de WB gebruikersbeheer gekoppeld aan de groep <b>kitContact</b>. U moet zelf de geblokkeerde gebruikers verwijderen. <i>Administratoren</i> kunnen uit veiligheid gronden niet met KIT verbonden worden.');
 define('kit_desc_cfg_cronjob_key',                'Om te voorkomen dat cronjobs worden uitgevoerd door een eenvoudige oproep aan de cronjob.php moet de aangegeven sleutels doorgegeven worden als parameter. De oproep van het bestand is <b>cronjob.php?key=<i>SLEUTEL</i></b>.');
 define('kit_desc_cfg_developer_mode',							'Mogelijkheid voor de programmeur om configuratieparameters toe te voegen.');
@@ -305,6 +306,7 @@ define('kit_label_birthday',											'Verjaardag');
 define('kit_label_categories',										'Intern'); // anstatt Kategorie
 define('kit_label_cfg_add_app_tab',								'Extra TAB\'s toevoegen');
 define('kit_label_cfg_array_add_items',						'Voeg meer inzendingen toe:');
+define('kit_label_cfg_clear_compile_dir', 'Templates zurücksetzen');
 define('kit_label_cfg_connect_wb_users',					'Met WB gebruikers verbinden');
 define('kit_label_cfg_cronjob_key',               'Sleutel voor de Cronjobs');
 define('kit_label_cfg_developer_mode',						'Developer Mode');
@@ -446,6 +448,7 @@ define('kit_msg_cfg_add_success',									'<p>Het configuratiebestand met <b>ID 
 define('kit_msg_cfg_array_item_updated',					'<p>Het item met <b>ID %05d</b> wordt bijgewerkt.</p>');
 define('kit_msg_cfg_array_item_add',							'<p>Het item met <b>ID %05d</b> wordt toegevoegd.</p>');
 define('kit_msg_cfg_array_identifier_in_use',			'<p>Identificatiecode <b>%s</b> wordt al gebruikt door het <b>ID %05d</b> en kan niet worden toegevoegd. Geef een ander id op.</p>');
+define('kit_msg_cfg_clear_compile_dir', '<p>Es wurden insgesamt <b>%s</b> kompilierte Templates zurückgesetzt.</p>');
 define('kit_msg_cfg_csv_export',									'<p>Het configuratiebestand wordt opgeslagen als de <b>%s</b> in de  /MEDIA directory. </p>');
 define('kit_msg_cfg_id_updated',									'<p>Het configuratiebestand met <b>ID #%05d</b> en identifier <b>%s</b> wordt bijgwerkt.</p>');
 define('kit_msg_contact_deleted',									'<p>Contact met <b>ID %05d</b> wordt verwijderd.</p>');

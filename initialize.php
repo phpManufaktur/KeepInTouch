@@ -61,19 +61,16 @@ require_once(WB_PATH.'/framework/class.admin.php');
 // initialize Dwoo
 global $parser;
  
-if (!is_object($parser)) {
-	require_once WB_PATH.'/framework/addon.precheck.inc.php';
-	if (!defined('LEPTON_VERSION')) {
-		if (!class_exists('Dwoo')) require_once(WB_PATH.'/modules/dwoo/include.php');
-	} 
-	elseif (versionCompare(LEPTON_VERSION, '1.2.0', '<')) {
-		if (!class_exists('Dwoo')) require_once(WB_PATH.'/modules/dwoo/include.php');
-	}
-	else {
-		if (!class_exists('Dwoo')) require_once(WB_PATH.'/modules/lib_dwoo/library.php');
-	}
-	$parser = new Dwoo();
+if (!class_exists('Dwoo')) {
+	require_once WB_PATH.'/modules/dwoo/include.php';
 }
 
+$cache_path = WB_PATH.'/temp/cache';
+if (!file_exists($cache_path)) mkdir($cache_path, 0755, true);
+$compiled_path = WB_PATH.'/temp/compiled';
+if (!file_exists($compiled_path)) mkdir($compiled_path, 0755, true);
+
+global $parser;
+if (!is_object($parser)) $parser = new Dwoo($compiled_path, $cache_path);
 
 ?>

@@ -1,7 +1,7 @@
 <?php
 
 /**
- * kitDirList
+ * KeepInTouch
  * 
  * @author Ralf Hertsch (ralf.hertsch@phpmanufaktur.de)
  * @link http://phpmanufaktur.de

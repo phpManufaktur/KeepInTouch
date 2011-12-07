@@ -9,6 +9,8 @@ changed - some typos in class.interface.php
 added - KIT framework for cross compatibillity to kitDirList 
 added - kdl.php (from kitDirList) enables KIT to link to uploaded files from 
   the user account log
+added - option clear compile directories enables to reset the precompiled Dwoo
+  templates and force a rewrite of the templates
 
 Release 0.47
 2011-11-18

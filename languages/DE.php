@@ -142,6 +142,7 @@ define('kit_country_suisse',											'Schweiz');
 define('kit_country_undefined',										'');
 
 define('kit_desc_cfg_add_app_tab',								'Zusätzliche TAB\'s einfügen, um einfach zu anderen Add-ons wechseln zu können. TAB\'s mit Komma trennen, Aufbau BEZEICHNER|URL');
+define('kit_desc_cfg_clear_compile_dir', 'Sie können die von der Dwoo Template Engine kompilierten Templates zurücksetzen und ein erneutes Schreiben erzwingen. Setzen Sie den Schalter dazu auf 1, KIT setzt den Schalter nach dem Reset automatisch zurück.');
 define('kit_desc_cfg_connect_wb_users',						'Sie können KIT mit der WB Benutzerverwaltung verbinden. Wenn gesetzt, übernimmt KIT automatisch neu angelegte Benutzer und sperrt in KIT in der Benutzerverwaltung gesperrte oder gelöschte Benutzer. Kontakte, denen Sie in KIT die Kategorie <b>catWBUser</b> zuordnen werden in der WB Benutzerverwaltung mit der Gruppe <b>kitContact</b> angelegt, entfernen Sie die Zuordnung werden die Kontakte in der Benutzerverwaltung gesperrt. <i>Administratoren</i> können aus Sicherheitsgründen nicht mit KIT verbunden werden.');
 define('kit_desc_cfg_cronjob_key',                'Um zu verhindern, dass Cronjobs durch einen einfachen Aufruf der <b>cronjob.php</b> ausgeführt werden, muss der angegebene Schlüssel als Parameter übergeben werden. Der Aufruf der Datei lautet <b>cronjob.php?key=<i>SCHLÜSSEL</i></b>.');
 define('kit_desc_cfg_developer_mode',							'Ermöglicht dem Programmierer das Hinzufügen von Konfigurationsparametern.');
@@ -305,6 +306,7 @@ define('kit_label_birthday',											'Geburtstag');
 define('kit_label_categories',										'Intern'); // anstatt Kategorie
 define('kit_label_cfg_add_app_tab',								'Zusätzliche TAB\'s einfügen');
 define('kit_label_cfg_array_add_items',						'Fügen Sie weitere Einträge hinzu:');
+define('kit_label_cfg_clear_compile_dir', 'Templates zurücksetzen');
 define('kit_label_cfg_connect_wb_users',					'Mit WB Benutzern verbinden');
 define('kit_label_cfg_cronjob_key',               'Schlüssel für Cronjobs');
 define('kit_label_cfg_developer_mode',						'Developer Mode');
@@ -446,6 +448,7 @@ define('kit_msg_cfg_add_success',									'<p>Der Konfigurationsdatensatz mit de
 define('kit_msg_cfg_array_item_updated',					'<p>Der Eintrag mit der <b>ID %05d</b> wurde aktualisiert.</p>');
 define('kit_msg_cfg_array_item_add',							'<p>Der Eintrag mit der <b>ID %05d</b> wurde hinzugefügt.</p>');
 define('kit_msg_cfg_array_identifier_in_use',			'<p>Der Bezeichner <b>%s</b> wird bereits von der <b>ID %05d</b> verwendet und kann nicht übernommen werden. Bitte legen Sie einen anderen Bezeichner fest.</p>');
+define('kit_msg_cfg_clear_compile_dir', '<p>Es wurden insgesamt <b>%s</b> kompilierte Templates zurückgesetzt.</p>');
 define('kit_msg_cfg_csv_export',									'<p>Die Konfigurationsdaten wurden als <b>%s</b> im /MEDIA Verzeichnis gesichert.</p>');
 define('kit_msg_cfg_id_updated',									'<p>Der Konfigurationsdatensatz mit der <b>ID #%05d</b> und dem Bezeichner <b>%s</b> wurde aktualisiert.</p>');
 define('kit_msg_contact_deleted',									'<p>Der Kontakt mit der <b>ID %05d</b> wurde gelöscht.</p>');
