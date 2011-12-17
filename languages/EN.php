@@ -334,6 +334,7 @@ define('kit_label_checksum', 											'checksum');
 define('kit_label_contact_access', 								'contact sharing');
 define('kit_label_contact_edit', 									'Edit Contact');
 define('kit_label_contact_email',	 								'email');
+define('kit_label_contact_email_retype', 'E-Mail wiederholen');
 define('kit_label_contact_fax', 									'Fax');
 define('kit_label_contact_phone', 								'Phone');
 define('kit_label_contact_phone_mobile', 					'Mobile');
