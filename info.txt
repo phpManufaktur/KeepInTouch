@@ -3,6 +3,10 @@ KeepInTouch - Customer Relationship Management (CRM)
 Ralf Hertsch, Stockholmer Str. 31, 13359 Berlin (Germany)
 http://phpManufaktur.de - ralf.hertsch@phpManufaktur.de
 
+Release 0.50
+2011-12-22
+fixed - recursice dependency of kitDirList in precheck.php
+
 Release 0.49
 2011-12-17
 added - class.interface.php now support the check of retyped email addresses

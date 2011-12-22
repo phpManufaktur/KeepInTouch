@@ -36,12 +36,15 @@ if (defined('LEPTON_VERSION')) {
 	require_once WB_PATH.'/framework/addon.precheck.inc.php';
 	$PRECHECK['PHP_VERSION'] = array('VERSION' => '5.2.0', 'OPERATOR' => '>=');
 	$PRECHECK['WB_ADDONS']['dbconnect_le'] = array('VERSION' => '0.64', 'OPERATOR' => '>=');
-	if (versionCompare(LEPTON_VERSION, '1.2.0', '<')) {
+	if (versionCompare(LEPTON_VERSION, '2.0.0', '<')) {
 		$PRECHECK['WB_ADDONS']['dwoo'] = array('VERSION' => '0.11', 'OPERATOR' => '>=');
 	}
+	/* 
+	 * dont't check for kitDirList to avoid recursive dependencies ...
 	if (file_exists(WB_PATH.'/modules/kit_dirlist/include.php')) {
 	    $PRECHECK['WB_ADDONS']['kit_dirlist'] = array('VERSION' => '0.27', 'OPERATOR' => '>=');
 	}
+	*/
 }
 else {
 	// WebsiteBaker
