@@ -3,6 +3,12 @@ KeepInTouch - Customer Relationship Management (CRM)
 Ralf Hertsch, Stockholmer Str. 31, 13359 Berlin (Germany)
 http://phpManufaktur.de - ralf.hertsch@phpManufaktur.de
 
+Release 0.51
+2012-02-02
+changed - reply-to handling in class.mail.php
+added - switch for email provider to enable relaying. If relaying is disabled,
+  KIT will use a reply-to header instead. 
+
 Release 0.50
 2011-12-22
 fixed - recursice dependency of kitDirList in precheck.php

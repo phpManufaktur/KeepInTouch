@@ -233,7 +233,7 @@ if (!defined ('LEPTON_VERSION') && !class_exists('kitMail')) {
 			// Absender
 			$this->FromName = $from_name;
 			$this->From = $from_email;
-			$this->AddReplyTo ( $from_email );
+			//$this->AddReplyTo ( $from_email );
 			
 			// offene TO Empfaenger
 			foreach ( $to_array as $email => $name ) {
@@ -510,7 +510,7 @@ else {
 			// Absender
 			$this->FromName = $from_name;
 			$this->From = $from_email;
-			$this->AddReplyTo ( $from_email );
+			//$this->AddReplyTo ( $from_email );
 			
 			// offene TO Empfaenger
 			foreach ( $to_array as $email => $name ) {

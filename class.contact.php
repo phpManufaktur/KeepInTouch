@@ -1126,45 +1126,46 @@ class dbKITprotocol extends dbConnectLE {
 
 
 class dbKITprovider extends dbConnectLE {
-	
-	const field_id							= 'provider_id';
-	const field_name						= 'provider_name';
-	const field_email						= 'provider_email';
-	const field_identifier			= 'provider_identifier';
-	const field_remark					= 'provider_remark';
-	const field_smtp_auth				= 'provider_smtp_auth';
-	const field_smtp_host				= 'provider_smtp_host';
-	const field_smtp_user				= 'provider_smtp_user';
-	const field_smtp_pass				= 'provider_smtp_pass';
-	const field_status					= 'provider_status';
-	const field_update_by				= 'provider_update_by';
-	const field_update_when			= 'provider_update_when';
-	
-	const status_active					= 'statusActive'; 
-	const status_locked					= 'statusLocked'; 
-	const status_deleted				= 'statusDeleted';
-	
-	public $status_array = array(
-		self::status_active			=> kit_contact_status_active,
-		self::status_locked			=> kit_contact_status_locked,
-		self::status_deleted		=> kit_contact_status_deleted
-	);
-	
-	public $create_tables = false;
-	
-	public function __construct($create_tables = false) {
-		parent::__construct();
-		$this->create_tables = $create_tables;
-		$this->setTableName('mod_kit_provider');
-		$this->addFieldDefinition(self::field_id, "INT NOT NULL AUTO_INCREMENT", true);
-		$this->addFieldDefinition(self::field_name, "VARCHAR(50) NOT NULL DEFAULT ''");
-		$this->addFieldDefinition(self::field_identifier, "VARCHAR(50) NOT NULL DEFAULT ''");
-		$this->addFieldDefinition(self::field_email, "VARCHAR(128) NOT NULL DEFAULT ''");
+    
+    const field_id = 'provider_id';
+    const field_name = 'provider_name';
+    const field_email = 'provider_email';
+    const field_identifier = 'provider_identifier';
+    const field_remark = 'provider_remark';
+    const field_smtp_auth = 'provider_smtp_auth';
+    const field_smtp_host = 'provider_smtp_host';
+    const field_smtp_user = 'provider_smtp_user';
+    const field_smtp_pass = 'provider_smtp_pass';
+    const field_relaying = 'provider_relaying';
+    const field_status = 'provider_status';
+    const field_update_by = 'provider_update_by';
+    const field_update_when = 'provider_update_when';
+    
+    const status_active = 'statusActive';
+    const status_locked = 'statusLocked';
+    const status_deleted = 'statusDeleted';
+    
+    public $status_array = array(
+    self::status_active => kit_contact_status_active, 
+    self::status_locked => kit_contact_status_locked, 
+    self::status_deleted => kit_contact_status_deleted);
+    
+    public $create_tables = false;
+
+    public function __construct($create_tables = false) {
+        parent::__construct();
+        $this->create_tables = $create_tables;
+        $this->setTableName('mod_kit_provider');
+        $this->addFieldDefinition(self::field_id, "INT NOT NULL AUTO_INCREMENT", true);
+        $this->addFieldDefinition(self::field_name, "VARCHAR(50) NOT NULL DEFAULT ''");
+        $this->addFieldDefinition(self::field_identifier, "VARCHAR(50) NOT NULL DEFAULT ''");
+        $this->addFieldDefinition(self::field_email, "VARCHAR(128) NOT NULL DEFAULT ''");
 		$this->addFieldDefinition(self::field_remark, "VARCHAR(255) NOT NULL DEFAULT ''");
 		$this->addFieldDefinition(self::field_smtp_auth, "TINYINT NOT NULL DEFAULT '0'");
 		$this->addFieldDefinition(self::field_smtp_host, "VARCHAR(128) NOT NULL DEFAULT ''");
 		$this->addFieldDefinition(self::field_smtp_user, "VARCHAR(128) NOT NULL DEFAULT ''");
 		$this->addFieldDefinition(self::field_smtp_pass, "VARCHAR(128) NOT NULL DEFAULT ''");
+		$this->addFieldDefinition(self::field_relaying, "TINYINT NOT NULL DEFAULT '0'");
 		$this->addFieldDefinition(self::field_status, "VARCHAR(30) NOT NULL DEFAULT '".self::status_active."'");
 		$this->addFieldDefinition(self::field_update_by, "VARCHAR(30) NOT NULL DEFAULT 'SYSTEM'");
 		$this->addFieldDefinition(self::field_update_when, "DATETIME NOT NULL DEFAULT '0000-00-00 00:00:00'");

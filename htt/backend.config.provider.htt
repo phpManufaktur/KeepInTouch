@@ -34,6 +34,10 @@
           <td>{$value_remark}</td>
         </tr>
         <tr>
+          <td>{$label_enable_relaying}</td>
+          <td>{$value_enable_relaying}</td>
+        </tr>
+        <tr>
           <td>{$label_auth}</td>
           <td>{$value_auth}</td>
         </tr>

@@ -54,9 +54,11 @@ else {
 		'dbconnect_le'	=> array('VERSION' => '0.64', 'OPERATOR' => '>='),
 		'dwoo' => array('VERSION' => '0.10', 'OPERATOR' => '>=')
 	);
+	/*
 	if (file_exists(WB_PATH.'/modules/kit_dirlist/include.php')) {
 	    $PRECHECK['WB_ADDONS']['kit_dirlist'] = array('VERSION' => '0.27', 'OPERATOR' => '>=');
 	}
+	*/
 }
 
 global $database;

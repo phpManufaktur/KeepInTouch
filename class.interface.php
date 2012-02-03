@@ -1442,18 +1442,21 @@ class kitContactInterface {
             return false;
         }
         $provider = $provider[0];
-        $provider_data = array('id' => $provider[dbKITprovider::field_id], 
-        'name' => $provider[dbKITprovider::field_name], 
-        'email' => $provider[dbKITprovider::field_email], 
-        'identifier' => $provider[dbKITprovider::field_identifier], 
-        'remark' => $provider[dbKITprovider::field_remark], 
-        'smtp_auth' => $provider[dbKITprovider::field_smtp_auth], 
-        'smtp_host' => $provider[dbKITprovider::field_smtp_host], 
-        'smtp_user' => $provider[dbKITprovider::field_smtp_user], 
-        'smtp_pass' => $provider[dbKITprovider::field_smtp_pass], 
-        'status' => $provider[dbKITprovider::field_status], 
-        'update_by' => $provider[dbKITprovider::field_update_by], 
-        'update_when' => $provider[dbKITprovider::field_update_when]);
+        $provider_data = array(
+            'id' => $provider[dbKITprovider::field_id], 
+            'name' => $provider[dbKITprovider::field_name], 
+            'email' => $provider[dbKITprovider::field_email], 
+            'identifier' => $provider[dbKITprovider::field_identifier], 
+            'remark' => $provider[dbKITprovider::field_remark], 
+            'smtp_auth' => $provider[dbKITprovider::field_smtp_auth], 
+            'smtp_host' => $provider[dbKITprovider::field_smtp_host], 
+            'smtp_user' => $provider[dbKITprovider::field_smtp_user], 
+            'smtp_pass' => $provider[dbKITprovider::field_smtp_pass],
+            'relaying' => $provider[dbKITprovider::field_relaying], 
+            'status' => $provider[dbKITprovider::field_status], 
+            'update_by' => $provider[dbKITprovider::field_update_by], 
+            'update_when' => $provider[dbKITprovider::field_update_when]
+        );
         return true;
     } // getServiceProviderByID()
 

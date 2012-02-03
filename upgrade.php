@@ -246,6 +246,15 @@ if (!$dbCronjobData->sqlAlterTableChangeField(dbCronjobData::field_value, dbCron
     $error .= sprintf('[<p>[ALTER TABLE mod_kit_cronjob_data] %s</p>', $dbCronjobData->getError());
 }
 
+/**
+ * Release 0.51
+ */
+// add field 'relaying' to email provider
+if (!$dbKITprovider->sqlFieldExists(dbKITprovider::field_relaying)) {
+    if (!$dbKITprovider->sqlAlterTableAddField(dbKITprovider::field_relaying, "TINYINT NOT NULL DEFAULT '0'", dbKITprovider::field_smtp_pass)) {
+        $error .= sprintf('[<p>[ALTER TABLE mod_kit_provider] %s</p>', $dbKITprovider->getError());
+    }
+}
 
 // Prompt Errors
 if (!empty($error)) {

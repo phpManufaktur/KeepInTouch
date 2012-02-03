@@ -2749,6 +2749,7 @@ class kitBackend {
         // password and retype password
         $value[dbKITprovider::field_smtp_pass] = sprintf('<input type="password" name="%s" value="" />', dbKITprovider::field_smtp_pass);
         $value['pass_retype'] = '<input type="password" name="pass_retype" value="" />';
+        $value[dbKITprovider::field_relaying] = sprintf('<input type="checkbox" name="%s", value="1"%s />', dbKITprovider::field_relaying, ($provider[dbKITprovider::field_relaying] == 1) ? ' checked="checked"' : '');
         // status
         $select = '';
         foreach ($dbProvider->status_array as $key => $name) {
@@ -2790,6 +2791,8 @@ class kitBackend {
         'value_pass' => $value[dbKITprovider::field_smtp_pass], 
         'label_pass_retype' => kit_label_password_retype, 
         'value_pass_retype' => $value['pass_retype'], 
+        'label_enable_relaying' => kit_label_enable_relaying,
+        'value_enable_relaying' => $value[dbKITprovider::field_relaying],
         'label_status' => kit_label_status, 
         'value_status' => $value[dbKITprovider::field_status], 
         'btn_ok' => kit_btn_ok, 'btn_abort' => kit_btn_abort, 
@@ -2858,6 +2861,7 @@ class kitBackend {
         $new[dbKITprovider::field_smtp_host] = $_REQUEST[dbKITprovider::field_smtp_host];
         $new[dbKITprovider::field_smtp_user] = $_REQUEST[dbKITprovider::field_smtp_user];
         $new[dbKITprovider::field_smtp_pass] = $_REQUEST[dbKITprovider::field_smtp_pass];
+        $new[dbKITprovider::field_relaying] = (isset($_REQUEST[dbKITprovider::field_relaying])) ? 1 : 0;
         $new[dbKITprovider::field_status] = $_REQUEST[dbKITprovider::field_status];
         $new[dbKITprovider::field_update_by] = $tools->getDisplayName();
         $new[dbKITprovider::field_update_when] = date('Y-m-d H:i:s');
