@@ -63,6 +63,7 @@ class kitContactInterface {
 	const kit_categories = 'kit_categories'; // reines Info-Feld - wird nicht in die Feldliste aufgenommen!
 	const kit_intern = 'kit_intern'; // interner Verteiler, für Gruppenzuordnungen von Shops etc.
 	const kit_newsletter_subscribe = 'kit_newsletter_subscribe'; // BOOL - fuer die An- und Abmeldung von Newslettern
+	const kit_birthday = 'kit_birthday';
     
 
     public $field_array = array(
@@ -85,7 +86,8 @@ class kitContactInterface {
             self::kit_email_retype => kit_label_contact_email_retype, 
             self::kit_newsletter => kit_label_newsletter, 
             self::kit_password => kit_label_password, 
-            self::kit_password_retype => kit_label_password_retype
+            self::kit_password_retype => kit_label_password_retype,
+            self::kit_birthday => kit_label_birthday
             );
 	
 	private $field_assign = array(
@@ -97,7 +99,9 @@ class kitContactInterface {
             self::kit_department => dbKITcontact::field_company_department, 
             self::kit_street => dbKITcontactAddress::field_street, 
             self::kit_zip => dbKITcontactAddress::field_zip, 
-            self::kit_city => dbKITcontactAddress::field_city
+            self::kit_city => dbKITcontactAddress::field_city,
+	        self::kit_country => dbKITcontactAddress::field_country,
+	        self::kit_birthday => dbKITcontact::field_birthday
 	        );
 	
 	public $index_array = array(
@@ -117,10 +121,11 @@ class kitContactInterface {
 	        self::kit_phone_mobile => 22, 
             self::kit_fax => 23, 
 	        self::kit_email => 24, 
-	        self::kit_email_retype => 29, // last added field
+	        self::kit_email_retype => 29, 
 	        self::kit_newsletter => 25, 
             self::kit_password => 27, 
-	        self::kit_password_retype => 28
+	        self::kit_password_retype => 28,
+	        self::kit_birthday => 30 // last added field
 	        );
 	
 	const address_type_private = 'private';
@@ -397,6 +402,7 @@ class kitContactInterface {
                     case self::kit_last_name:
                     case self::kit_company:
                     case self::kit_department:
+                    case self::kit_birthday:
                         if (isset($contact_array[$field]) && ! empty($contact_array[$field]) && ($contact_array[$field] != $contact[$this->field_assign[$field]])) {
                             $contact[$this->field_assign[$field]] = $contact_array[$field];
                             $contact_changed = true;
@@ -405,6 +411,7 @@ class kitContactInterface {
                     case self::kit_street:
                     case self::kit_city:
                     case self::kit_zip:
+                    case self::kit_country:
                         if (isset($contact_array[$field]) && ! empty($contact_array[$field]) && ($contact_array[$field] !== $address[$this->field_assign[$field]])) {
                             $address[$this->field_assign[$field]] = $contact_array[$field];
                             $address_changed = true;
@@ -466,10 +473,13 @@ class kitContactInterface {
             }
             if ($address_changed) {
                 if ($address[dbKITcontactAddress::field_id] == - 1) {
-                    // es existiert noch Adressdatensatz, Kontakt ID festhalten
+                    // es existiert noch kein Adressdatensatz, Kontakt ID festhalten
                     $address[dbKITcontactAddress::field_contact_id] = $contact_id;
                     // Adresstyp festlegen
                     $address[dbKITcontactAddress::field_type] = ((isset($contact_array[self::kit_address_type])) && ($contact_array[self::kit_address_type] == self::address_type_business)) ? dbKITcontactAddress::type_business : dbKITcontactAddress::type_private;
+                    $address[dbKITcontactAddress::field_status] = dbKITcontactAddress::status_active;
+                    $address[dbKITcontactAddress::field_update_by] = 'INTERFACE';
+                    if (!isset($address[dbKITcontactAddress::field_country])) $address[dbKITcontactAddress::field_country] = 'DE';
                     // Adresse anlegen
                     $address_id = - 1;
                     if (! $dbContactAddress->sqlInsertRecord($address, $address_id)) {
@@ -478,6 +488,7 @@ class kitContactInterface {
                     }
                     // Kontakt Datensatz aktualisieren
                     $address_ids = explode(',', $contact[dbKITcontact::field_address]);
+                    if (false !== ($key = array_search('-1', $address_ids))) unset($address_ids[$key]);
                     $address_ids[] = $address_id;
                     $contact[dbKITcontact::field_address] = implode(',', $address_ids);
                     $contact[dbKITcontact::field_address_standard] = ($contact[dbKITcontact::field_address_standard] > 0) ? $contact[dbKITcontact::field_address_standard] : $address_id;
@@ -488,6 +499,9 @@ class kitContactInterface {
                     // Adressdatensatz aktualisieren
                     // Adresstyp festlegen
                     $address[dbKITcontactAddress::field_type] = ((isset($contact_array[self::kit_address_type])) && ($contact_array[self::kit_address_type] == self::address_type_business)) ? dbKITcontactAddress::type_business : dbKITcontactAddress::type_private;
+                    $address[dbKITcontactAddress::field_status] = dbKITcontactAddress::status_active;
+                    $address[dbKITcontactAddress::field_update_by] = 'INTERFACE';
+                    if (!isset($address[dbKITcontactAddress::field_country])) $address[dbKITcontactAddress::field_country] = 'DE';
                     $where = array(
                     dbKITcontactAddress::field_id => $address[dbKITcontactAddress::field_id]);
                     if (! $dbContactAddress->sqlUpdateRecord($address, $where)) {
@@ -643,12 +657,12 @@ class kitContactInterface {
             $address = array(
             dbKITcontactAddress::field_city => isset($contact_array[self::kit_city]) ? $contact_array[self::kit_city] : '', 
             dbKITcontactAddress::field_contact_id => $contact_id, 
-            dbKITcontactAddress::field_country => 'DE', 
+            dbKITcontactAddress::field_country => isset($contact_array[self::kit_country]) ? $contact_array[self::kit_country] : 'DE', 
             dbKITcontactAddress::field_street => isset($contact_array[self::kit_street]) ? $contact_array[self::kit_street] : '', 
             dbKITcontactAddress::field_zip => isset($contact_array[self::kit_zip]) ? $contact_array[self::kit_zip] : '', 
             dbKITcontactAddress::field_type => (isset($contact_array[self::kit_address_type]) && ($contact_array[self::kit_address_type] == self::address_type_business)) ? dbKITcontactAddress::type_business : dbKITcontactAddress::type_private, 
             dbKITcontactAddress::field_status => dbKITcontactAddress::status_active, 
-            dbKITcontactAddress::field_update_by => 'SYSTEM', 
+            dbKITcontactAddress::field_update_by => 'INTERFACE', 
             dbKITcontactAddress::field_update_when => date('Y-m-d H:i:s'));
             $address_id = - 1;
             if (! $dbContactAddress->sqlInsertRecord($address, $address_id)) {
@@ -658,7 +672,7 @@ class kitContactInterface {
             // Kontakt Datensatz aktualisieren
             $contact[dbKITcontact::field_address] = $address_id;
             $contact[dbKITcontact::field_address_standard] = $address_id;
-            $contact[dbKITcontact::field_update_by] = 'SYSTEM';
+            $contact[dbKITcontact::field_update_by] = 'INTERFACE';
             $contact[dbKITcontact::field_update_when] = date('Y-m-d H:i:s');
             $where = array(dbKITcontact::field_id => $contact_id);
             if (! $dbContact->sqlUpdateRecord($contact, $where)) {

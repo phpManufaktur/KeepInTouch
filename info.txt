@@ -3,6 +3,13 @@ KeepInTouch - Customer Relationship Management (CRM)
 Ralf Hertsch, Stockholmer Str. 31, 13359 Berlin (Germany)
 http://phpManufaktur.de - ralf.hertsch@phpManufaktur.de
 
+Release 0.52
+2012-02-04
+added - Country support for the KIT interface
+fixed - problem inserting and updating addresses, KIT interface sets wrong 
+  defaults
+added - Birthday date support for the KIT interface
+
 Release 0.51
 2012-02-02
 changed - reply-to handling in class.mail.php
@@ -11,7 +18,7 @@ added - switch for email provider to enable relaying. If relaying is disabled,
 
 Release 0.50
 2011-12-22
-fixed - recursice dependency of kitDirList in precheck.php
+fixed - recursive dependency of kitDirList in precheck.php
 
 Release 0.49
 2011-12-17
