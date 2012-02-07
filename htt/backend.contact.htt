@@ -89,6 +89,23 @@
           {$internet|default: ''}
         </div>
       </div>
+      {if $additional_fields.active == 1}
+      <div class="accordion_tab"><a href="#">{$additional_fields.title}</a></div>
+      <div>
+        <div class="kit_contact_additional_fields">
+          {foreach $additional_fields.fields field}
+          <div class="kccp_label">{$field.label}</div>
+          <div class="kccp_value"><input type="text" name="{$field.name}" value="{$field.value}" /></div>
+          {/foreach}
+          {foreach $additional_fields.notes note}
+          <div class="kccp_label">{$note.label}</div>
+          <div class="kccp_value">
+            <textarea name="{$note.name}">{$note.value}</textarea>
+          </div>
+          {/foreach}
+        </div>
+      </div>
+      {/if}
       <div class="accordion_tab"><a href="#">{$header_categories}</a></div>
       <div>
         <!-- categories -->

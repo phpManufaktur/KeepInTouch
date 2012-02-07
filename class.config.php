@@ -88,6 +88,8 @@ class dbKITcfg extends dbConnectLE {
     const cfgKITadmins = 'cfgKITadmins';
     const cfgMinPwdLen = 'cfgMinPwdLen';
     const cfgClearCompileDir = 'cfgClearCompileDir';
+    const cfgAdditionalFields = 'cfgAdditionalFields';
+    const cfgAdditionalNotes = 'cfgAdditionalNotes';
     
     public $config_array = array(
             array(
@@ -166,7 +168,21 @@ class dbKITcfg extends dbConnectLE {
                     self::type_boolean,
                     '0',
                     'kit_desc_cfg_clear_compile_dir'
-                    )
+                    ),
+            array(
+                'kit_label_cfg_additional_fields',
+                self::cfgAdditionalFields,
+                self::type_array,
+                '',
+                'kit_desc_cfg_additional_fields'
+                ),
+            array(
+                'kit_label_cfg_additional_notes',
+                self::cfgAdditionalNotes,
+                self::type_array,
+                '',
+                'kit_desc_cfg_additional_notes'
+                )
             );
 
     public function __construct($createTables = false) {

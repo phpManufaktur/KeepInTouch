@@ -734,6 +734,7 @@ class kitBackend {
         global $dbMemos;
         global $dbProtocol;
         global $dbRegister;
+        global $dbCfg;
         
         ((isset($_REQUEST[dbKITcontact::field_id])) && (! empty($_REQUEST[dbKITcontact::field_id]))) ? $id = intval($_REQUEST[dbKITcontact::field_id]) : $id = - 1;
         if ($id != - 1) {
@@ -1341,6 +1342,83 @@ class kitBackend {
                     );
         }
         
+        // additional fields
+        $show_additional_fields = false;
+        $additional_fields = $dbCfg->getValue(dbKITcfg::cfgAdditionalFields);
+        if (isset($additional_fields[0]) && !empty($additional_fields[0])) $show_additional_fields = true;
+        $additional_notes = $dbCfg->getValue(dbKITcfg::cfgAdditionalNotes);
+        if (isset($additional_notes[0]) && !empty($additional_notes[0])) $show_additional_fields = true;
+        
+        if ($show_additional_fields) {
+            $fields = array();
+            foreach ($additional_fields as $field_data) {
+                if (empty($field_data)) continue;
+                if (false === (strpos($field_data, '|'))) continue;
+                list($fid, $label) = explode('|', $field_data);
+                $fid = (int) $fid;
+                if (!isset($item[sprintf('contact_free_field_%d', $fid)])) continue;
+                $i = $item[sprintf('contact_free_field_%d', $fid)];
+                $SQL = sprintf("SELECT %s FROM %s WHERE %s='%s' AND %s='%s'",
+                    dbKITmemos::field_memo,
+                    $dbMemos->getTableName(),
+                    dbKITmemos::field_id,
+                    $i,
+                    dbKITmemos::field_status,
+                    dbKITmemos::status_active
+                    );
+                $memo = array();
+                if (!$dbMemos->sqlExec($SQL, $memo)) {
+                    $this->setError(sprintf('[%s - %s] %s', __METHOD__, __LINE__, $dbMemos->getError()));
+                    return false;
+                }
+                $value = (count($memo) > 0) ? $memo[0][dbKITmemos::field_memo] : '';
+                $fields[] = array(
+                    'label' => trim($label),
+                    'value' => $value,
+                    'name' => sprintf('contact_free_field_%d', $fid)
+                );
+            }
+            $notes = array();
+            foreach ($additional_notes as $note_data) {
+                if (empty($note_data)) continue;
+                if (false === (strpos($note_data, '|'))) continue;
+                list($fid, $label) = explode('|', $note_data);
+                $fid = (int) $fid;
+                if (!isset($item[sprintf('contact_free_note_%d', $fid)])) continue;
+                $i = $item[sprintf('contact_free_note_%d', $fid)];
+                $SQL = sprintf("SELECT %s FROM %s WHERE %s='%s' AND %s='%s'",
+                    dbKITmemos::field_memo,
+                    $dbMemos->getTableName(),
+                    dbKITmemos::field_id,
+                    $i,
+                    dbKITmemos::field_status,
+                    dbKITmemos::status_active
+                    );
+                $memo = array();
+                if (!$dbMemos->sqlExec($SQL, $memo)) {
+                    $this->setError(sprintf('[%s - %s] %s', __METHOD__, __LINE__, $dbMemos->getError()));
+                    return false;
+                }
+                $value = (count($memo) > 0) ? $memo[0][dbKITmemos::field_memo] : '';
+                $notes[] = array(
+                    'label' => trim($label),
+                    'value' => $value,
+                    'name' => sprintf('contact_free_note_%d', $fid)
+                );
+            }
+            
+            $additional = array(
+                'active' => 1,
+                'title' => kit_label_additional_fields,
+                'fields' => $fields,
+                'notes' => $notes
+            );
+        }
+        else {
+            $additional = array(    
+                'active' => 0
+            );
+        }
         $data = array(
                 'form_name' => $form_name, 
                 'form_action' => $this->page_link, 
@@ -1438,7 +1516,9 @@ class kitBackend {
                 'label_protocol' => kit_label_protocol, 
                 'value_protocol' => $protocol,
                 // Administration
-                'administration' => $administration
+                'administration' => $administration,
+                // additional fields & notes
+                'additional_fields' => $additional
                 );
         return $parser->get($this->template_path . 'backend.contact.htt', $data);
     } // dlgContact()
@@ -1912,7 +1992,6 @@ class kitBackend {
             $message .= kit_msg_protocol_updated;
         } // check Protocol
         
-
         /*
 		 * STATUS
 		 */
@@ -1984,6 +2063,14 @@ class kitBackend {
             $data = $this->contact_array;
             $id = $data[dbKITcontact::field_id];
             unset($data[dbKITcontact::field_id]);
+            // unset the free fields and notes! (will be saved later)
+            unset($data[dbKITcontact::field_free_1]);
+            unset($data[dbKITcontact::field_free_2]);
+            unset($data[dbKITcontact::field_free_3]);
+            unset($data[dbKITcontact::field_free_4]);
+            unset($data[dbKITcontact::field_free_5]);
+            unset($data[dbKITcontact::field_free_note_1]);
+            unset($data[dbKITcontact::field_free_note_2]);
             $data[dbKITcontact::field_update_by] = $tools->getDisplayName();
             $data[dbKITcontact::field_update_when] = date('Y-m-d H:i:s');
             if (! $dbContact->sqlInsertRecord($data, $id)) {
@@ -2000,6 +2087,14 @@ class kitBackend {
             $where[dbKITcontact::field_id] = $id;
             $data = $this->contact_array;
             unset($data[dbKITcontact::field_id]);
+            // unset the free fields and notes! (will be saved later)
+            unset($data[dbKITcontact::field_free_1]);
+            unset($data[dbKITcontact::field_free_2]);
+            unset($data[dbKITcontact::field_free_3]);
+            unset($data[dbKITcontact::field_free_4]);
+            unset($data[dbKITcontact::field_free_5]);
+            unset($data[dbKITcontact::field_free_note_1]);
+            unset($data[dbKITcontact::field_free_note_2]);
             $data[dbKITcontact::field_update_by] = $tools->getDisplayName();
             $data[dbKITcontact::field_update_when] = date('Y-m-d H:i:s');
             if (! $dbContact->sqlUpdateRecord($data, $where)) {
@@ -2128,6 +2223,90 @@ class kitBackend {
                 $message .= kit_msg_register_status_updated;
             }
         }
+        
+        /*
+         * user defined fields
+         */
+        // get the old user defined fields for compare        
+        $SQL = sprintf("SELECT %s,%s,%s,%s,%s,%s,%s FROM %s WHERE %s='%s'",
+            dbKITcontact::field_free_1,
+            dbKITcontact::field_free_2,
+            dbKITcontact::field_free_3,
+            dbKITcontact::field_free_4,
+            dbKITcontact::field_free_5,
+            dbKITcontact::field_free_note_1,
+            dbKITcontact::field_free_note_2,
+            $dbContact->getTableName(),
+            dbKITcontact::field_id,
+            $id
+            );
+        $field_array = array();
+        if (!$dbContact->sqlExec($SQL, $field_array)) {
+            $this->setError(sprintf('[%s - %s] %s', __METHOD__, __LINE__, $dbContact->getError()));
+            return false;
+        }
+        $field_array = $field_array[0];
+        $user_defined_fields = array('contact_free_note_%d', 'contact_free_field_%d');
+        foreach ($user_defined_fields as $user_defined_field) {
+            // walk through the user defined fields & notes and look if they ar set
+            for ($i=1;$i < 6; $i++) {
+                if (isset($_REQUEST[sprintf($user_defined_field, $i)])) {
+                    $fid = $field_array[sprintf($user_defined_field, $i)];
+                    if (($fid < 1) && (!empty($_REQUEST[sprintf($user_defined_field, $i)]))) {
+                        // field is not empty and does not exists in in dbKITmemo
+                        $data = array(
+                            dbKITmemos::field_contact_id => $id,
+                            dbKITmemos::field_memo => trim($_REQUEST[sprintf($user_defined_field, $i)]),
+                            dbKITmemos::field_status => dbKITmemos::status_active,
+                            dbKITmemos::field_update_by => 'SYSTEM',
+                            dbKITmemos::field_update_when => date('Y-m-d H:i:s')
+                        );
+                        $mid = -1;
+                        if (!$dbMemos->sqlInsertRecord($data, $mid)) {
+                            $this->setError(sprintf('[%s - %s] %s', __METHOD__, __LINE__, $dbMemos->getError()));
+                            return false;
+                        }
+                        // update contact record!
+                        $where = array(    
+                            dbKITcontact::field_id => $id
+                        );
+                        $data = array(
+                            sprintf($user_defined_field, $i) => $mid
+                        );
+                        if (!$dbContact->sqlUpdateRecord($data, $where)) {
+                            $this->setError(sprintf('[%s - %s] %s', __METHOD__, __LINE__, $dbContact->getError()));
+                            return false;
+                        }
+                    }
+                    elseif ($fid > 0) {
+                        // field already exists in dbKITmemo - get the data field
+                        $where = array(
+                            dbKITmemos::field_id => $fid
+                        );
+                        $memo = array();
+                        if (!$dbMemos->sqlSelectRecord($where, $memo)) {
+                            $this->setError(sprintf('[%s - %s] %s', __METHOD__, __LINE__, $dbMemos->getError()));
+                            return false;
+                        }
+                        $memo = $memo[0];
+                        if (trim($_REQUEST[sprintf($user_defined_field, $i)] != $memo[dbKITmemos::field_memo])) {
+                            // entries differ - update record
+                            $data = array(
+                                dbKITmemos::field_memo => trim($_REQUEST[sprintf($user_defined_field, $i)]),
+                                dbKITmemos::field_status => dbKITmemos::status_active,
+                                dbKITmemos::field_update_by => 'SYSTEM',
+                                dbKITmemos::field_update_when => date('Y-m-d H:i:s')
+                            );
+                            if (!$dbMemos->sqlUpdateRecord($data, $where)) {
+                                $this->setError(sprintf('[%s - %s] %s', __METHOD__, __LINE__, $dbMemos->getError()));
+                                return false;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        
         
         $this->setMessage($message);
         if ($this->contact_array[dbKITcontact::field_status] == dbKITcontact::status_deleted) {

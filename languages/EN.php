@@ -147,6 +147,8 @@ define('kit_country_suisse', 'Suisse');
 define('kit_country_undefined', '');
 
 define('kit_desc_cfg_add_app_tab', 'Additional TAB \'s Add to simply switch to other add-ons can. TAB \'s separated by comma, building identifier | URL');
+define('kit_desc_cfg_additional_fields', 'Sie können bis zu 5 zusätzliche Eingabefelder in KIT definieren, diese werden im Kontakt Dialog angezeigt und in kitForm zur Verfügung gestellt.<br/>Definieren Sie die Felder in der Form <NUMMER>|<BEZEICHNUNG> und trennen Sie die Felder mit einem Komma, z.B.: "1|Lieblingsfarbe,2|Haustier".');
+define('kit_desc_cfg_additional_notes', 'Sie können 2 zusätzliche Notizfelder in KIT definieren, diese werden im Kontakt Dialog angezeigt und in kitForm zur Verfügung gestellt.<br />Definieren Sie die Felder in der Form <NUMMER>|<BEZEICHNUNG> und trennen Sie die Felder mit einem Komma, z.B.: "1|Letztes Telefonat,2|Diagnose".');
 define('kit_desc_cfg_clear_compile_dir', 'Sie können die von der Dwoo Template Engine kompilierten Templates zurücksetzen und ein erneutes Schreiben erzwingen. Setzen Sie den Schalter dazu auf 1, KIT setzt den Schalter nach dem Reset automatisch zurück.');
 define('kit_desc_cfg_connect_wb_users', 'KIT You can connect with the WB user management. If set, automatically assumes KIT newly created user and lock in KIT blocked in user administration, or deleted users. Contacts to whom you will assign to the category <b>catWBUser KIT</b> in the user administration with the WB group <b>kitContact</b> Remove created the assignment, the contacts are locked in the user management. <i>administrators</i> can not be associated with KIT for security reasons.');
 define('kit_desc_cfg_cronjob_key', 'To prevent cronjobs to be executed by a simple call to the <b>cronjob.php</b>, the specified keys passed as parameters. The call of the file is <b>cronjob.php?<i>key=KEY</i></b>.');
@@ -297,6 +299,7 @@ define('kit_intro_preview', '<p>Check the preview in the <b>HTML</b> and in the 
 define('kit_intro_register_installation', '<p>KeepInTouch Register your installation</p><p>This allows you to charge the full functionality of KeepInTouch test.</p>');
 
 define('kit_label_add_new_address', 'Add Additional Address');
+define('kit_label_additional_fields', 'Benutzerdefinierte Felder');
 define('kit_label_address_city', 'city');
 define('kit_label_address_street', 'street');
 define('kit_label_address_type', 'type the address');
@@ -310,6 +313,8 @@ define('kit_label_audience', 'Recipient');
 define('kit_label_birthday', 'birthday');
 define('kit_label_categories', 'Intern'); // instead of category
 define('kit_label_cfg_add_app_tab', 'Additional TAB\'s add');
+define('kit_label_cfg_additional_fields', 'Zusätzliche KIT Felder');
+define('kit_label_cfg_additional_notes', 'Zusätzliche KIT Notizen');
 define('kit_label_cfg_array_add_items', 'Add more items');
 define('kit_label_cfg_clear_compile_dir', 'Templates zurücksetzen');
 define('kit_label_cfg_connect_wb_users', 'Connect to WB users');
@@ -357,6 +362,13 @@ define('kit_label_csv_export', 'CSV Export');
 define('kit_label_csv_import', 'Import CSV');
 define('kit_label_distribution', 'distribution');
 define('kit_label_enable_relaying', 'Use Relaying');
+define('kit_label_free_field_1', 'Freies Datenfeld 1');
+define('kit_label_free_field_2', 'Freies Datenfeld 2');
+define('kit_label_free_field_3', 'Freies Datenfeld 3');
+define('kit_label_free_field_4', 'Freies Datenfeld 4');
+define('kit_label_free_field_5', 'Freies Datenfeld 5');
+define('kit_label_free_note_1', 'Freies Textfeld 1');
+define('kit_label_free_note_2', 'Freies Textfeld 2');
 define('kit_label_html_format', 'HTML Format');
 define('kit_label_id', 'id');
 define('kit_label_identifier', 'identifier');

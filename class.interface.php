@@ -64,7 +64,13 @@ class kitContactInterface {
 	const kit_intern = 'kit_intern'; // interner Verteiler, für Gruppenzuordnungen von Shops etc.
 	const kit_newsletter_subscribe = 'kit_newsletter_subscribe'; // BOOL - fuer die An- und Abmeldung von Newslettern
 	const kit_birthday = 'kit_birthday';
-    
+	const kit_free_field_1 = 'kit_free_field_1';
+	const kit_free_field_2 = 'kit_free_field_2';
+	const kit_free_field_3 = 'kit_free_field_3';
+	const kit_free_field_4 = 'kit_free_field_4';
+	const kit_free_field_5 = 'kit_free_field_5';
+    const kit_free_note_1 = 'kit_free_note_1';
+    const kit_free_note_2 = 'kit_free_note_2';
 
     public $field_array = array(
             self::kit_title => kit_label_person_title, 
@@ -87,10 +93,17 @@ class kitContactInterface {
             self::kit_newsletter => kit_label_newsletter, 
             self::kit_password => kit_label_password, 
             self::kit_password_retype => kit_label_password_retype,
-            self::kit_birthday => kit_label_birthday
+            self::kit_birthday => kit_label_birthday,
+            self::kit_free_field_1 => kit_label_free_field_1,
+            self::kit_free_field_2 => kit_label_free_field_2,
+            self::kit_free_field_3 => kit_label_free_field_3,
+            self::kit_free_field_4 => kit_label_free_field_4,
+            self::kit_free_field_5 => kit_label_free_field_5,
+            self::kit_free_note_1 => kit_label_free_note_1,
+            self::kit_free_note_2 => kit_label_free_note_2            
             );
 	
-	private $field_assign = array(
+	public $field_assign = array(
 	        self::kit_title => dbKITcontact::field_person_title, 
             self::kit_title_academic => dbKITcontact::field_person_title_academic, 
             self::kit_first_name => dbKITcontact::field_person_first_name, 
@@ -101,7 +114,14 @@ class kitContactInterface {
             self::kit_zip => dbKITcontactAddress::field_zip, 
             self::kit_city => dbKITcontactAddress::field_city,
 	        self::kit_country => dbKITcontactAddress::field_country,
-	        self::kit_birthday => dbKITcontact::field_birthday
+	        self::kit_birthday => dbKITcontact::field_birthday,
+	        self::kit_free_field_1 => dbKITcontact::field_free_1,
+	        self::kit_free_field_2 => dbKITcontact::field_free_2,
+	        self::kit_free_field_3 => dbKITcontact::field_free_3,
+	        self::kit_free_field_4 => dbKITcontact::field_free_4,
+	        self::kit_free_field_5 => dbKITcontact::field_free_5,
+	        self::kit_free_note_1 => dbKITcontact::field_free_note_1,
+	        self::kit_free_note_2 => dbKITcontact::field_free_note_2	        
 	        );
 	
 	public $index_array = array(
@@ -125,7 +145,14 @@ class kitContactInterface {
 	        self::kit_newsletter => 25, 
             self::kit_password => 27, 
 	        self::kit_password_retype => 28,
-	        self::kit_birthday => 30 // last added field
+	        self::kit_birthday => 30, 
+	        self::kit_free_field_1 => 31,
+	        self::kit_free_field_2 => 32,
+	        self::kit_free_field_3 => 33,
+	        self::kit_free_field_4 => 34,
+	        self::kit_free_field_5 => 35,
+	        self::kit_free_note_1 => 36,
+	        self::kit_free_note_2 => 37 // last added field
 	        );
 	
 	const address_type_private = 'private';
