@@ -34,7 +34,6 @@ if (defined('WB_PATH')) {
 }
 // end include LEPTON class.secure.php
 
-
 require_once (WB_PATH . '/modules/' . basename(dirname(__FILE__)) . '/initialize.php');
 require_once (WB_PATH . '/modules/' . basename(dirname(__FILE__)) . '/class.mail.php');
 require_once (WB_PATH . '/modules/' . basename(dirname(__FILE__)) . '/class.editor.php');
@@ -56,6 +55,20 @@ global $dbContactAddress;
 if (! is_object($parser)) $parser = new Dwoo();
 if (! is_object($dbContact)) $dbContact = new dbKITcontact();
 if (! is_object($dbContactAddress)) $dbContactAddress = new dbKITcontactAddress();
+
+// check dependencies for KIT
+global $PRECHECK;
+global $database;
+require_once(WB_PATH.'/modules/'.basename(dirname(__FILE__)).'/precheck.php');
+if (isset($PRECHECK['KIT'])) {
+	if (isset($PRECHECK['KIT']['kit_dirlist'])) {
+		$table = TABLE_PREFIX.'addons';
+		$version = $database->get_one("SELECT `version` FROM $table WHERE `directory`='kit_dirlist'", MYSQL_ASSOC);
+		if (!version_compare($version, $PRECHECK['KIT']['kit_dirlist']['VERSION'], $PRECHECK['KIT']['kit_dirlist']['OPERATOR'])) {
+			trigger_error(sprintf(kit_error_please_update, 'kitDirList', $version, $PRECHECK['KIT']['kit_dirlist']['VERSION']), E_USER_ERROR);
+		}		
+	}
+}
 
 class kitBackend {
     

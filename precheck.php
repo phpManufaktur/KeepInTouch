@@ -39,12 +39,6 @@ if (defined('LEPTON_VERSION')) {
 	if (versionCompare(LEPTON_VERSION, '2.0.0', '<')) {
 		$PRECHECK['WB_ADDONS']['dwoo'] = array('VERSION' => '0.11', 'OPERATOR' => '>=');
 	}
-	/* 
-	 * dont't check for kitDirList to avoid recursive dependencies ...
-	if (file_exists(WB_PATH.'/modules/kit_dirlist/include.php')) {
-	    $PRECHECK['WB_ADDONS']['kit_dirlist'] = array('VERSION' => '0.27', 'OPERATOR' => '>=');
-	}
-	*/
 }
 else {
 	// WebsiteBaker
@@ -54,11 +48,11 @@ else {
 		'dbconnect_le'	=> array('VERSION' => '0.64', 'OPERATOR' => '>='),
 		'dwoo' => array('VERSION' => '0.10', 'OPERATOR' => '>=')
 	);
-	/*
-	if (file_exists(WB_PATH.'/modules/kit_dirlist/include.php')) {
-	    $PRECHECK['WB_ADDONS']['kit_dirlist'] = array('VERSION' => '0.27', 'OPERATOR' => '>=');
-	}
-	*/
+}
+
+// SPECIAL: check dependencies at runtime but not at installation!
+if (file_exists(WB_PATH.'/modules/kit_dirlist/include.php')) {
+	$PRECHECK['KIT']['kit_dirlist'] = array('VERSION' => '0.27', 'OPERATOR' => '>=');
 }
 
 global $database;

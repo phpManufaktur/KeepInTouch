@@ -229,7 +229,7 @@ if ($database->is_error()) {
 }
 
 // delete no longer needed files and directories
-$delete_array = array('kit.php', 'class.newsletter.link.php', 'class.response.php', 'class.request.php', 'droplets', 'class.droplets.php', 'class.dialogs.php', 'dialogs');
+$delete_array = array('kit.php', 'class.newsletter.link.php', 'class.response.php', 'class.request.php', 'droplets', 'class.droplets.php', 'class.dialogs.php', 'dialogs', 'frontend.css');
 foreach ($delete_array as $item) {
 	if (file_exists(WB_PATH.'/modules/kit/'.$item)) {
 		if (!rm_full_dir(WB_PATH.'/modules/kit/'.$item)) {

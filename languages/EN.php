@@ -35,6 +35,11 @@ if (defined('WB_PATH')) {
 }
 // end include LEPTON class.secure.php
 
+if ('á' != "\xc3\xa1") {
+	// important: language files must be saved as UTF-8 (without BOM)
+	trigger_error('The language file <b>'.basename(__FILE__).'</b> is damaged, it must be saved <b>UTF-8</b> encoded!', E_USER_ERROR);
+}
+
 // Deutsche Modulbeschreibung
 $module_description = 'dbKeepInTouch (KIT) is a contact details management system that provides a variety of centralized applications.';
 
@@ -197,6 +202,7 @@ define('kit_error_insufficient_permissions', '<p>you do not have permission to m
 define('kit_error_open_file', '<p><b>File %s</b> could not be opened</p>');
 define('kit_error_page_exists', '<p>The page with the basic designation <b>%s</b> already exists</p>');
 define('kit_error_page_not_found', '<p>The side with the PAGE_ID <b>%d</b> was not found</p>');
+define('kit_error_please_update',	'<p>Bitte aktualisieren Sie <b>%s</b>! Installiert ist die Version <b>%s</b>, benoetigt wird die Version <b>%s</b> oder hoeher!</p>');
 define('kit_error_preview_id_invalid', '<p><b>preview with the id %05d</b> was not found</p>');
 define('kit_error_preview_id_missing', '<p>There is no preview ID was specified</p>');
 define('kit_error_record_for_email_exists', '<p>There is already a record with <b>ID %03d</b> for the e-mail address <b>%s</b>, please update this record instead of one To create new</p>');

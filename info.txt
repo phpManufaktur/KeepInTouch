@@ -3,6 +3,13 @@ KeepInTouch - Customer Relationship Management (CRM)
 Ralf Hertsch, Stockholmer Str. 31, 13359 Berlin (Germany)
 http://phpManufaktur.de - ralf.hertsch@phpManufaktur.de
 
+Release 0.53
+2012-02-14
+removed - frontend.css is no longer needed
+changed: introduce $_SESSION['KIT_HTML_REQUEST'] to mark fields which should not
+  processed by xssPrevent()
+added: check the language files for correct UTF-8 encoding
+
 Release 0.52
 2012-02-04
 added - Country support for the KIT interface
