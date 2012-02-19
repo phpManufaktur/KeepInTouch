@@ -2,13 +2,13 @@
 
 /**
  * KeepInTouch (KIT)
- * 
+ *
  * @author Ralf Hertsch (ralf.hertsch@phpmanufaktur.de)
  * @link http://phpmanufaktur.de
  * @copyright 2011
  * @license GNU GPL (http://www.gnu.org/licenses/gpl.html)
  * @version $Id$
- * 
+ *
  * FOR VERSION- AND RELEASE NOTES PLEASE LOOK AT INFO.TXT!
  */
 
@@ -156,6 +156,8 @@ define('kit_desc_cfg_additional_fields', 'Sie können bis zu 5 zusätzliche Eing
 define('kit_desc_cfg_additional_notes', 'Sie können 2 zusätzliche Notizfelder in KIT definieren, diese werden im Kontakt Dialog angezeigt und in kitForm zur Verfügung gestellt.<br />Definieren Sie die Felder in der Form <NUMMER>|<BEZEICHNUNG> und trennen Sie die Felder mit einem Komma, z.B.: "1|Letztes Telefonat,2|Diagnose".');
 define('kit_desc_cfg_clear_compile_dir', 'Sie können die von der Dwoo Template Engine kompilierten Templates zurücksetzen und ein erneutes Schreiben erzwingen. Setzen Sie den Schalter dazu auf 1, KIT setzt den Schalter nach dem Reset automatisch zurück.');
 define('kit_desc_cfg_connect_wb_users', 'KIT You can connect with the WB user management. If set, automatically assumes KIT newly created user and lock in KIT blocked in user administration, or deleted users. Contacts to whom you will assign to the category <b>catWBUser KIT</b> in the user administration with the WB group <b>kitContact</b> Remove created the assignment, the contacts are locked in the user management. <i>administrators</i> can not be associated with KIT for security reasons.');
+define('kit_desc_cfg_contact_language_default', 'Sprache, die als Voreinstellung für neue Kontakte verwendet werden soll');
+define('kit_desc_cfg_contact_language_select', "Legen Sie fest, wie die Auswahl der Kontakt Sprache in Dialogen angezeigt werden soll: '<b>local</b>' verwendet die lokale Bezeichnung, z.B. <i>Deutsch</i>, '<b>english</b>' verwendet die internationale Bezeichnung in <i>Englisch</i> und '<b>iso</b>' verwendet das ISO 639-1 Länderkürzel, z.B. <i>DE</i>.<br />Voreinstellung ist <b>local</b>");
 define('kit_desc_cfg_cronjob_key', 'To prevent cronjobs to be executed by a simple call to the <b>cronjob.php</b>, the specified keys passed as parameters. The call of the file is <b>cronjob.php?<i>key=KEY</i></b>.');
 define('kit_desc_cfg_developer_mode', 'Allows the programmer to add configuration parameters.');
 define('kit_desc_cfg_google_maps_api_key', 'For the use and display the cards you need a <a href="http://code.google.com/intl/de-DE/apis/maps/signup.html" target="_blank">Google Maps API Key</a>.');
@@ -165,6 +167,7 @@ define('kit_desc_cfg_kit_response_page', 'Kit needed for the display of the dial
 define('kit_desc_cfg_limit_contact_list', 'Determine how many entries in the contacts list to display per page.');
 define('kit_desc_cfg_max_invalid_login', 'Maximum number of failed login attempts by users before the account is locked.');
 define('kit_desc_cfg_min_pwd_len', 'Mindeslänge used the password');
+define('kit_desc_cfg_newsletter_language_marker', 'Fügen Sie den Werten für die Newsletter jeweils am Anfang den Sprachcode in eckigen Klammern hinzu, z.B. <i><b>[DE]</b> Kundeninformation</i> oder <i><b>[EN]</b> Customer information</i> dann gibt KIT in den Dialog die Newsletter sprachabhängig aus und entfernt gleichzeitig den Sprachcode aus der Anzeige. <b>1</b> schaltet die Funktion ein, <b>0</b> schaltet sie aus.');
 define('kit_desc_cfg_nl_adjust_register', 'Smooths the call of the newsletter dialogue table with kit_register kit_contact from (Use this setting only when requested by the Support! 0 = OFF, 1 = ON ).');
 define('kit_desc_cfg_nl_max_package_size', 'Sets the maximum number of recipients per packet during the newsletters, the individual packets are processed by a cron job by degrees, the highest allowable value is 100..');
 define('kit_desc_cfg_nl_set_time_limit', 'Determines the duration in seconds that the newsletter script max may. need to send out the mails. If the value is too low, you will get a runtime error, increase the value as required in steps (DEFAULT = 60 ).');
@@ -324,6 +327,8 @@ define('kit_label_cfg_additional_notes', 'Zusätzliche KIT Notizen');
 define('kit_label_cfg_array_add_items', 'Add more items');
 define('kit_label_cfg_clear_compile_dir', 'Templates zurücksetzen');
 define('kit_label_cfg_connect_wb_users', 'Connect to WB users');
+define('kit_label_cfg_contact_language_default', 'Kontakt Sprache, Vorgabe');
+define('kit_label_cfg_contact_language_select', 'Kontakt Sprache, Auswahl');
 define('kit_label_cfg_cronjob_key', 'key for cronjobs');
 define('kit_label_cfg_developer_mode', 'Developer Mode');
 define('kit_label_cfg_google_maps_api_key', 'Google Maps API Key');
@@ -333,6 +338,7 @@ define('kit_label_cfg_kit_reponse_page', 'KIT response page');
 define('kit_label_cfg_limit_contact_list', 'max entries contact list. ');
 define('kit_label_cfg_max_invalid_login', 'Maximum login attempts');
 define('kit_label_cfg_min_pwd_len', 'min password length');
+define('kit_label_cfg_newsletter_language_marker', 'Newsletter, Sprachmarkierungen');
 define('kit_label_cfg_nl_adjust_register', 'kit_register Syndicate');
 define('kit_label_cfg_nl_max_package_size', 'Max packet size');
 define('kit_label_cfg_nl_salutation', 'salutation');
@@ -352,6 +358,7 @@ define('kit_label_contact_edit', 'Edit Contact');
 define('kit_label_contact_email', 'email');
 define('kit_label_contact_email_retype', 'E-Mail wiederholen');
 define('kit_label_contact_fax', 'Fax');
+define('kit_label_contact_language', 'Kontakt Sprache');
 define('kit_label_contact_phone', 'Phone');
 define('kit_label_contact_phone_mobile', 'Mobile');
 define('kit_label_contact_since', 'Contact Date');
@@ -453,6 +460,7 @@ define('kit_list_sort_company', 'Company');
 define('kit_list_sort_deleted', 'deleted items');
 define('kit_list_sort_email', 'email');
 define('kit_list_sort_firstname', 'first name');
+define('kit_list_sort_language', 'Kontakt Sprache');
 define('kit_list_sort_lastname', 'Last Name');
 define('kit_list_sort_locked', 'locked entries');
 define('kit_list_sort_phone', 'Number');

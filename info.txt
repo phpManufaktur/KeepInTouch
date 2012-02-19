@@ -3,12 +3,21 @@ KeepInTouch - Customer Relationship Management (CRM)
 Ralf Hertsch, Stockholmer Str. 31, 13359 Berlin (Germany)
 http://phpManufaktur.de - ralf.hertsch@phpManufaktur.de
 
+Release 0.54
+2012-02-19
+added - language table (ISO 639-1) for prefered languages
+added - field "contact language" in KIT contact dialog
+added - field "kit_contact_language" in KIT interface 
+added - KIT options cfgContactLanguageDefault and cfgContactLanguageSelect
+added - KIT option cfgNewsletterLanguageMarkers enables to define language
+  depending newsletters
+
 Release 0.53
 2012-02-14
 removed - frontend.css is no longer needed
-changed: introduce $_SESSION['KIT_HTML_REQUEST'] to mark fields which should not
+changed - introduce $_SESSION['KIT_HTML_REQUEST'] to mark fields which should not
   processed by xssPrevent()
-added: check the language files for correct UTF-8 encoding
+added - check the language files for correct UTF-8 encoding
 
 Release 0.52
 2012-02-04

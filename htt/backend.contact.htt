@@ -21,6 +21,8 @@
           <div class="kccl_value {$class_type|default: ''}">{$value_type|default: ''}</div>
           <div class="kccl_label {$class_access|default: ''}">{$label_access|default: ''}</div>
           <div class="kccl_value {$class_access|default: ''}">{$value_access|default: ''}</div>
+          <div class="kccl_label {$class_language|default: ''}">{$label_language|default: ''}</div>
+          <div class="kccl_value {$class_language|default: ''}">{$value_language|default: ''}</div>
           <div class="kccl_label {$class_status|default: ''}">{$label_status|default: ''}</div>
           <div class="kccl_value {$class_status|default: ''}">{$value_status|default: ''}</div>
           <div class="kccl_empty_row"></div>

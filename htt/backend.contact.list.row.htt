@@ -11,4 +11,5 @@
   <td>{$street|default: ''}</td>
   <td>{$email|default: ''}</td>
   <td>{$phone|default: ''}</td>
+  <td>{$language|default: ''}</td>
 </tr>

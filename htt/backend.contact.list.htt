@@ -19,7 +19,8 @@
         <col width="9%" />
         <col width="14%" />
         <col width="14%" />
-        <col width="15%" />
+        <col width="13%" />
+        <col width="2%" />
       </colgroup>
       <tr>
         <th>{$header_select|default: ''}</th>
@@ -33,6 +34,7 @@
         <th>{$header_street|default: ''}</th>
         <th>{$header_email|default: ''}</th>
         <th>{$header_phone|default: ''}</th>
+        <th>{$header_language|default: ''}</th>
       </tr>
       {$rows}
     </table>

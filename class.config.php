@@ -2,19 +2,19 @@
 
 /**
  * KeepInTouch (KIT)
- * 
+ *
  * @author Ralf Hertsch (ralf.hertsch@phpmanufaktur.de)
  * @link http://phpmanufaktur.de
  * @copyright 2011
  * @license GNU GPL (http://www.gnu.org/licenses/gpl.html)
  * @version $Id$
- * 
+ *
  * FOR VERSION- AND RELEASE NOTES PLEASE LOOK AT INFO.TXT!
  */
 
 // include class.secure.php to protect this file and the whole CMS!
-if (defined('WB_PATH')) {	
-	if (defined('LEPTON_VERSION')) include(WB_PATH.'/framework/class.secure.php'); 
+if (defined('WB_PATH')) {
+	if (defined('LEPTON_VERSION')) include(WB_PATH.'/framework/class.secure.php');
 } else {
 	$oneback = "../";
 	$root = $oneback;
@@ -23,8 +23,8 @@ if (defined('WB_PATH')) {
 		$root .= $oneback;
 		$level += 1;
 	}
-	if (file_exists($root.'/framework/class.secure.php')) { 
-		include($root.'/framework/class.secure.php'); 
+	if (file_exists($root.'/framework/class.secure.php')) {
+		include($root.'/framework/class.secure.php');
 	} else {
 		trigger_error(sprintf("[ <b>%s</b> ] Can't include class.secure.php!", $_SERVER['SCRIPT_NAME']), E_USER_ERROR);
 	}
@@ -37,13 +37,13 @@ require_once (WB_PATH . '/modules/' . basename(dirname(__FILE__)) . '/initialize
 if (!defined('KIT_INSTALL_RUNNING')) {
     global $dbCfg;
     if (! is_object($dbCfg)) $dbCfg = new dbKITcfg();
-    
+
     //	define('USE_CUSTOM_FILES', $dbCfg->getValue(dbKITcfg::cfgUseCustomFiles));
     define('KIT_SESSION_ID', $dbCfg->getValue(dbKITcfg::cfgSessionID));
 }
 
 class dbKITcfg extends dbConnectLE {
-    
+
     const field_id = 'cfg_id';
     const field_name = 'cfg_name';
     const field_type = 'cfg_type';
@@ -53,10 +53,10 @@ class dbKITcfg extends dbConnectLE {
     const field_status = 'cfg_status';
     const field_update_by = 'cfg_update_by';
     const field_update_when = 'cfg_update_when';
-    
+
     const status_active = 1;
     const status_deleted = 0;
-    
+
     const type_undefined = 0;
     const type_array = 7;
     const type_boolean = 1;
@@ -66,16 +66,22 @@ class dbKITcfg extends dbConnectLE {
     const type_path = 5;
     const type_string = 6;
     const type_url = 8;
-    
-    public $type_array = array(self::type_undefined => '-UNDEFINED-', 
-    self::type_array => 'ARRAY', self::type_boolean => 'BOOLEAN', 
-    self::type_email => 'E-MAIL', self::type_float => 'FLOAT', 
-    self::type_integer => 'INTEGER', self::type_path => 'PATH', 
-    self::type_string => 'STRING', self::type_url => 'URL');
-    
+
+    public $type_array = array(
+    		self::type_undefined => '-UNDEFINED-',
+        self::type_array => 'ARRAY',
+    		self::type_boolean => 'BOOLEAN',
+        self::type_email => 'E-MAIL',
+    		self::type_float => 'FLOAT',
+        self::type_integer => 'INTEGER',
+    		self::type_path => 'PATH',
+        self::type_string => 'STRING',
+    		self::type_url => 'URL'
+    		);
+
     private $createTables = false;
     private $message = '';
-    
+
     const cfgDeveloperMode = 'cfgDeveloperMode';
     const cfgGoogleMapsAPIkey = 'cfgGoogleMapsAPIkey';
     const cfgMaxInvalidLogin = 'cfgMaxInvalidLogin';
@@ -90,100 +96,124 @@ class dbKITcfg extends dbConnectLE {
     const cfgClearCompileDir = 'cfgClearCompileDir';
     const cfgAdditionalFields = 'cfgAdditionalFields';
     const cfgAdditionalNotes = 'cfgAdditionalNotes';
-    
+    const cfgContactLanguageDefault = 'cfgContactLanguageDefault';
+    const cfgContactLanguageSelect = 'cfgContactLanguageSelect';
+    const cfgNewsletterLanguageMarkers = 'cfgNewsletterLanguageMarkers';
+
     public $config_array = array(
-            array(
-                'kit_label_cfg_google_maps_api_key', 
-                self::cfgGoogleMapsAPIkey,
-                self::type_string, 
-                '', 
-                'kit_desc_cfg_google_maps_api_key'
-                ), 
-            array(
-                'kit_label_cfg_max_invalid_login', 
-                self::cfgMaxInvalidLogin, 
-                self::type_integer, 
-                '10', 
-                'kit_desc_cfg_max_invalid_login'
-                ), 
-            array(
-                'kit_label_cfg_add_app_tab', 
-                self::cfgAddAppTab, 
-                self::type_array, 
-                '', 
-                'kit_desc_cfg_add_app_tab'
-                ), 
-            array(
-                'kit_label_cfg_cronjob_key', 
-                self::cfgCronjobKey, 
-                self::type_string, 
-                '', 
-                'kit_desc_cfg_cronjob_key'
-                ), 
-            array(
-                'kit_label_cfg_session_id', 
-                self::cfgSessionID, 
-                self::type_string, 
-                'kit7543_', 
-                'kit_desc_cfg_session_id'
-                ), 
-            array(
-                'kit_label_cfg_sort_contact_list', 
-                self::cfgSortContactList, 
-                self::type_integer, 
-                '0', 
-                'kit_desc_cfg_sort_contact_list'
-                ), 
-            array(
-                'kit_label_cfg_limit_contact_list', 
-                self::cfgLimitContactList, 
-                self::type_integer, 
-                '50', 
-                'kit_desc_cfg_limit_contact_list'
-                ), 
-            array(
-                'kit_label_cfg_connect_wb_users', 
-                self::cfgConnectWBusers, 
-                self::type_boolean, 
-                '0', 
-                'kit_desc_cfg_connect_wb_users'
-                ), 
-            array(
-                'kit_label_cfg_kit_admins', 
-                self::cfgKITadmins, 
-                self::type_array, 
-                '', 
-                'kit_desc_cfg_kit_admins'
-                ), 
-            array(
-                'kit_label_cfg_min_pwd_len', 
-                self::cfgMinPwdLen, 
-                self::type_integer, 
-                7, 
-                'kit_desc_cfg_min_pwd_len'
-                ),
-            array(
-                    'kit_label_cfg_clear_compile_dir',
-                    self::cfgClearCompileDir,
-                    self::type_boolean,
-                    '0',
-                    'kit_desc_cfg_clear_compile_dir'
-                    ),
-            array(
-                'kit_label_cfg_additional_fields',
-                self::cfgAdditionalFields,
-                self::type_array,
-                '',
-                'kit_desc_cfg_additional_fields'
-                ),
-            array(
-                'kit_label_cfg_additional_notes',
-                self::cfgAdditionalNotes,
-                self::type_array,
-                '',
-                'kit_desc_cfg_additional_notes'
-                )
-            );
+        array(
+            'kit_label_cfg_google_maps_api_key',
+            self::cfgGoogleMapsAPIkey,
+            self::type_string,
+            '',
+            'kit_desc_cfg_google_maps_api_key'
+            ),
+        array(
+            'kit_label_cfg_max_invalid_login',
+            self::cfgMaxInvalidLogin,
+            self::type_integer,
+            '10',
+            'kit_desc_cfg_max_invalid_login'
+            ),
+        array(
+            'kit_label_cfg_add_app_tab',
+            self::cfgAddAppTab,
+            self::type_array,
+            '',
+            'kit_desc_cfg_add_app_tab'
+            ),
+        array(
+            'kit_label_cfg_cronjob_key',
+            self::cfgCronjobKey,
+            self::type_string,
+            '',
+            'kit_desc_cfg_cronjob_key'
+            ),
+        array(
+            'kit_label_cfg_session_id',
+            self::cfgSessionID,
+            self::type_string,
+            'kit7543_',
+            'kit_desc_cfg_session_id'
+            ),
+        array(
+            'kit_label_cfg_sort_contact_list',
+            self::cfgSortContactList,
+            self::type_integer,
+            '0',
+            'kit_desc_cfg_sort_contact_list'
+            ),
+        array(
+            'kit_label_cfg_limit_contact_list',
+            self::cfgLimitContactList,
+            self::type_integer,
+            '50',
+            'kit_desc_cfg_limit_contact_list'
+            ),
+        array(
+            'kit_label_cfg_connect_wb_users',
+            self::cfgConnectWBusers,
+            self::type_boolean,
+            '0',
+            'kit_desc_cfg_connect_wb_users'
+            ),
+        array(
+            'kit_label_cfg_kit_admins',
+            self::cfgKITadmins,
+            self::type_array,
+            '',
+            'kit_desc_cfg_kit_admins'
+            ),
+        array(
+            'kit_label_cfg_min_pwd_len',
+            self::cfgMinPwdLen,
+            self::type_integer,
+            7,
+            'kit_desc_cfg_min_pwd_len'
+            ),
+        array(
+            'kit_label_cfg_clear_compile_dir',
+            self::cfgClearCompileDir,
+            self::type_boolean,
+            '0',
+            'kit_desc_cfg_clear_compile_dir'
+            ),
+        array(
+            'kit_label_cfg_additional_fields',
+            self::cfgAdditionalFields,
+            self::type_array,
+            '',
+            'kit_desc_cfg_additional_fields'
+            ),
+        array(
+            'kit_label_cfg_additional_notes',
+            self::cfgAdditionalNotes,
+            self::type_array,
+            '',
+            'kit_desc_cfg_additional_notes'
+            ),
+    		array(
+    				'kit_label_cfg_contact_language_default',
+    				self::cfgContactLanguageDefault,
+    				self::type_string,
+    				'de',
+    				'kit_desc_cfg_contact_language_default'
+    				),
+    		array(
+    				'kit_label_cfg_contact_language_select',
+    				self::cfgContactLanguageSelect,
+    				self::type_string,
+    				'locale',
+    				'kit_desc_cfg_contact_language_select'
+    				),
+    		array(
+    				'kit_label_cfg_newsletter_language_marker',
+    				self::cfgNewsletterLanguageMarkers,
+    				self::type_boolean,
+    				'1',
+    				'kit_desc_cfg_newsletter_language_marker'
+    				)
+        );
 
     public function __construct($createTables = false) {
         $this->createTables = $createTables;
@@ -218,40 +248,40 @@ class dbKITcfg extends dbConnectLE {
         }
     } // __construct()
 
-    
+
     public function setMessage($message) {
         $this->message = $message;
     } // setMessage()
 
-    
+
     /**
      * Get Message from $this->message;
-     * 
+     *
      * @return STR $this->message
      */
     public function getMessage() {
         return $this->message;
     } // getMessage()
 
-    
+
     /**
      * Check if $this->message is empty
-     * 
+     *
      * @return BOOL
      */
     public function isMessage() {
         return (bool) ! empty($this->message);
     } // isMessage
 
-    
+
     /**
      * Aktualisiert den Wert $new_value des Datensatz $name
-     * 
+     *
      * @param $new_value STR - Wert, der uebernommen werden soll
      * @param $id INT - ID des Datensatz, dessen Wert aktualisiert werden soll
-     * 
+     *
      * @return BOOL Ergebnis
-     * 
+     *
      */
     public function setValueByName($new_value, $name) {
         $where = array();
@@ -268,7 +298,7 @@ class dbKITcfg extends dbConnectLE {
         return $this->setValue($new_value, $config[0][self::field_id]);
     } // setValueByName()
 
-    
+
     /**
      * Haengt einen Slash an das Ende des uebergebenen Strings
      * wenn das letzte Zeichen noch kein Slash ist
@@ -321,10 +351,10 @@ class dbKITcfg extends dbConnectLE {
 
     /**
      * Aktualisiert den Wert $new_value des Datensatz $id
-     * 
+     *
      * @param $new_value STR - Wert, der uebernommen werden soll
      * @param $id INT - ID des Datensatz, dessen Wert aktualisiert werden soll
-     * 
+     *
      * @return BOOL Ergebnis
      */
     public function setValue($new_value, $id) {
@@ -397,12 +427,12 @@ class dbKITcfg extends dbConnectLE {
         return true;
     } // setValue()
 
-    
+
     /**
      * Gibt den angeforderten Wert zurueck
-     * 
-     * @param $name - Bezeichner 
-     * 
+     *
+     * @param $name - Bezeichner
+     *
      * @return WERT entsprechend des TYP
      */
     public function getValue($name) {
@@ -446,7 +476,7 @@ class dbKITcfg extends dbConnectLE {
         return $result;
     } // getValue()
 
-    
+
     public function checkConfig() {
         foreach ($this->config_array as $item) {
             $where = array();

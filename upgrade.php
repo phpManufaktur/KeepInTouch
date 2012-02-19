@@ -2,29 +2,29 @@
 
 /**
  * KeepInTouch (KIT)
- * 
+ *
  * @author Ralf Hertsch (ralf.hertsch@phpmanufaktur.de)
  * @link http://phpmanufaktur.de
  * @copyright 2011
  * @license GNU GPL (http://www.gnu.org/licenses/gpl.html)
  * @version $Id$
- * 
+ *
  * FOR VERSION- AND RELEASE NOTES PLEASE LOOK AT INFO.TXT!
  */
 
 // try to include LEPTON class.secure.php to protect this file and the whole CMS!
-if (defined('WB_PATH')) {	
+if (defined('WB_PATH')) {
 	if (defined('LEPTON_VERSION')) include(WB_PATH.'/framework/class.secure.php');
 } elseif (file_exists($_SERVER['DOCUMENT_ROOT'].'/framework/class.secure.php')) {
-	include($_SERVER['DOCUMENT_ROOT'].'/framework/class.secure.php'); 
+	include($_SERVER['DOCUMENT_ROOT'].'/framework/class.secure.php');
 } else {
 	$subs = explode('/', dirname($_SERVER['SCRIPT_NAME']));	$dir = $_SERVER['DOCUMENT_ROOT'];
 	$inc = false;
 	foreach ($subs as $sub) {
 		if (empty($sub)) continue; $dir .= '/'.$sub;
-		if (file_exists($dir.'/framework/class.secure.php')) { 
-			include($dir.'/framework/class.secure.php'); $inc = true;	break; 
-		} 
+		if (file_exists($dir.'/framework/class.secure.php')) {
+			include($dir.'/framework/class.secure.php'); $inc = true;	break;
+		}
 	}
 	if (!$inc) trigger_error(sprintf("[ <b>%s</b> ] Can't include LEPTON class.secure.php!", $_SERVER['SCRIPT_NAME']), E_USER_ERROR);
 }
@@ -67,9 +67,9 @@ if (!$dbKITcontact->sqlFieldExists(dbKITcontact::field_newsletter)) {
 // check field_distribution --> #0.29
 if (!$dbKITcontact->sqlFieldExists(dbKITcontact::field_distribution)) {
   if (!$dbKITcontact->sqlAlterTableAddField(dbKITcontact::field_distribution, "VARCHAR(255) NOT NULL DEFAULT ''", dbKITcontact::field_newsletter)) {
- 		$error .= sprintf('<p>[Upgrade] %s </p>', $dbKITcontact->getError()); 	
+ 		$error .= sprintf('<p>[Upgrade] %s </p>', $dbKITcontact->getError());
   }
-}		
+}
 
 // install tables for newsletter module
 $dbKITnewsletterTemplates = new dbKITnewsletterTemplates();
@@ -102,9 +102,9 @@ if (!$dbKITnewsletterArchive->sqlTableExists()) {
 // check support for distributions --> #0.29
 if (!$dbKITnewsletterArchive->sqlFieldExists(dbKITnewsletterArchive::field_distributions)) {
   if (!$dbKITnewsletterArchive->sqlAlterTableAddField(dbKITnewsletterArchive::field_distributions, "VARCHAR(255) NOT NULL DEFAULT ''", dbKITnewsletterArchive::field_groups)) {
- 		$error .= sprintf('<p>[Upgrade] %s </p>', $dbKITnewsletterArchive->getError()); 	
+ 		$error .= sprintf('<p>[Upgrade] %s </p>', $dbKITnewsletterArchive->getError());
   }
-}		
+}
 
 
 $dbKITnewsletterProcess = new dbKITnewsletterProcess();
@@ -116,9 +116,9 @@ if (!$dbKITnewsletterProcess->sqlTableExists()) {
 // check process for distributions --> #0.29
 if (!$dbKITnewsletterProcess->sqlFieldExists(dbKITnewsletterProcess::field_distribution_ids)) {
   if (!$dbKITnewsletterProcess->sqlAlterTableAddField(dbKITnewsletterProcess::field_distribution_ids, "VARCHAR(255) NOT NULL DEFAULT ''", dbKITnewsletterProcess::field_register_ids)) {
- 		$error .= sprintf('<p>[Upgrade] %s </p>', $dbKITnewsletterProcess->getError()); 	
+ 		$error .= sprintf('<p>[Upgrade] %s </p>', $dbKITnewsletterProcess->getError());
   }
-}		
+}
 
 
 $dbCronjobData = new dbCronjobData();
@@ -128,14 +128,14 @@ if (!$dbCronjobData->sqlTableExists()) {
 	}
 	else {
 		// Blindwerte eintragen
-		$datas = array(	array(dbCronjobData::field_item => dbCronjobData::item_last_call, dbCronjobData::field_value => ''), 
+		$datas = array(	array(dbCronjobData::field_item => dbCronjobData::item_last_call, dbCronjobData::field_value => ''),
 										array(dbCronjobData::field_item => dbCronjobData::item_last_job, dbCronjobData::field_value => ''),
 										array(dbCronjobData::field_item => dbCronjobData::item_last_nl_id, dbCronjobData::field_value => ''));
 		foreach ($datas as $data) {
 			if (!$dbCronjobData->sqlInsertRecord($data)) {
 				$error .= sprintf('<p>[Installation] %s</p>', $dbCronjobData->getError());
 			}
-		}				
+		}
 	}
 }
 
@@ -161,7 +161,7 @@ if (!$dbImport->sqlTableExists()) {
 }
 
 /**
- * BUGFIX correct a problem of KIT < 0.34 with duplicate active entries for the same e-mail address within dbKITregister  
+ * BUGFIX correct a problem of KIT < 0.34 with duplicate active entries for the same e-mail address within dbKITregister
  */
 $SQL = sprintf("SELECT %s, %s, COUNT(*) AS cnt FROM %s WHERE %s='%s' GROUP BY %s HAVING cnt>1",
 								dbKITregister::field_contact_id,
@@ -204,7 +204,7 @@ else {
 
 /**
  * Release 0.43
- * Remove /dialogs, /droplets, kit.php, class.request.php and class.repsonse.php and use kitForms instead 
+ * Remove /dialogs, /droplets, kit.php, class.request.php and class.repsonse.php and use kitForms instead
  */
 
 // remove mod_kit_newsletter_links
@@ -252,8 +252,25 @@ if (!$dbCronjobData->sqlAlterTableChangeField(dbCronjobData::field_value, dbCron
 // add field 'relaying' to email provider
 if (!$dbKITprovider->sqlFieldExists(dbKITprovider::field_relaying)) {
     if (!$dbKITprovider->sqlAlterTableAddField(dbKITprovider::field_relaying, "TINYINT NOT NULL DEFAULT '0'", dbKITprovider::field_smtp_pass)) {
-        $error .= sprintf('[<p>[ALTER TABLE mod_kit_provider] %s</p>', $dbKITprovider->getError());
+        $error .= sprintf('<p>[ALTER TABLE mod_kit_provider] %s</p>', $dbKITprovider->getError());
     }
+}
+
+/**
+ * Release 0.54
+ */
+// new table mod_kit_languages
+$dbKITlanguages = new dbKITlanguages();
+if (!$dbKITlanguages->sqlTableExists()) {
+	if (!$dbKITlanguages->initTables()) {
+		$error .= sprintf('<p>[CREATE TABLE mod_kit_languages] %s</p>', $dbKITlanguages->getError());
+	}
+}
+// add field 'contact_language' to contact db
+if (!$dbKITcontact->sqlFieldExists(dbKITcontact::field_contact_language)) {
+	if (!$dbKITcontact->sqlAlterTableAddField(dbKITcontact::field_contact_language, "VARCHAR(2) NOT NULL DEFAULT 'en'", dbKITcontact::field_contact_note)) {
+		$error .= sprintf('<p>[ALTER TABLE mod_kit_contact] %s</p>', $dbKITcontact->getError());
+	}
 }
 
 // Prompt Errors

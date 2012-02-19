@@ -2,29 +2,29 @@
 
 /**
  * KeepInTouch (KIT)
- * 
+ *
  * @author Ralf Hertsch (ralf.hertsch@phpmanufaktur.de)
  * @link http://phpmanufaktur.de
  * @copyright 2011
  * @license GNU GPL (http://www.gnu.org/licenses/gpl.html)
  * @version $Id$
- * 
+ *
  * FOR VERSION- AND RELEASE NOTES PLEASE LOOK AT INFO.TXT!
  */
 
 // try to include LEPTON class.secure.php to protect this file and the whole CMS!
-if (defined('WB_PATH')) {	
+if (defined('WB_PATH')) {
 	if (defined('LEPTON_VERSION')) include(WB_PATH.'/framework/class.secure.php');
 } elseif (file_exists($_SERVER['DOCUMENT_ROOT'].'/framework/class.secure.php')) {
-	include($_SERVER['DOCUMENT_ROOT'].'/framework/class.secure.php'); 
+	include($_SERVER['DOCUMENT_ROOT'].'/framework/class.secure.php');
 } else {
 	$subs = explode('/', dirname($_SERVER['SCRIPT_NAME']));	$dir = $_SERVER['DOCUMENT_ROOT'];
 	$inc = false;
 	foreach ($subs as $sub) {
 		if (empty($sub)) continue; $dir .= '/'.$sub;
-		if (file_exists($dir.'/framework/class.secure.php')) { 
-			include($dir.'/framework/class.secure.php'); $inc = true;	break; 
-		} 
+		if (file_exists($dir.'/framework/class.secure.php')) {
+			include($dir.'/framework/class.secure.php'); $inc = true;	break;
+		}
 	}
 	if (!$inc) trigger_error(sprintf("[ <b>%s</b> ] Can't include LEPTON class.secure.php!", $_SERVER['SCRIPT_NAME']), E_USER_ERROR);
 }
@@ -43,7 +43,8 @@ if (!defined('KIT_INSTALL_RUNNING')) {
 	global $dbWBusers;
 	global $dbWBgroups;
 	global $dbCfg;
-	
+	global $dbLanguages;
+
 	if (!is_object($tools)) $tools = new kitTools();
 	if (!is_object($dbCfg)) $dbCfg = new dbKITcfg();
 	if (!is_object($dbRegister)) $dbRegister = new dbKITregister();
@@ -56,169 +57,172 @@ if (!defined('KIT_INSTALL_RUNNING')) {
 	if (!is_object($dbWBusers)) $dbWBusers = new dbWBusers();
 	if (!is_object($dbWBgroups)) $dbWBgroups = new dbWBgroups();
 	if (!is_object($dbContact)) $dbContact = new dbKITcontact();
+	if (!is_object($dbLanguages)) $dbLanguages = new dbKITlanguages();
 }
 
 /**
  * General data container for all contacts
  */
 class dbKITcontact extends dbConnectLE {
-	
+
 	const field_id										= 'contact_id';
-	
+
 	const field_type									= 'contact_type';
 	const field_access								= 'contact_access';
 	const field_status								= 'contact_status';
-	
+
 	const field_contact_identifier		= 'contact_identifier';
-	
+
 	const field_company_title					= 'contact_company_title';
 	const field_company_name					= 'contact_company_name';
 	const field_company_department		= 'contact_company_dept';
 	const field_company_additional		= 'contact_company_add';
-	
+
 	const field_person_title					= 'contact_person_title';
 	const field_person_title_academic	= 'contact_person_title_academic';
 	const field_person_first_name			= 'contact_person_first_name';
 	const field_person_last_name			= 'contact_person_last_name';
 	const field_person_function				= 'contact_person_function';
-	
+
 	const field_address								= 'contact_address_ids';
 	const field_address_standard			= 'contact_address_standard';
-	
+
 	const field_category							= 'contact_category_ids';
 	const field_newsletter						= 'contact_newsletter_ids';
 	const field_distribution					= 'contact_distribution_ids';
-	
+
 	const field_internet							= 'contact_internet';
-	
+
 	const field_phone									= 'contact_phone';
 	const field_phone_standard				= 'contact_phone_standard';
-	
+
 	const field_email									= 'contact_email';
 	const field_email_standard				= 'contact_email_standard';
-	
+
 	const field_birthday							= 'contact_birthday';
 	const field_contact_since					= 'contact_since';
 	const field_contact_note					= 'contact_note';
-	
+
+	const field_contact_language      = 'contact_language';
+
 	const field_picture_id						= 'contact_picture_id';
-	
+
 	const field_free_1								= 'contact_free_field_1';
 	const field_free_2								= 'contact_free_field_2';
 	const field_free_3								= 'contact_free_field_3';
 	const field_free_4								= 'contact_free_field_4';
 	const field_free_5								= 'contact_free_field_5';
-	
+
 	const field_free_note_1						= 'contact_free_note_1';
 	const field_free_note_2						= 'contact_free_note_2';
-	
+
 	const field_update_when						= 'contact_update_when';
 	const field_update_by							= 'contact_update_by';
-	
+
 	const access_internal							= 'accInternal'; //1;
 	const access_public								= 'accPublic'; //2;
-	
+
 	public $access_array = array(
 		self::access_internal		=> kit_contact_access_internal,
 		self::access_public			=> kit_contact_access_public
 	);
-	
+
 	const type_person									= 'typePerson';//1;
 	const type_company								= 'typeCompany';//2;
 	const type_institution						= 'typeInstitution'; //3;
-	
+
 	public $type_array = array(
 		self::type_person				=> kit_contact_type_person,
 		self::type_company			=> kit_contact_type_company,
 		self::type_institution	=> kit_contact_type_institution
 	);
-	
+
 	const status_active								= 'statusActive'; //1;
 	const status_locked								= 'statusLocked'; //2;
 	const status_deleted							= 'statusDeleted'; //-1;
-	
+
 	public $status_array = array(
 		self::status_active			=> kit_contact_status_active,
 		self::status_locked			=> kit_contact_status_locked,
 		self::status_deleted		=> kit_contact_status_deleted
 	);
-	
+
 	const company_title_none					= 'companyNone'; //0;
 	const company_title_to						= 'companyTo'; //1;
-	
+
 	public $company_title_array = array(
 		self::company_title_none	=> kit_contact_company_title_none,
 		self::company_title_to		=> kit_contact_company_title_to
 	);
-	
+
 	const person_title_mister					= 'titleMister'; //1;
 	const person_title_lady						= 'titleLady'; //2;
-	
+
 	public $person_title_array = array(
 		self::person_title_mister		=> kit_contact_person_title_mister,
 		self::person_title_lady			=> kit_contact_person_title_lady
 	);
-	
+
 	const person_title_academic_none	= 'academicNone'; //0;
 	const person_title_academic_dr		= 'academicDr'; //1;
 	const person_title_academic_prof	= 'academicProf'; //2;
-	
+
 	public $person_title_academic_array = array(
 		self::person_title_academic_none	=> kit_contact_person_title_academic_none,
 		self::person_title_academic_dr		=> kit_contact_person_title_academic_dr,
 		self::person_title_academic_prof	=> kit_contact_person_title_academic_prof
 	);
-	
+
 	const category_wb_user				= 'catWBUser'; //1;
 	//const category_newsletter			= 'catNewsletter'; //2;
-	
+
 	public $category_array = array(
 		self::category_wb_user		=> kit_contact_category_wb_user,
 //		self::category_newsletter	=> kit_contact_category_newsletter
 	);
-	
+
 	const newsletter_newsletter		= 'newsNewsletter';
-	
+
 	public $newsletter_array = array(
 		self::newsletter_newsletter	=> kit_contact_newsletter_newsletter
 	);
-	
+
 	const distribution_control		= 'distControl';
-	
+
 	public $distribution_array = array(
 		self::distribution_control	=> kit_contact_distribution_control
 	);
-	
+
 	const internet_homepage				= 'inetHomepage'; //1;
 	const internet_xing						= 'inetXing'; //2;
 	const internet_facebook				= 'inetFacebook'; //3;
 	const internet_twitter				= 'inetTwitter'; //4;
-	
+
 	public $internet_array = array(
 		self::internet_facebook			=> kit_contact_internet_facebook,
 		self::internet_homepage			=> kit_contact_internet_homepage,
 		self::internet_twitter			=> kit_contact_internet_twitter,
 		self::internet_xing					=> kit_contact_internet_xing
 	);
-	
+
 	const phone_phone							= 'phonePhone'; //1;
 	const phone_handy							= 'phoneHandy'; //2;
 	const phone_fax								= 'phoneFax'; //3;
-	
+
 	public $phone_array = array(
 		self::phone_phone						=> kit_contact_phone_phone,
 		self::phone_handy						=> kit_contact_phone_handy,
 		self::phone_fax							=> kit_contact_phone_fax
 	);
-	
+
 	const email_private						= 'emailPrivate'; //1;
 	const email_business					= 'emailBusiness'; //2;
-	
+
 	public $email_array = array(
 		self::email_private					=> kit_contact_email_private,
 		self::email_business				=> kit_contact_email_business
 	);
-	
+
 	public $create_tables = false;
 
   /**
@@ -256,6 +260,7 @@ class dbKITcontact extends dbConnectLE {
 		$this->addFieldDefinition(self::field_birthday, "VARCHAR(20) NOT NULL DEFAULT ''");
 		$this->addFieldDefinition(self::field_contact_since, "VARCHAR(20) NOT NULL DEFAULT ''");
 		$this->addFieldDefinition(self::field_contact_note, "INT NOT NULL DEFAULT '-1'");
+		$this->addFieldDefinition(self::field_contact_language, "VARCHAR(2) NOT NULL DEFAULT 'en'");
 		$this->addFieldDefinition(self::field_free_1, "INT NOT NULL DEFAULT '-1'");
 		$this->addFieldDefinition(self::field_free_2, "INT NOT NULL DEFAULT '-1'");
 		$this->addFieldDefinition(self::field_free_3, "INT NOT NULL DEFAULT '-1'");
@@ -281,8 +286,8 @@ class dbKITcontact extends dbConnectLE {
 			$this->checkWBusers();
 		}
 	} // __construct
-	
-	
+
+
 	public function initTables() {
 		if (!$this->sqlTableExists()) {
 			if (!$this->sqlCreateTable()) {
@@ -298,7 +303,7 @@ class dbKITcontact extends dbConnectLE {
 		}
 		return true;
 	} // initTables()
-	
+
 	public function initArrays() {
 		global $dbContactArrayCfg;
 		global $dbContactAddress;
@@ -334,7 +339,7 @@ class dbKITcontact extends dbConnectLE {
 			$where = array();
 			$where[dbKITcontactArrayCfg::field_type] = $type;
 			$where[dbKITcontactArrayCfg::field_status] = dbKITcontactArrayCfg::status_active;
-			$result = array(); 
+			$result = array();
 			if (!$dbContactArrayCfg->sqlSelectRecord($where, $result)) {
 				$this->setError(sprintf('[%s - %s] %s', __METHOD__, __LINE__, $dbContactArrayCfg->getError()));
 				return false;
@@ -369,15 +374,15 @@ class dbKITcontact extends dbConnectLE {
 			case dbKITcontactArrayCfg::type_phone:
 				$this->phone_array = $result_array; break;
 			case dbKITcontactArrayCfg::type_email:
-				$this->email_array = $result_array; break;		
+				$this->email_array = $result_array; break;
 			case dbKITcontactArrayCfg::type_protocol:
 				$dbProtocol->type_array = $result_array; break;
-			
+
 			endswitch;
 		}
 		return true;
 	} // initArrays()
-	
+
 	/**
 	 * Fuegt einen Protokolleintrag fuer Systemereignisse ein
 	 */
@@ -398,10 +403,10 @@ class dbKITcontact extends dbConnectLE {
 		}
 		return true;
 	}
-	
+
 	/**
 	 * Return the standard email address for the desired $id
-	 * 
+	 *
 	 * @param INT $id
 	 * @return STR
 	 */
@@ -415,14 +420,14 @@ class dbKITcontact extends dbConnectLE {
 		}
 		if (count($addr) < 1) return false;
 		$addr = $addr[0];
-		(!empty($addr[dbKITcontact::field_email_standard])) ? $standard = $addr[dbKITcontact::field_email_standard] : $standard = 0; 
+		(!empty($addr[dbKITcontact::field_email_standard])) ? $standard = $addr[dbKITcontact::field_email_standard] : $standard = 0;
 		$email_array = explode(';', $addr[dbKITcontact::field_email]);
 		if (count($email_array) < 1) return false;
 		if (strpos($email_array[$standard], '|') === false) return false;
 		$standard_mail = explode('|', $email_array[$standard]);
-		return $standard_mail[1];		
+		return $standard_mail[1];
 	} // getStandardEMailByID()
-	
+
 	public function getStandardPhoneByID($id) {
 		$where = array();
 		$where[self::field_id] = $id;
@@ -445,17 +450,17 @@ class dbKITcontact extends dbConnectLE {
 			return '';
 		}
 	} //getStandardPhoneByID()
-	
+
 	/**
 	 * Return the contact by the requested ID
-	 * 
+	 *
 	 * @param INT $id
 	 * @param REFERENCE ARRAY $contact
 	 * @param boolean $isDeleted - Search for deleted addresses
 	 * @return boolean
 	 */
 	public function getContactByID($id=-1, &$contact=array(), $isDeleted=false) {
-		$check_deleted = $isDeleted ? '=' : '!='; 
+		$check_deleted = $isDeleted ? '=' : '!=';
 		// search for contact id
 		$SQL = sprintf(	"SELECT * FROM %s WHERE %s='%s' AND %s%s'%s'",
 										$this->getTableName(),
@@ -477,10 +482,10 @@ class dbKITcontact extends dbConnectLE {
 		$contact = $contact[0];
 		return true;
 	} // getContactByID()
-	
+
 	/**
 	 * Return the address requested by the address_ID
-	 * 
+	 *
 	 * @param integer $address_id
 	 * @param reference array $address
 	 * @param boolean $isDeleted
@@ -510,7 +515,7 @@ class dbKITcontact extends dbConnectLE {
 		$address = $address[0];
 		return true;
 	} // getAddressByID()
-	
+
 	/**
 	 * Connect to WB users and balance Users with Contacts
 	 * @return BOOL
@@ -541,7 +546,7 @@ class dbKITcontact extends dbConnectLE {
 				$this->setError(sprintf('[%s - %s] %s', __METHOD__, __LINE__, $dbRegister->getError()));
 				return false;
 			}
-			
+
 			foreach ($users as $user) {
 				// WB User in KIT einfuegen...
 				$data = array(
@@ -577,9 +582,9 @@ class dbKITcontact extends dbConnectLE {
 				if (!$dbRegister->sqlInsertRecord($data)) {
 					$this->setError(sprintf('[%s - %s] %s', __METHOD__, __LINE__, $dbRegister->getError()));
 					return false;
-				}			
+				}
 			}
-			
+
 			$SQL = sprintf(	"SELECT * FROM %s WHERE %s='%s' AND ((%s LIKE '%s') OR (%s LIKE '%s,%%') OR (%s LIKE '%%,%s') OR (%s LIKE '%%%s,%%'))",
 											$this->getTableName(),
 											dbKITcontact::field_status,
@@ -597,8 +602,8 @@ class dbKITcontact extends dbConnectLE {
 				$this->setError(sprintf('[%s - %s] %s', __METHOD__, ____LINE__, $this->getError()));
 				return false;
 			}
-			
-			// pruefen ob eine WB Gruppe fuer KIT existiert 
+
+			// pruefen ob eine WB Gruppe fuer KIT existiert
 			$where = array(dbWBgroups::field_name => dbWBgroups::kitWBgoup);
 			$groups = array();
 			if (!$dbWBgroups->sqlSelectRecord($where, $groups)) {
@@ -617,7 +622,7 @@ class dbKITcontact extends dbConnectLE {
 			else {
 				$kit_group_id = $groups[0][dbWBgroups::field_group_id];
 			}
-			
+
 			foreach ($contacts as $contact) {
 				if (!empty($contact[dbKITcontact::field_email])) {
 					$emails = explode(',', $contact[dbKITcontact::field_email]);
@@ -676,9 +681,9 @@ class dbKITcontact extends dbConnectLE {
 		}
 		return true;
 	} // checkWBusers()
-	
+
 	/**
-	 * Get the primary E-Mail adresses of the defined admins	 
+	 * Get the primary E-Mail adresses of the defined admins
 	 * @param REFERENCE $primary_emails
 	 * @return BOOL if Admins are defined
 	 */
@@ -687,12 +692,12 @@ class dbKITcontact extends dbConnectLE {
 		$primary_emails = $dbCfg->getValue(dbKITcfg::cfgKITadmins);
 		return (count($primary_emails) < 1) ? false : true;
 	} // getAdmins()
-	
+
 } // class dbKITcontact
 
 
 class dbKITcontactArrayCfg extends dbConnectLE {
-	
+
 	const field_id							= 'array_id';
 	const field_type						= 'array_type';
 	const field_identifier			= 'array_identifier';
@@ -700,7 +705,7 @@ class dbKITcontactArrayCfg extends dbConnectLE {
 	const field_status					= 'array_status';
 	const field_update_when			= 'array_update_when';
 	const field_update_by				= 'array_update_by';
-	
+
 	const type_undefined				= 'typeUndefined'; //-1;
 	const type_type							= 'typeType'; //1;
 	const type_access						= 'typeAccess'; //2;
@@ -714,7 +719,7 @@ class dbKITcontactArrayCfg extends dbConnectLE {
 	const type_email						= 'typeEmail'; //9;
 	const type_protocol					= 'typeProtocol'; //10;
 	const type_distribution			= 'typeDistribution';
-	
+
 	public $type_array = array(
 //		self::type_undefined				=> kit_contact_array_type_undefined,
 		self::type_type							=> kit_contact_array_type_type,
@@ -730,17 +735,17 @@ class dbKITcontactArrayCfg extends dbConnectLE {
 		self::type_protocol					=> kit_contact_array_type_protocol,
 		self::type_distribution			=> kit_contact_array_type_distribution
 	);
-	
+
 	const status_active								= 'statusActive'; //1;
 	const status_deleted							= 'statusDeleted'; //-1;
-	
+
 	public $status_array = array(
 		self::status_active			=> kit_contact_status_active,
 		self::status_deleted		=> kit_contact_status_deleted
 	);
-	
+
 	public $create_tables = false;
-	
+
 	public function __construct($create_tables = false) {
 		parent::__construct();
 		$this->create_tables = $create_tables;
@@ -761,8 +766,8 @@ class dbKITcontactArrayCfg extends dbConnectLE {
 			$this->initTables();
 		}
 	} // __construct()
-	
-	
+
+
 	public function initTables() {
 		if (!$this->sqlTableExists()) {
 			if (!$this->sqlCreateTable()) {
@@ -772,7 +777,7 @@ class dbKITcontactArrayCfg extends dbConnectLE {
 		}
 		return true;
 	} // initTables()
-	
+
 	public function checkArray($type, $identifier, $value) {
 		$where = array();
 		$where[self::field_type] = $type;
@@ -811,12 +816,12 @@ class dbKITcontactArrayCfg extends dbConnectLE {
 		}
 		return true;
 	} // checkArray()
-		
+
 } // class dbKITcontactArrayCfg
 
 
 class dbKITcontactAddress extends dbConnectLE {
-	
+
 	const field_id					= 'address_id';
 	const field_contact_id	= 'contact_id';
 	const field_type				= 'address_type';
@@ -827,13 +832,13 @@ class dbKITcontactAddress extends dbConnectLE {
 	const field_status			= 'address_status';
 	const field_update_by		= 'address_update_by';
 	const field_update_when	= 'address_update_when';
-	
+
 	const type_undefined		= 'typeUndefined'; //0;
 	const type_private			= 'typePrivate'; //1;
 	const type_business			= 'typeBusiness'; //2;
 	const type_delivery			= 'typeDelivery';
-	const type_post_office	= 'typePOB'; 
-	
+	const type_post_office	= 'typePOB';
+
 	public $type_array = array(
 		self::type_undefined			=> kit_contact_address_type_undefined,
 		self::type_private				=> kit_contact_address_type_private,
@@ -841,31 +846,31 @@ class dbKITcontactAddress extends dbConnectLE {
 		self::type_delivery				=> kit_contact_address_type_delivery,
 		self::type_post_office		=> kit_contact_address_type_post_office_box
 	);
-	
+
 	const country_undefined	= '';
 	const country_germany		= 'DE';
 	const country_austria		= 'AU';
 	const country_suisse		= 'CH';
-	
+
 	public $country_array = array(
 		self::country_undefined		=> kit_country_undefined,
 		self::country_germany			=> kit_country_germany,
 		self::country_suisse			=> kit_country_suisse,
 		self::country_austria			=> kit_country_austria
 	);
-	
+
 	const status_active								= 'statusActive'; //1;
 	const status_locked								= 'statusLocked'; //2;
 	const status_deleted							= 'statusDeleted'; //-1;
-	
+
 	public $status_array = array(
 		self::status_active			=> kit_contact_status_active,
 	//	self::status_locked			=> kit_contact_status_locked,
 		self::status_deleted		=> kit_contact_status_deleted
 	);
-	
+
 	public $create_tables = false;
-	
+
 	public function __construct($create_tables = false) {
 		parent::__construct();
 		$this->create_tables = $create_tables;
@@ -893,10 +898,10 @@ class dbKITcontactAddress extends dbConnectLE {
 			$this->initArrays();
 		}
 	} // __construct()
-	
+
 	public function initTables() {
 		global $dbCountries;
-		
+
 		if (!$this->sqlTableExists()) {
 			if (!$this->sqlCreateTable()) {
 				$this->setError(sprintf('[%s - %s] %s', __METHOD__, __LINE__, $this->getError()));
@@ -911,7 +916,7 @@ class dbKITcontactAddress extends dbConnectLE {
 		}
 		return true;
 	} // initTables()
-	
+
 	public function initArrays() {
 		$dbCountries = new dbKITcountries();
 		$where = array();
@@ -924,20 +929,20 @@ class dbKITcontactAddress extends dbConnectLE {
 		foreach ($countries as $country) {
 		//	$this->country_array[$country[dbKITcountries::field_land_kfz]] = utf8_decode($country[dbKITcountries::field_land_name]);
 			$this->country_array[$country[dbKITcountries::field_land_kfz]] = $country[dbKITcountries::field_land_name];
-		}		
+		}
 		return true;
 	} // initArrays()
-	
+
 } // class dbKITcontactAddress
 
 class dbKITcountries extends dbConnectLE {
-	
+
 	const field_id					= 'land_id';
 	const field_land_kfz		= 'land_kfz';
 	const field_land_name		= 'land_name';
-	
+
 	public $create_tables = false;
-	
+
 	function __construct($create_tables = false) {
 		parent::__construct();
 		$this->create_tables = $create_tables;
@@ -952,7 +957,7 @@ class dbKITcountries extends dbConnectLE {
 			$this->initTables();
 		}
 	} // __construct()
-	
+
 	public function initTables() {
 		if (!$this->sqlTableExists()) {
 			if (!$this->sqlCreateTable()) {
@@ -973,27 +978,88 @@ class dbKITcountries extends dbConnectLE {
 
 } // dbKITcountries
 
+/**
+ * ISO 639-1 language codes for KIT
+ *
+ * @author Ralf Hertsch
+ *
+ */
+class dbKITlanguages extends dbConnectLE {
+
+	const FIELD_ID = 'id';
+	const FIELD_ISO = 'ISO';
+	const FIELD_LOCAL = 'Local';
+	const FIELD_ENGLISH = 'English';
+
+	public $create_tables = false;
+
+	/**
+	 * Constructor
+	 *
+	 * @param boolean $create_tables - create table if not exists
+	 */
+	public function __construct($create_tables = false) {
+		parent::__construct();
+		$this->create_tables = $create_tables;
+		$this->setTableName('mod_kit_languages');
+		$this->addFieldDefinition(self::FIELD_ID, "INT(11) NOT NULL AUTO_INCREMENT", true);
+		$this->addFieldDefinition(self::FIELD_ISO, "VARCHAR(2) NOT NULL DEFAULT 'nn'");
+		$this->addFieldDefinition(self::FIELD_LOCAL, "VARCHAR(64) NOT NULL DEFAULT '-undefined-'");
+		$this->addFieldDefinition(self::FIELD_ENGLISH, "VARCHAR(64) NOT NULL DEFAULT '-undefined-'");
+		$this->checkFieldDefinitions();
+		// set default timezone
+		date_default_timezone_set(kit_cfg_time_zone);
+		if ($this->create_tables) {
+			$this->initTables();
+		}
+	} // __construct()
+
+	/**
+	 * Initialize the ISO 639-1 language code table
+	 *
+	 * @return boolean
+	 */
+	public function initTables() {
+		if (!$this->sqlTableExists()) {
+			if (!$this->sqlCreateTable()) {
+				$this->setError(sprintf('[%s - %s] %s', __METHOD__, __LINE__, $this->getError()));
+				return false;
+			}
+		}
+		$csv_file = WB_PATH.'/modules/'.basename(dirname(__FILE__)).'/csv/languages.csv';
+		$csv_array = array();
+		if (file_exists($csv_file)) {
+			if (!$this->csvImport($csv_array, $csv_file, true, false, 1000, ";", "\"")) {
+				$this->setError(sprintf('[%s - %s] %s', __METHOD__, __LINE__, $this->getError()));
+				return false;
+			}
+		}
+		return true;
+	} // initTables()
+
+} // class dbKITlanguages
+
 class dbKITmemos extends dbConnectLE {
-	
+
 	const field_id					= 'memo_id';
 	const field_memo				= 'memo_memo';
 	const field_contact_id	= 'contact_id';
 	const field_status			= 'memo_status';
 	const field_update_by		= 'memo_update_by';
 	const field_update_when	= 'memo_update_when';
-	
+
 	const status_active								= 'statusActive'; //1;
 	const status_locked								= 'statusLocked'; //2;
 	const status_deleted							= 'statusDeleted'; //-1;
-	
+
 	public $status_array = array(
 		self::status_active			=> kit_contact_status_active,
 		self::status_locked			=> kit_contact_status_locked,
 		self::status_deleted		=> kit_contact_status_deleted
 	);
-	
+
 	public $create_tables = false;
-	
+
 	public function __construct($create_tables = false) {
 		parent::__construct();
 		$this->create_tables = $create_tables;
@@ -1014,7 +1080,7 @@ class dbKITmemos extends dbConnectLE {
 			$this->initTables();
 		}
 	} // __construct()
-	
+
 	public function initTables() {
 		if (!$this->sqlTableExists()) {
 			if (!$this->sqlCreateTable()) {
@@ -1024,11 +1090,11 @@ class dbKITmemos extends dbConnectLE {
 		}
 		return true;
 	} // initTables()
-	
+
 } // class dbKITmemos
 
 class dbKITprotocol extends dbConnectLE {
-	
+
 	const field_id							= 'protocol_id';
 	const field_contact_id			= 'contact_id';
 	const field_date						= 'protocol_date';
@@ -1038,18 +1104,18 @@ class dbKITprotocol extends dbConnectLE {
 	const field_status					= 'protocol_status';
 	const field_update_by				= 'protocol_update_by';
 	const field_update_when			= 'protocol_update_when';
-	
+
 	const status_active					= 'statusActive'; //1;
 	const status_locked					= 'statusLocked'; //2;
 	const status_deleted				= 'statusDeleted'; //-1;
-	
+
 	const type_undefined				= 'typeUndefined'; //-1;
 	const type_memo							= 'typeMemo'; //1;
 	const type_email						= 'typeEmail'; //2;
 	const type_call							= 'typeCall'; //3;
 	const type_newsletter				= 'typeNewsletter'; //4;
 	const type_meeting					= 'typeMeeting'; //5;
-	
+
 	public $type_array = array(
 		self::type_undefined			=> kit_contact_protocol_type_undefined,
 		self::type_call						=> kit_contact_protocol_type_call,
@@ -1058,15 +1124,15 @@ class dbKITprotocol extends dbConnectLE {
 		self::type_memo						=> kit_contact_protocol_type_memo,
 		self::type_newsletter			=> kit_contact_protocol_type_newsletter
 	);
-	
+
 	public $status_array = array(
 		self::status_active			=> kit_contact_status_active,
 		self::status_locked			=> kit_contact_status_locked,
 		self::status_deleted		=> kit_contact_status_deleted
 	);
-	
+
 	public $create_tables = false;
-	
+
 	public function __construct($create_tables = false) {
 		parent::__construct();
 		$this->create_tables = $create_tables;
@@ -1090,7 +1156,7 @@ class dbKITprotocol extends dbConnectLE {
 			$this->initTables();
 		}
 	} // __construct()
-	
+
 	public function initTables() {
 		if (!$this->sqlTableExists()) {
 			if (!$this->sqlCreateTable()) {
@@ -1100,13 +1166,13 @@ class dbKITprotocol extends dbConnectLE {
 		}
 		return true;
 	} // initTables()
-	
+
 	/**
 	 * Fuegt einen Protokolleintrag fuer Systemereignisse ein
 	 */
 	public function addSystemNotice($kid_id, $memo) {
 		global $tools;
-		
+
 		$data = array();
 		$data[self::field_contact_id] = $kid_id;
 		$data[self::field_memo] = $memo;
@@ -1121,12 +1187,12 @@ class dbKITprotocol extends dbConnectLE {
 		}
 		return true;
 	}
-	
+
 } // class dbKITprotocol
 
 
 class dbKITprovider extends dbConnectLE {
-    
+
     const field_id = 'provider_id';
     const field_name = 'provider_name';
     const field_email = 'provider_email';
@@ -1140,16 +1206,16 @@ class dbKITprovider extends dbConnectLE {
     const field_status = 'provider_status';
     const field_update_by = 'provider_update_by';
     const field_update_when = 'provider_update_when';
-    
+
     const status_active = 'statusActive';
     const status_locked = 'statusLocked';
     const status_deleted = 'statusDeleted';
-    
+
     public $status_array = array(
-    self::status_active => kit_contact_status_active, 
-    self::status_locked => kit_contact_status_locked, 
+    self::status_active => kit_contact_status_active,
+    self::status_locked => kit_contact_status_locked,
     self::status_deleted => kit_contact_status_deleted);
-    
+
     public $create_tables = false;
 
     public function __construct($create_tables = false) {
@@ -1178,7 +1244,7 @@ class dbKITprovider extends dbConnectLE {
 			$this->initTables();
 		}
 	} // __construct()
-	
+
 	public function initTables() {
 		if (!$this->sqlTableExists()) {
 			if (!$this->sqlCreateTable()) {
@@ -1188,12 +1254,12 @@ class dbKITprovider extends dbConnectLE {
 		}
 		return true;
 	} // initTables()
-	
+
 } // class dbKITprovider
 
 
 class dbKITregister extends dbConnectLE {
-	
+
 	const field_id									= 'reg_id';
 	const field_email								= 'reg_email';
 	const field_username						= 'reg_username';
@@ -1208,13 +1274,13 @@ class dbKITregister extends dbConnectLE {
 	const field_login_locked				= 'reg_login_locked';
 	const field_update_by						= 'reg_update_by';
 	const field_update_when					= 'reg_update_when';
-	
-	const status_active					= 'statusActive'; 
-	const status_locked					= 'statusLocked'; 
+
+	const status_active					= 'statusActive';
+	const status_locked					= 'statusLocked';
 	const status_deleted				= 'statusDeleted';
 	const status_key_send				= 'statusKeySend';
 	const status_key_created		= 'statusKeyCreated';
-	
+
 	public $status_array = array(
 		self::status_key_created	=> kit_contact_status_key_created,
 		self::status_key_send			=> kit_contact_status_key_send,
@@ -1222,7 +1288,7 @@ class dbKITregister extends dbConnectLE {
 		self::status_locked				=> kit_contact_status_locked,
 		self::status_deleted			=> kit_contact_status_deleted
 	);
-	
+
 	public $status_dwoo_array = array(
 	        array(
 	                'value' => self::status_key_created,
@@ -1245,9 +1311,9 @@ class dbKITregister extends dbConnectLE {
 	                'text' => kit_contact_status_deleted
 	                )
 	        );
-	
+
 	public $create_tables = false;
-	
+
 	public function __construct($create_tables = false) {
 		parent::__construct();
 		$this->create_tables = $create_tables;
@@ -1263,7 +1329,7 @@ class dbKITregister extends dbConnectLE {
 		$this->addFieldDefinition(self::field_contact_id, "INT NOT NULL DEFAULT '-1'");
 		$this->addFieldDefinition(self::field_newsletter, "VARCHAR(255) NOT NULL DEFAULT ''");
 		$this->addFieldDefinition(self::field_login_failures, "TINYINT NOT NULL DEFAULT '0'");
-		$this->addFieldDefinition(self::field_login_locked, "TINYINT NOT NULL DEFAULT '0'");		
+		$this->addFieldDefinition(self::field_login_locked, "TINYINT NOT NULL DEFAULT '0'");
 		$this->addFieldDefinition(self::field_update_by, "VARCHAR(30) NOT NULL DEFAULT 'SYSTEM'");
 		$this->addFieldDefinition(self::field_update_when, "DATETIME NOT NULL DEFAULT '0000-00-00 00:00:00'");
 		// check field definitions
@@ -1275,7 +1341,7 @@ class dbKITregister extends dbConnectLE {
 			$this->initTables();
 		}
 	} // __construct()
-	
+
 	public function initTables() {
 		if (!$this->sqlTableExists()) {
 			if (!$this->sqlCreateTable()) {
@@ -1285,16 +1351,16 @@ class dbKITregister extends dbConnectLE {
 		}
 		return true;
 	} // initTables()
-	
+
 	public function getAdmins(&$primary_emails = array()) {
 		global $dbContact;
 		return $dbContact->getAdmins($primary_emails);
 	} // getAdmins()
-	
+
 } // dbKITregister
 
 class dbWBusers extends dbConnectLE {
-	
+
 	const field_user_id								= 'user_id';
 	const field_group_id							= 'group_id';
 	const field_groups_id							= 'groups_id';
@@ -1312,10 +1378,10 @@ class dbWBusers extends dbConnectLE {
 	const field_home_folder						= 'home_folder';
 	const field_login_when						= 'login_when';
 	const field_login_ip							= 'login_ip';
-	
+
 	const status_active								= 1;
 	const status_inactive							= 0;
-	
+
 	public function __construct() {
 		parent::__construct();
 		$this->setTableName('users');
@@ -1340,32 +1406,32 @@ class dbWBusers extends dbConnectLE {
 		$this->checkFieldDefinitions();
 		// set default timezone
 		date_default_timezone_set(kit_cfg_time_zone);
-		
+
 	} // __construct()
-	
+
 	public function sqlCreateTable() {
 		$this->setError('Function not implemented for this table!');
 		return false;
 	}
-	
+
 	public function sqlDeleteTable() {
 		$this->setError('Function not implemented for this table!');
 		return false;
 	}
-	
+
 } // class dbWBusers
 
 
 class dbWBgroups extends dbConnectLE {
-	
+
 	const field_group_id							= 'group_id';
 	const field_name									= 'name';
 	const field_system_permissions		= 'system_permissions';
 	const field_module_permissions		= 'module_permissions';
 	const field_template_permissions	= 'template_permissions';
-	
+
 	const kitWBgoup										= 'kitContact';
-	
+
 	public function __construct() {
 		parent::__construct();
 		$this->setTableName('groups');
@@ -1378,19 +1444,19 @@ class dbWBgroups extends dbConnectLE {
 		$this->checkFieldDefinitions();
 		// set default timezone
 		date_default_timezone_set(kit_cfg_time_zone);
-		
+
 	} // __construct()
 
 	public function sqlCreateTable() {
 		$this->setError('Function not implemented for this table!');
 		return false;
 	}
-	
+
 	public function sqlDeleteTable() {
 		$this->setError('Function not implemented for this table!');
 		return false;
 	}
-	
+
 } // class dbWBgroups
 
 ?>

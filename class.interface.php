@@ -79,6 +79,7 @@ class kitContactInterface {
   const kit_free_field_5 = 'kit_free_field_5';
   const kit_free_note_1 = 'kit_free_note_1';
   const kit_free_note_2 = 'kit_free_note_2';
+  const kit_contact_language = 'kit_contact_language';
 
   public $field_array = array(
       self::kit_title => kit_label_person_title,
@@ -108,7 +109,9 @@ class kitContactInterface {
       self::kit_free_field_4 => kit_label_free_field_4,
       self::kit_free_field_5 => kit_label_free_field_5,
       self::kit_free_note_1 => kit_label_free_note_1,
-      self::kit_free_note_2 => kit_label_free_note_2);
+      self::kit_free_note_2 => kit_label_free_note_2,
+  		self::kit_contact_language => kit_label_contact_language
+  		);
 
   public $field_assign = array(
       self::kit_title => dbKITcontact::field_person_title,
@@ -128,7 +131,9 @@ class kitContactInterface {
       self::kit_free_field_4 => dbKITcontact::field_free_4,
       self::kit_free_field_5 => dbKITcontact::field_free_5,
       self::kit_free_note_1 => dbKITcontact::field_free_note_1,
-      self::kit_free_note_2 => dbKITcontact::field_free_note_2);
+      self::kit_free_note_2 => dbKITcontact::field_free_note_2,
+  		self::kit_contact_language => dbKITcontact::field_contact_language
+  		);
 
   public $index_array = array(
       self::kit_title => 10,
@@ -158,7 +163,8 @@ class kitContactInterface {
       self::kit_free_field_4 => 34,
       self::kit_free_field_5 => 35,
       self::kit_free_note_1 => 36,
-      self::kit_free_note_2 => 37 // last added field
+      self::kit_free_note_2 => 37,
+  		self::kit_contact_language => 38 // last added field
   );
 
   const address_type_private = 'private';
@@ -305,7 +311,7 @@ class kitContactInterface {
     $titles = $dbContact->person_title_array;
     $title_array = array();
     foreach ($titles as $key => $value) {
-      $title_array[] = array(
+      $title_array[$key] = array(
           'value' => $key,
           'text' => $value,
           'checked' => ($key == dbKITcontact::person_title_mister) ? 1 : 0);
@@ -323,7 +329,7 @@ class kitContactInterface {
     $academics = $dbContact->person_title_academic_array;
     $academic_array = array();
     foreach ($academics as $key => $value) {
-      $academic_array[] = array(
+      $academic_array[$key] = array(
           'value' => $key,
           'text' => $value,
           'checked' => ($key == dbKITcontact::person_title_academic_none) ? 1 : 0);
@@ -332,7 +338,7 @@ class kitContactInterface {
   } // getFormPersonTitleAcademicArray()
 
   /**
-   * Return the address type array ((private, company, ...) for usage in kitForm
+   * Return the address type array (private, company, ...) for usage in kitForm
    * @param REFERENCE ARRAY $address_type_array
    * @return BOOL
    */
@@ -341,7 +347,7 @@ class kitContactInterface {
     $address_types = $this->address_type_array;
     $address_type_array = array();
     foreach ($address_types as $key => $value) {
-      $address_type_array[] = array(
+      $address_type_array[$key] = array(
           'value' => $key,
           'text' => $value,
           'checked' => ($key == self::address_type_private) ? 1 : 0);
@@ -351,15 +357,38 @@ class kitContactInterface {
 
   /**
    * Return the available newsletters as array for usage with kitForm
+   *
    * @param REFERENCE ARRAY $newsletter_array
    * @return BOOL
    */
   public function getFormNewsletterArray(&$newsletter_array = array()) {
     global $dbContact;
+
+    // check if language markers are in use
+    $use_language_marker = $this->getConfigurationValue(dbKITcfg::cfgNewsletterLanguageMarkers);
+
+    // get the complete newsletter array
     $newsletters = $dbContact->newsletter_array;
+    // the newsletter array to return
     $newsletter_array = array();
+
     foreach ($newsletters as $key => $value) {
-      $newsletter_array[] = array(
+    	if ($use_language_marker) {
+    		// look for matches of language markers, i.e. "[DE]" or "[EN]"
+    		preg_match('/\[[[A-Z,a-z][A-Z,a-z]\]/', $value, $match);
+    		if (isset($match[0])) {
+    			$lang = $match[0];
+    			$lang = str_replace(array('[',']',' '), '', $lang);
+    			if (strtoupper($lang) == LANGUAGE) {
+    				// language match, remove the marker an spaces
+    				$value = str_replace($match, '', $value);
+    				$value = trim($value);
+    			}
+    			// language of the newsletter does not match, continue
+    			else continue;
+    		}
+    	}
+      $newsletter_array[$key] = array(
           'value' => $key,
           'text' => $value,
           'checked' => 0);
@@ -371,6 +400,7 @@ class kitContactInterface {
    * Ueberprueft ob die E-Mail Adresse $email_address als primaere E-Mail Adresse
    * registriert ist und gibt bei einem Treffer die KIT Contact ID sowie den Status
    * des Adressdatensatz zurueck.
+   *
    * @param STR $email_address
    * @param REFERENCE INT $contact_id
    * @param REFERENCE STR $status
@@ -442,6 +472,15 @@ class kitContactInterface {
               $contact_changed = true;
             }
             break;
+          case self::kit_contact_language:
+          	if (isset($contact_array[$field])) {
+          		$lg = strtolower(trim($contact_array[$field]));
+          		if ($lg !== $contact[$this->field_assign[$field]]) {
+          			$contact[$this->field_assign[$field]] = $lg;
+          			$contact_changed = true;
+          		}
+          	}
+          	break;
           case self::kit_first_name:
           case self::kit_last_name:
           case self::kit_company:
@@ -606,6 +645,7 @@ class kitContactInterface {
     global $dbContactAddress;
     global $dbRegister;
     global $tools;
+    global $dbCfg;
 
     if (!isset($contact_array[self::kit_email])) {
       // es wurde keine E-Mail Adresse uebergeben
@@ -684,8 +724,14 @@ class kitContactInterface {
         case dbKITcontact::field_status:
           $contact[$key] = dbKITcontact::status_active;
           break;
+        case dbKITcontact::field_contact_language:
+        	// set contact language
+        	$def_lang = $dbCfg->getValue(dbKITcfg::cfgContactLanguageDefault);
+        	$def_lang = strtolower(trim($def_lang));
+        	$contact[$key] = (isset($contact_array[self::kit_contact_language])) ? strtolower(trim($contact_array[self::kit_contact_language])) : $def_lang;
+        	break;
         default:
-        // nothing to do...
+          // nothing to do...
           break;
       endswitch;
     }
