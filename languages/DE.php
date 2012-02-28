@@ -12,8 +12,7 @@
  * FOR VERSION- AND RELEASE NOTES PLEASE LOOK AT INFO.TXT!
  */
 
-// try to include LEPTON class.secure.php to protect this file and the whole
-// CMS!
+// try to include LEPTON class.secure.php to protect this file and the whole CMS!
 if (defined('WB_PATH')) {
     if (defined('LEPTON_VERSION')) include (WB_PATH . '/framework/class.secure.php');
 } elseif (file_exists($_SERVER['DOCUMENT_ROOT'] . '/framework/class.secure.php')) {
