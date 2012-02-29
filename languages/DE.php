@@ -167,6 +167,7 @@ define('kit_desc_cfg_limit_contact_list', 'Legen Sie fest, wieviele Einträge in
 define('kit_desc_cfg_max_invalid_login', 'Maximale Anzahl von fehlerhaften Login Versuchen von Anwendern, bevor das Konto gesperrt wird.');
 define('kit_desc_cfg_min_pwd_len', 'Mindeslänge der verwendeten Passwörter');
 define('kit_desc_cfg_newsletter_language_marker', 'Fügen Sie den Werten für die Newsletter jeweils am Anfang den Sprachcode in eckigen Klammern hinzu, z.B. <i><b>[DE]</b> Kundeninformation</i> oder <i><b>[EN]</b> Customer information</i> dann gibt KIT in den Dialogen die Newsletter sprachabhängig aus und entfernt gleichzeitig den Sprachcode aus der Anzeige. <b>1</b> schaltet die Funktion ein, <b>0</b> schaltet sie aus.');
+define('kit_desc_cfg_newsletter_account_info', 'KIT schickt dem Benutzer bei der Aktivierung eines Newsletter die Zugangsdaten für einen Zugriff auf das Benutzerkonto. Falls dies nicht gewünscht ist, setzen Sie diesen Schalter auf <b>0</b>, ansonsten auf <b>1</b> (default).');
 define('kit_desc_cfg_nl_adjust_register', 'Gleicht beim Aufruf des Newsletter Dialog die Tabelle kit_register mit kit_contact ab (Verwenden Sie diese Einstellung nur nach Aufforderung durch den Support! 0=AUS, 1=AN).');
 define('kit_desc_cfg_nl_max_package_size', 'Legt die max. Anzahl von Adressaten pro Paket während des Newsletterversand fest. Die einzelnen Pakete werden von einem Cronjob nach und nach abgearbeitet, der höchste zulässige Wert ist 100.');
 define('kit_desc_cfg_nl_set_time_limit', 'Legt die Dauer in Sekunden fest, die das Newsletter Script max. für die Versendung der Mails benötigen darf. Ist der Wert zu niedrig, werden Sie einen Laufzeitfehler erhalten, erhöhen Sie den Wert bei Bedarf schrittweise (DEFAULT=60).');
@@ -338,6 +339,7 @@ define('kit_label_cfg_limit_contact_list', 'max. Einträge Kontaktliste');
 define('kit_label_cfg_max_invalid_login', 'Maximale Loginversuche');
 define('kit_label_cfg_min_pwd_len', 'Min. Passwortlänge');
 define('kit_label_cfg_newsletter_language_marker', 'Newsletter, Sprachmarkierungen');
+define('kit_label_cfg_newsletter_account_info', 'Newsletter, Kontoinformation');
 define('kit_label_cfg_nl_adjust_register', 'kit_register abgleichen');
 define('kit_label_cfg_nl_max_package_size', 'Max. Paketgröße');
 define('kit_label_cfg_nl_salutation', 'Grußformel');

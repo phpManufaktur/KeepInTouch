@@ -167,6 +167,7 @@ define('kit_desc_cfg_kit_response_page', 'Kit die nodig is voor de weergave van 
 define('kit_desc_cfg_limit_contact_list', 'Bepalen hoeveel items in de lijst met contacten moet worden weergegeven per pagina.');
 define('kit_desc_cfg_max_invalid_login', 'Maximum aantal mislukte login pogingen van gebruikers voordat de account wordt geblokkeerd.');
 define('kit_desc_cfg_min_pwd_len', 'Minimale lengte van de gebruikte wachtwoorden');
+define('kit_desc_cfg_newsletter_account_info', 'KIT schickt dem Benutzer bei der Aktivierung eines Newsletter die Zugangsdaten für einen Zugriff auf das Benutzerkonto. Falls dies nicht gewünscht ist, setzen Sie diesen Schalter auf <b>0</b>, ansonsten auf <b>1</b> (default).');
 define('kit_desc_cfg_newsletter_language_marker', 'Fügen Sie den Werten für die Newsletter jeweils am Anfang den Sprachcode in eckigen Klammern hinzu, z.B. <i><b>[DE]</b> Kundeninformation</i> oder <i><b>[EN]</b> Customer information</i> dann gibt KIT in den Dialog die Newsletter sprachabhängig aus und entfernt gleichzeitig den Sprachcode aus der Anzeige. <b>1</b> schaltet die Funktion ein, <b>0</b> schaltet sie aus.');
 define('kit_desc_cfg_nl_adjust_register', 'Rechts op de oproep van de nieuwsbrief, de dialoog tafel met een kit van kit_contact register (Gebruik deze instelling alleen op verzoek van de ondersteuning! 0=UIT, 1=AAN).');
 define('kit_desc_cfg_nl_max_package_size', 'Stelt het maximum aantal ontvangers per pakket tijdens het versturen van de nieuwsbrieven vast. De individuele pakketten worden verwerkt door een cron job, de maximaal toegestane waarde is 100.');
@@ -338,6 +339,7 @@ define('kit_label_cfg_kit_reponse_page', 'KIT antwoord website');
 define('kit_label_cfg_limit_contact_list', 'max. vermeldingen in contactlijst');
 define('kit_label_cfg_max_invalid_login', 'Maximale Login pogingen');
 define('kit_label_cfg_min_pwd_len', 'Min. lengte wachtwoord');
+define('kit_label_cfg_newsletter_account_info', 'Newsletter, Kontoinformation');
 define('kit_label_cfg_newsletter_language_marker', 'Newsletter, Sprachmarkierungen');
 define('kit_label_cfg_nl_adjust_register', 'kit_register syndicaat');
 define('kit_label_cfg_nl_max_package_size', 'Max. Paketgroote');

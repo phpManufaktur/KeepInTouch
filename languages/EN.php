@@ -167,6 +167,7 @@ define('kit_desc_cfg_kit_response_page', 'Kit needed for the display of the dial
 define('kit_desc_cfg_limit_contact_list', 'Determine how many entries in the contacts list to display per page.');
 define('kit_desc_cfg_max_invalid_login', 'Maximum number of failed login attempts by users before the account is locked.');
 define('kit_desc_cfg_min_pwd_len', 'Mindeslänge used the password');
+define('kit_desc_cfg_newsletter_account_info', 'KIT schickt dem Benutzer bei der Aktivierung eines Newsletter die Zugangsdaten für einen Zugriff auf das Benutzerkonto. Falls dies nicht gewünscht ist, setzen Sie diesen Schalter auf <b>0</b>, ansonsten auf <b>1</b> (default).');
 define('kit_desc_cfg_newsletter_language_marker', 'Fügen Sie den Werten für die Newsletter jeweils am Anfang den Sprachcode in eckigen Klammern hinzu, z.B. <i><b>[DE]</b> Kundeninformation</i> oder <i><b>[EN]</b> Customer information</i> dann gibt KIT in den Dialog die Newsletter sprachabhängig aus und entfernt gleichzeitig den Sprachcode aus der Anzeige. <b>1</b> schaltet die Funktion ein, <b>0</b> schaltet sie aus.');
 define('kit_desc_cfg_nl_adjust_register', 'Smooths the call of the newsletter dialogue table with kit_register kit_contact from (Use this setting only when requested by the Support! 0 = OFF, 1 = ON ).');
 define('kit_desc_cfg_nl_max_package_size', 'Sets the maximum number of recipients per packet during the newsletters, the individual packets are processed by a cron job by degrees, the highest allowable value is 100..');
@@ -338,6 +339,7 @@ define('kit_label_cfg_kit_reponse_page', 'KIT response page');
 define('kit_label_cfg_limit_contact_list', 'max entries contact list. ');
 define('kit_label_cfg_max_invalid_login', 'Maximum login attempts');
 define('kit_label_cfg_min_pwd_len', 'min password length');
+define('kit_label_cfg_newsletter_account_info', 'Newsletter, Kontoinformation');
 define('kit_label_cfg_newsletter_language_marker', 'Newsletter, Sprachmarkierungen');
 define('kit_label_cfg_nl_adjust_register', 'kit_register Syndicate');
 define('kit_label_cfg_nl_max_package_size', 'Max packet size');

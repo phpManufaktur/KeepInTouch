@@ -99,6 +99,7 @@ class dbKITcfg extends dbConnectLE {
     const cfgContactLanguageDefault = 'cfgContactLanguageDefault';
     const cfgContactLanguageSelect = 'cfgContactLanguageSelect';
     const cfgNewsletterLanguageMarkers = 'cfgNewsletterLanguageMarkers';
+    const cfgNewsletterAccountInfo = 'cfgNewsletterNoAccountInfo';
 
     public $config_array = array(
         array(
@@ -212,7 +213,14 @@ class dbKITcfg extends dbConnectLE {
     				self::type_boolean,
     				'1',
     				'kit_desc_cfg_newsletter_language_marker'
-    				)
+    				),
+        array(
+            'kit_label_cfg_newsletter_account_info',
+            self::cfgNewsletterAccountInfo,
+            self::type_boolean,
+            '1',
+            'kit_desc_cfg_newsletter_account_info'
+            )
         );
 
     public function __construct($createTables = false) {

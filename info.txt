@@ -3,6 +3,11 @@ KeepInTouch - Customer Relationship Management (CRM)
 Ralf Hertsch, Stockholmer Str. 31, 13359 Berlin (Germany)
 http://phpManufaktur.de - ralf.hertsch@phpManufaktur.de
 
+Release 0.55
+2012-02-29
+added - KIT option cfgNewsletterAccountInfo enables to switch on/off the account
+  information for the user.
+
 Release 0.54
 2012-02-19
 added - language table (ISO 639-1) for prefered languages
