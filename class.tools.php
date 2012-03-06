@@ -1,34 +1,37 @@
 <?php
 
 /**
- * KeepInTouch (KIT)
- * 
- * @author Ralf Hertsch (ralf.hertsch@phpmanufaktur.de)
+ * KeepInTouch
+ *
+ * @author Ralf Hertsch <ralf.hertsch@phpmanufaktur.de>
  * @link http://phpmanufaktur.de
- * @copyright 2011
- * @license GNU GPL (http://www.gnu.org/licenses/gpl.html)
+ * @copyright 2012 - phpManufaktur by Ralf Hertsch
+ * @license http://www.gnu.org/licenses/gpl.html GNU Public License (GPL)
  * @version $Id$
- * 
+ *
  * FOR VERSION- AND RELEASE NOTES PLEASE LOOK AT INFO.TXT!
  */
 
-// try to include LEPTON class.secure.php to protect this file and the whole CMS!
-if (defined('WB_PATH')) {	
-	if (defined('LEPTON_VERSION')) include(WB_PATH.'/framework/class.secure.php');
-} elseif (file_exists($_SERVER['DOCUMENT_ROOT'].'/framework/class.secure.php')) {
-	include($_SERVER['DOCUMENT_ROOT'].'/framework/class.secure.php'); 
-} else {
-	$subs = explode('/', dirname($_SERVER['SCRIPT_NAME']));	$dir = $_SERVER['DOCUMENT_ROOT'];
-	$inc = false;
-	foreach ($subs as $sub) {
-		if (empty($sub)) continue; $dir .= '/'.$sub;
-		if (file_exists($dir.'/framework/class.secure.php')) { 
-			include($dir.'/framework/class.secure.php'); $inc = true;	break; 
-		} 
-	}
-	if (!$inc) trigger_error(sprintf("[ <b>%s</b> ] Can't include LEPTON class.secure.php!", $_SERVER['SCRIPT_NAME']), E_USER_ERROR);
+// include class.secure.php to protect this file and the whole CMS!
+if (defined('WB_PATH')) {
+  if (defined('LEPTON_VERSION')) include (WB_PATH . '/framework/class.secure.php');
 }
-// end include LEPTON class.secure.php
+else {
+  $oneback = "../";
+  $root = $oneback;
+  $level = 1;
+  while (($level < 10) && (!file_exists($root . '/framework/class.secure.php'))) {
+    $root .= $oneback;
+    $level += 1;
+  }
+  if (file_exists($root . '/framework/class.secure.php')) {
+    include ($root . '/framework/class.secure.php');
+  }
+  else {
+    trigger_error(sprintf("[ <b>%s</b> ] Can't include class.secure.php!", $_SERVER['SCRIPT_NAME']), E_USER_ERROR);
+  }
+}
+// end include class.secure.php
 
 require_once(WB_PATH.'/modules/'.basename(dirname(__FILE__)).'/initialize.php');
 
@@ -38,7 +41,7 @@ if (!is_object($tools)) $tools = new kitTools();
 /**
  * Return the completed TemplatePath, checks LANGUAGE dependencies and check,
  * if custom templates exists...
- * 
+ *
  * @param STR $template_file
  * @return STR
  */
@@ -70,7 +73,7 @@ function getTemplateFile($template_file='', $template_path='', $language_path=''
 			// Standardtemplate zurueckgeben
 			return $path.$default_language.$template;
 		}
-	} 
+	}
 	else {
 		// sprachneutrales Template
 		$path = $template_path;
@@ -85,12 +88,12 @@ function getTemplateFile($template_file='', $template_path='', $language_path=''
 
 
 class kitTools {
-	
+
   const   	unkownUser = 'UNKNOWN USER';
   const   	unknownEMail = 'unknown@user.tld';
   private 	$error;
   private 	$googleMapsAPIkey = '';
-  
+
   /**
    * Konstruktor
    *
@@ -188,7 +191,7 @@ class kitTools {
     global $database ;
     global $sql_result ;
     $settings = array();
-    $thisQuery = "SELECT * FROM " . TABLE_PREFIX . "settings" ;		
+    $thisQuery = "SELECT * FROM " . TABLE_PREFIX . "settings" ;
     $oldErrorReporting = error_reporting(0) ;
     $sql_result = $database->query($thisQuery) ;
     error_reporting($oldErrorReporting) ;
@@ -228,17 +231,17 @@ class kitTools {
    * im Front- und Backend zurueck
    *
    * @return STR
-   */  
+   */
   public function getDisplayName() {
     global $wb;
     global $admin;
     if ($this->isFrontendActive()) {
     	if (is_object($wb)) {
 	      if ($wb->is_authenticated()) {
-	        return $wb->get_display_name();  
+	        return $wb->get_display_name();
 	      }
 	      else {
-	        return self::unkownUser; 
+	        return self::unkownUser;
 	      }
     	}
     	else {
@@ -249,7 +252,7 @@ class kitTools {
       if ($admin->is_authenticated()) {
         return $admin->get_display_name(); }
       else {
-        return self::unkownUser; 
+        return self::unkownUser;
       }
     }
     else {
@@ -517,7 +520,7 @@ class kitTools {
         $guid = com_create_guid();
         $guid = strtolower($guid);
         if (strpos($guid, '{') == 0) {
-        $guid = substr($guid, 1); 
+        $guid = substr($guid, 1);
         }
         if (strpos($guid, '}') == strlen($guid)-1) {
         $guid = substr($guid, 0, strlen($guid)-2);
@@ -637,13 +640,13 @@ class kitTools {
       return $string;
     }
   }
-	
+
   /**
    * Prueft HTTP Links
-   * 
+   *
    * @param $url
    * @param $code_only
-   * 
+   *
    * @author Johannes Froemter <j-f@gmx.net>
    * @author Ralf Hertsch <hertsch@berlin.de>
    */
@@ -652,14 +655,14 @@ class kitTools {
 	  if (!preg_match("=://=", $url)) $url = "http://$url";
 	  $url = parse_url($url);
 	  if (strtolower($url["scheme"]) != "http") return FALSE;
-	
+
 	  if (!isset($url["port"])) $url["port"] = 80;
 	  if (!isset($url["path"])) $url["path"] = "/";
-	
+
 	  //$fp = fsockopen($url["host"], $url["port"], &$errno, &$errstr, 30);
 		$fp = @fsockopen($url["host"], $url["port"]);
-		@stream_set_timeout($fp, 15); 
-	  
+		@stream_set_timeout($fp, 15);
+
 	  if (!$fp) {
 	  	return false;
 	  }
@@ -677,26 +680,26 @@ class kitTools {
 	    $http["HTTP-Version"] = $matches[1];
 	    $http["Status-Code"] = $matches[2];
 	    $http["Reason-Phrase"] = $matches[3];
-	
+
 	    // Nur den HTTP Status Code zurueckgeben
 	    if ($code_only) return $http["Status-Code"];
-	
+
 	    $rclass = array("Informational", "Success",
 	                    "Redirection", "Client Error",
 	                    "Server Error");
 	    $http["Response-Class"] = $rclass[$http["Status-Code"][0] - 1];
-	
+
 	    preg_match_all("=^(.+): ([^\r\n]*)=m", $head, $matches, PREG_SET_ORDER);
 	    foreach($matches as $line) $http[$line[1]] = $line[2];
-	
+
 	    // Bei Umleitungen den Status Code der umgeleiteten Adresse ermitteln
 	    if ($http["Status-Code"][0] == 3)
 	      $http["Location-Status-Code"] = $this->checkLink($http["Location"], true);
-	
+
 	    return $http;
 	  }
   } // checkLink()
-	
+
   /**
    * Checking Telefonnumber, accepts only international Format
    * +49 (30) 1234566
@@ -767,7 +770,7 @@ class kitTools {
 			        marker.events.register("mousedown", marker, function(evt) {
 			          alert(name+"\\n"+address);
 			          OpenLayers.Event.stop(evt); });
-			        map.layers[map.layers.length-1].addMarker(marker);      
+			        map.layers[map.layers.length-1].addMarker(marker);
 			      }
 			    });
 			  }
@@ -783,11 +786,11 @@ class kitTools {
   										$address,
   										$zoom
   										);
-  	return $result;	
+  	return $result;
   } // showOSMmap
-  
-  
-  
+
+
+
 } // class kitTools
 
 

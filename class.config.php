@@ -1,12 +1,12 @@
 <?php
 
 /**
- * KeepInTouch (KIT)
+ * KeepInTouch
  *
- * @author Ralf Hertsch (ralf.hertsch@phpmanufaktur.de)
+ * @author Ralf Hertsch <ralf.hertsch@phpmanufaktur.de>
  * @link http://phpmanufaktur.de
- * @copyright 2011
- * @license GNU GPL (http://www.gnu.org/licenses/gpl.html)
+ * @copyright 2012 - phpManufaktur by Ralf Hertsch
+ * @license http://www.gnu.org/licenses/gpl.html GNU Public License (GPL)
  * @version $Id$
  *
  * FOR VERSION- AND RELEASE NOTES PLEASE LOOK AT INFO.TXT!
@@ -14,20 +14,22 @@
 
 // include class.secure.php to protect this file and the whole CMS!
 if (defined('WB_PATH')) {
-	if (defined('LEPTON_VERSION')) include(WB_PATH.'/framework/class.secure.php');
-} else {
-	$oneback = "../";
-	$root = $oneback;
-	$level = 1;
-	while (($level < 10) && (!file_exists($root.'/framework/class.secure.php'))) {
-		$root .= $oneback;
-		$level += 1;
-	}
-	if (file_exists($root.'/framework/class.secure.php')) {
-		include($root.'/framework/class.secure.php');
-	} else {
-		trigger_error(sprintf("[ <b>%s</b> ] Can't include class.secure.php!", $_SERVER['SCRIPT_NAME']), E_USER_ERROR);
-	}
+  if (defined('LEPTON_VERSION')) include (WB_PATH . '/framework/class.secure.php');
+}
+else {
+  $oneback = "../";
+  $root = $oneback;
+  $level = 1;
+  while (($level < 10) && (!file_exists($root . '/framework/class.secure.php'))) {
+    $root .= $oneback;
+    $level += 1;
+  }
+  if (file_exists($root . '/framework/class.secure.php')) {
+    include ($root . '/framework/class.secure.php');
+  }
+  else {
+    trigger_error(sprintf("[ <b>%s</b> ] Can't include class.secure.php!", $_SERVER['SCRIPT_NAME']), E_USER_ERROR);
+  }
 }
 // end include class.secure.php
 
@@ -83,7 +85,6 @@ class dbKITcfg extends dbConnectLE {
     private $message = '';
 
     const cfgDeveloperMode = 'cfgDeveloperMode';
-    const cfgGoogleMapsAPIkey = 'cfgGoogleMapsAPIkey';
     const cfgMaxInvalidLogin = 'cfgMaxInvalidLogin';
     const cfgAddAppTab = 'cfgAddAppTab';
     const cfgCronjobKey = 'cfgCronjobKey';
@@ -99,16 +100,15 @@ class dbKITcfg extends dbConnectLE {
     const cfgContactLanguageDefault = 'cfgContactLanguageDefault';
     const cfgContactLanguageSelect = 'cfgContactLanguageSelect';
     const cfgNewsletterLanguageMarkers = 'cfgNewsletterLanguageMarkers';
-    const cfgNewsletterAccountInfo = 'cfgNewsletterNoAccountInfo';
+    const cfgNewsletterAccountInfo = 'cfgNewsletterAccountInfo';
+    const cfgUseSSL = 'cfgUseSSL';
+    const cfgGMapStaticUse = 'cfgGMapStaticUse';
+    const cfgGMapStaticWidth = 'cfgGMapStaticWidth';
+    const cfgGMapStaticHeight = 'cfgGMapStaticHeight';
+    const cfgGMapStaticZoom = 'cfgGMapStaticZoom';
+    const cfgGMapStaticMarkerColor = 'cfgGMapStaticMarkerColor';
 
     public $config_array = array(
-        array(
-            'kit_label_cfg_google_maps_api_key',
-            self::cfgGoogleMapsAPIkey,
-            self::type_string,
-            '',
-            'kit_desc_cfg_google_maps_api_key'
-            ),
         array(
             'kit_label_cfg_max_invalid_login',
             self::cfgMaxInvalidLogin,
@@ -220,7 +220,49 @@ class dbKITcfg extends dbConnectLE {
             self::type_boolean,
             '1',
             'kit_desc_cfg_newsletter_account_info'
-            )
+            ),
+        array(
+            'kit_label_cfg_use_ssl',
+            self::cfgUseSSL,
+            self::type_boolean,
+            '1',
+            'kit_desc_cfg_use_ssl'
+            ),
+        array(
+            'kit_label_cfg_gmap_static_use',
+            self::cfgGMapStaticUse,
+            self::type_boolean,
+            '1',
+            'kit_desc_cfg_gmap_static_use'
+            ),
+        array(
+            'kit_label_cfg_gmap_static_width',
+            self::cfgGMapStaticWidth,
+            self::type_integer,
+            '275',
+            'kit_desc_cfg_gmap_static_width'
+            ),
+        array(
+            'kit_label_cfg_gmap_static_height',
+            self::cfgGMapStaticHeight,
+            self::type_integer,
+            '275',
+            'kit_desc_cfg_gmap_static_height'
+            ),
+        array(
+            'kit_label_cfg_gmap_static_zoom',
+            self::cfgGMapStaticZoom,
+            self::type_integer,
+            '15',
+            'kit_desc_cfg_gmap_static_zoom'
+            ),
+        array(
+            'kit_label_cfg_gmap_static_marker_color',
+            self::cfgGMapStaticMarkerColor,
+            self::type_string,
+            '0xda251d',
+            'kit_desc_cfg_gmap_static_marker_color'
+            ),
         );
 
     public function __construct($createTables = false) {
@@ -239,7 +281,7 @@ class dbKITcfg extends dbConnectLE {
         $this->setIndexFields(array(self::field_name));
         $this->setAllowedHTMLtags('<a><abbr><acronym><span>');
         $this->checkFieldDefinitions();
-        date_default_timezone_set(kit_cfg_time_zone);
+        date_default_timezone_set(CFG_TIME_ZONE);
         // Tabelle erstellen
         if ($this->createTables) {
             if (! $this->sqlTableExists()) {

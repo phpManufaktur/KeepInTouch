@@ -1,39 +1,42 @@
 <?php
 
 /**
- * KeepInTouch (KIT)
- * 
- * @author Ralf Hertsch (ralf.hertsch@phpmanufaktur.de)
+ * KeepInTouch
+ *
+ * @author Ralf Hertsch <ralf.hertsch@phpmanufaktur.de>
  * @link http://phpmanufaktur.de
- * @copyright 2011
- * @license GNU GPL (http://www.gnu.org/licenses/gpl.html)
+ * @copyright 2012 - phpManufaktur by Ralf Hertsch
+ * @license http://www.gnu.org/licenses/gpl.html GNU Public License (GPL)
  * @version $Id$
- * 
+ *
  * FOR VERSION- AND RELEASE NOTES PLEASE LOOK AT INFO.TXT!
  */
 
-// try to include LEPTON class.secure.php to protect this file and the whole CMS!
-if (defined('WB_PATH')) {	
-	if (defined('LEPTON_VERSION')) include(WB_PATH.'/framework/class.secure.php');
-} elseif (file_exists($_SERVER['DOCUMENT_ROOT'].'/framework/class.secure.php')) {
-	include($_SERVER['DOCUMENT_ROOT'].'/framework/class.secure.php'); 
-} else {
-	$subs = explode('/', dirname($_SERVER['SCRIPT_NAME']));	$dir = $_SERVER['DOCUMENT_ROOT'];
-	$inc = false;
-	foreach ($subs as $sub) {
-		if (empty($sub)) continue; $dir .= '/'.$sub;
-		if (file_exists($dir.'/framework/class.secure.php')) { 
-			include($dir.'/framework/class.secure.php'); $inc = true;	break; 
-		} 
-	}
-	if (!$inc) trigger_error(sprintf("[ <b>%s</b> ] Can't include LEPTON class.secure.php!", $_SERVER['SCRIPT_NAME']), E_USER_ERROR);
+// include class.secure.php to protect this file and the whole CMS!
+if (defined('WB_PATH')) {
+  if (defined('LEPTON_VERSION')) include (WB_PATH . '/framework/class.secure.php');
 }
-// end include LEPTON class.secure.php
+else {
+  $oneback = "../";
+  $root = $oneback;
+  $level = 1;
+  while (($level < 10) && (!file_exists($root . '/framework/class.secure.php'))) {
+    $root .= $oneback;
+    $level += 1;
+  }
+  if (file_exists($root . '/framework/class.secure.php')) {
+    include ($root . '/framework/class.secure.php');
+  }
+  else {
+    trigger_error(sprintf("[ <b>%s</b> ] Can't include class.secure.php!", $_SERVER['SCRIPT_NAME']), E_USER_ERROR);
+  }
+}
+// end include class.secure.php
 
 require_once(WB_PATH .'/modules/'.basename(dirname(__FILE__)).'/initialize.php');
 
 class dbCronjobData extends dbConnectLE {
-	
+
 	const field_id							= 'cj_id';
 	const field_item						= 'cj_item';
 	const field_value						= 'cj_value';
@@ -42,9 +45,9 @@ class dbCronjobData extends dbConnectLE {
 	const item_last_call				= 'last_call';
 	const item_last_job					= 'last_job';
 	const item_last_nl_id				= 'last_nl_id';
-	
+
 	public $create_tables = false;
-	
+
 	public function __construct($create_tables=false) {
 		parent::__construct();
 		$this->create_tables = $create_tables;
@@ -63,10 +66,10 @@ class dbCronjobData extends dbConnectLE {
 					return false;
 				}
 			}
-		}	
+		}
 		return true;
 	} // __construct()
-	
+
 	/**
 	 * Return the last Call of cronjob.php as UNIX timestamp or FALSE on error
 	 * @return INT timestamp
@@ -83,17 +86,17 @@ class dbCronjobData extends dbConnectLE {
 		}
 		return false;
 	} // getLastCronjobCall()
-	
+
 } // class dbCronjobData
 
 class dbCronjobErrorLog extends dbConnectLE {
-	
+
 	const field_id						= 'cj_error_id';
 	const field_error					= 'cj_error_str';
 	const field_timestamp			= 'cj_error_stamp';
-	
+
 	public $create_tables = false;
-	
+
 	function __construct($create_tables=false) {
 		parent::__construct();
 		$this->create_tables = $create_tables;
@@ -111,14 +114,14 @@ class dbCronjobErrorLog extends dbConnectLE {
 					return false;
 				}
 			}
-		}	
+		}
 		return true;
 	} // __construct()
-	
+
 } // class dbCronjobErrorLog
 
 class dbCronjobNewsletterLog extends dbConnectLE {
-	
+
 	const field_id							= 'cj_log_id';
 	const field_nl_process_id		= 'nl_pro_id';
 	const field_email						= 'cj_log_email';
@@ -130,15 +133,15 @@ class dbCronjobNewsletterLog extends dbConnectLE {
 	const status_ok							= 1;
 	const status_error					= -1;
 	const status_simulation			= 2;
-	
+
 	public $status_array = array(
 		self::status_ok						=> kit_status_ok,
 		self::status_error				=> kit_status_error,
 		self::status_simulation		=> kit_status_simulation
 	);
-	
+
 	public $create_tables = false;
-	
+
 	function __construct($create_tables=false) {
 		parent::__construct();
 		$this->create_tables = $create_tables;
@@ -148,7 +151,7 @@ class dbCronjobNewsletterLog extends dbConnectLE {
 		$this->addFieldDefinition(self::field_email, "VARCHAR(80) NOT NULL DEFAULT ''");
 		$this->addFieldDefinition(self::field_kit_id, "INT(11) NOT NULL DEFAULT '-1'");
 		$this->addFieldDefinition(self::field_status, "TINYINT NOT NULL DEFAULT '".self::status_ok."'");
-		$this->addFieldDefinition(self::field_error, "VARCHAR(255) NOT NULL DEFAULT ''");  
+		$this->addFieldDefinition(self::field_error, "VARCHAR(255) NOT NULL DEFAULT ''");
 		$this->addFieldDefinition(self::field_timestamp, "TIMESTAMP");
 		// check field definitions
 		$this->checkFieldDefinitions();
@@ -160,10 +163,10 @@ class dbCronjobNewsletterLog extends dbConnectLE {
 					return false;
 				}
 			}
-		}	
+		}
 		return true;
 	} // __construct()
-	
+
 } // class dbCronjopNewsletterLog
 
 ?>

@@ -1,34 +1,37 @@
 <?php
 
 /**
- * KeepInTouch (KIT)
+ * KeepInTouch
  *
- * @author Ralf Hertsch (ralf.hertsch@phpmanufaktur.de)
+ * @author Ralf Hertsch <ralf.hertsch@phpmanufaktur.de>
  * @link http://phpmanufaktur.de
- * @copyright 2011
- * @license GNU GPL (http://www.gnu.org/licenses/gpl.html)
+ * @copyright 2012 - phpManufaktur by Ralf Hertsch
+ * @license http://www.gnu.org/licenses/gpl.html GNU Public License (GPL)
  * @version $Id$
  *
  * FOR VERSION- AND RELEASE NOTES PLEASE LOOK AT INFO.TXT!
  */
 
-// try to include LEPTON class.secure.php to protect this file and the whole CMS!
+// include class.secure.php to protect this file and the whole CMS!
 if (defined('WB_PATH')) {
-	if (defined('LEPTON_VERSION')) include(WB_PATH.'/framework/class.secure.php');
-} elseif (file_exists($_SERVER['DOCUMENT_ROOT'].'/framework/class.secure.php')) {
-	include($_SERVER['DOCUMENT_ROOT'].'/framework/class.secure.php');
-} else {
-	$subs = explode('/', dirname($_SERVER['SCRIPT_NAME']));	$dir = $_SERVER['DOCUMENT_ROOT'];
-	$inc = false;
-	foreach ($subs as $sub) {
-		if (empty($sub)) continue; $dir .= '/'.$sub;
-		if (file_exists($dir.'/framework/class.secure.php')) {
-			include($dir.'/framework/class.secure.php'); $inc = true;	break;
-		}
-	}
-	if (!$inc) trigger_error(sprintf("[ <b>%s</b> ] Can't include LEPTON class.secure.php!", $_SERVER['SCRIPT_NAME']), E_USER_ERROR);
+  if (defined('LEPTON_VERSION')) include (WB_PATH . '/framework/class.secure.php');
 }
-// end include LEPTON class.secure.php
+else {
+  $oneback = "../";
+  $root = $oneback;
+  $level = 1;
+  while (($level < 10) && (!file_exists($root . '/framework/class.secure.php'))) {
+    $root .= $oneback;
+    $level += 1;
+  }
+  if (file_exists($root . '/framework/class.secure.php')) {
+    include ($root . '/framework/class.secure.php');
+  }
+  else {
+    trigger_error(sprintf("[ <b>%s</b> ] Can't include class.secure.php!", $_SERVER['SCRIPT_NAME']), E_USER_ERROR);
+  }
+}
+// end include class.secure.php
 
 if (!defined('KIT_INSTALL_RUNNING')) {
 	global $tools;
@@ -274,7 +277,7 @@ class dbKITcontact extends dbConnectLE {
 		// check field definitions
 		$this->checkFieldDefinitions();
 		// set default timezone
-		date_default_timezone_set(kit_cfg_time_zone);
+		date_default_timezone_set(CFG_TIME_ZONE);
 		// create tables
 		if ($this->create_tables) {
 			$this->initTables();
@@ -760,7 +763,7 @@ class dbKITcontactArrayCfg extends dbConnectLE {
 		// check field definitions
 		$this->checkFieldDefinitions();
 		// set default timezone
-		date_default_timezone_set(kit_cfg_time_zone);
+		date_default_timezone_set(CFG_TIME_ZONE);
 		// create tables
 		if ($this->create_tables) {
 			$this->initTables();
@@ -889,7 +892,7 @@ class dbKITcontactAddress extends dbConnectLE {
 		// check field definitions
 		$this->checkFieldDefinitions();
 		// set default timezone
-		date_default_timezone_set(kit_cfg_time_zone);
+		date_default_timezone_set(CFG_TIME_ZONE);
 		// create tables
 		if ($this->create_tables) {
 			$this->initTables();
@@ -952,7 +955,7 @@ class dbKITcountries extends dbConnectLE {
 		$this->addFieldDefinition(self::field_land_name, "VARCHAR(50) NOT NULL DEFAULT ''");
 		$this->checkFieldDefinitions();
 		// set default timezone
-		date_default_timezone_set(kit_cfg_time_zone);
+		date_default_timezone_set(CFG_TIME_ZONE);
 		if ($this->create_tables) {
 			$this->initTables();
 		}
@@ -1008,7 +1011,7 @@ class dbKITlanguages extends dbConnectLE {
 		$this->addFieldDefinition(self::FIELD_ENGLISH, "VARCHAR(64) NOT NULL DEFAULT '-undefined-'");
 		$this->checkFieldDefinitions();
 		// set default timezone
-		date_default_timezone_set(kit_cfg_time_zone);
+		date_default_timezone_set(CFG_TIME_ZONE);
 		if ($this->create_tables) {
 			$this->initTables();
 		}
@@ -1074,7 +1077,7 @@ class dbKITmemos extends dbConnectLE {
 		// check field definitions
 		$this->checkFieldDefinitions();
 		// set default timezone
-		date_default_timezone_set(kit_cfg_time_zone);
+		date_default_timezone_set(CFG_TIME_ZONE);
 		// create tables
 		if ($this->create_tables) {
 			$this->initTables();
@@ -1150,7 +1153,7 @@ class dbKITprotocol extends dbConnectLE {
 		// check field definitions
 		$this->checkFieldDefinitions();
 		// set default timezone
-		date_default_timezone_set(kit_cfg_time_zone);
+		date_default_timezone_set(CFG_TIME_ZONE);
 		// create tables
 		if ($this->create_tables) {
 			$this->initTables();
@@ -1238,7 +1241,7 @@ class dbKITprovider extends dbConnectLE {
 		// check field definitions
 		$this->checkFieldDefinitions();
 		// set default timezone
-		date_default_timezone_set(kit_cfg_time_zone);
+		date_default_timezone_set(CFG_TIME_ZONE);
 		// create tables
 		if ($this->create_tables) {
 			$this->initTables();
@@ -1335,7 +1338,7 @@ class dbKITregister extends dbConnectLE {
 		// check field definitions
 		$this->checkFieldDefinitions();
 		// set default timezone
-		date_default_timezone_set(kit_cfg_time_zone);
+		date_default_timezone_set(CFG_TIME_ZONE);
 		// create tables
 		if ($this->create_tables) {
 			$this->initTables();
@@ -1405,7 +1408,7 @@ class dbWBusers extends dbConnectLE {
 		// check field definitions
 		$this->checkFieldDefinitions();
 		// set default timezone
-		date_default_timezone_set(kit_cfg_time_zone);
+		date_default_timezone_set(CFG_TIME_ZONE);
 
 	} // __construct()
 
@@ -1443,7 +1446,7 @@ class dbWBgroups extends dbConnectLE {
 		// check field definitions
 		$this->checkFieldDefinitions();
 		// set default timezone
-		date_default_timezone_set(kit_cfg_time_zone);
+		date_default_timezone_set(CFG_TIME_ZONE);
 
 	} // __construct()
 

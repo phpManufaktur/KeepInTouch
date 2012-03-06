@@ -1,7 +1,14 @@
 KeepInTouch - Customer Relationship Management (CRM)
-(c) 2010, 2011 by phpManufaktur
+(c) 2010, 2011, 2012 by phpManufaktur
 Ralf Hertsch, Stockholmer Str. 31, 13359 Berlin (Germany)
 http://phpManufaktur.de - ralf.hertsch@phpManufaktur.de
+
+Release 0.56
+
+fixed - uninstall calls the no longer existing class.dialogs.php
+added - LEPTON I18n language support
+moved - the old static languages files are renamed to old.* and still in use, 
+  they will be obsolete step by step with the next KIT releases
 
 Release 0.55
 2012-02-29

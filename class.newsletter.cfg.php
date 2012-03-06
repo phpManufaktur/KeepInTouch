@@ -1,41 +1,44 @@
 <?php
 
 /**
- * KeepInTouch (KIT)
- * 
- * @author Ralf Hertsch (ralf.hertsch@phpmanufaktur.de)
+ * KeepInTouch
+ *
+ * @author Ralf Hertsch <ralf.hertsch@phpmanufaktur.de>
  * @link http://phpmanufaktur.de
- * @copyright 2011
- * @license GNU GPL (http://www.gnu.org/licenses/gpl.html)
+ * @copyright 2012 - phpManufaktur by Ralf Hertsch
+ * @license http://www.gnu.org/licenses/gpl.html GNU Public License (GPL)
  * @version $Id$
- * 
+ *
  * FOR VERSION- AND RELEASE NOTES PLEASE LOOK AT INFO.TXT!
  */
 
-// try to include LEPTON class.secure.php to protect this file and the whole CMS!
-if (defined('WB_PATH')) {	
-	if (defined('LEPTON_VERSION')) include(WB_PATH.'/framework/class.secure.php');
-} elseif (file_exists($_SERVER['DOCUMENT_ROOT'].'/framework/class.secure.php')) {
-	include($_SERVER['DOCUMENT_ROOT'].'/framework/class.secure.php'); 
-} else {
-	$subs = explode('/', dirname($_SERVER['SCRIPT_NAME']));	$dir = $_SERVER['DOCUMENT_ROOT'];
-	$inc = false;
-	foreach ($subs as $sub) {
-		if (empty($sub)) continue; $dir .= '/'.$sub;
-		if (file_exists($dir.'/framework/class.secure.php')) { 
-			include($dir.'/framework/class.secure.php'); $inc = true;	break; 
-		} 
-	}
-	if (!$inc) trigger_error(sprintf("[ <b>%s</b> ] Can't include LEPTON class.secure.php!", $_SERVER['SCRIPT_NAME']), E_USER_ERROR);
+// include class.secure.php to protect this file and the whole CMS!
+if (defined('WB_PATH')) {
+  if (defined('LEPTON_VERSION')) include (WB_PATH . '/framework/class.secure.php');
 }
-// end include LEPTON class.secure.php
+else {
+  $oneback = "../";
+  $root = $oneback;
+  $level = 1;
+  while (($level < 10) && (!file_exists($root . '/framework/class.secure.php'))) {
+    $root .= $oneback;
+    $level += 1;
+  }
+  if (file_exists($root . '/framework/class.secure.php')) {
+    include ($root . '/framework/class.secure.php');
+  }
+  else {
+    trigger_error(sprintf("[ <b>%s</b> ] Can't include class.secure.php!", $_SERVER['SCRIPT_NAME']), E_USER_ERROR);
+  }
+}
+// end include class.secure.php
 
 require_once(WB_PATH.'/modules/'.basename(dirname(__FILE__)).'/initialize.php');
 
 $dbNewsletterCfg = new dbKITnewsletterCfg();
 
 class dbKITnewsletterCfg extends dbConnectLE {
-	
+
 	const field_id						= 'nl_cfg_id';
 	const field_name					= 'nl_cfg_name';
 	const field_type					= 'nl_cfg_type';
@@ -45,10 +48,10 @@ class dbKITnewsletterCfg extends dbConnectLE {
 	const field_status				= 'nl_cfg_status';
 	const field_update_by			= 'nl_cfg_update_by';
 	const field_update_when		= 'nl_cfg_update_when';
-	
+
 	const status_active				= 1;
 	const status_deleted			= 0;
-	
+
 	const type_undefined			= 0;
 	const type_array					= 7;
   const type_boolean				= 1;
@@ -58,7 +61,7 @@ class dbKITnewsletterCfg extends dbConnectLE {
   const type_path						= 5;
   const type_string					= 6;
   const type_url						= 8;
-  
+
   public $type_array = array(
   	self::type_undefined		=> '-UNDEFINED-',
   	self::type_array				=> 'ARRAY',
@@ -70,10 +73,10 @@ class dbKITnewsletterCfg extends dbConnectLE {
   	self::type_string				=> 'STRING',
   	self::type_url					=> 'URL'
   );
-  
+
   private $createTables 		= false;
   private $message					= '';
-    
+
   //const cfgDeveloperMode		= 'cfgDeveloperMode';
   const cfgSalutation_01		= 'cfgSalutation_01';
   const cfgSalutation_02		= 'cfgSalutation_02';
@@ -89,7 +92,7 @@ class dbKITnewsletterCfg extends dbConnectLE {
   const cfgAdjustRegister   = 'cfgAdjustRegister';
   //const cfgSetTimeLimit     = 'cfgSetTimeLimit';
   const cfgMaxPackageSize		= 'cfgMaxPackageSize';
-  
+
   public $config_array = array(
   	//array('kit_label_cfg_developer_mode', self::cfgDeveloperMode, self::type_boolean, 0, 'kit_desc_cfg_developer_mode'),
   	array('kit_label_cfg_nl_salutation', self::cfgSalutation_01, self::type_string, 'Sehr geehrter Herr {$account_first_name} {$account_last_name},|Sehr geehrte Frau {$account_first_name} {$account_last_name},|Sehr geehrter Kunde,', 'kit_desc_cfg_nl_salutation'),
@@ -106,8 +109,8 @@ class dbKITnewsletterCfg extends dbConnectLE {
     array('kit_label_cfg_nl_adjust_register', self::cfgAdjustRegister, self::type_boolean, '0', 'kit_desc_cfg_nl_adjust_register'),
     //array('kit_label_cfg_nl_set_time_limit', self::cfgSetTimeLimit, self::type_integer, '60', 'kit_desc_cfg_nl_set_time_limit')
     array('kit_label_cfg_nl_max_package_size', self::cfgMaxPackageSize, self::type_integer, '50', 'kit_desc_cfg_nl_max_package_size')
-  );  
-  
+  );
+
   public function __construct($createTables = false) {
   	$this->createTables = $createTables;
   	parent::__construct();
@@ -137,14 +140,14 @@ class dbKITnewsletterCfg extends dbConnectLE {
   		$this->checkConfig();
   	}
   } // __construct()
-  
+
   public function setMessage($message) {
     $this->message = $message;
   } // setMessage()
 
   /**
     * Get Message from $this->message;
-    * 
+    *
     * @return STR $this->message
     */
   public function getMessage() {
@@ -153,21 +156,21 @@ class dbKITnewsletterCfg extends dbConnectLE {
 
   /**
     * Check if $this->message is empty
-    * 
+    *
     * @return BOOL
     */
   public function isMessage() {
     return (bool) !empty($this->message);
   } // isMessage
-  
+
   /**
    * Aktualisiert den Wert $new_value des Datensatz $name
-   * 
+   *
    * @param $new_value STR - Wert, der uebernommen werden soll
    * @param $id INT - ID des Datensatz, dessen Wert aktualisiert werden soll
-   * 
+   *
    * @return BOOL Ergebnis
-   * 
+   *
    */
   public function setValueByName($new_value, $name) {
   	$where = array();
@@ -183,18 +186,18 @@ class dbKITnewsletterCfg extends dbConnectLE {
   	}
   	return $this->setValue($new_value, $config[0][self::field_id]);
   } // setValueByName()
-  
+
   /**
    * Aktualisiert den Wert $new_value des Datensatz $id
-   * 
+   *
    * @param $new_value STR - Wert, der uebernommen werden soll
    * @param $id INT - ID des Datensatz, dessen Wert aktualisiert werden soll
-   * 
+   *
    * @return BOOL Ergebnis
    */
   public function setValue($new_value, $id) {
   	global $tools;
-  	
+
   	$value = '';
   	$where = array();
   	$where[self::field_id] = $id;
@@ -216,7 +219,7 @@ class dbKITnewsletterCfg extends dbConnectLE {
   		foreach ($worker as $item) {
   			$data[] = trim($item);
   		};
-  		$value = implode(",", $data);  			
+  		$value = implode(",", $data);
   		break;
   	case self::type_boolean:
   		$value = (bool) $new_value;
@@ -228,7 +231,7 @@ class dbKITnewsletterCfg extends dbConnectLE {
   		}
   		else {
   			$this->setMessage(sprintf(kit_msg_invalid_email, $new_value));
-  			return false;			
+  			return false;
   		}
   		break;
   	case self::type_float:
@@ -257,12 +260,12 @@ class dbKITnewsletterCfg extends dbConnectLE {
   	}
   	return true;
   } // setValue()
-  
+
   /**
    * Gibt den angeforderten Wert zurueck
-   * 
-   * @param $name - Bezeichner 
-   * 
+   *
+   * @param $name - Bezeichner
+   *
    * @return WERT entsprechend des TYP
    */
   public function getValue($name) {
@@ -304,7 +307,7 @@ class dbKITnewsletterCfg extends dbConnectLE {
   	endswitch;
   	return $result;
   } // getValue()
-  
+
   public function checkConfig() {
   	foreach ($this->config_array as $item) {
   		$where = array();
@@ -332,7 +335,7 @@ class dbKITnewsletterCfg extends dbConnectLE {
   	}
   	return true;
   }
-	  
+
 } // class dbKITnewsletterCfg
 
 

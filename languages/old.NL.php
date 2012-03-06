@@ -1,50 +1,42 @@
 <?php
 
 /**
- * KeepInTouch (KIT)
+ * KeepInTouch
  *
- * @author Ralf Hertsch (ralf.hertsch@phpmanufaktur.de)
+ * @author Ralf Hertsch <ralf.hertsch@phpmanufaktur.de>
  * @link http://phpmanufaktur.de
- * @copyright 2011
- * @license GNU GPL (http://www.gnu.org/licenses/gpl.html)
+ * @copyright 2012 - phpManufaktur by Ralf Hertsch
+ * @license http://www.gnu.org/licenses/gpl.html GNU Public License (GPL)
  * @version $Id$
  *
  * FOR VERSION- AND RELEASE NOTES PLEASE LOOK AT INFO.TXT!
  */
 
-// try to include LEPTON class.secure.php to protect this file and the whole
-// CMS!
+// include class.secure.php to protect this file and the whole CMS!
 if (defined('WB_PATH')) {
-    if (defined('LEPTON_VERSION')) include (WB_PATH . '/framework/class.secure.php');
-} elseif (file_exists($_SERVER['DOCUMENT_ROOT'] . '/framework/class.secure.php')) {
-    include ($_SERVER['DOCUMENT_ROOT'] . '/framework/class.secure.php');
-} else {
-    $subs = explode('/', dirname($_SERVER['SCRIPT_NAME']));
-    $dir = $_SERVER['DOCUMENT_ROOT'];
-    $inc = false;
-    foreach ($subs as $sub) {
-        if (empty($sub)) continue;
-        $dir .= '/' . $sub;
-        if (file_exists($dir . '/framework/class.secure.php')) {
-            include ($dir . '/framework/class.secure.php');
-            $inc = true;
-            break;
-        }
-    }
-    if (! $inc) trigger_error(sprintf("[ <b>%s</b> ] Can't include LEPTON class.secure.php!", $_SERVER['SCRIPT_NAME']), E_USER_ERROR);
+  if (defined('LEPTON_VERSION')) include (WB_PATH . '/framework/class.secure.php');
 }
-// end include LEPTON class.secure.php
+else {
+  $oneback = "../";
+  $root = $oneback;
+  $level = 1;
+  while (($level < 10) && (!file_exists($root . '/framework/class.secure.php'))) {
+    $root .= $oneback;
+    $level += 1;
+  }
+  if (file_exists($root . '/framework/class.secure.php')) {
+    include ($root . '/framework/class.secure.php');
+  }
+  else {
+    trigger_error(sprintf("[ <b>%s</b> ] Can't include class.secure.php!", $_SERVER['SCRIPT_NAME']), E_USER_ERROR);
+  }
+}
+// end include class.secure.php
 
 if ('á' != "\xc3\xa1") {
 	// important: language files must be saved as UTF-8 (without BOM)
 	trigger_error('The language file <b>'.basename(__FILE__).'</b> is damaged, it must be saved <b>UTF-8</b> encoded!', E_USER_ERROR);
 }
-
-// Deutsche Modulbeschreibung
-$module_description = 'dbKeepInTouch (KIT) ist eine zentrale Adress- und Kontaktverwaltung, die unterschiedlichen Anwendungen Kontaktdaten zur Verfuegung stellt.';
-
-// name of the person(s) who translated and edited this language file
-$module_translation_by = 'Frank Bos (ConsultOne)';
 
 define('kit_btn_abort', 'Afbreken');
 define('kit_btn_edit', 'Bewerken');
@@ -61,15 +53,6 @@ define('kit_btn_register', 'Registreren');
 define('kit_btn_save', 'Opslaan');
 define('kit_btn_send', 'Versturen');
 define('kit_btn_yes', 'Ja');
-
-define('kit_cfg_date_str', 'd.m.Y');
-define('kit_cfg_date_time_str', 'd.m.Y - H:i:s');
-define('kit_cfg_thousand_separator', '.');
-define('kit_cfg_date_separator', '.');
-define('kit_cfg_decimal_separator', ',');
-define('kit_cfg_price', '%s €');
-define('kit_cfg_euro', '%s EUR');
-define('kit_cfg_time_zone', 'Europe/Berlin');
 
 define('kit_cmd_nl_account_email', 'E-Mail adres abonnee');
 define('kit_cmd_nl_account_first_name', 'Voornaam abonnee');
@@ -165,6 +148,11 @@ define('kit_desc_cfg_kit_admins', '<b>KIT Administratoren</b> hebben uitgebreide
 define('kit_desc_cfg_kit_request_link', '<b>kit.php</b> accepteert alle aanvragen, retourneert data en geeft een dialoog weer. Het bestand bevindt zich in de directory /modules/kit, maar het kan ook worden gekopieerd naar een andere locatie, bijvoorbeeld in de root directory');
 define('kit_desc_cfg_kit_response_page', 'Kit die nodig is voor de weergave van de dialoog en verwijst naar een aparte pagina');
 define('kit_desc_cfg_limit_contact_list', 'Bepalen hoeveel items in de lijst met contacten moet worden weergegeven per pagina.');
+define('kit_desc_cfg_gmap_static_use', 'Google Maps (statisch) verwenden.');
+define('kit_desc_cfg_gmap_static_width', 'Breite der Google Map in Pixel');
+define('kit_desc_cfg_gmap_static_height', 'Höhe der Google Map in Pixel');
+define('kit_desc_cfg_gmap_static_zoom', 'Zoomfakor für die Detailanzeige der Google Map');
+define('kit_desc_cfg_gmap_static_marker_color', 'Farbe des gesetzen Markers, Hexadezimal Wert.');
 define('kit_desc_cfg_max_invalid_login', 'Maximum aantal mislukte login pogingen van gebruikers voordat de account wordt geblokkeerd.');
 define('kit_desc_cfg_min_pwd_len', 'Minimale lengte van de gebruikte wachtwoorden');
 define('kit_desc_cfg_newsletter_account_info', 'KIT schickt dem Benutzer bei der Aktivierung eines Newsletter die Zugangsdaten für einen Zugriff auf das Benutzerkonto. Falls dies nicht gewünscht ist, setzen Sie diesen Schalter auf <b>0</b>, ansonsten auf <b>1</b> (default).');
@@ -181,6 +169,7 @@ define('kit_desc_cfg_session_id', 'ID voor de unieke identificatie van de sessie
 define('kit_desc_cfg_sort_contact_list', 'Voorkeur voor het sorteren van de lijst met contactpersonen: 0 = ongesorteerd, 1 = E-mail ... 3 = achternaam - de mogelijke cijfers worden weergegeven in de keuzelijst voor het sorteren.');
 define('kit_desc_cfg_use_captcha', 'Beslis of de diaglogen gebruik maken van de Frontend CAPTCHA spam bescherming ');
 define('kit_desc_cfg_use_custom_files', 'Indien ingesteld, kunt u gebruik maken van op maat gemaakte templates en taal bestanden. De bestanden beginnen met "custom", bijvoorbeeld "Custom.NL.php", deze bestanden worden niet overschreven tijdens een update.');
+define('kit_desc_cfg_use_ssl', 'Falls gesetzt verwendet KIT, sofern möglich, Secure Sockets Layer (SSL) für den Aufruf von URL\'s (HTTPS://).');
 
 define('kit_error_blank_title', '<p>De pagina moet een titel hebben!</p>');
 define('kit_error_cfg_id', '<p>De configuratie opgenomen met het ID <b>% 05D </ b> kon niet worden gelezen!</p>');
@@ -337,6 +326,11 @@ define('kit_label_cfg_kit_admins', 'KIT Administratoren');
 define('kit_label_cfg_kit_request_link', 'KIT Request Link');
 define('kit_label_cfg_kit_reponse_page', 'KIT antwoord website');
 define('kit_label_cfg_limit_contact_list', 'max. vermeldingen in contactlijst');
+define('kit_label_cfg_gmap_static_height', 'Google Map, Höhe');
+define('kit_label_cfg_gmap_static_marker_color', 'Google Map, Marker Farbe');
+define('kit_label_cfg_gmap_static_use', 'Google Map verwenden');
+define('kit_label_cfg_gmap_static_width', 'Google Map, Breite');
+define('kit_label_cfg_gmap_static_zoom', 'Google Map, Zoom');
 define('kit_label_cfg_max_invalid_login', 'Maximale Login pogingen');
 define('kit_label_cfg_min_pwd_len', 'Min. lengte wachtwoord');
 define('kit_label_cfg_newsletter_account_info', 'Newsletter, Kontoinformation');
@@ -354,6 +348,7 @@ define('kit_label_cfg_sort_contact_list', 'Contact lijst sorteren');
 define('kit_label_cfg_temp_dir', 'Tijdelijke directory');
 define('kit_label_cfg_use_captcha', 'CAPTCHA gebruiken');
 define('kit_label_cfg_use_custom_files', 'Aangepaste gegevensbestanden gebruiken');
+define('kit_label_cfg_use_ssl', 'SSL verwenden');
 define('kit_label_checksum', 'Checksum');
 define('kit_label_contact_access', 'Toegang Contact');
 define('kit_label_contact_edit', 'Contact bewerken');

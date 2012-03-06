@@ -1,34 +1,37 @@
 <?php
 
 /**
- * KeepInTouch (KIT)
- * 
- * @author Ralf Hertsch (ralf.hertsch@phpmanufaktur.de)
+ * KeepInTouch
+ *
+ * @author Ralf Hertsch <ralf.hertsch@phpmanufaktur.de>
  * @link http://phpmanufaktur.de
- * @copyright 2011
- * @license GNU GPL (http://www.gnu.org/licenses/gpl.html)
+ * @copyright 2012 - phpManufaktur by Ralf Hertsch
+ * @license http://www.gnu.org/licenses/gpl.html GNU Public License (GPL)
  * @version $Id$
- * 
+ *
  * FOR VERSION- AND RELEASE NOTES PLEASE LOOK AT INFO.TXT!
  */
 
-// try to include LEPTON class.secure.php to protect this file and the whole CMS!
-if (defined('WB_PATH')) {	
-	if (defined('LEPTON_VERSION')) include(WB_PATH.'/framework/class.secure.php');
-} elseif (file_exists($_SERVER['DOCUMENT_ROOT'].'/framework/class.secure.php')) {
-	include($_SERVER['DOCUMENT_ROOT'].'/framework/class.secure.php'); 
-} else {
-	$subs = explode('/', dirname($_SERVER['SCRIPT_NAME']));	$dir = $_SERVER['DOCUMENT_ROOT'];
-	$inc = false;
-	foreach ($subs as $sub) {
-		if (empty($sub)) continue; $dir .= '/'.$sub;
-		if (file_exists($dir.'/framework/class.secure.php')) { 
-			include($dir.'/framework/class.secure.php'); $inc = true;	break; 
-		} 
-	}
-	if (!$inc) trigger_error(sprintf("[ <b>%s</b> ] Can't include LEPTON class.secure.php!", $_SERVER['SCRIPT_NAME']), E_USER_ERROR);
+// include class.secure.php to protect this file and the whole CMS!
+if (defined('WB_PATH')) {
+  if (defined('LEPTON_VERSION')) include (WB_PATH . '/framework/class.secure.php');
 }
-// end include LEPTON class.secure.php
+else {
+  $oneback = "../";
+  $root = $oneback;
+  $level = 1;
+  while (($level < 10) && (!file_exists($root . '/framework/class.secure.php'))) {
+    $root .= $oneback;
+    $level += 1;
+  }
+  if (file_exists($root . '/framework/class.secure.php')) {
+    include ($root . '/framework/class.secure.php');
+  }
+  else {
+    trigger_error(sprintf("[ <b>%s</b> ] Can't include class.secure.php!", $_SERVER['SCRIPT_NAME']), E_USER_ERROR);
+  }
+}
+// end include class.secure.php
 
 if (!defined('DEBUG_MODE')) define('DEBUG_MODE', true);
 
@@ -41,12 +44,35 @@ else {
 	error_reporting(E_ERROR);
 }
 
-// include language file
-if(!file_exists(WB_PATH .'/modules/'.basename(dirname(__FILE__)).'/languages/' .LANGUAGE .'.php')) {
-	require_once(WB_PATH .'/modules/'.basename(dirname(__FILE__)).'/languages/DE.php'); 
+// use LEPTON 2.x I18n for access to language files
+if (!class_exists('LEPTON_Helper_I18n')) require_once WB_PATH.'/modules/'.basename(dirname(__FILE__)).'/framework/LEPTON/Helper/I18n.php';
+global $I18n;
+if (!is_object($I18n)) {
+  $I18n = new LEPTON_Helper_I18n(array('lang' => LANGUAGE));
 }
 else {
-	require_once(WB_PATH .'/modules/'.basename(dirname(__FILE__)).'/languages/' .LANGUAGE .'.php'); 
+  $I18n->addFile('DE.php', WB_PATH.'/modules/'.basename(dirname(__FILE__)).'/languages/');
+}
+
+// load language depending onfiguration
+if (!file_exists(WB_PATH.'/modules/' . basename(dirname(__FILE__)) . '/languages/' . LANGUAGE . '.cfg.php')) {
+  require_once(WB_PATH .'/modules/'.basename(dirname(__FILE__)).'/languages/DE.cfg.php');
+} else {
+  require_once(WB_PATH .'/modules/'.basename(dirname(__FILE__)).'/languages/' .LANGUAGE .'.cfg.php');
+}
+if (!file_exists(WB_PATH . '/modules/' . basename(dirname(__FILE__)) . '/languages/' . LANGUAGE . '.php')) {
+  if (! defined('KIT_LANGUAGE')) define('KIT_LANGUAGE', 'DE'); // important: language flag is used by template selection
+} else {
+  if (! defined('KIT_LANGUAGE')) define('KIT_LANGUAGE', LANGUAGE);
+}
+
+
+// include the OLD language file - needed as long not complete switched to I18n !!!
+if (!file_exists(WB_PATH .'/modules/'.basename(dirname(__FILE__)).'/languages/old.' .LANGUAGE .'.php')) {
+	require_once(WB_PATH .'/modules/'.basename(dirname(__FILE__)).'/languages/old.DE.php');
+}
+else {
+	require_once(WB_PATH .'/modules/'.basename(dirname(__FILE__)).'/languages/old.' .LANGUAGE .'.php');
 }
 
 // include dbConnect
@@ -60,7 +86,7 @@ require_once(WB_PATH.'/framework/class.admin.php');
 
 // initialize Dwoo
 global $parser;
- 
+
 if (!class_exists('Dwoo')) {
 	require_once WB_PATH.'/modules/dwoo/include.php';
 }
@@ -70,7 +96,10 @@ if (!file_exists($cache_path)) mkdir($cache_path, 0755, true);
 $compiled_path = WB_PATH.'/temp/compiled';
 if (!file_exists($compiled_path)) mkdir($compiled_path, 0755, true);
 
-global $parser;
 if (!is_object($parser)) $parser = new Dwoo($compiled_path, $cache_path);
+
+// load extensions for the template engine
+$loader = $parser->getLoader();
+$loader->addDirectory(WB_PATH.'/modules/'.basename(dirname(__FILE__)).'/templates/plugins/');
 
 ?>

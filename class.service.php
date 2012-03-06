@@ -1,54 +1,57 @@
 <?php
 
 /**
- * KeepInTouch (KIT)
- * 
- * @author Ralf Hertsch (ralf.hertsch@phpmanufaktur.de)
+ * KeepInTouch
+ *
+ * @author Ralf Hertsch <ralf.hertsch@phpmanufaktur.de>
  * @link http://phpmanufaktur.de
- * @copyright 2011
- * @license GNU GPL (http://www.gnu.org/licenses/gpl.html)
+ * @copyright 2012 - phpManufaktur by Ralf Hertsch
+ * @license http://www.gnu.org/licenses/gpl.html GNU Public License (GPL)
  * @version $Id$
- * 
+ *
  * FOR VERSION- AND RELEASE NOTES PLEASE LOOK AT INFO.TXT!
  */
 
-// try to include LEPTON class.secure.php to protect this file and the whole CMS!
-if (defined('WB_PATH')) {	
-	if (defined('LEPTON_VERSION')) include(WB_PATH.'/framework/class.secure.php');
-} elseif (file_exists($_SERVER['DOCUMENT_ROOT'].'/framework/class.secure.php')) {
-	include($_SERVER['DOCUMENT_ROOT'].'/framework/class.secure.php'); 
-} else {
-	$subs = explode('/', dirname($_SERVER['SCRIPT_NAME']));	$dir = $_SERVER['DOCUMENT_ROOT'];
-	$inc = false;
-	foreach ($subs as $sub) {
-		if (empty($sub)) continue; $dir .= '/'.$sub;
-		if (file_exists($dir.'/framework/class.secure.php')) { 
-			include($dir.'/framework/class.secure.php'); $inc = true;	break; 
-		} 
-	}
-	if (!$inc) trigger_error(sprintf("[ <b>%s</b> ] Can't include LEPTON class.secure.php!", $_SERVER['SCRIPT_NAME']), E_USER_ERROR);
+// include class.secure.php to protect this file and the whole CMS!
+if (defined('WB_PATH')) {
+  if (defined('LEPTON_VERSION')) include (WB_PATH . '/framework/class.secure.php');
 }
-// end include LEPTON class.secure.php
+else {
+  $oneback = "../";
+  $root = $oneback;
+  $level = 1;
+  while (($level < 10) && (!file_exists($root . '/framework/class.secure.php'))) {
+    $root .= $oneback;
+    $level += 1;
+  }
+  if (file_exists($root . '/framework/class.secure.php')) {
+    include ($root . '/framework/class.secure.php');
+  }
+  else {
+    trigger_error(sprintf("[ <b>%s</b> ] Can't include class.secure.php!", $_SERVER['SCRIPT_NAME']), E_USER_ERROR);
+  }
+}
+// end include class.secure.php
 
 require_once(WB_PATH.'/modules/'.basename(dirname(__FILE__)).'/initialize.php');
 
 global $parser;
 
-if (!is_object($parser)) $parser = new Dwoo(); 
+if (!is_object($parser)) $parser = new Dwoo();
 
 class kitService {
-	
+
 	const request_action							= 'stact';
-	
+
 	const action_default							= 'def';
-	
+
 	private $page_link 								= '';
 	private $img_url									= '';
 	private $template_path						= '';
 	private $help_path								= '';
 	private $error										= '';
 	private $message									= '';
-	
+
 	public function __construct() {
 		global $dbCfg;
 		$this->page_link = ADMIN_URL.'/admintools/tool.php?tool=kit';
@@ -56,10 +59,10 @@ class kitService {
 		$this->help_path = WB_PATH . '/modules/' . basename(dirname(__FILE__)) . '/languages/' ;
 		$this->img_url = WB_URL.'/modules/'.basename(dirname(__FILE__)).'/img/';
 	} // __construct()
-	
+
 	/**
     * Set $this->error to $error
-    * 
+    *
     * @param STR $error
     */
   public function setError($error) {
@@ -68,7 +71,7 @@ class kitService {
 
   /**
     * Get Error from $this->error;
-    * 
+    *
     * @return STR $this->error
     */
   public function getError() {
@@ -77,7 +80,7 @@ class kitService {
 
   /**
     * Check if $this->error is empty
-    * 
+    *
     * @return BOOL
     */
   public function isError() {
@@ -92,7 +95,7 @@ class kitService {
   }
 
   /** Set $this->message to $message
-    * 
+    *
     * @param STR $message
     */
   public function setMessage($message='') {
@@ -101,7 +104,7 @@ class kitService {
 
   /**
     * Get Message from $this->message;
-    * 
+    *
     * @return STR $this->message
     */
   public function getMessage() {
@@ -110,16 +113,16 @@ class kitService {
 
   /**
     * Check if $this->message is empty
-    * 
+    *
     * @return BOOL
     */
   public function isMessage() {
     return (bool) !empty($this->message);
   } // isMessage
-	
+
     /**
    * Verhindert XSS Cross Site Scripting
-   * 
+   *
    * @param REFERENCE $_REQUEST Array
    * @return $request
    */
@@ -132,8 +135,8 @@ class kitService {
   	}
 	  return $request;
   } // xssPrevent()
-  
-  
+
+
   public function action() {
   	// ACHTUNG: erlaubte HTML Felder muessen auch in $kitBackend->action() angegeben werden !!!
   	$html_allowed = array();
@@ -150,7 +153,7 @@ class kitService {
   	endswitch;
   	return true;
   } // action();
-  
+
   /**
    * Return Release of Module
    *
@@ -160,7 +163,7 @@ class kitService {
     // read info.php into array
     $info_text = file(WB_PATH.'/modules/'.basename(dirname(__FILE__)).'/info.php');
     if ($info_text == false) {
-      return -1; 
+      return -1;
     }
     // walk through array
     foreach ($info_text as $item) {
@@ -169,11 +172,11 @@ class kitService {
         $value = explode('=', $item);
         // return floatval
         return floatval(preg_replace('([\'";,\(\)[:space:][:alpha:]])', '', $value[1]));
-      } 
+      }
     }
     return -1;
   } // getRelease()
-  
+
   /**
    * Show Informations about KeepInTouch
    * @return STR Information
@@ -187,7 +190,7 @@ class kitService {
   	);
   	return $parser->get($this->template_path.'backend.start.license.info.htt', $data);
   } // getLicenseInfo()
-	
+
   private function getInfoBox() {
   	if ($this->isMessage()) {
   		return sprintf('<div id="kit_info_box">%s</div>', $this->getMessage());
@@ -195,7 +198,7 @@ class kitService {
   	// Abfrage externer Infoserver fehlt noch...
   	return '';
   }
-  
+
   public function dlgStart() {
   	global $parser;
   	$menu_items = '';
@@ -254,11 +257,11 @@ class kitService {
   																	kit_tab_help),
   								'info' => kit_start_help);
   	$menu_items .= $parser->get($row, $data);
-		
+
   	$license_info = $this->getKITInfo();
-  	
+
   	$kit_info = $this->getInfoBox();
-  	
+
   	$data = array(
   		'menu_items'		=> $menu_items,
   		'license_info'	=> $license_info,
@@ -266,6 +269,6 @@ class kitService {
   	);
   	return $parser->get($this->template_path.'backend.start.htt', $data);
   } // dlgStart()
-   
+
 } // class kitService
 ?>

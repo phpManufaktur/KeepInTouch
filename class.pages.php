@@ -1,34 +1,37 @@
 <?php
 
 /**
- * KeepInTouch (KIT)
- * 
- * @author Ralf Hertsch (ralf.hertsch@phpmanufaktur.de)
+ * KeepInTouch
+ *
+ * @author Ralf Hertsch <ralf.hertsch@phpmanufaktur.de>
  * @link http://phpmanufaktur.de
- * @copyright 2011
- * @license GNU GPL (http://www.gnu.org/licenses/gpl.html)
+ * @copyright 2012 - phpManufaktur by Ralf Hertsch
+ * @license http://www.gnu.org/licenses/gpl.html GNU Public License (GPL)
  * @version $Id$
- * 
+ *
  * FOR VERSION- AND RELEASE NOTES PLEASE LOOK AT INFO.TXT!
  */
 
-// try to include LEPTON class.secure.php to protect this file and the whole CMS!
-if (defined('WB_PATH')) {	
-	if (defined('LEPTON_VERSION')) include(WB_PATH.'/framework/class.secure.php');
-} elseif (file_exists($_SERVER['DOCUMENT_ROOT'].'/framework/class.secure.php')) {
-	include($_SERVER['DOCUMENT_ROOT'].'/framework/class.secure.php'); 
-} else {
-	$subs = explode('/', dirname($_SERVER['SCRIPT_NAME']));	$dir = $_SERVER['DOCUMENT_ROOT'];
-	$inc = false;
-	foreach ($subs as $sub) {
-		if (empty($sub)) continue; $dir .= '/'.$sub;
-		if (file_exists($dir.'/framework/class.secure.php')) { 
-			include($dir.'/framework/class.secure.php'); $inc = true;	break; 
-		} 
-	}
-	if (!$inc) trigger_error(sprintf("[ <b>%s</b> ] Can't include LEPTON class.secure.php!", $_SERVER['SCRIPT_NAME']), E_USER_ERROR);
+// include class.secure.php to protect this file and the whole CMS!
+if (defined('WB_PATH')) {
+  if (defined('LEPTON_VERSION')) include (WB_PATH . '/framework/class.secure.php');
 }
-// end include LEPTON class.secure.php
+else {
+  $oneback = "../";
+  $root = $oneback;
+  $level = 1;
+  while (($level < 10) && (!file_exists($root . '/framework/class.secure.php'))) {
+    $root .= $oneback;
+    $level += 1;
+  }
+  if (file_exists($root . '/framework/class.secure.php')) {
+    include ($root . '/framework/class.secure.php');
+  }
+  else {
+    trigger_error(sprintf("[ <b>%s</b> ] Can't include class.secure.php!", $_SERVER['SCRIPT_NAME']), E_USER_ERROR);
+  }
+}
+// end include class.secure.php
 
 
 require_once(WB_PATH.'/modules/'.basename(dirname(__FILE__)).'/initialize.php');
@@ -58,7 +61,7 @@ class db_wb_pages extends dbConnectLE {
 	const field_viewing_users      = 'viewing_users';
 	const field_modified_when      = 'modified_when';
 	const field_modified_by        = 'modified_by';
-	
+
 	public function __construct() {
     parent::__construct();
     $this->setTableName('pages');
@@ -67,7 +70,7 @@ class db_wb_pages extends dbConnectLE {
     $this->addFieldDefinition(self::field_root_parent, "INT(11) NOT NULL DEFAULT '0'");
     $this->addFieldDefinition(self::field_level, "INT(11) NOT NULL DEFAULT '0'");
     $this->addFieldDefinition(self::field_link, "TEXT NOT NULL DEFAULT ''");
-    $this->addFieldDefinition(self::field_target, "VARCHAR(7) NOT NULL DEFAULT ''");    
+    $this->addFieldDefinition(self::field_target, "VARCHAR(7) NOT NULL DEFAULT ''");
     $this->addFieldDefinition(self::field_page_title, "VARCHAR(255) NOT NULL DEFAULT ''");
     $this->addFieldDefinition(self::field_menu_title, "VARCHAR(255) NOT NULL DEFAULT ''");
     $this->addFieldDefinition(self::field_description, "TEXT NOT NULL DEFAULT ''");
@@ -87,12 +90,12 @@ class db_wb_pages extends dbConnectLE {
     $this->addFieldDefinition(self::field_modified_by, "INT(11) NOT NULL DEFAULT '0'");
     $this->checkFieldDefinitions();
 	} // __construct()
-	
+
 } // class db_wb_pages
 
 
 class db_wb_sections extends dbConnectLE {
-	
+
 	const field_section_id         = 'section_id';
 	const field_page_id            = 'page_id';
 	const field_position           = 'position';
@@ -100,7 +103,7 @@ class db_wb_sections extends dbConnectLE {
 	const field_block              = 'block';
 	const field_publ_start         = 'publ_start';
 	const field_publ_end           = 'publ_end';
-	
+
 	public function __construct() {
     parent::__construct();
     $this->setTableName('sections');
@@ -113,17 +116,17 @@ class db_wb_sections extends dbConnectLE {
     $this->addFieldDefinition(self::field_publ_end, "VARCHAR(255) NOT NULL DEFAULT '0'");
     $this->checkFieldDefinitions();
 	} // __construct()
-	
+
 } // class db_wb_sections
 
 
 class db_wb_mod_wysiwyg extends dbConnectLE {
-	
+
 	const field_section_id         = 'section_id';
 	const field_page_id            = 'page_id';
 	const field_content            = 'content';
 	const field_text               = 'text';
-	
+
   public function __construct() {
     parent::__construct();
     $this->setTableName('mod_wysiwyg');
@@ -133,15 +136,15 @@ class db_wb_mod_wysiwyg extends dbConnectLE {
     $this->addFieldDefinition(self::field_text, "LONGTEXT NOT NULL DEFAULT ''");
     $this->checkFieldDefinitions();
   } // __construct()
-  
+
 } // class db_wb_mod_wysiwyg
 
 class db_wb_mod_code extends dbConnectLE {
-	
+
 	const field_section_id				= 'section_id';
 	const field_page_id            = 'page_id';
 	const field_content            = 'content';
-	
+
   public function __construct() {
     parent::__construct();
     $this->setTableName('mod_code');
@@ -150,15 +153,15 @@ class db_wb_mod_code extends dbConnectLE {
     $this->addFieldDefinition(self::field_content, "TEXT NOT NULl DEFAULT ''");
     $this->checkFieldDefinitions();
   } // __construct()
-	
+
 } // class db_wb_mod_code
 
 
 class handlePages {
-		
+
 	/**
     * Set $this->error to $error
-    * 
+    *
     * @param STR $error
     */
   public function setError($error) {
@@ -167,7 +170,7 @@ class handlePages {
 
   /**
     * Get Error from $this->error;
-    * 
+    *
     * @return STR $this->error
     */
   public function getError() {
@@ -176,32 +179,32 @@ class handlePages {
 
   /**
     * Check if $this->error is empty
-    * 
+    *
     * @return BOOL
     */
   public function isError() {
     return (bool) !empty($this->error);
   } // isError
-	
+
 	public function createPage($title, $parent, $module, $visibility, $admin_groups, $viewing_groups) {
   	global $database;
   	// admin object initialisieren
   	require_once(WB_PATH.'/framework/class.admin.php');
   	require_once(WB_PATH.'/framework/functions.php');
   	require_once(WB_PATH.'/framework/class.order.php');
-  	
+
   	$admin = new admin('Pages', 'pages_add', false, false);
   	$title = htmlspecialchars($title);
   	// sicherstellen, dass Admin in der Admin-Gruppe und in der Betrachter-Gruppe existiert
   	if (!in_array(1, $admin_groups)) $admin_groups[] = 1;
   	if (!in_array(1, $viewing_groups)) $viewing_groups[] = 1;
-  	
+
   	// Leerer Titel?
   	if (($title == '') || (substr($title, 0, 1) == '.')) {
   		$this->setError(sprintf('[%s - %s] %s', __METHOD__, __LINE__, kit_error_blank_title));
   		return false;
   	}
-  	
+
   	// pruefen, ob die Seite ueber die erforderlichen Rechte verfuegt
   	if (!in_array(1, $admin->get_groups_id())) {
   		$admin_perm_ok = false;
@@ -225,10 +228,10 @@ class handlePages {
   			return false;
   		}
   	}
-  	
+
   	$admin_groups = implode(',', $admin_groups);
   	$viewing_groups = implode(',', $viewing_groups);
-  	
+
   	// Dateinamen erstellen
   	if ($parent == '0') {
   		$link = '/'.page_filename($title);
@@ -254,7 +257,7 @@ class handlePages {
   		$filename = WB_PATH. PAGES_DIRECTORY. '/'. $parent_section. $page_filename. PAGE_EXTENSION;
   		make_dir(WB_PATH. PAGES_DIRECTORY. '/'. $parent_section);
   	}
-  	
+
   	// prufen, ob bereits eine Datei mit dem gleichen Dateinamen existiert
   	$dbPages = new db_wb_pages();
   	$where = array();
@@ -268,9 +271,9 @@ class handlePages {
   	  	(file_exists(WB_PATH. PAGES_DIRECTORY. $link. PAGE_EXTENSION)) ||
   	  	(file_exists(WB_PATH. PAGES_DIRECTORY. $link. '/'))) {
   	  $this->setError(sprintf('[%s - %s] %s', __METHOD__, __LINE__, sprintf(kit_error_page_exists, $link)));
-  	  return false;		
+  	  return false;
   	}
-  	
+
   	// include the ordering class
   	$order = new order(TABLE_PREFIX.'pages', 'position', 'page_id', 'parent');
   	// clean order
@@ -294,7 +297,7 @@ class handlePages {
   		$template = '';
   		$language = DEFAULT_LANGUAGE;
   	}
-  	
+
   	// Neue Seite in Tabelle einfuegen
   	$data = array();
   	$data[db_wb_pages::field_page_title] = $title;
@@ -316,14 +319,14 @@ class handlePages {
   		$this->setError(sprintf('[%s - %s] %s', __METHOD__, __LINE__, $dbPages->getError()));
   		return false;
   	}
-  	
+
   	// work out the level
   	$level = level_count($page_id);
   	// work out root parent
   	$root_parent = root_parent($page_id);
   	// work out page trail
   	$page_trail = get_page_trail($page_id);
-  	
+
   	$where = array();
   	$where[db_wb_pages::field_page_id] = $page_id;
   	$data = array();
@@ -335,13 +338,13 @@ class handlePages {
   		$this->setError(sprintf('[%s - %s] %s', __METHOD__, __LINE__, $dbPages->getError()));
   		return false;
   	}
-  	
+
   	// create a new file in the /pages directory
   	create_access_file($filename, $page_id, $level);
-  	
+
   	// add position 1 to new page
   	$position = 1;
-  	
+
   	// add a new record to section table
   	$dbSections = new db_wb_sections();
   	$data = array();
@@ -381,7 +384,7 @@ class handlePages {
   	}
   	$parent = $pages[0][db_wb_pages::field_parent];
   	$link = $pages[0][db_wb_pages::field_link];
-  	
+
   	$dbSections = new db_wb_sections();
   	$where = array();
   	$where[db_wb_sections::field_page_id] = $page_id;
@@ -397,14 +400,14 @@ class handlePages {
 				require(WB_PATH.'/modules/'.$section[db_wb_sections::field_module].'/delete.php');
 			}
   	}
-  	
+
   	$where = array();
   	$where[db_wb_pages::field_page_id] = $page_id;
   	if (!$dbPages->sqlDeleteRecord($where)) {
   		$this->setError(sprintf('[%s - %s] %s', __METHOD__, __LINE__, $dbPages->getError()));
   		return false;
   	}
-  	
+
   	$where = array();
   	$where[db_wb_sections::field_page_id] = $page_id;
   	if (!$dbSections->sqlDeleteRecord($where)) {
@@ -424,17 +427,17 @@ class handlePages {
 			if (!is_writable(WB_PATH .PAGES_DIRECTORY .'/')) {
 				$this->setError(sprintf('[%s - %s] %s', __METHOD__, __LINE__, sprintf(kit_error_delete_access_file, $filename)));
 				return false;
-			} 
+			}
 			else {
 				unlink($filename);
 				if (file_exists($directory) && rtrim($directory,'/') != WB_PATH .PAGES_DIRECTORY && substr($link, 0, 1) != '.') {
 					rm_full_dir($directory);
 				}
 			}
-		} 
-		return true; 	
+		}
+		return true;
   } // deletePage()
-	
+
 }
 
 ?>

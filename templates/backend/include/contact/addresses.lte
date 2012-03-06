@@ -1,0 +1,35 @@
+<fieldset class="fs_addresses">
+  <legend>{translate('Addresses')}</legend>
+  {$i=0}{foreach $contact.addresses.addresses address}
+  {if $i > 0}<div class="kc_clear"></div>{/if}
+  <div class="kc_label_small"><label for="{$address.street.name}">{translate('Street')}</label></div>
+  <div class="kc_value_small"><input type="{$address.street.name}" value="{$address.street.value}" /></div>
+  <div class="kc_clear"></div>
+  <div class="kc_label_small"><label for="{$address.city.name}">{translate('ZIP, City')}</label></div>
+  <div class="kc_value_small">
+    <input class="kc_input_zip" type="text" name="{$address.zip.name}" value="{$address.zip.value}" />
+    <input class="kc_input_city" type="text" name="{$address.city.name}" value="{$address.city.value}" />
+  </div>
+  <div class="kc_clear"></div>
+  <div class="kc_label_small">
+    <select name="{$address.country.name}">
+      {foreach $address.country.options option}
+      <option value="{$option.value}"{if $option.value == $address.country.value} selected="selected"{/if}>{$option.text}</option>
+      {/foreach}
+    </select>          
+  </div>
+  <div class="kc_value_small">
+    <select class="kc_select_address_type" name="{$address.type.name}">
+      {foreach $address.type.options option}
+      <option value="{$option.value}"{if $option.value == $address.type.value} selected="selected"{/if}>{$option.text}</option>
+      {/foreach}
+    </select>
+    <select class="kc_select_address_status" name="{$address.status.name}">
+      {foreach $address.status.options option}
+      <option value="{$option.value}"{if $option.value == $address.status.value} selected="selected"{/if}>{$option.text}</option>
+      {/foreach}
+    </select>
+    <input class="kc_radio_address_standard" type="radio" name="{$contact.addresses.standard.name}" value="{$address.id.value}"{if $contact.addresses.standard.value == $address.id.value} checked="checked"{/if} title="{translate('Check to set this address as default')}" />
+  </div>
+  {$i=$i+1}{/foreach}
+</fieldset>

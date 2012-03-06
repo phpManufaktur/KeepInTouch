@@ -479,3 +479,118 @@ td.help_help {
   font-weight: bold;
 }
 
+.kit_contact {
+  clear: both;
+  font-size: 7pt;
+}
+.kit_contact input {
+  font-size: 7pt;
+}
+.kit_contact fieldset {
+  color: #000;
+  background-color: transparent;
+  padding: 10px 5px 5px 5px;
+}
+.kit_contact legend {
+  color: #999999;
+  background-color: transparent;
+}
+.kc_label {
+  float: left;
+  width: 150px;
+}
+.kc_label_small {
+  float: left;
+  width: 100px;
+}
+.kc_value_phone,
+.kc_value_email,
+.kc_value_small {
+  float: left;
+  width: 165px;
+}
+.kc_value_phone input[type=text],
+.kc_value_email input[type=text] {
+  width: 140px;
+}
+.kc_value_phone input[type=radio],
+.kc_value_email input[type=radio] {
+  width: 10px;
+}
+.kc_value {
+  float: left;
+  width: 200px;
+}
+.kc_clear {
+  clear:left;
+  width: auto;
+  height: 1px;
+  padding: 0;
+  margin: 0 0 5px 0;
+}
+.kc_submit {
+  clear: both;
+}
+input[name=contact_identifier] {
+  width: 130px;
+}
+select[name=contact_language],
+select[name=contact_type],
+select[name=contact_access] {
+  width: 100px;
+}
+input.kc_input_zip {
+  float: left;
+  width: 40px;
+}
+input.kc_input_city {
+  float: left;
+  width: 115px;
+}
+select.kc_select_address_type {
+  float: left;
+  width: 80px;
+}
+select.kc_select_address_status {
+  float: left;
+  width: 60px;
+}
+input.kc_radio_address_standard {
+  float: left;
+  width: 10px;
+}
+.container_middle,
+.container_left {
+  float: left;
+  width: 280px;
+  padding: 0;
+  margin: 0 20px 0 0;
+}
+.container_right {
+  float: left;
+  width: 300px;
+  padding: 0;
+  margin: 0;
+}
+.container_right textarea {
+  height: 80px;
+  font-size: 7pt;
+}
+.container_map {
+  margin: 0;
+  padding: 0;
+  width: 290px;
+  height: 200px;
+  overflow: hidden;
+}
+fieldset.fs_phone,
+fieldset.fs_person {
+  color: #000;
+  background-color: #e3e3e3;
+  border: 1px solid #a0a0a0;
+}
+.fs_phone legend,
+.fs_person legend {
+  color: #800000;
+  background-color: transparent;
+}

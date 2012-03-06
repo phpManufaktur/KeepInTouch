@@ -1,34 +1,37 @@
 <?php
 
 /**
- * KeepInTouch (KIT)
- * 
- * @author Ralf Hertsch (ralf.hertsch@phpmanufaktur.de)
+ * KeepInTouch
+ *
+ * @author Ralf Hertsch <ralf.hertsch@phpmanufaktur.de>
  * @link http://phpmanufaktur.de
- * @copyright 2011
- * @license GNU GPL (http://www.gnu.org/licenses/gpl.html)
+ * @copyright 2012 - phpManufaktur by Ralf Hertsch
+ * @license http://www.gnu.org/licenses/gpl.html GNU Public License (GPL)
  * @version $Id$
- * 
+ *
  * FOR VERSION- AND RELEASE NOTES PLEASE LOOK AT INFO.TXT!
  */
 
-// try to include LEPTON class.secure.php to protect this file and the whole CMS!
-if (defined('WB_PATH')) {	
-	if (defined('LEPTON_VERSION')) include(WB_PATH.'/framework/class.secure.php');
-} elseif (file_exists($_SERVER['DOCUMENT_ROOT'].'/framework/class.secure.php')) {
-	include($_SERVER['DOCUMENT_ROOT'].'/framework/class.secure.php'); 
-} else {
-	$subs = explode('/', dirname($_SERVER['SCRIPT_NAME']));	$dir = $_SERVER['DOCUMENT_ROOT'];
-	$inc = false;
-	foreach ($subs as $sub) {
-		if (empty($sub)) continue; $dir .= '/'.$sub;
-		if (file_exists($dir.'/framework/class.secure.php')) { 
-			include($dir.'/framework/class.secure.php'); $inc = true;	break; 
-		} 
-	}
-	if (!$inc) trigger_error(sprintf("[ <b>%s</b> ] Can't include LEPTON class.secure.php!", $_SERVER['SCRIPT_NAME']), E_USER_ERROR);
+// include class.secure.php to protect this file and the whole CMS!
+if (defined('WB_PATH')) {
+  if (defined('LEPTON_VERSION')) include (WB_PATH . '/framework/class.secure.php');
 }
-// end include LEPTON class.secure.php
+else {
+  $oneback = "../";
+  $root = $oneback;
+  $level = 1;
+  while (($level < 10) && (!file_exists($root . '/framework/class.secure.php'))) {
+    $root .= $oneback;
+    $level += 1;
+  }
+  if (file_exists($root . '/framework/class.secure.php')) {
+    include ($root . '/framework/class.secure.php');
+  }
+  else {
+    trigger_error(sprintf("[ <b>%s</b> ] Can't include class.secure.php!", $_SERVER['SCRIPT_NAME']), E_USER_ERROR);
+  }
+}
+// end include class.secure.php
 
 require_once(WB_PATH.'/modules/'.basename(dirname(__FILE__)).'/initialize.php');
 
@@ -39,10 +42,10 @@ require_once(WB_PATH.'/modules/'.basename(dirname(__FILE__)).'/initialize.php');
  *
  */
 class dbMassMailAddresses extends dbConnectLE {
-	
+
 	const field_group_id				= 'group_id';
 	const field_mail_to					= 'mail_to';
-	
+
 	public function __construct() {
 		parent::__construct();
 		$this->setTableName('mod_massmail_addresses');
@@ -58,13 +61,13 @@ class dbMassMailAddresses extends dbConnectLE {
  *
  */
 class dbMassMailGroups extends dbConnectLE {
-	
+
 	const field_group_id				= 'group_id';
 	const field_group_name			= 'group_name';
 	const field_mail_to					= 'mail_to';
 	const field_wb_group				= 'wb_group';
 	const field_wb_group_id			= 'wb_group_id';
-	
+
 	public function __construct() {
 		parent::__construct();
 		$this->setTableName('mod_massmail_groups');
@@ -83,11 +86,11 @@ class dbMassMailGroups extends dbConnectLE {
  *
  */
 class dbNewsletterSnippet extends dbConnectLE {
-	
+
 	const field_id							= 'id';
 	const field_email						= 'email';
 	const field_checksum				= 'checkSum';
-	
+
 	public function __construct() {
 		parent::__construct();
 		$this->setTableName('mod_newsletter');
@@ -99,7 +102,7 @@ class dbNewsletterSnippet extends dbConnectLE {
 } // class dbNewsletterSnippet
 
 class dbKITimport extends dbConnectLE {
-	
+
 	const field_id							= 'imp_id';
 	const field_date						= 'imp_date';
 	const field_separator				= 'imp_sep';
@@ -112,13 +115,13 @@ class dbKITimport extends dbConnectLE {
 	const field_status					= 'imp_status';
 	const field_error						= 'imp_error';
 	const field_timestamp				= 'imp_timestamp';
-	
+
 	const separator_comma				= 'sepc';
 	const separator_semicolon		= 'seps';
 	const separator_tab					= 'sept';
 	const separator_pipe				= 'sepp';
 	const separator_colon				= 'seco';
-	
+
 	public $separator_array = array(
 		self::separator_comma			=> kit_text_comma_separated,
 		self::separator_semicolon	=> kit_text_semicolon_separated,
@@ -126,7 +129,7 @@ class dbKITimport extends dbConnectLE {
 		self::separator_pipe			=> kit_text_pipe_separated,
 		self::separator_colon			=> kit_text_colon_separated
 	);
-	
+
 	public $separator_value = array(
 		self::separator_comma			=> ',',
 		self::separator_semicolon	=> ';',
@@ -134,14 +137,14 @@ class dbKITimport extends dbConnectLE {
 		self::separator_pipe			=> '|',
 		self::separator_colon			=> ':'
 	);
-	
+
 	const charset_ansi					= 'ansi'; // definition missing in dbConnectLE
-	
+
 	public $charset_array = array(
 		self::charset_ansi	=> 'ANSI',
 		self::charset_utf8	=> 'UTF-8' // defined in dbConnectLE
 	);
-	
+
 	const status_error					= 0;
 	const status_start					= 1;
 	const status_step_1					= 3;
@@ -150,7 +153,7 @@ class dbKITimport extends dbConnectLE {
 	const status_step_4					= 6;
 	const status_step_5					= 7;
 	const status_success				= 2;
-	
+
 	public $status_array = array(
 		self::status_error				=> kit_status_error,
 		self::status_start				=> kit_status_start,
@@ -161,33 +164,33 @@ class dbKITimport extends dbConnectLE {
 		self::status_step_5				=> kit_status_step_5,
 		self::status_success			=> kit_status_success
 	);
-	
+
 	const import_no_selection				= -1;
-	
+
 	const import_addr_pers_street		= 'imp_addr_pers_street';
 	const import_addr_pers_zip			= 'imp_addr_pers_zip';
 	const import_addr_pers_city			= 'imp_addr_pers_city';
 	const import_addr_pers_country	= 'imp_addr_pers_country';
-	const import_con_pers_email_1		= 'imp_con_pers_email_1';		
-	const import_con_pers_email_2		= 'imp_con_pers_email_2';		
+	const import_con_pers_email_1		= 'imp_con_pers_email_1';
+	const import_con_pers_email_2		= 'imp_con_pers_email_2';
 	const import_con_pers_phone			= 'imp_con_pers_phone';
 	const import_con_pers_handy			= 'imp_con_pers_handy';
 	const import_con_pers_fax				= 'imp_con_pers_fax';
-	
+
 	const import_addr_comp_street		= 'imp_addr_comp_street';
 	const import_addr_comp_zip			= 'imp_addr_comp_zip';
 	const import_addr_comp_city			= 'imp_addr_comp_city';
 	const import_addr_comp_country	= 'imp_addr_comp_country';
-	const import_con_comp_email_1		= 'imp_con_comp_email_1';		
-	const import_con_comp_email_2		= 'imp_con_comp_email_2';		
+	const import_con_comp_email_1		= 'imp_con_comp_email_1';
+	const import_con_comp_email_2		= 'imp_con_comp_email_2';
 	const import_con_comp_phone			= 'imp_con_comp_phone';
 	const import_con_comp_handy			= 'imp_con_comp_handy';
 	const import_con_comp_fax				= 'imp_con_comp_fax';
-	
+
 	const import_con_www						= 'imp_con_www';
-	
+
 	public $import_fields = array(
-		self::import_no_selection											=> kit_imp_no_selection,														
+		self::import_no_selection											=> kit_imp_no_selection,
 		dbKITcontact::field_person_title							=> kit_imp_con_pers_title,
 		dbKITcontact::field_person_title_academic			=> kit_imp_con_pers_title_academic,
 		dbKITcontact::field_person_first_name					=> kit_imp_con_pers_first_name,
@@ -202,7 +205,7 @@ class dbKITimport extends dbConnectLE {
 		self::import_con_pers_phone										=> kit_imp_con_pers_phone,
 		self::import_con_pers_handy										=> kit_imp_con_pers_handy,
 		self::import_con_pers_fax											=> kit_imp_con_pers_fax,
-		
+
 		dbKITcontact::field_company_name							=> kit_imp_con_comp_name,
 		dbKITcontact::field_company_department				=> kit_imp_con_comp_department,
 		dbKITcontact::field_company_additional				=> kit_imp_con_comp_additional,
@@ -215,13 +218,13 @@ class dbKITimport extends dbConnectLE {
 		self::import_con_comp_phone										=> kit_imp_con_comp_phone,
 		self::import_con_comp_handy										=> kit_imp_con_comp_handy,
 		self::import_con_comp_fax											=> kit_imp_con_comp_fax,
-		
+
 		self::import_con_www													=> kit_imp_con_www
 	);
-	
-	
+
+
 	private $create_tables = false;
-	
+
 	public function __construct($create_tables=false) {
 		parent::__construct();
 		$this->create_tables = $create_tables;
@@ -231,10 +234,10 @@ class dbKITimport extends dbConnectLE {
 		$this->addFieldDefinition(self::field_separator, "VARCHAR(5) NOT NULL DEFAULT '".self::separator_comma."'");
 		$this->addFieldDefinition(self::field_charset, "VARCHAR(10) NOT NULL DEFAULT '".self::charset_utf8."'");
 		$this->addFieldDefinition(self::field_file_original, "VARCHAR(255) NOT NULL DEFAULT ''");
-		$this->addFieldDefinition(self::field_file_renamed, "VARCHAR(255) NOT NULL DEFAULT ''"); 
+		$this->addFieldDefinition(self::field_file_renamed, "VARCHAR(255) NOT NULL DEFAULT ''");
 		$this->addFieldDefinition(self::field_cols_original, "TEXT NOT NULL DEFAULT ''");
 		$this->addFieldDefinition(self::field_cols_dedicated, "TEXT NOT NULL DEFAULT ''");
-		$this->addFieldDefinition(self::field_duplicates, "TINYINT NOT NULL DEFAULT '0'"); 
+		$this->addFieldDefinition(self::field_duplicates, "TINYINT NOT NULL DEFAULT '0'");
 		$this->addFieldDefinition(self::field_status, "TINYINT NOT NULL DEFAULT '".self::status_start."'");
 		$this->addFieldDefinition(self::field_error, "VARCHAR(255) NOT NULL DEFAULT ''");
 		$this->addFieldDefinition(self::field_timestamp, "TIMESTAMP");
@@ -248,13 +251,13 @@ class dbKITimport extends dbConnectLE {
 					return false;
 				}
 			}
-		}	
+		}
 	} // __construct()
-	
+
 } // class dbKITimport
 
 class kitImportDialog {
-	
+
 	const request_action				= 'impact';
 	const request_command				= 'impcmd';
 	const request_separator			= 'sep';
@@ -263,13 +266,13 @@ class kitImportDialog {
 	const request_csv_file			= 'csvf';
 	const request_field					= 'field';
 	const request_count					= 'count';
-	
+
 	const action_default				= 'def';
 	const action_step_1					= 'step1';
-	const action_check_step_1		= 'chk1';					
+	const action_check_step_1		= 'chk1';
 	const action_check_step_2		= 'chk2';
-	
-	
+
+
 	private $page_link 							= '';
 	private $img_url								= '';
 	private $template_path					= '';
@@ -277,10 +280,10 @@ class kitImportDialog {
 	private $error									= '';
 	private $message								= '';
 	private $import_directory				= '';
-	
+
 	private $swNavHide							= array();
 	private $overwriteNavigation		= '';
-	
+
 	public function __construct() {
 		$this->page_link = sprintf(	'%s/admintools/tool.php?tool=kit&%s=%s&%s=%s',
 																ADMIN_URL,
@@ -293,10 +296,10 @@ class kitImportDialog {
 		$this->img_url = WB_URL.'/modules/'.basename(dirname(__FILE__)).'/img/';
 		$this->import_directory = WB_PATH.MEDIA_DIRECTORY.'/kit/import/';
 	} // __construct()
-	
+
 	/**
     * Set $this->error to $error
-    * 
+    *
     * @param STR $error
     */
   public function setError($error) {
@@ -305,7 +308,7 @@ class kitImportDialog {
 
   /**
     * Get Error from $this->error;
-    * 
+    *
     * @return STR $this->error
     */
   public function getError() {
@@ -314,7 +317,7 @@ class kitImportDialog {
 
   /**
     * Check if $this->error is empty
-    * 
+    *
     * @return BOOL
     */
   public function isError() {
@@ -329,7 +332,7 @@ class kitImportDialog {
   }
 
   /** Set $this->message to $message
-    * 
+    *
     * @param STR $message
     */
   public function setMessage($message) {
@@ -338,7 +341,7 @@ class kitImportDialog {
 
   /**
     * Get Message from $this->message;
-    * 
+    *
     * @return STR $this->message
     */
   public function getMessage() {
@@ -347,16 +350,16 @@ class kitImportDialog {
 
   /**
     * Check if $this->message is empty
-    * 
+    *
     * @return BOOL
     */
   public function isMessage() {
     return (bool) !empty($this->message);
   } // isMessage
-	
+
     /**
    * Verhindert XSS Cross Site Scripting
-   * 
+   *
    * @param REFERENCE $_REQUEST Array
    * @return $request
    */
@@ -369,8 +372,8 @@ class kitImportDialog {
   	}
 	  return $request;
   } // xssPrevent()
-  
-  
+
+
   public function action() {
   	// ACHTUNG: erlaubte HTML Felder muessen auch in $kitBackend->action() angegeben werden !!!
   	$html_allowed = array();
@@ -395,10 +398,10 @@ class kitImportDialog {
   	endswitch;
   	return true;
   } // action();
-  
+
   /**
    * Erstellt eine Navigationsleiste
-   * 
+   *
    * @param $action - aktives Navigationselement
    * @return STR Navigationsleiste
    */
@@ -408,8 +411,8 @@ class kitImportDialog {
   	if (!empty($this->overwriteNavigation)) $action = $this->overwriteNavigation;
   	foreach ($this->tab_navigation_array as $key => $value) {
   		if (!in_array($key, $this->swNavHide)) {
-	  		($key == $action) ? $selected = ' class="selected"' : $selected = ''; 
-	  		$result .= sprintf(	'<li%s><a href="%s">%s</a></li>', 
+	  		($key == $action) ? $selected = ' class="selected"' : $selected = '';
+	  		$result .= sprintf(	'<li%s><a href="%s">%s</a></li>',
 	  												$selected,
 	  												sprintf('%s&%s=%s', $this->page_link, self::request_action, $key),
 	  												$value
@@ -419,14 +422,14 @@ class kitImportDialog {
   	$result = sprintf('<ul class="nav_tab">%s</ul>', $result);
   	return $result;
   } // getNavigation()
-  
-  
+
+
   /**
    * Ausgabe des formatierten Ergebnis mit Navigationsleiste
-   * 
+   *
    * @param $action - aktives Navigationselement
    * @param $content - Inhalt
-   * 
+   *
    * @return STR RESULT
    */
   public function show($action, $content) {
@@ -446,13 +449,13 @@ class kitImportDialog {
   	);
   	return $parser->get($this->template_path.'backend.body.htt', $data);
   } // show()
-	
+
   /**
    * Start the import process
    */
   public function dlgImportStep_1() {
   	global $parser;
-  	
+
   	$dbImport = new dbKITimport();
   	if ($dbImport->isError()) {
   		$this->setError(sprintf('[%s - %s] %s', __METHOD__, __LINE__, $dbImport->getError()));
@@ -460,7 +463,7 @@ class kitImportDialog {
   	}
   	$items = '';
   	$row = new Dwoo_Template_File($this->template_path.'backend.import.step.1.tr.htt');
-  	
+
   	$select = '';
   	foreach ($dbImport->separator_array as $key => $value) {
   		$selected = (isset($_REQUEST[self::request_separator]) && ($_REQUEST[self::request_separator] == $key)) ? ' selected="selected"' : '';
@@ -472,7 +475,7 @@ class kitImportDialog {
   		'help'	=> ''
   	);
   	$items .= $parser->get($row, $data);
-  	
+
   	$select = '';
   	foreach ($dbImport->charset_array as $key => $value) {
   		$selected = (isset($_REQUEST[self::request_charset]) && ($_REQUEST[self::request_charset] == $key)) ? ' selected="selected"' : '';
@@ -484,22 +487,22 @@ class kitImportDialog {
   		'help'	=> ''
   	);
   	$items .= $parser->get($row, $data);
-  	
+
   	$data = array(
   		'label'	=> kit_label_import_csv_file,
   		'input'	=> sprintf('<input name="%s" type="file">', self::request_csv_file),
   		'help'	=> ''
   	);
   	$items .= $parser->get($row, $data);
-  	
+
   	// intro oder meldung?
 		if ($this->isMessage()) {
 			$intro = sprintf('<div class="message">%s</div>', $this->getMessage());
 		}
 		else {
 			$intro = sprintf('<div class="intro">%s</div>', kit_intro_import_start);
-		}	 
-		
+		}
+
   	$data = array(
   		'form_name'				=> 'kit_import',
   		'form_action'			=> $this->page_link,
@@ -515,13 +518,13 @@ class kitImportDialog {
   	);
   	return $parser->get($this->template_path.'backend.import.step.1.htt', $data);
   } // dlgImportStep_1()
-  
-  
+
+
   public function checkImportStep_1() {
   	global $parser;
-  		
+
   	$dbImport = new dbKITimport();
-  	
+
   	$message = '';
   	$separator = (isset($_REQUEST[self::request_separator])) ? $_REQUEST[self::request_separator] : dbKITimport::separator_comma;
   	$charset = (isset($_REQUEST[self::request_charset])) ? $_REQUEST[self::request_charset] : dbKITimport::charset_utf8;
@@ -592,7 +595,7 @@ class kitImportDialog {
   		return $this->dlgImportStep_1();
   	}
   } // checkImportStep_1()
-	
+
   public function dlgImportStep_2($id=-1) {
   	global $parser;
   	$dbImport = new dbKITimport();
@@ -628,7 +631,7 @@ class kitImportDialog {
      	foreach ($dbImport->import_fields as $key => $value) {
      		$selected = (isset($_REQUEST[$field_id]) && ($_REQUEST[$field_id] == $key)) ? ' selected="selected"' : '';
      		$select .= sprintf('<option value="%s"%s>%s</option>', $key, $selected, $value);
-     	}	
+     	}
      	$data = array(
      		'label'	=> $column,
      		'input'	=> sprintf('<select name="%s">%s</select>', $field_id, $select),
@@ -636,15 +639,15 @@ class kitImportDialog {
      	);
      	$items .= $parser->get($row, $data);
     }
-        
+
     // intro oder meldung?
 		if ($this->isMessage()) {
 			$intro = sprintf('<div class="message">%s</div>', $this->getMessage());
 		}
 		else {
 			$intro = sprintf('<div class="intro">%s</div>', kit_intro_import_fields);
-		}	 
-		
+		}
+
     $data = array(
      	'form_name'				=> 'kit_import',
      	'form_action'			=> $this->page_link,
@@ -662,10 +665,10 @@ class kitImportDialog {
      	'btn_abort'				=> kit_btn_abort,
      	'abort_location'	=> $this->page_link
     );
-        
+
     return $parser->get($this->template_path.'backend.import.step.2.htt', $data);
   } // dlgImportStep_2()
-  
+
   public function checkImportStep_2() {
   	$dbImport = new dbKITimport();
   	$id = (isset($_REQUEST[dbKITimport::field_id])) ? $_REQUEST[dbKITimport::field_id] : -1;
@@ -686,13 +689,13 @@ class kitImportDialog {
   	for ($i=1; $i < $count+1; $i++) {
   		$field = sprintf('%s_%d', self::request_field, $i);
   		if (isset($_REQUEST[$field]) && ($_REQUEST[$field] != -1)) {
-  			$import_fields[$_REQUEST[$field]] = $import_columns[$i-1]; 
+  			$import_fields[$_REQUEST[$field]] = $import_columns[$i-1];
   		}
   	}
   	print_R($import_fields);
   	return "check";
   } // checkFields()
-  
+
 } // class kitImportDialog
 
 ?>

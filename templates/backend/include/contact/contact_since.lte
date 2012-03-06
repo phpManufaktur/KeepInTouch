@@ -1,0 +1,5 @@
+<fieldset class="fs_contact_since">
+  <legend>{translate('Contact')}</legend>
+  <div class="kc_label_small"><label for="{$contact.contact_since.name}">{translate('Contact since')}</label></div>
+  <div class="kc_value_small"><input id="datepicker_2" type="text" name="{$contact.contact_since.name}" value="{$contact.contact_since.value}" /></div>
+</fieldset>

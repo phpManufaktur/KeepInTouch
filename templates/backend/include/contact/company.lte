@@ -1,0 +1,20 @@
+<fieldset class="fs_company">
+  <legend>{translate('Company')}</legend>
+  <div class="kc_label_small"><label for="{$contact.company.title.name}">{translate('Title')}</label></div>
+  <div class="kc_value_small">
+    <select name="{$contact.company.title.name}">
+      {foreach $contact.company.title.options option}
+      <option value="{$option.value}"{if $option.value == $contact.company.title.value} selected="selected"{/if}>{$option.text}</option>
+      {/foreach}
+    </select>
+  </div>
+  <div class="kc_clear"></div>
+  <div class="kc_label_small"><label for="{$contact.company.name.name}">{translate('Company')}</label></div>
+  <div class="kc_value_small"><input type="text" name="{$contact.company.name.name}" value="{$contact.company.name.value}" /></div>
+  <div class="kc_clear"></div>
+  <div class="kc_label_small"><label for="{$contact.company.department.name}">{translate('Department')}</label></div>
+  <div class="kc_value_small"><input type="text" name="{$contact.company.department.name}" value="{$contact.company.department.value}" /></div>
+  <div class="kc_clear"></div>
+  <div class="kc_label_small"><label for="{$contact.company.additional.name}">{translate('Additional')}</label></div>
+  <div class="kc_value_small"><input type="text" name="{$contact.company.additional.name}" value="{$contact.company.additional.value}" /></div>
+</fieldset>   

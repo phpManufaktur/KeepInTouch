@@ -1,0 +1,33 @@
+<fieldset class="fs_person">
+  <legend>{translate('Person')}</legend>
+  <div class="kc_label_small"><label for="{$contact.person.title.name}">{translate('Title')}</label></div>
+  <div class="kc_value_small">
+    <select name="{$contact.person.title.name}">
+      {foreach $contact.person.title.options option}
+      <option value="{$option.value}"{if $option.value == $contact.person.title.value} selected="selected"{/if}>{$option.text}</option>
+      {/foreach}
+    </select>
+  </div>
+  <div class="kc_clear"></div>
+  <div class="kc_label_small"><label for="{$contact.person.title_academic.name}">{translate('Academic title')}</label></div>
+  <div class="kc_value_small">
+    <select name="{$contact.person.title_academic.name}">
+      {foreach $contact.person.title_academic.options option}
+      <option value="{$option.value}"{if $option.value == $contact.person.title_academic.value} selected="selected"{/if}>{$option.text}</option>
+      {/foreach}
+    </select>
+  </div>
+  <div class="kc_clear"></div>
+  <div class="kc_label_small"><label for="{$contact.person.first_name.name}">{translate('First name')}</label></div>
+  <div class="kc_value_small"><input type="text" name="{$contact.person.first_name.name}" value="{$contact.person.first_name.value}" /></div>
+  <div class="kc_clear"></div>
+  <div class="kc_label_small"><label for="{$contact.person.last_name.name}">{translate('Last name')}</label></div>
+  <div class="kc_value_small"><input type="text" name="{$contact.person.last_name.name}" value="{$contact.person.last_name.value}" /></div>
+  <div class="kc_clear"></div>
+  <div class="kc_label_small"><label for="{$contact.person.function.name}">{translate('Function')}</label></div>
+  <div class="kc_value_small"><input type="text" name="{$contact.person.function.name}" value="{$contact.person.function.value}" /></div>
+  <div class="kc_clear"></div>
+  <div class="kc_label_small"><label for="{$contact.person.birthday.name}">{translate('Birthday')}</label></div>
+  <div class="kc_value_small"><input type="text" id="datepicker" name="{$contact.person.birthday.name}" value="{$contact.person.birthday.value}" /></div>
+</fieldset>
+      

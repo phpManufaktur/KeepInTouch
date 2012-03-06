@@ -1,0 +1,4 @@
+<fieldset class="fs_notes">
+  <legend><label for="{$contact.notes.name}">{translate('Notes')}</label></legend>
+  <textarea name="{$contact.notes.name}">{$contact.notes.value}</textarea>
+</fieldset>

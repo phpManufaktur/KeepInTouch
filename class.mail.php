@@ -1,60 +1,56 @@
 <?php
 
 /**
- * KeepInTouch (KIT)
- * 
- * @author Ralf Hertsch (ralf.hertsch@phpmanufaktur.de)
+ * KeepInTouch
+ *
+ * @author Ralf Hertsch <ralf.hertsch@phpmanufaktur.de>
  * @link http://phpmanufaktur.de
- * @copyright 2011
- * @license GNU GPL (http://www.gnu.org/licenses/gpl.html)
+ * @copyright 2012 - phpManufaktur by Ralf Hertsch
+ * @license http://www.gnu.org/licenses/gpl.html GNU Public License (GPL)
  * @version $Id$
- * 
+ *
  * FOR VERSION- AND RELEASE NOTES PLEASE LOOK AT INFO.TXT!
  */
 
-// try to include LEPTON class.secure.php to protect this file and the whole CMS!
-if (defined ( 'WB_PATH' )) {
-	if (defined ( 'LEPTON_VERSION' ))
-		include (WB_PATH . '/framework/class.secure.php');
-} elseif (file_exists ( $_SERVER ['DOCUMENT_ROOT'] . '/framework/class.secure.php' )) {
-	include ($_SERVER ['DOCUMENT_ROOT'] . '/framework/class.secure.php');
-} else {
-	$subs = explode ( '/', dirname ( $_SERVER ['SCRIPT_NAME'] ) );
-	$dir = $_SERVER ['DOCUMENT_ROOT'];
-	$inc = false;
-	foreach ( $subs as $sub ) {
-		if (empty ( $sub ))
-			continue;
-		$dir .= '/' . $sub;
-		if (file_exists ( $dir . '/framework/class.secure.php' )) {
-			include ($dir . '/framework/class.secure.php');
-			$inc = true;
-			break;
-		}
-	}
-	if (! $inc)
-		trigger_error ( sprintf ( "[ <b>%s</b> ] Can't include LEPTON class.secure.php!", $_SERVER ['SCRIPT_NAME'] ), E_USER_ERROR );
+// include class.secure.php to protect this file and the whole CMS!
+if (defined('WB_PATH')) {
+  if (defined('LEPTON_VERSION')) include (WB_PATH . '/framework/class.secure.php');
 }
-// end include LEPTON class.secure.php
+else {
+  $oneback = "../";
+  $root = $oneback;
+  $level = 1;
+  while (($level < 10) && (!file_exists($root . '/framework/class.secure.php'))) {
+    $root .= $oneback;
+    $level += 1;
+  }
+  if (file_exists($root . '/framework/class.secure.php')) {
+    include ($root . '/framework/class.secure.php');
+  }
+  else {
+    trigger_error(sprintf("[ <b>%s</b> ] Can't include class.secure.php!", $_SERVER['SCRIPT_NAME']), E_USER_ERROR);
+  }
+}
+// end include class.secure.php
 
 
 require_once (WB_PATH . '/modules/' . basename ( dirname ( __FILE__ ) ) . '/initialize.php');
 
 if (!defined ('LEPTON_VERSION') && !class_exists('kitMail')) {
 	require_once (WB_PATH . '/modules/' . basename ( dirname ( __FILE__ ) ) . '/include/phpmailer/class.phpmailer.php');
-	
+
 	/**
 	 * KIT Mail class extending PHPMailer
 	 * PHPMailer class is renamed to xPHPMailer class to avoid conflicts with the
 	 * PHPMailer used by WebsiteBaker
 	 *
 	 */
-	
+
 	class kitMail extends xPHPMailer {
-		
+
 		private $mailError = '';
 		private $mailMessage = '';
-		
+
 		function __construct($provider_id = -1) {
 			global $dbProvider;
 			$tools = new kitTools ();
@@ -69,7 +65,7 @@ if (!defined ('LEPTON_VERSION') && !class_exists('kitMail')) {
 				$db_wbmailer_smtp_password = $settings ['wbmailer_smtp_password'];
 				$db_wbmailer_default_sendername = $settings ['wbmailer_default_sendername'];
 				$db_server_email = $settings ['server_email'];
-				
+
 				if ($provider_id != - 1) {
 					$where = array (dbKITprovider::field_id => $provider_id, dbKITprovider::field_status => dbKITprovider::status_active );
 					$provider = array ();
@@ -92,7 +88,7 @@ if (!defined ('LEPTON_VERSION') && !class_exists('kitMail')) {
 						$db_server_email = $provider [dbKITprovider::field_email];
 					}
 				}
-				
+
 				// set method to send out emails
 				if ($db_wbmailer_routine == "smtp" && strlen ( $db_wbmailer_smtp_host ) > 5) {
 					// use SMTP for all outgoing mails send by Website Baker
@@ -113,7 +109,7 @@ if (!defined ('LEPTON_VERSION') && !class_exists('kitMail')) {
 				if (defined ( "LANGUAGE" )) {
 					$this->SetLanguage ( strtolower ( LANGUAGE ) ); // english default (also used if file is missing)
 				}
-				
+
 				// set default charset
 				if (defined ( 'DEFAULT_CHARSET' )) {
 					$this->CharSet = DEFAULT_CHARSET;
@@ -121,12 +117,12 @@ if (!defined ('LEPTON_VERSION') && !class_exists('kitMail')) {
 					$this->CharSet = 'utf-8';
 				}
 				$this->FromName = $db_wbmailer_default_sendername;
-				/* 
-					some mail provider (lets say mail.com) reject mails send out by foreign mail 
+				/*
+					some mail provider (lets say mail.com) reject mails send out by foreign mail
 					relays but using the providers domain in the from mail address (e.g. myname@mail.com)
 				*/
 				$this->From = $db_server_email; // FROM MAIL: (server mail)
-				
+
 
 				// set default mail formats
 				$this->IsHTML ( false );
@@ -138,42 +134,42 @@ if (!defined ('LEPTON_VERSION') && !class_exists('kitMail')) {
 				return false;
 			}
 		} // __construct()
-		
+
 
 		public function __destruct() {
 			// nothing to do yet...
 		} // __destruct()
-		
+
 
 		/**
 		 * Set $this->error to $error
-		 * 
+		 *
 		 * @param STR $error
 		 */
 		public function setMailError($error) {
 			$this->mailError = $error;
 		} // setMailError()
-		
+
 
 		/**
 		 * Get Error from $this->error;
-		 * 
+		 *
 		 * @return STR $this->error
 		 */
 		public function getMailError() {
 			return $this->mailError;
 		} // getMailError()
-		
+
 
 		/**
 		 * Check if $this->error is empty
-		 * 
+		 *
 		 * @return BOOL
 		 */
 		public function isMailError() {
 			return ( bool ) ! empty ( $this->mailError );
 		} // isMailError
-		
+
 
 		/**
 		 * Reset Error to empty String
@@ -181,41 +177,41 @@ if (!defined ('LEPTON_VERSION') && !class_exists('kitMail')) {
 		public function clearMailError() {
 			$this->mailError = '';
 		} // clearMailError()
-		
 
-		/** 
+
+		/**
 		 * Set $this->message to $message
-		 * 
+		 *
 		 * @param STR $message
 		 */
 		public function setMailMessage($message) {
 			$this->mailMessage = $message;
 		} // setMailMessage()
-		
+
 
 		/**
 		 * Get Message from $this->message;
-		 * 
+		 *
 		 * @return STR $this->message
 		 */
 		public function getMailMessage() {
 			return $this->mailMessage;
 		} // getMailMessage()
-		
+
 
 		/**
 		 * Check if $this->message is empty
-		 * 
+		 *
 		 * @return BOOL
 		 */
 		public function isMailMessage() {
 			return ( bool ) ! empty ( $this->mailMessage );
 		} // isMailMessage
-		
+
 
 		/**
 		 * Mailroutine fuer KIT
-		 * 
+		 *
 		 * @param STR $subject
 		 * @param STR $message
 		 * @param STR $from_email
@@ -225,31 +221,31 @@ if (!defined ('LEPTON_VERSION') && !class_exists('kitMail')) {
 		 * @param ARRAY $cc_array
 		 * @param ARRAY $bcc_array
 		 * @param Array $attach_array
-		 * 
+		 *
 		 * @return bool
-		 * 
+		 *
 		 */
 		public function mail($subject, $message, $from_email, $from_name, $to_array, $is_html = false, $cc_array = array(), $bcc_array = array(), $attach_array = array()) {
 			// Absender
 			$this->FromName = $from_name;
 			$this->From = $from_email;
 			//$this->AddReplyTo ( $from_email );
-			
+
 			// offene TO Empfaenger
 			foreach ( $to_array as $email => $name ) {
 				$this->AddAddress ( $email, $name );
 			}
-			
+
 			// offene CC Empfaenger
 			foreach ( $cc_array as $email => $name ) {
 				$this->AddCC ( $email, $name );
 			}
-			
+
 			// VERSTECKTE BCC Empfaenger
 			foreach ( $bcc_array as $email ) {
 				$this->AddBCC ( $email );
 			}
-			
+
 			// Attachments
 			foreach ( $attach_array as $attachment ) {
 				if (! $this->AddAttachment ( $attachment )) {
@@ -257,7 +253,7 @@ if (!defined ('LEPTON_VERSION') && !class_exists('kitMail')) {
 					return false;
 				}
 			}
-			
+
 			$this->Subject = $subject;
 			if ($is_html) {
 				$this->IsHTML ( true );
@@ -267,7 +263,7 @@ if (!defined ('LEPTON_VERSION') && !class_exists('kitMail')) {
 				$this->IsHTML ( false );
 				$this->Body = $message;
 			}
-			
+
 			// check if there are any send mail errors, otherwise say successful
 			if (false === $this->Send ()) {
 				$this->setMailError ( $this->ErrorInfo );
@@ -275,12 +271,12 @@ if (!defined ('LEPTON_VERSION') && !class_exists('kitMail')) {
 			} else {
 				return true;
 			}
-		} // mail()  
-		
+		} // mail()
+
 
 		/**
 		 * Mailroutine fuer KIT
-		 * 
+		 *
 		 * @param STR $subject
 		 * @param STR $html_message
 		 * @param STR $text_message
@@ -288,20 +284,20 @@ if (!defined ('LEPTON_VERSION') && !class_exists('kitMail')) {
 		 * @param STR $from_name
 		 * @param STR $to_email
 		 * @param STR $to_name
-		 * 
+		 *
 		 * @return bool
-		 * 
+		 *
 		 */
 		public function sendNewsletter($subject, $html_message, $text_message, $from_email, $from_name, $to_email, $to_name, $is_html = true) {
 			// Absender
 			$this->FromName = $from_name;
 			$this->From = $from_email;
 			$this->AddReplyTo ( $from_email );
-			
+
 			$this->AddAddress ( $to_email, $to_name );
-			
+
 			$this->Subject = $subject;
-			
+
 			if ($is_html) {
 				$this->IsHTML ( true );
 				$this->Body = $html_message;
@@ -310,7 +306,7 @@ if (!defined ('LEPTON_VERSION') && !class_exists('kitMail')) {
 				$this->IsHTML ( false );
 				$this->Body = $text_message;
 			}
-			
+
 			// check if there are any send mail errors, otherwise say successful
 			if (! $this->Send ()) {
 				$this->setMailError ( $this->ErrorInfo );
@@ -318,8 +314,8 @@ if (!defined ('LEPTON_VERSION') && !class_exists('kitMail')) {
 			} else {
 				return true;
 			}
-		} // sendNewsletter()  
-	
+		} // sendNewsletter()
+
 
 	} // class kitMail
 } // WebsiteBaker
@@ -328,10 +324,10 @@ else {
 	 * KIT Mail class extending PHPMailer
 	 */
 	class kitMail extends PHPMailer {
-		
+
 		private $mailError = '';
 		private $mailMessage = '';
-		
+
 		function __construct($provider_id = -1) {
 			global $dbProvider;
 			$tools = new kitTools ();
@@ -346,7 +342,7 @@ else {
 				$db_wbmailer_smtp_password = $settings ['wbmailer_smtp_password'];
 				$db_wbmailer_default_sendername = $settings ['wbmailer_default_sendername'];
 				$db_server_email = $settings ['server_email'];
-				
+
 				if ($provider_id != - 1) {
 					$where = array (dbKITprovider::field_id => $provider_id, dbKITprovider::field_status => dbKITprovider::status_active );
 					$provider = array ();
@@ -369,7 +365,7 @@ else {
 						$db_server_email = $provider [dbKITprovider::field_email];
 					}
 				}
-				
+
 				// set method to send out emails
 				if ($db_wbmailer_routine == "smtp" && strlen ( $db_wbmailer_smtp_host ) > 5) {
 					// use SMTP for all outgoing mails send by Website Baker
@@ -390,7 +386,7 @@ else {
 				if (defined ( "LANGUAGE" )) {
 					$this->SetLanguage ( strtolower ( LANGUAGE ) ); // english default (also used if file is missing)
 				}
-				
+
 				// set default charset
 				if (defined ( 'DEFAULT_CHARSET' )) {
 					$this->CharSet = DEFAULT_CHARSET;
@@ -398,12 +394,12 @@ else {
 					$this->CharSet = 'utf-8';
 				}
 				$this->FromName = $db_wbmailer_default_sendername;
-				/* 
-					some mail provider (lets say mail.com) reject mails send out by foreign mail 
+				/*
+					some mail provider (lets say mail.com) reject mails send out by foreign mail
 					relays but using the providers domain in the from mail address (e.g. myname@mail.com)
 				*/
 				$this->From = $db_server_email; // FROM MAIL: (server mail)
-				
+
 
 				// set default mail formats
 				$this->IsHTML ( false );
@@ -415,42 +411,42 @@ else {
 				return false;
 			}
 		} // __construct()
-		
+
 
 		public function __destruct() {
 			// nothing to do yet...
 		} // __destruct()
-		
+
 
 		/**
 		 * Set $this->error to $error
-		 * 
+		 *
 		 * @param STR $error
 		 */
 		public function setMailError($error) {
 			$this->mailError = $error;
 		} // setMailError()
-		
+
 
 		/**
 		 * Get Error from $this->error;
-		 * 
+		 *
 		 * @return STR $this->error
 		 */
 		public function getMailError() {
 			return $this->mailError;
 		} // getMailError()
-		
+
 
 		/**
 		 * Check if $this->error is empty
-		 * 
+		 *
 		 * @return BOOL
 		 */
 		public function isMailError() {
 			return ( bool ) ! empty ( $this->mailError );
 		} // isMailError
-		
+
 
 		/**
 		 * Reset Error to empty String
@@ -458,41 +454,41 @@ else {
 		public function clearMailError() {
 			$this->mailError = '';
 		} // clearMailError()
-		
 
-		/** 
+
+		/**
 		 * Set $this->message to $message
-		 * 
+		 *
 		 * @param STR $message
 		 */
 		public function setMailMessage($message) {
 			$this->mailMessage = $message;
 		} // setMailMessage()
-		
+
 
 		/**
 		 * Get Message from $this->message;
-		 * 
+		 *
 		 * @return STR $this->message
 		 */
 		public function getMailMessage() {
 			return $this->mailMessage;
 		} // getMailMessage()
-		
+
 
 		/**
 		 * Check if $this->message is empty
-		 * 
+		 *
 		 * @return BOOL
 		 */
 		public function isMailMessage() {
 			return ( bool ) ! empty ( $this->mailMessage );
 		} // isMailMessage
-		
+
 
 		/**
 		 * Mailroutine fuer KIT
-		 * 
+		 *
 		 * @param STR $subject
 		 * @param STR $message
 		 * @param STR $from_email
@@ -502,31 +498,31 @@ else {
 		 * @param ARRAY $cc_array
 		 * @param ARRAY $bcc_array
 		 * @param Array $attach_array
-		 * 
+		 *
 		 * @return bool
-		 * 
+		 *
 		 */
 		public function mail($subject, $message, $from_email, $from_name, $to_array, $is_html = false, $cc_array = array(), $bcc_array = array(), $attach_array = array()) {
 			// Absender
 			$this->FromName = $from_name;
 			$this->From = $from_email;
 			//$this->AddReplyTo ( $from_email );
-			
+
 			// offene TO Empfaenger
 			foreach ( $to_array as $email => $name ) {
 				$this->AddAddress ( $email, $name );
 			}
-			
+
 			// offene CC Empfaenger
 			foreach ( $cc_array as $email => $name ) {
 				$this->AddCC ( $email, $name );
 			}
-			
+
 			// VERSTECKTE BCC Empfaenger
 			foreach ( $bcc_array as $email ) {
 				$this->AddBCC ( $email );
 			}
-			
+
 			// Attachments
 			foreach ( $attach_array as $attachment ) {
 				if (! $this->AddAttachment ( $attachment )) {
@@ -534,7 +530,7 @@ else {
 					return false;
 				}
 			}
-			
+
 			$this->Subject = $subject;
 			if ($is_html) {
 				$this->IsHTML ( true );
@@ -544,7 +540,7 @@ else {
 				$this->IsHTML ( false );
 				$this->Body = $message;
 			}
-			
+
 			// check if there are any send mail errors, otherwise say successful
 			if (! $this->Send ()) {
 				$this->setMailError ( $this->ErrorInfo );
@@ -552,12 +548,12 @@ else {
 			} else {
 				return true;
 			}
-		} // mail()  
-		
+		} // mail()
+
 
 		/**
 		 * Mailroutine fuer KIT
-		 * 
+		 *
 		 * @param STR $subject
 		 * @param STR $html_message
 		 * @param STR $text_message
@@ -565,20 +561,20 @@ else {
 		 * @param STR $from_name
 		 * @param STR $to_email
 		 * @param STR $to_name
-		 * 
+		 *
 		 * @return bool
-		 * 
+		 *
 		 */
 		public function sendNewsletter($subject, $html_message, $text_message, $from_email, $from_name, $to_email, $to_name, $is_html = true) {
 			// Absender
 			$this->FromName = $from_name;
 			$this->From = $from_email;
 			$this->AddReplyTo ( $from_email );
-			
+
 			$this->AddAddress ( $to_email, $to_name );
-			
+
 			$this->Subject = $subject;
-			
+
 			if ($is_html) {
 				$this->IsHTML ( true );
 				$this->Body = $html_message;
@@ -587,7 +583,7 @@ else {
 				$this->IsHTML ( false );
 				$this->Body = $text_message;
 			}
-			
+
 			// check if there are any send mail errors, otherwise say successful
 			if (! $this->Send ()) {
 				$this->setMailError ( $this->ErrorInfo );
@@ -595,15 +591,15 @@ else {
 			} else {
 				return true;
 			}
-		} // sendNewsletter()  
-	
+		} // sendNewsletter()
 
-	} // class kitMail	
+
+	} // class kitMail
 } // LEPTON
 
 
 class dbKITmail extends dbConnectLE {
-	
+
 	const field_id = 'mail_id';
 	const field_is_html = 'mail_is_html';
 	const field_subject = 'mail_subject';
@@ -618,15 +614,15 @@ class dbKITmail extends dbConnectLE {
 	const field_status = 'mail_status';
 	const field_update_by = 'mail_update_by';
 	const field_update_when = 'mail_update_when';
-	
+
 	const status_active = 'statusActive';
 	const status_locked = 'statusLocked';
 	const status_deleted = 'statusDeleted';
-	
+
 	public $status_array = array (self::status_active => kit_contact_status_active, self::status_locked => kit_contact_status_locked, self::status_deleted => kit_contact_status_deleted );
-	
+
 	private $create_tables = false;
-	
+
 	function __construct($create_tables = false) {
 		parent::__construct ();
 		$this->create_tables = $create_tables;
@@ -652,7 +648,7 @@ class dbKITmail extends dbConnectLE {
 			$this->initTables ();
 		}
 	} // __construct()
-	
+
 
 	private function initTables() {
 		if (! $this->sqlTableExists ()) {

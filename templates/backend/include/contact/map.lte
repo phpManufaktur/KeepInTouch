@@ -1,0 +1,8 @@
+{if $contact.map.use == 1}
+<fieldset class="fs_map">
+  <legend>{translate('Map')}</legend>
+  <div class="container_map">
+    <img src="{$contact.map.url}" width="{$contact.map.width}" height="{$contact.map.height}" alt="{translate('Google Static Map')}" />
+  </div>
+</fieldset>
+{/if}

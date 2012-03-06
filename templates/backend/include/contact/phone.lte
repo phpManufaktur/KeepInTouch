@@ -1,0 +1,16 @@
+<fieldset class="fs_phone">
+  <legend>{translate('Phone')}</legend>
+  {$i=0}{foreach $contact.phones.phones phone}
+  {if $i > 0}<div class="kc_clear"></div>{/if}
+  <div class="kc_label_small">
+    <select name="{$phone.name_type}">
+    {foreach $contact.phones.types type}
+    <option value="{$type.value}"{if $type.value == $phone.type} selected="selected"{/if}>{$type.text}</option>
+    {/foreach}
+    </select>
+  </div>
+  <div class="kc_value_phone">
+    <input type="text" name="{$phone.name}" value="{$phone.value}" /><input type="radio" name="{$contact.phones.standard.name}" value="{$i}"{if $contact.phones.standard.value == $i} checked="checked"{/if} title="{translate('Check to set this phone number as default')}" />
+  </div>
+  {$i=$i+1}{/foreach}
+</fieldset>

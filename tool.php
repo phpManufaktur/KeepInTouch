@@ -1,43 +1,37 @@
 <?php
 
 /**
- * KeepInTouch (KIT)
+ * KeepInTouch
  *
- * @author Ralf Hertsch (ralf.hertsch@phpmanufaktur.de)
+ * @author Ralf Hertsch <ralf.hertsch@phpmanufaktur.de>
  * @link http://phpmanufaktur.de
- * @copyright 2011
- * @license GNU GPL (http://www.gnu.org/licenses/gpl.html)
+ * @copyright 2012 - phpManufaktur by Ralf Hertsch
+ * @license http://www.gnu.org/licenses/gpl.html GNU Public License (GPL)
  * @version $Id$
  *
  * FOR VERSION- AND RELEASE NOTES PLEASE LOOK AT INFO.TXT!
  */
 
-// try to include LEPTON class.secure.php to protect this file and the whole CMS!
+// include class.secure.php to protect this file and the whole CMS!
 if (defined('WB_PATH')) {
-  if (defined('LEPTON_VERSION'))
-    include(WB_PATH.'/framework/class.secure.php');
-}
-elseif (file_exists($_SERVER['DOCUMENT_ROOT'].'/framework/class.secure.php')) {
-  include($_SERVER['DOCUMENT_ROOT'].'/framework/class.secure.php');
+  if (defined('LEPTON_VERSION')) include (WB_PATH . '/framework/class.secure.php');
 }
 else {
-  $subs = explode('/', dirname($_SERVER['SCRIPT_NAME']));
-  $dir = $_SERVER['DOCUMENT_ROOT'];
-  $inc = false;
-  foreach ($subs as $sub) {
-    if (empty($sub))
-      continue;
-    $dir .= '/'.$sub;
-    if (file_exists($dir.'/framework/class.secure.php')) {
-      include($dir.'/framework/class.secure.php');
-      $inc = true;
-      break;
-    }
+  $oneback = "../";
+  $root = $oneback;
+  $level = 1;
+  while (($level < 10) && (!file_exists($root . '/framework/class.secure.php'))) {
+    $root .= $oneback;
+    $level += 1;
   }
-  if (!$inc)
-    trigger_error(sprintf("[ <b>%s</b> ] Can't include LEPTON class.secure.php!", $_SERVER['SCRIPT_NAME']), E_USER_ERROR);
+  if (file_exists($root . '/framework/class.secure.php')) {
+    include ($root . '/framework/class.secure.php');
+  }
+  else {
+    trigger_error(sprintf("[ <b>%s</b> ] Can't include class.secure.php!", $_SERVER['SCRIPT_NAME']), E_USER_ERROR);
+  }
 }
-// end include LEPTON class.secure.php
+// end include class.secure.php
 
 require_once(WB_PATH.'/modules/'.basename(dirname(__FILE__)).'/initialize.php');
 require_once(WB_PATH.'/modules/'.basename(dirname(__FILE__)).'/class.mail.php');
@@ -58,8 +52,6 @@ global $parser;
 global $dbContact;
 global $dbContactAddress;
 
-if (!is_object($parser))
-  $parser = new Dwoo();
 if (!is_object($dbContact))
   $dbContact = new dbKITcontact();
 if (!is_object($dbContactAddress))
@@ -159,7 +151,17 @@ class kitBackend {
 
   private $swNavHide = array();
 
+  private $lang = NULL;
+
+  /**
+   * Constructor for kitBackend
+   */
   public function __construct() {
+    global $I18n;
+
+    $this->lang = $I18n;
+    date_default_timezone_set(CFG_TIME_ZONE);
+
     $this->page_link = ADMIN_URL.'/admintools/tool.php?tool=kit';
     $this->template_path = WB_PATH.'/modules/'.basename(dirname(__FILE__)).'/htt/';
     $this->help_path = WB_PATH.'/modules/'.basename(dirname(__FILE__)).'/languages/';
@@ -276,6 +278,32 @@ class kitBackend {
     }
     return -1;
   } // getVersion()
+
+  /**
+   * Parse the $template with the $template_data and return the result.
+   *
+   * @param string $template
+   * @param array $template_data
+   * @return string $result
+   */
+  public function getTemplate($template, $template_data) {
+    global $parser;
+
+    $template_path = WB_PATH.'/modules/'.basename(dirname(__FILE__)).'/templates/backend/';
+
+    // check if a custom template exists ...
+    $load_template = (file_exists($template_path.'custom.'.$template)) ? $template_path.'custom.'.$template : $template_path.$template;
+    try {
+      $result = $parser->get($load_template, $template_data);
+    }
+    catch (Exception $e) {
+      $this->setError(sprintf('[%s - %s] %s', __METHOD__, __LINE__, $this->lang->translate('Error executing the template <b>{{ template }}</b>: {{ error }}', array(
+          'template' => basename($load_template),
+          'error' => $e->getMessage()))));
+      return false;
+    }
+    return $result;
+  } // getTemplate()
 
   /**
    * return the official supported languages of KIT
@@ -1020,7 +1048,698 @@ class kitBackend {
 
   /**
    * Dialog for creating and editing contacts
+   *
+   * @todo personal photo/image is not supported yet!
    */
+  public function dlgContact() {
+    global $dbContact;
+    global $tools;
+    global $parser;
+    global $dbContactAddress;
+    global $dbMemos;
+    global $dbProtocol;
+    global $dbRegister;
+    global $dbCfg;
+    global $dbLanguages;
+
+    $id = ((isset($_REQUEST[dbKITcontact::field_id])) && (!empty($_REQUEST[dbKITcontact::field_id]))) ? intval($_REQUEST[dbKITcontact::field_id]) : -1;
+
+
+    if ($id > 0) {
+      // Existierende Adresse auslesen
+      $item = array();
+      $where = array();
+      $where[dbKITcontact::field_id] = $id;
+      if (!$dbContact->sqlSelectRecord($where, $item)) {
+        $this->setError(sprintf('[%s - %s] %s', __METHOD__, __LINE__, $dbContact->getError()));
+        return false;
+      }
+      if (sizeof($item) < 1) {
+        // Fehler: gesuchter Datensatz existiert nicht
+        $this->setError(sprintf('[%s - %s] %s', __METHOD__, __LINE__, sprintf(kit_error_item_id, $id)));
+        return false;
+      }
+      $item = $item[0];
+    }
+    else {
+      // neuer Datensatz
+      $item = $dbContact->getFields();
+      $item[dbKITcontact::field_id] = $id;
+      $item[dbKITcontact::field_status] = dbKITcontact::status_locked;
+      $item[dbKITcontact::field_type] = dbKITcontact::type_person; //array_search(kit_contact_type_person, $dbContact->type_array);
+      $item[dbKITcontact::field_access] = dbKITcontact::access_internal; //array_search(kit_contact_access_public, $dbContact->access_array);
+      $item[dbKITcontact::field_person_title] = dbKITcontact::person_title_mister; //array_search(kit_contact_person_title_mister, $dbContact->person_title_array);
+      $item[dbKITcontact::field_person_title_academic] = dbKITcontact::person_title_academic_none; //array_search(kit_contact_person_title_academic_none, $dbContact->person_title_academic_array);
+      $item[dbKITcontact::field_company_title] = dbKITcontact::company_title_none; //array_search(kit_contact_company_title_none, $dbContact->company_title_array);
+      $lang_default = $dbCfg->getValue(dbKITcfg::cfgContactLanguageDefault);
+      $lang_default = strtolower(trim($lang_default));
+      $item[dbKITcontact::field_contact_language] = $lang_default;
+      foreach ($item as $key => $value) {
+        if (isset($_REQUEST[$key])) {
+          (is_string($_REQUEST[$key])) ? $item[$key] = utf8_decode($_REQUEST[$key]) : $item[$key] = $_REQUEST[$key];
+        }
+      }
+    }
+
+    // init empty contact_array
+    $contact_array = array();
+
+    // contact ID
+    $contact_array['id'] = array(
+        'name' => dbKITcontact::field_id,
+        'value' => $id
+        );
+
+    // contact identifier
+    $contact_array['identifier'] = array(
+        'name' => dbKITcontact::field_contact_identifier,
+        'value' => $item[dbKITcontact::field_contact_identifier]
+        );
+
+    // contact type
+    $options = array();
+    foreach ($dbContact->type_array as $value => $text) {
+      $options[] = array(
+          'value' => $value,
+          'text' => $text
+          );
+    }
+    $contact_array['type'] = array(
+        'name' => dbKITcontact::field_type,
+        'value' => $item[dbKITcontact::field_type],
+        'options' => $options
+        );
+
+    // contact access
+    $options = array();
+    foreach ($dbContact->access_array as $value => $text) {
+      $options[] = array(
+          'value' => $value,
+          'text' => $text
+          );
+    }
+    $contact_array['access'] = array(
+        'name' => dbKITcontact::field_access,
+        'value' => $item[dbKITcontact::field_access],
+        'options' => $options
+        );
+
+    // contact status
+    $options = array();
+    foreach ($dbContact->status_array as $value => $text) {
+      $options[] = array(
+          'value' => $value,
+          'text' => $text
+          );
+    }
+    $contact_array['status'] = array(
+        'name' => dbKITcontact::field_status,
+        'value' => $item[dbKITcontact::field_status],
+        'options' => $options
+        );
+
+    // contact language
+    $languages = array();
+    if (!$dbLanguages->sqlExec(sprintf("SELECT * FROM %s", $dbLanguages->getTableName()), $languages)) {
+      $this->setError(sprintf('[%s - %s] %s', __METHOD__, __LINE__, $dbLanguages->getError()));
+      return false;
+    }
+    $lang_select = $dbCfg->getValue(dbKITcfg::cfgContactLanguageSelect);
+    $lang_select = strtolower(trim($lang_select));
+    $options = array();
+    foreach ($languages as $language) {
+      if ($lang_select == 'iso') {
+        $lang = $language[dbKITlanguages::FIELD_ISO];
+      }
+      elseif ($lang_select == 'english') {
+        $lang = $language[dbKITlanguages::FIELD_ENGLISH];
+      }
+      else {
+        // use local settings
+        $lang = $language[dbKITlanguages::FIELD_LOCAL];
+      }
+      $options[] = array(
+          'value' => $language[dbKITlanguages::FIELD_ISO],
+          'text' => $lang
+          );
+    }
+    $contact_array['contact_language'] = array(
+        'name' => dbKITcontact::field_contact_language,
+        'value' => $item[dbKITcontact::field_contact_language],
+        'options' => $options
+        );
+
+    // person title
+    $options = array();
+    foreach ($dbContact->person_title_array as $value => $text) {
+      $options[] = array(
+          'value' => $value,
+          'text' => $text
+          );
+    }
+    $contact_array['person']['title'] = array(
+        'name' => dbKITcontact::field_person_title,
+        'value' => $item[dbKITcontact::field_person_title],
+        'options' => $options
+        );
+    // person title academic
+    $options = array();
+    foreach ($dbContact->person_title_academic_array as $value => $text) {
+      $options[] = array(
+          'value' => $value,
+          'text' => $text
+          );
+    }
+    $contact_array['person']['title_academic'] = array(
+        'name' => dbKITcontact::field_person_title_academic,
+        'value' => $item[dbKITcontact::field_person_title_academic],
+        'options' => $options
+        );
+    // person last name
+    $contact_array['person']['last_name'] = array(
+        'name' => dbKITcontact::field_person_last_name,
+        'value' => $item[dbKITcontact::field_person_last_name]
+        );
+    // person first name
+    $contact_array['person']['first_name'] = array(
+        'name' => dbKITcontact::field_person_first_name,
+        'value' => $item[dbKITcontact::field_person_first_name]
+        );
+    // person function
+    $contact_array['person']['function'] = array(
+        'name' => dbKITcontact::field_person_function,
+        'value' => $item[dbKITcontact::field_person_function]
+        );
+    // person birthday
+    $timestamp = -1;
+    if ($this->check_date($item[dbKITcontact::field_birthday], $timestamp)) {
+      $datetime = new DateTime($item[dbKITcontact::field_birthday]);
+      $date = $datetime->format(DATE_FORMAT);
+    }
+    else {
+      $date = $item[dbKITcontact::field_birthday];
+    }
+    $contact_array['person']['birthday'] = array(
+        'name' => dbKITcontact::field_birthday,
+        'value' => $date
+        );
+
+    // contact since
+    $timestamp = -1;
+    if ($this->check_date($item[dbKITcontact::field_contact_since], $timestamp)) {
+      $datetime = new DateTime($item[dbKITcontact::field_contact_since]);
+      $date = $datetime->format(DATE_FORMAT);
+    }
+    else {
+      $date = $item[dbKITcontact::field_contact_since];
+    }
+    $contact_array['contact_since'] = array(
+        'name' => dbKITcontact::field_contact_since,
+        'value' => $date
+    );
+
+    // company title
+    $options = array();
+    foreach ($dbContact->company_title_array as $value => $text) {
+      $options[] = array(
+          'value' => $value,
+          'text' => $text
+          );
+    }
+    $contact_array['company']['title'] = array(
+        'name' => dbKITcontact::field_company_title,
+        'value' => $item[dbKITcontact::field_company_title],
+        'options' => $options
+        );
+    // company name
+    $contact_array['company']['name'] = array(
+        'name' => dbKITcontact::field_company_name,
+        'value' => $item[dbKITcontact::field_company_name]
+        );
+    // company department
+    $contact_array['company']['department'] = array(
+        'name' => dbKITcontact::field_company_department,
+        'value' => $item[dbKITcontact::field_company_department]
+        );
+    // company additional
+    $contact_array['company']['additional'] = array(
+        'name' => dbKITcontact::field_company_additional,
+        'value' => $item[dbKITcontact::field_company_additional]
+        );
+
+    // contact notes
+    if ($item[dbKITcontact::field_contact_note] > 0) {
+      // get memo record
+      $where = array();
+      $where[dbKITmemos::field_id] = $item[dbKITcontact::field_contact_note];
+      $memos = array();
+      if (!$dbMemos->sqlSelectRecord($where, $memos)) {
+        $this->setError(sprintf('[%s - %s] %s', __METHOD__, __LINE__, $dbMemos->getError()));
+        return false;
+      }
+      $memo = $memos[0][dbKITmemos::field_memo];
+    }
+    else {
+      $memo = '';
+    }
+    $contact_array['notes'] = array(
+        'name' => dbKITcontact::field_contact_note,
+        'value' => $memo
+        );
+
+    // email addresses
+    if (empty($item[dbKITcontact::field_email])) {
+      $item[dbKITcontact::field_email] = '-1|-1';
+    }
+    $email_array = explode(';', $item[dbKITcontact::field_email]);
+    // append additional email field (for a new entry)
+    if (!in_array('-1|-1', $email_array))
+      $email_array[] = '-1|-1';
+    $email_array_str = implode(';', $email_array);
+
+    $emails = array();
+    $i=-1;
+    foreach ($email_array as $email_item) {
+      $i++;
+      list($email_type, $email_address) = explode('|', $email_item);
+      if (isset($_REQUEST[dbKITcontact::field_email.'_'.$i]))
+        $email_address = $_REQUEST[dbKITcontact::field_email.'_'.$i];
+      if (isset($_REQUEST['email_type_'.$i]))
+        $email_type = $_REQUEST['email_type_'.$i];
+      if ($email_address == -1)
+        $email_address = '';
+      $emails[] = array(
+          'name' => sprintf('%s_%d', dbKITcontact::field_email, $i),
+          'name_type' => sprintf('email_type_%d', $i),
+          'value' => $email_address,
+          'type' => $email_type
+          );
+    }
+    $types = array();
+    foreach ($dbContact->email_array as $value => $text) {
+      $types[] = array(
+          'value' => $value,
+          'text' => $text
+          );
+    }
+    $contact_array['emails'] = array(
+        'name' => dbKITcontact::field_email,
+        'value' => $email_array_str,
+        'standard' => array(
+            'value' =>$item[dbKITcontact::field_email_standard],
+            'name' => dbKITcontact::field_email_standard
+            ),
+        'emails' => $emails,
+        'types' => $types
+        );
+
+    // phone numbers
+    if (empty($item[dbKITcontact::field_phone])) {
+      $item[dbKITcontact::field_phone] = '-1|-1';
+    }
+    $phone_array = explode(';', $item[dbKITcontact::field_phone]);
+    // append additional phone field (for a new entry)
+    if (!in_array('-1|-1', $phone_array))
+      $email_array[] = '-1|-1';
+    $phone_array_str = implode(';', $phone_array);
+
+    $phones = array();
+    $i=-1;
+    foreach ($phone_array as $phone_item) {
+      $i++;
+      list($phone_type, $phone_number) = explode('|', $phone_item);
+      if (isset($_REQUEST[dbKITcontact::field_phone.'_'.$i]))
+        $phone_number = $_REQUEST[dbKITcontact::field_phone.'_'.$i];
+      if (isset($_REQUEST['phone_type_'.$i]))
+        $phone_type = $_REQUEST['phone_type_'.$i];
+      if ($phone_number == -1)
+        $phone_number = '';
+      $phones[] = array(
+          'name' => sprintf('%s_%d', dbKITcontact::field_phone, $i),
+          'name_type' => sprintf('phone_type_%d', $i),
+          'value' => $phone_number,
+          'type' => $phone_type
+      );
+    }
+    $types = array();
+    foreach ($dbContact->phone_array as $value => $text) {
+      $types[] = array(
+          'value' => $value,
+          'text' => $text
+      );
+    }
+    $contact_array['phones'] = array(
+        'name' => dbKITcontact::field_phone,
+        'value' => $phone_array_str,
+        'standard' => array(
+            'value' =>$item[dbKITcontact::field_phone_standard],
+            'name' => dbKITcontact::field_phone_standard
+        ),
+        'phones' => $phones,
+        'types' => $types
+    );
+
+    // internet addresses
+    if (empty($item[dbKITcontact::field_internet])) {
+      $item[dbKITcontact::field_internet] = '-1|-1';
+    }
+    $internet_array = explode(';', $item[dbKITcontact::field_internet]);
+    // append additional internet field (for a new entry)
+    if (!in_array('-1|-1', $internet_array))
+      $internet_array[] = '-1|-1';
+    $internet_array_str = implode(';', $internet_array);
+
+    $internet = array();
+    $i=-1;
+    foreach ($internet_array as $internet_item) {
+      $i++;
+      list($internet_type, $internet_url) = explode('|', $internet_item);
+      if (isset($_REQUEST[dbKITcontact::field_internet.'_'.$i]))
+        $internet_url = $_REQUEST[dbKITcontact::field_internet.'_'.$i];
+      if (isset($_REQUEST['internet_type_'.$i]))
+        $internet_type = $_REQUEST['internet_type_'.$i];
+      if ($internet_url == -1)
+        $internet_url = '';
+      $internet[] = array(
+          'name' => sprintf('%s_%d', dbKITcontact::field_internet, $i),
+          'name_type' => sprintf('internet_type_%d', $i),
+          'value' => $internet_url,
+          'type' => $internet_type
+      );
+    }
+    $types = array();
+    foreach ($dbContact->internet_array as $value => $text) {
+      $types[] = array(
+          'value' => $value,
+          'text' => $text
+      );
+    }
+    $contact_array['internet'] = array(
+        'name' => dbKITcontact::field_internet,
+        'value' => $internet_array_str,
+        'internet' => $internet,
+        'types' => $types
+    );
+
+    if (empty($item[dbKITcontact::field_address])) $item[dbKITcontact::field_address] = 0;
+    $address_ids = explode(',', $item[dbKITcontact::field_address]);
+    // add zero to insert an additional empty address
+    if (!in_array(0, $address_ids)) $address_ids[] = 0;
+    $addresses = array();
+    $address_array = array();
+    $map_address = array();
+    $address_standard = (isset($item[dbKITcontact::field_address_standard]) && is_numeric($item[dbKITcontact::field_address_standard])) ? $item[dbKITcontact::field_address_standard] : 0;
+
+    foreach ($address_ids as $addr) {
+      if ($addr < 1) {
+        // insert empty fields
+        $addr = 0;
+        $addr_values = array(
+            dbKITcontactAddress::field_id => $addr,
+            dbKITcontactAddress::field_street => (isset($_REQUEST[dbKITcontactAddress::field_street.'_'.$addr])) ? $_REQUEST[dbKITcontactAddress::field_street.'_'.$addr] : '',
+            dbKITcontactAddress::field_zip => (isset($_REQUEST[dbKITcontactAddress::field_zip.'_'.$addr])) ? $_REQUEST[dbKITcontactAddress::field_zip.'_'.$addr] : '',
+            dbKITcontactAddress::field_city => (isset($_REQUEST[dbKITcontactAddress::field_city.'_'.$addr])) ? $_REQUEST[dbKITcontactAddress::field_city.'_'.$addr] : '',
+            dbKITcontactAddress::field_country => (isset($_REQUEST[dbKITcontactAddress::field_country.'_'.$addr])) ? $_REQUEST[dbKITcontactAddress::field_country.'_'.$addr] : LANGUAGE,
+            dbKITcontactAddress::field_type => (isset($_REQUEST[dbKITcontactAddress::field_type.'_'.$addr])) ? $_REQUEST[dbKITcontactAddress::field_type.'_'.$addr] : dbKITcontactAddress::type_undefined,
+            dbKITcontactAddress::field_status => dbKITcontactAddress::status_active
+            );
+      }
+      else {
+        $addr_values = array();
+        $SQL = sprintf("SELECT * FROM %s WHERE `%s`='%s' AND `%s`='%s'",
+            $dbContactAddress->getTableName(),
+            dbKITcontactAddress::field_id,
+            $addr,
+            dbKITcontactAddress::field_status,
+            dbKITcontactAddress::status_active);
+        if (!$dbContactAddress->sqlExec($SQL, $addr_values)) {
+          $this->setError(sprintf('[%s - %s] %s', __METHOD__, __LINE__, $dbContactAddress->getError()));
+          return false;
+        }
+        if (count($addr_values) < 1) continue;
+        $addr_values = $addr_values[0];
+      }
+      // get the address for the map
+      if ($addr == $address_standard) $map_address = $addr_values;
+      // now collect address array ...
+      $address_array[] = $addr;
+
+      // get country list
+      $country_array = $dbContactAddress->country_array;
+      // sort countries by key (2-digit identifer)
+      ksort($country_array);
+      $countries = array();
+      foreach ($country_array as $value => $text) {
+        $countries[] = array(
+            'value' => $value,
+            'text' => $text
+        );
+      }
+      // get address type list
+      $type_array = $dbContactAddress->type_array;
+      $types = array();
+      foreach ($type_array as $value => $text) {
+        $types[] = array(
+            'value' => $value,
+            'text' => $text
+            );
+      }
+      // get status array
+      $status_array = $dbContactAddress->status_array;
+      $status = array();
+      foreach ($status_array as $value => $text) {
+        $status[] = array(
+            'value' => $value,
+            'text' => $text
+            );
+      }
+
+      $addresses[] = array(
+          'id' => array(
+              'name' => dbKITcontactAddress::field_id,
+              'value' => $addr
+              ),
+          'street' => array(
+              'name' => sprintf('%s_%d', dbKITcontactAddress::field_street, $addr),
+              'value' => $addr_values[dbKITcontactAddress::field_street]
+              ),
+          'zip' => array(
+              'name' => sprintf('%s_%d', dbKITcontactAddress::field_zip, $addr),
+              'value' => $addr_values[dbKITcontactAddress::field_zip]
+              ),
+          'city' => array(
+              'name' => sprintf('%s_%d', dbKITcontactAddress::field_city, $addr),
+              'value' => $addr_values[dbKITcontactAddress::field_city]
+          ),
+          'country' => array(
+              'name' => sprintf('%s_%d', dbKITcontactAddress::field_country, $addr),
+              'value' => $addr_values[dbKITcontactAddress::field_country],
+              'options' => $countries
+          ),
+          'type' => array(
+              'name' => sprintf('%s_%d', dbKITcontactAddress::field_type, $addr),
+              'value' => $addr_values[dbKITcontactAddress::field_type],
+              'options' => $types
+              ),
+          'status' => array(
+              'name' => sprintf('%s_%d', dbKITcontactAddress::field_status, $addr),
+              'value' => $addr_values[dbKITcontactAddress::field_status],
+              'options' => $status
+              )
+          );
+    }
+
+    $contact_array['addresses'] = array(
+        'name' => dbKITcontact::field_address,
+        'value' => implode(',', $address_array),
+        'addresses' => $addresses,
+        'standard' => array(
+            'name' => dbKITcontact::field_address_standard,
+            'value' => $address_standard
+            )
+        );
+
+    // Google map
+    $width = $dbCfg->getValue(dbKITcfg::cfgGMapStaticWidth);
+    $height = $dbCfg->getValue(dbKITcfg::cfgGMapStaticHeight);
+    $zoom = $dbCfg->getValue(dbKITcfg::cfgGMapStaticZoom);
+    $color = $dbCfg->getValue(dbKITcfg::cfgGMapStaticMarkerColor);
+    $protocol = ($dbCfg->getValue(dbKITcfg::cfgUseSSL)) ? 'https' : 'http';
+    if (isset($map_address[dbKITcontactAddress::field_id]) && ($map_address[dbKITcontactAddress::field_id] > 0)) {
+      // try to show a valid address
+      $location = '';
+      if (!empty($map_address[dbKITcontactAddress::field_street])) $location .= $map_address[dbKITcontactAddress::field_street];
+      if (!empty($map_address[dbKITcontactAddress::field_zip])) {
+        if (!empty($location)) $location .= ',';
+        $location .= $map_address[dbKITcontactAddress::field_zip];
+      }
+      if (!empty($map_address[dbKITcontactAddress::field_city])) {
+        if (!empty($location)) $location .= ',';
+        $location .= $map_address[dbKITcontactAddress::field_city];
+      }
+      if (!empty($map_address[dbKITcontactAddress::field_country])) {
+        if (!empty($location)) $location .= ',';
+        $location .= $dbContactAddress->country_array[$map_address[dbKITcontactAddress::field_country]];
+      }
+      $url = sprintf('%s://maps.google.com/maps/api/staticmap?center=%s&size=%dx%d&sensor=false&zoom=%d&markers=color:%s|label:.|%s',
+          $protocol, urlencode($location), $width, $height, $zoom, $color, urlencode($location));
+      $contact_array['map'] = array(
+          'use' => (int) $dbCfg->getValue(dbKITcfg::cfgGMapStaticUse),
+          'url' => $url,
+          'width' => $width,
+          'height' => $height
+      );
+    }
+    else {
+      // no valid address, still show europe
+      $url = sprintf('%s://maps.google.com/maps/api/staticmap?center=europa&size=%dx%d&sensor=false',
+          $protocol, $width, $height);
+      $contact_array['map'] = array(
+          'use' => (int) $dbCfg->getValue(dbKITcfg::cfgGMapStaticUse),
+          'url' => $url,
+          'width' => $width,
+          'height' => $height
+          );
+    }
+
+    /*
+    // address standard
+    if (isset($item[dbKITcontact::field_address_standard]) && is_numeric($item[dbKITcontact::field_address_standard])) {
+      $address_standard = $item[dbKITcontact::field_address_standard];
+    }
+    else {
+      $address_standard = 0;
+    }
+    // insert addresses
+    $map_address = '';
+    $addresses = '';
+    if (empty($item[dbKITcontact::field_address]))
+      $item[dbKITcontact::field_address] = -1;
+    $address_array = explode(',', $item[dbKITcontact::field_address]);
+    if (isset($_REQUEST['add_address']))
+      $address_array[] = 0;
+    $address_array_new = array();
+    // address template
+    $addr_template = new Dwoo_Template_File($this->template_path.'backend.contact.address.htt');
+    $countries = $dbContactAddress->country_array;
+    // sort countries by key (2-digit identifer)
+    ksort($countries);
+    foreach ($address_array as $addr) {
+      $addr_values = array();
+      $skip = false;
+      if (($addr == -1) || ($addr == 0)) {
+        // insert empty fields
+        $addr = 0;
+        (isset($_REQUEST[dbKITcontactAddress::field_street.'_'.$addr])) ? $street = $_REQUEST[dbKITcontactAddress::field_street.'_'.$addr] : $street = '';
+        (isset($_REQUEST[dbKITcontactAddress::field_zip.'_'.$addr])) ? $zip = $_REQUEST[dbKITcontactAddress::field_zip.'_'.$addr] : $zip = '';
+        (isset($_REQUEST[dbKITcontactAddress::field_city.'_'.$addr])) ? $city = $_REQUEST[dbKITcontactAddress::field_city.'_'.$addr] : $city = '';
+        (isset($_REQUEST[dbKITcontactAddress::field_country.'_'.$addr])) ? $country = $_REQUEST[dbKITcontactAddress::field_country.'_'.$addr] : $country = 'DE';
+        (isset($_REQUEST[dbKITcontactAddress::field_type.'_'.$addr])) ? $addr_type = $_REQUEST[dbKITcontactAddress::field_type.'_'.$addr] : $addr_type = dbKITcontactAddress::type_undefined;
+        $addr_values[dbKITcontactAddress::field_id] = $addr;
+        $addr_values[dbKITcontactAddress::field_street] = $street;
+        $addr_values[dbKITcontactAddress::field_zip] = $zip;
+        $addr_values[dbKITcontactAddress::field_city] = $city;
+        $addr_values[dbKITcontactAddress::field_country] = $country;
+        $addr_values[dbKITcontactAddress::field_type] = $addr_type;
+        $addr_values[dbKITcontactAddress::field_status] = dbKITcontactAddress::status_active;
+      }
+      else {
+        $where = array();
+        $where[dbKITcontactAddress::field_id] = $addr;
+        $where[dbKITcontactAddress::field_status] = dbKITcontactAddress::status_active;
+        if (!$dbContactAddress->sqlSelectRecord($where, $addr_values)) {
+          $this->setError(sprintf('[%s - %s] %s', __METHOD__, __LINE__, $dbContactAddress->getError()));
+          return false;
+        }
+        if (sizeof($addr_values) > 0) {
+          $addr_values = $addr_values[0];
+        }
+        else {
+          // no active address - skip this address
+          $skip = true;
+        }
+      }
+      if (!$skip) {
+        $address_array_new[] = $addr_values[dbKITcontactAddress::field_id];
+        $street = sprintf('<input type="text" name="%s" value="%s" />', dbKITcontactAddress::field_street.'_'.$addr_values[dbKITcontactAddress::field_id], $addr_values[dbKITcontactAddress::field_street]);
+        $zip = sprintf('<input type="text" name="%s" value="%s" />', dbKITcontactAddress::field_zip.'_'.$addr_values[dbKITcontactAddress::field_id], $addr_values[dbKITcontactAddress::field_zip]);
+        $city = sprintf('<input type="text" name="%s" value="%s" />', dbKITcontactAddress::field_city.'_'.$addr_values[dbKITcontactAddress::field_id], $addr_values[dbKITcontactAddress::field_city]);
+        $additional = '';
+        $select = '';
+        foreach ($countries as $key => $name) {
+          ($key == $addr_values[dbKITcontactAddress::field_country]) ? $selected = ' selected="selected"' : $selected = '';
+          $select .= sprintf('<option value="%s"%s title="%s">%s</option>', $key, $selected, $name, $key);
+        }
+        $country = sprintf('<select name="%s">%s</select>', dbKITcontactAddress::field_country.'_'.$addr_values[dbKITcontactAddress::field_id], $select);
+        $select = '';
+        foreach ($dbContactAddress->type_array as $key => $name) {
+          ($key == $addr_values[dbKITcontactAddress::field_type]) ? $selected = ' selected="selected"' : $selected = '';
+          $select .= sprintf('<option value="%s"%s>%s</option>', $key, $selected, $name);
+        }
+        $addr_type = sprintf('<select name="%s">%s</select>', dbKITcontactAddress::field_type.'_'.$addr_values[dbKITcontactAddress::field_id], $select);
+        $select = '';
+        foreach ($dbContactAddress->status_array as $key => $name) {
+          ($key == $addr_values[dbKITcontactAddress::field_status]) ? $selected = ' selected="selected"' : $selected = '';
+          $select .= sprintf('<option value="%s"%s>%s</option>', $key, $selected, $name);
+        }
+        $addr_status = sprintf('<select name="%s">%s</select>', dbKITcontactAddress::field_status.'_'.$addr_values[dbKITcontactAddress::field_id], $select);
+        if ($addr_values[dbKITcontactAddress::field_id] == $address_standard) {
+          // Standard Adresse wird fuer die Karte verwendet
+          $checked = ' checked="checked"';
+          if (!empty($addr_values[dbKITcontactAddress::field_street])) {
+            $map_address = sprintf('%s, %s %s', $addr_values[dbKITcontactAddress::field_street], $addr_values[dbKITcontactAddress::field_zip], $addr_values[dbKITcontactAddress::field_city]);
+          }
+        }
+        else {
+          $checked = '';
+        }
+        $addr_standard = sprintf('<input type="radio" name="%s" value="%s"%s />%s', dbKITcontact::field_address_standard, $addr_values[dbKITcontactAddress::field_id], $checked, kit_label_standard);
+
+        $additional = $country.$addr_type.$addr_status.$addr_standard;
+
+        $addr_array = array(
+            'label_street' => kit_label_address_street,
+            'value_street' => $street,
+            'class_street' => dbKITcontactAddress::field_street,
+            'label_zip_city' => kit_label_address_zip_city,
+            'value_city' => $city,
+            'class_city' => dbKITcontactAddress::field_city,
+            'value_zip' => $zip,
+            'class_zip' => dbKITcontactAddress::field_zip,
+            'label_add' => '&nbsp;',
+            'value_add' => $additional);
+        $addresses .= $parser->get($addr_template, $addr_array);
+      } // !$skip
+    }
+    $address_array = implode(',', $address_array_new);
+    // add "insert new address" checkbox
+    $add_address = sprintf('<input type="checkbox" name="add_address" value="1" />%s', kit_label_add_new_address);
+    $data = array(
+        'label_add_address' => ' ',
+        'value_add_address' => $add_address);
+    $addresses .= $parser->get($this->template_path.'backend.contact.address.add.htt', $data);
+    */
+    // the data array for the parser
+    $data = array(
+        'form' => array(
+            'name' => 'kit_contact',
+            'action' => $this->page_link
+            ),
+        'action' => array(
+            'name' => self::request_action,
+            'value' => self::action_contact_save
+            ),
+        'language' => (LANGUAGE == 'EN') ? '' : strtolower(LANGUAGE),
+        'contact' => $contact_array
+        );
+    return $this->getTemplate('backend.contact.lte', $data);
+  } // dlgContact()
+
+
+  /**
+   * Dialog for creating and editing contacts
+   */
+  /*
   public function dlgContact() {
     global $dbContact;
     global $tools;
@@ -1156,6 +1875,7 @@ class kitBackend {
     $person_first_name = sprintf('<input type="text" name="%s" value="%s" />', dbKITcontact::field_person_first_name, $item[dbKITcontact::field_person_first_name]);
     // person function
     $person_function = sprintf('<input type="text" name="%s" value="%s" />', dbKITcontact::field_person_function, $item[dbKITcontact::field_person_function]);
+
     // address standard
     if (isset($item[dbKITcontact::field_address_standard]) && is_numeric($item[dbKITcontact::field_address_standard])) {
       $address_standard = $item[dbKITcontact::field_address_standard];
@@ -1271,6 +1991,7 @@ class kitBackend {
         'label_add_address' => ' ',
         'value_add_address' => $add_address);
     $addresses .= $parser->get($this->template_path.'backend.contact.address.add.htt', $data);
+
     // RIGHT COLUMN
     // birthday
     $timestamp = -1;
@@ -1371,9 +2092,9 @@ class kitBackend {
           'value_email' => $email_address);
       $email .= $parser->get($template_email, $data);
     }
-    /*
-     * Telefon
-     */
+
+    // Telefon
+
     $phone = '';
     if (empty($item[dbKITcontact::field_phone]))
       $item[dbKITcontact::field_phone] = '-1|-1';
@@ -1411,9 +2132,9 @@ class kitBackend {
           'value_phone' => $phone_number);
       $phone .= $parser->get($template_phone, $data);
     }
-    /*
-     * Internet Verbindungen
-     */
+
+    // Internet Verbindungen
+
     $internet = '';
     if (empty($item[dbKITcontact::field_internet]))
       $item[dbKITcontact::field_internet] = '-1|-1';
@@ -1447,9 +2168,9 @@ class kitBackend {
       $internet .= $parser->get($template_internet, $data);
     }
 
-    /*
-     * Karte anzeigen?
-     */
+
+    // Karte anzeigen?
+
     $map_width = 240;
     $map_height = 240;
     $map_zoom = 16;
@@ -1470,9 +2191,9 @@ class kitBackend {
       endswitch;
       $map = sprintf('<div id="map" style="width:%dpx;height:%dpx; %s"></div>', $map_width, $map_height, $pos);
     }
-    /*
-     * Kategorien
-     */
+
+    // Kategorien
+
     $categories = '';
     $categories_array = explode(',', $item[dbKITcontact::field_category]);
     $categories_td = '';
@@ -1506,9 +2227,9 @@ class kitBackend {
     $data = array('rows' => $categories_tr);
     $categories = $parser->get($this->template_path.'backend.contact.categories.htt', $data);
 
-    /*
-     * Newsletter
-     */
+
+    // Newsletter
+
     $newsletter = '';
     $newsletter_array = explode(',', $item[dbKITcontact::field_newsletter]);
     $newsletter_td = '';
@@ -1539,9 +2260,9 @@ class kitBackend {
     $data = array('rows' => $newsletter_tr);
     $newsletter = $parser->get($this->template_path.'backend.contact.newsletter.htt', $data);
 
-    /*
-     * Verteiler
-     */
+
+    // Verteiler
+
     $distribution = '';
     $distribution_array = explode(',', $item[dbKITcontact::field_distribution]);
     $distribution_td = '';
@@ -1572,9 +2293,9 @@ class kitBackend {
     $data = array('rows' => $distribution_tr);
     $distribution = $parser->get($this->template_path.'backend.contact.distribution.htt', $data);
 
-    /*
-     * Protokoll
-     */
+
+    // Protokoll
+
     $protocol = '';
     // Protokoll abfragen
     $where = array();
@@ -1650,11 +2371,11 @@ class kitBackend {
           'register' => array(
               'date' => array(
                   'label' => kit_label_register_date,
-                  'value' => date(kit_cfg_date_time_str, strtotime($register[dbKITregister::field_register_date])),
+                  'value' => date(CFG_DATETIME_STR, strtotime($register[dbKITregister::field_register_date])),
                   'date' => $register[dbKITregister::field_register_date]),
               'confirmed' => array(
                   'label' => kit_label_register_confirmed,
-                  'value' => date(kit_cfg_date_time_str, strtotime($register[dbKITregister::field_register_confirmed])),
+                  'value' => date(CFG_DATETIME_STR, strtotime($register[dbKITregister::field_register_confirmed])),
                   'date' => $register[dbKITregister::field_register_confirmed]),
               'key' => array(
                   'label' => kit_label_register_key,
@@ -1860,6 +2581,7 @@ class kitBackend {
         'additional_fields' => $additional);
     return $parser->get($this->template_path.'backend.contact.htt', $data);
   } // dlgContact()
+  */
 
   private function getKeyIndexOfValue($array = array(), $item) {
     foreach ($array as $key => $value) {

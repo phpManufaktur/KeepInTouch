@@ -1,0 +1,39 @@
+<fieldset class="fs_information">
+  <legend>{translate('Information')}</legend>
+  <div class="kc_label_small">{translate('Contact ID')}</div>
+  <div class="kc_value_small"><strong>{if $contact.id.value > 0}{string_format($contact.id.value, '%05d')}{else}<em>{translate('- new contact -')}</em>{/if}</strong></div>
+  <div class="kc_label_small"><label for="{$contact.identifier.name}">{translate('Contact identifier')}</label></div>
+  <div class="kc_value_small"><input type="text" name="{$contact.identifier.name}" value="{$contact.identifier.value}" /></div>
+  <div class="kc_label_small"><label for="{$contact.status.name}">{translate('Contact status')}</label></div>
+  <div class="kc_value">
+    {foreach $contact.status.options option}
+    <input type="radio" name="{$contact.status.name}" value="{$option.value}"{if $option.value == $contact.status.value} checked="checked"{/if}>{$option.text}&nbsp;
+    {/foreach}
+  </div>
+  <div class="kc_clear"></div>
+
+  <div class="kc_label_small"><label for="{$contact.type.name}">{translate('Contact type')}</label></div>
+  <div class="kc_value_small">
+    <select name="{$contact.type.name}">
+      {foreach $contact.type.options option}
+      <option value="{$option.value}"{if $option.value == $contact.type.value} selected="selected"{/if}>{$option.text}</option>
+      {/foreach}
+    </select>
+  </div>
+  <div class="kc_label_small"><label for="{$contact.contact_language.name}">{translate('Contact language')}</label></div>
+  <div class="kc_value_small">
+    <select name="{$contact.contact_language.name}">
+      {foreach $contact.contact_language.options option}
+      <option value="{$option.value}"{if $option.value == $contact.contact_language.value} selected="selected"{/if}>{$option.text}</option>
+      {/foreach}
+    </select>
+  </div>
+  <div class="kc_label_small"><label for="{$contact.access.name}">{translate('Contact access')}</label></div>
+  <div class="kc_value_small">
+    <select name="{$contact.access.name}">
+      {foreach $contact.access.options option}
+      <option value="{$option.value}"{if $option.value == $contact.access.value} selected="selected"{/if}>{translate($option.text)}</option>
+      {/foreach}
+    </select>
+  </div>
+</fieldset>

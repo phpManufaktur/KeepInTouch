@@ -1,0 +1,16 @@
+<fieldset class="fs_internet">
+  <legend>{translate('Internet')}</legend>
+  {$i=0}{foreach $contact.internet.internet internet}
+  {if $i > 0}<div class="kc_clear"></div>{/if}
+  <div class="kc_label_small">
+    <select name="{$internet.name_type}">
+    {foreach $contact.internet.types type}
+    <option value="{$type.value}"{if $type.value == $internet.type} selected="selected"{/if}>{$type.text}</option>
+    {/foreach}
+    </select>
+  </div>
+  <div class="kc_value_small">
+    <input type="text" name="{$internet.name}" value="{$internet.value}" />
+  </div>
+  {$i=$i+1}{/foreach}
+</fieldset>
