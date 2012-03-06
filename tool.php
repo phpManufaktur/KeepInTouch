@@ -1732,7 +1732,7 @@ class kitBackend {
         'language' => (LANGUAGE == 'EN') ? '' : strtolower(LANGUAGE),
         'contact' => $contact_array
         );
-    return $this->getTemplate('backend.contact.lte', $data);
+    return $this->getTemplate('contact.lte', $data);
   } // dlgContact()
 
 
