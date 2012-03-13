@@ -1602,122 +1602,156 @@ class kitBackend {
           );
     }
 
+    // Categories
+    $categories = array();
+    $categories_array = explode(',', $item[dbKITcontact::field_category]);
+    foreach ($dbContact->category_array as $value => $text) {
+      $categories[$value] = array(
+          'value' => $value,
+          'text' => $text,
+          'checked' => (int) in_array($value, $categories_array)
+          );
+    }
+    $contact_array['categories'] = array(
+        'name' => dbKITcontact::field_category,
+        'values' => $categories_array,
+        'categories' => $categories
+        );
+
+    // Distribution
+    $distribution = array();
+    $distribution_array = explode(',', $item[dbKITcontact::field_distribution]);
+    foreach ($dbContact->distribution_array as $value => $text) {
+      $distribution[$value] = array(
+          'value' => $value,
+          'text' => $text,
+          'checked' => (int) in_array($value, $distribution_array)
+      );
+    }
+    $contact_array['distribution'] = array(
+        'name' => dbKITcontact::field_distribution,
+        'values' => $distribution_array,
+        'distribution' => $distribution
+    );
+
+    // Newsletter
+    $newsletter = array();
+    $newsletter_array = explode(',', $item[dbKITcontact::field_newsletter]);
+    foreach ($dbContact->newsletter_array as $value => $text) {
+      $newsletter[$value] = array(
+          'value' => $value,
+          'text' => $text,
+          'checked' => (int) in_array($value, $newsletter_array)
+      );
+    }
+    $contact_array['newsletter'] = array(
+        'name' => dbKITcontact::field_newsletter,
+        'values' => $newsletter_array,
+        'newsletter' => $newsletter
+    );
+
     /*
-    // address standard
-    if (isset($item[dbKITcontact::field_address_standard]) && is_numeric($item[dbKITcontact::field_address_standard])) {
-      $address_standard = $item[dbKITcontact::field_address_standard];
-    }
-    else {
-      $address_standard = 0;
-    }
-    // insert addresses
-    $map_address = '';
-    $addresses = '';
-    if (empty($item[dbKITcontact::field_address]))
-      $item[dbKITcontact::field_address] = -1;
-    $address_array = explode(',', $item[dbKITcontact::field_address]);
-    if (isset($_REQUEST['add_address']))
-      $address_array[] = 0;
-    $address_array_new = array();
-    // address template
-    $addr_template = new Dwoo_Template_File($this->template_path.'backend.contact.address.htt');
-    $countries = $dbContactAddress->country_array;
-    // sort countries by key (2-digit identifer)
-    ksort($countries);
-    foreach ($address_array as $addr) {
-      $addr_values = array();
-      $skip = false;
-      if (($addr == -1) || ($addr == 0)) {
-        // insert empty fields
-        $addr = 0;
-        (isset($_REQUEST[dbKITcontactAddress::field_street.'_'.$addr])) ? $street = $_REQUEST[dbKITcontactAddress::field_street.'_'.$addr] : $street = '';
-        (isset($_REQUEST[dbKITcontactAddress::field_zip.'_'.$addr])) ? $zip = $_REQUEST[dbKITcontactAddress::field_zip.'_'.$addr] : $zip = '';
-        (isset($_REQUEST[dbKITcontactAddress::field_city.'_'.$addr])) ? $city = $_REQUEST[dbKITcontactAddress::field_city.'_'.$addr] : $city = '';
-        (isset($_REQUEST[dbKITcontactAddress::field_country.'_'.$addr])) ? $country = $_REQUEST[dbKITcontactAddress::field_country.'_'.$addr] : $country = 'DE';
-        (isset($_REQUEST[dbKITcontactAddress::field_type.'_'.$addr])) ? $addr_type = $_REQUEST[dbKITcontactAddress::field_type.'_'.$addr] : $addr_type = dbKITcontactAddress::type_undefined;
-        $addr_values[dbKITcontactAddress::field_id] = $addr;
-        $addr_values[dbKITcontactAddress::field_street] = $street;
-        $addr_values[dbKITcontactAddress::field_zip] = $zip;
-        $addr_values[dbKITcontactAddress::field_city] = $city;
-        $addr_values[dbKITcontactAddress::field_country] = $country;
-        $addr_values[dbKITcontactAddress::field_type] = $addr_type;
-        $addr_values[dbKITcontactAddress::field_status] = dbKITcontactAddress::status_active;
-      }
-      else {
-        $where = array();
-        $where[dbKITcontactAddress::field_id] = $addr;
-        $where[dbKITcontactAddress::field_status] = dbKITcontactAddress::status_active;
-        if (!$dbContactAddress->sqlSelectRecord($where, $addr_values)) {
-          $this->setError(sprintf('[%s - %s] %s', __METHOD__, __LINE__, $dbContactAddress->getError()));
-          return false;
-        }
-        if (sizeof($addr_values) > 0) {
-          $addr_values = $addr_values[0];
-        }
-        else {
-          // no active address - skip this address
-          $skip = true;
-        }
-      }
-      if (!$skip) {
-        $address_array_new[] = $addr_values[dbKITcontactAddress::field_id];
-        $street = sprintf('<input type="text" name="%s" value="%s" />', dbKITcontactAddress::field_street.'_'.$addr_values[dbKITcontactAddress::field_id], $addr_values[dbKITcontactAddress::field_street]);
-        $zip = sprintf('<input type="text" name="%s" value="%s" />', dbKITcontactAddress::field_zip.'_'.$addr_values[dbKITcontactAddress::field_id], $addr_values[dbKITcontactAddress::field_zip]);
-        $city = sprintf('<input type="text" name="%s" value="%s" />', dbKITcontactAddress::field_city.'_'.$addr_values[dbKITcontactAddress::field_id], $addr_values[dbKITcontactAddress::field_city]);
-        $additional = '';
-        $select = '';
-        foreach ($countries as $key => $name) {
-          ($key == $addr_values[dbKITcontactAddress::field_country]) ? $selected = ' selected="selected"' : $selected = '';
-          $select .= sprintf('<option value="%s"%s title="%s">%s</option>', $key, $selected, $name, $key);
-        }
-        $country = sprintf('<select name="%s">%s</select>', dbKITcontactAddress::field_country.'_'.$addr_values[dbKITcontactAddress::field_id], $select);
-        $select = '';
-        foreach ($dbContactAddress->type_array as $key => $name) {
-          ($key == $addr_values[dbKITcontactAddress::field_type]) ? $selected = ' selected="selected"' : $selected = '';
-          $select .= sprintf('<option value="%s"%s>%s</option>', $key, $selected, $name);
-        }
-        $addr_type = sprintf('<select name="%s">%s</select>', dbKITcontactAddress::field_type.'_'.$addr_values[dbKITcontactAddress::field_id], $select);
-        $select = '';
-        foreach ($dbContactAddress->status_array as $key => $name) {
-          ($key == $addr_values[dbKITcontactAddress::field_status]) ? $selected = ' selected="selected"' : $selected = '';
-          $select .= sprintf('<option value="%s"%s>%s</option>', $key, $selected, $name);
-        }
-        $addr_status = sprintf('<select name="%s">%s</select>', dbKITcontactAddress::field_status.'_'.$addr_values[dbKITcontactAddress::field_id], $select);
-        if ($addr_values[dbKITcontactAddress::field_id] == $address_standard) {
-          // Standard Adresse wird fuer die Karte verwendet
-          $checked = ' checked="checked"';
-          if (!empty($addr_values[dbKITcontactAddress::field_street])) {
-            $map_address = sprintf('%s, %s %s', $addr_values[dbKITcontactAddress::field_street], $addr_values[dbKITcontactAddress::field_zip], $addr_values[dbKITcontactAddress::field_city]);
-          }
-        }
-        else {
-          $checked = '';
-        }
-        $addr_standard = sprintf('<input type="radio" name="%s" value="%s"%s />%s', dbKITcontact::field_address_standard, $addr_values[dbKITcontactAddress::field_id], $checked, kit_label_standard);
+    // Kategorien
 
-        $additional = $country.$addr_type.$addr_status.$addr_standard;
-
-        $addr_array = array(
-            'label_street' => kit_label_address_street,
-            'value_street' => $street,
-            'class_street' => dbKITcontactAddress::field_street,
-            'label_zip_city' => kit_label_address_zip_city,
-            'value_city' => $city,
-            'class_city' => dbKITcontactAddress::field_city,
-            'value_zip' => $zip,
-            'class_zip' => dbKITcontactAddress::field_zip,
-            'label_add' => '&nbsp;',
-            'value_add' => $additional);
-        $addresses .= $parser->get($addr_template, $addr_array);
-      } // !$skip
+    $categories = '';
+    $categories_array = explode(',', $item[dbKITcontact::field_category]);
+    $categories_td = '';
+    $categories_tr = '';
+    $i = 0;
+    // Template fuer die Kategorien
+    $template_category_td = new Dwoo_Template_File($this->template_path.'backend.contact.categories.td.htt');
+    $template_category_tr = new Dwoo_Template_File($this->template_path.'backend.contact.categories.tr.htt');
+    foreach ($dbContact->category_array as $key => $value) {
+      $i++;
+      if ($i > 5) {
+        $i = 1;
+        //$categories_tr .= sprintf('<tr>%s</tr>', $categories_td);
+        $data = array('category_td' => $categories_td);
+        $categories_tr .= $parser->get($template_category_tr, $data);
+        $categories_td = '';
+      }
+      (in_array($key, $categories_array)) ? $checked = ' checked="checked"' : $checked = '';
+      $cat = sprintf('<input type="checkbox" name="%s[]" value="%s"%s />%s', dbKITcontact::field_category, $key, $checked, $value);
+      $data = array('category_item' => $cat);
+      $categories_td .= $parser->get($template_category_td, $data);
     }
-    $address_array = implode(',', $address_array_new);
-    // add "insert new address" checkbox
-    $add_address = sprintf('<input type="checkbox" name="add_address" value="1" />%s', kit_label_add_new_address);
-    $data = array(
-        'label_add_address' => ' ',
-        'value_add_address' => $add_address);
-    $addresses .= $parser->get($this->template_path.'backend.contact.address.add.htt', $data);
+    for ($u = $i; $u < 6; $u++) {
+      $data = array('category_item' => '&nbsp;');
+      $categories_td .= $parser->get($template_category_td, $data);
+
+      //$categories_td .= '<td>&nbsp;</td>';
+    }
+    $data = array('category_td' => $categories_td);
+    $categories_tr .= $parser->get($template_category_tr, $data);
+    $data = array('rows' => $categories_tr);
+    $categories = $parser->get($this->template_path.'backend.contact.categories.htt', $data);
+
+
+    // Newsletter
+
+    $newsletter = '';
+    $newsletter_array = explode(',', $item[dbKITcontact::field_newsletter]);
+    $newsletter_td = '';
+    $newsletter_tr = '';
+    $i = 0;
+    // Template fuer die Newsletter
+    $template_newsletter_td = new Dwoo_Template_File($this->template_path.'backend.contact.newsletter.td.htt');
+    $template_newsletter_tr = new Dwoo_Template_File($this->template_path.'backend.contact.newsletter.tr.htt');
+    foreach ($dbContact->newsletter_array as $key => $value) {
+      $i++;
+      if ($i > 5) {
+        $i = 1;
+        $data = array('newsletter_td' => $newsletter_td);
+        $newsletter_tr .= $parser->get($template_newsletter_tr, $data);
+        $newsletter_td = '';
+      }
+      (in_array($key, $newsletter_array)) ? $checked = ' checked="checked"' : $checked = '';
+      $news = sprintf('<input type="checkbox" name="%s[]" value="%s"%s />%s', dbKITcontact::field_newsletter, $key, $checked, $value);
+      $data = array('newsletter_item' => $news);
+      $newsletter_td .= $parser->get($template_newsletter_td, $data);
+    }
+    for ($u = $i; $u < 6; $u++) {
+      $data = array('newsletter_item' => '&nbsp;');
+      $newsletter_td .= $parser->get($template_newsletter_td, $data);
+    }
+    $data = array('newsletter_td' => $newsletter_td);
+    $newsletter_tr .= $parser->get($template_newsletter_tr, $data);
+    $data = array('rows' => $newsletter_tr);
+    $newsletter = $parser->get($this->template_path.'backend.contact.newsletter.htt', $data);
+
+
+    // Verteiler
+
+    $distribution = '';
+    $distribution_array = explode(',', $item[dbKITcontact::field_distribution]);
+    $distribution_td = '';
+    $distribution_tr = '';
+    $i = 0;
+    // Template fuer die Newsletter
+    $template_distribution_td = new Dwoo_Template_File($this->template_path.'backend.contact.distribution.td.htt');
+    $template_distribution_tr = new Dwoo_Template_File($this->template_path.'backend.contact.distribution.tr.htt');
+    foreach ($dbContact->distribution_array as $key => $value) {
+      $i++;
+      if ($i > 5) {
+        $i = 1;
+        $data = array('distribution_td' => $distribution_td);
+        $distribution_tr .= $parser->get($template_distribution_tr, $data);
+        $distribution_td = '';
+      }
+      (in_array($key, $distribution_array)) ? $checked = ' checked="checked"' : $checked = '';
+      $news = sprintf('<input type="checkbox" name="%s[]" value="%s"%s />%s', dbKITcontact::field_distribution, $key, $checked, $value);
+      $data = array('distribution_item' => $news);
+      $distribution_td .= $parser->get($template_distribution_td, $data);
+    }
+    for ($u = $i; $u < 6; $u++) {
+      $data = array('distribution_item' => '&nbsp;');
+      $distribution_td .= $parser->get($template_distribution_td, $data);
+    }
+    $data = array('distribution_td' => $distribution_td);
+    $distribution_tr .= $parser->get($template_distribution_tr, $data);
+    $data = array('rows' => $distribution_tr);
+    $distribution = $parser->get($this->template_path.'backend.contact.distribution.htt', $data);
+
     */
     // the data array for the parser
     $data = array(

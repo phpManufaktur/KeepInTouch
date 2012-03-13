@@ -47,6 +47,8 @@ $module_translation_by = 'Ralf Hertsch (phpManufaktur)';
 $LANG = array(
     '- new contact -'
       => '- neuer Kontakt -',
+    'Abort'
+      => 'Abbruch',
     'Academic title'
       => 'Titel',
     'Additional'
@@ -55,6 +57,8 @@ $LANG = array(
       => 'Adressen',
     'Birthday'
       => 'Geburtstag',
+    'Categories'
+      => 'Kategorien',
     'Check to set this address as default'
       => 'Aktivieren, um diese Adresse als Standard zu setzen',
     'Check to set this email address as default'
@@ -85,6 +89,8 @@ $LANG = array(
       => 'Kontakt Typ',
     'Department'
       => 'Abteilung',
+    'Distribution'
+      => 'Verteiler',
     'First name'
       => 'Vorname',
     'Function'

@@ -38,6 +38,7 @@
       {include('include/contact/email.lte')}
       {include('include/contact/phone.lte')}
       {include('include/contact/internet.lte')}
+      {include('include/contact/categories.lte')}
     </div>
     
     <div class="container_middle">

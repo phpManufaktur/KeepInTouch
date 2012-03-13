@@ -1,0 +1,8 @@
+<fieldset class="fs_categories">
+  <legend>{translate('Categories')}</legend>
+  {foreach $contact.categories.categories category}
+  <div class="kc_category">
+    <input type="checkbox" name="{$contact.categories.name}[]" value="{$category.value}"{if $category.checked == 1} checked="checked"{/if} /> {$category.text}
+  </div> 
+  {/foreach}
+</fieldset>

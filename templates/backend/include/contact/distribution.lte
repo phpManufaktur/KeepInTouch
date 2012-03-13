@@ -1,0 +1,8 @@
+<fieldset class="fs_distribution">
+  <legend>{translate('Distribution')}</legend>
+  {foreach $contact.distribution.distribution distribution}
+  <div class="kc_distribution">
+    <input type="checkbox" name="{$contact.distribution.name}[]" value="{$distribution.value}"{if $distribution.checked == 1} checked="checked"{/if} /> {$distribution.text}
+  </div> 
+  {/foreach}
+</fieldset>

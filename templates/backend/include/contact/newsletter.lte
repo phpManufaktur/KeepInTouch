@@ -1,0 +1,8 @@
+<fieldset class="fs_newsletter">
+  <legend>{translate('Newsletter')}</legend>
+  {foreach $contact.newsletter.newsletter newsletter}
+  <div class="kc_newsletter">
+    <input type="checkbox" name="{$contact.newsletter.name}[]" value="{$newsletter.value}"{if $newsletter.checked == 1} checked="checked"{/if} /> {$newsletter.text}
+  </div> 
+  {/foreach}
+</fieldset>
