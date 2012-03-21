@@ -66,7 +66,7 @@ $LANG = array(
     'Check to set this phone number as default'
       => 'Aktivieren, um diese Telefonnummer als Standard zu setzen',
     'City'
-      => 'Stadt',
+      => 'Ort',
     'Communication'
       => 'Kommunikation',
     'Company'
