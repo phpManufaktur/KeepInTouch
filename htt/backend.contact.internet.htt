@@ -1,3 +1,10 @@
-<!-- $Id$ -->
+{*
+ * KeepInTouch
+ *
+ * @author Ralf Hertsch <ralf.hertsch@phpmanufaktur.de>
+ * @link http://phpmanufaktur.de
+ * @copyright 2010 - 2012
+ * @license MIT License (MIT) http://www.opensource.org/licenses/MIT
+ *}
 <div class="kccr_label internet">{$label_internet|default: ''}</div>
 <div class="kccr_value internet">{$value_internet|default: ''}</div>

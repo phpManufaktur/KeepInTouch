@@ -1,3 +1,11 @@
+{*
+ * KeepInTouch
+ *
+ * @author Ralf Hertsch <ralf.hertsch@phpmanufaktur.de>
+ * @link http://phpmanufaktur.de
+ * @copyright 2010 - 2012
+ * @license MIT License (MIT) http://www.opensource.org/licenses/MIT
+ *}
 <style type="text/css">
   body,td { background-color:#ffffff; color:#2f2f2f; font:9pt Verdana, Arial, Helvetica, sans-serif;}
   a { text-decoration:none; font-weight: bold; }

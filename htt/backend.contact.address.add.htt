@@ -1,4 +1,11 @@
-<!-- $Id$ -->
+{*
+ * KeepInTouch
+ *
+ * @author Ralf Hertsch <ralf.hertsch@phpmanufaktur.de>
+ * @link http://phpmanufaktur.de
+ * @copyright 2010 - 2012
+ * @license MIT License (MIT) http://www.opensource.org/licenses/MIT
+ *}
 <div class="kccl_label add_address">{$label_add_address|default: ''}</div>
 <div class="kccl_value add_address">{$value_add_address|default: ''}</div>
 <div class="kccl_empty_row"></div>

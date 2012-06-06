@@ -1,10 +1,11 @@
 /**
-  Copyright (c) 2010, Ralf Hertsch
-  ralf.hertsch@phpManufaktur.de - http://phpManufaktur.de
-  
-  $Id$
-**/
-
+ * KeepInTouch
+ *
+ * @author Ralf Hertsch <ralf.hertsch@phpmanufaktur.de>
+ * @link http://phpmanufaktur.de
+ * @copyright 2010 - 2012
+ * @license MIT License (MIT) http://www.opensource.org/licenses/MIT
+ */
 
 @import "include/jquery/themes/smoothness/ui.base.css";
 @import "include/jquery/themes/smoothness/ui.theme.css";

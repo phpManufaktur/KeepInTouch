@@ -1,4 +1,11 @@
-<!-- $Id: backend.newsletter.cronjob.active.list.htt 21 2010-11-21 11:34:55Z phpmanufaktur $ -->
+{*
+ * KeepInTouch
+ *
+ * @author Ralf Hertsch <ralf.hertsch@phpmanufaktur.de>
+ * @link http://phpmanufaktur.de
+ * @copyright 2010 - 2012
+ * @license MIT License (MIT) http://www.opensource.org/licenses/MIT
+ *}
 <div class="cronjob_list">
   <h2>{$header}</h2>
   {$intro|default: ''}

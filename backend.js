@@ -1,21 +1,11 @@
-
 /**
-  Module developed for the Open Source Content Management System Website Baker (http://websitebaker.org)
-  Copyright (c) 2010, Ralf Hertsch
-  Contact me: ralf.hertsch@phpManufaktur.de, http://phpManufaktur.de
-
-  This module is free software. You can redistribute it and/or modify it
-  under the terms of the GNU General Public License  - version 2 or later,
-  as published by the Free Software Foundation: http://www.gnu.org/licenses/gpl.html.
-
-  This module is distributed in the hope that it will be useful,
-  but WITHOUT ANY WARRANTY; without even the implied warranty of
-  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-  GNU General Public License for more details.
-  
-  $Id$
-  
-**/
+ * KeepInTouch
+ *
+ * @author Ralf Hertsch <ralf.hertsch@phpmanufaktur.de>
+ * @link http://phpmanufaktur.de
+ * @copyright 2010 - 2012
+ * @license MIT License (MIT) http://www.opensource.org/licenses/MIT
+ */
 
 
 function addSelectToLink(target_url, select_id) {

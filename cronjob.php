@@ -1,11 +1,12 @@
 <?php
 
 /**
- * @author       Ralf Hertsch
- * @copyright    2010-today by phpManufaktur   
- * @link         http://phpManufaktur.de
- * @license      http://www.gnu.org/licenses/gpl.html
- * @version      $Id$
+ * KeepInTouch
+ *
+ * @author Ralf Hertsch <ralf.hertsch@phpmanufaktur.de>
+ * @link http://phpmanufaktur.de
+ * @copyright 2010 - 2012
+ * @license MIT License (MIT) http://www.opensource.org/licenses/MIT
  */
 
 // WebsiteBaker config.php einbinden
@@ -29,41 +30,41 @@ $cronjob = new cronjob();
 $cronjob->action();
 
 class cronjob {
-	
+
 	const request_key			= 'key';
-	
+
 	private $error;
 	private $start_script;
-	
+
 	public function __construct() {
 		$this->start_script = time(true);
 	} // __construct()
-	
+
 	private function setError($error) {
 		global $dbCronjobErrorLog;
 		$this->error = $error;
 		// write simply to database - here is no chance to trigger additional errors...
 		$dbCronjobErrorLog->sqlInsertRecord(array(dbCronjobErrorLog::field_error => $error));
 	} // setError()
-	
+
 	private function getError() {
 		return $this->error;
 	} // getError()
-	
+
 	private function isError() {
 	    return (bool) !empty($this->error);
 	} // isError
-	
+
 	/**
 	 * Action Handler
-	 * 
+	 *
 	 */
 	public function action() {
 		global $dbCronjobData;
 		global $dbNewsProcess;
 		global $dbCfg;
 		global $tools;
-		
+
 		// Log access to cronjob...
 		$where = array(dbCronjobData::field_item => dbCronjobData::item_last_call);
 		$data = array();
@@ -90,14 +91,14 @@ class cronjob {
 		if (!$dbCronjobData->sqlUpdateRecord($data, $where)) {
 			$this->setError(sprintf('[%s - %s] %s', __METHOD__, __LINE__, $dbCronjobData->getError()));
 			exit($this->getError());
-		} 
-		
+		}
+
 		// check if the access is allowed
 		$cronjob_key = $dbCfg->getValue(dbKITcfg::cfgCronjobKey);
 		if (strlen($cronjob_key) < 3) {
 			// Cronjob Key does not exist, so create one...
 			$cronjob_key = $tools->generatePassword();
-			$dbCfg->setValueByName($cronjob_key, dbKITcfg::cfgCronjobKey); 
+			$dbCfg->setValueByName($cronjob_key, dbKITcfg::cfgCronjobKey);
 		}
 		if (!isset($_REQUEST[self::request_key]) || ($_REQUEST[self::request_key] !== $cronjob_key)) {
 			// Cronjob key does not match, log denied access...
@@ -106,7 +107,7 @@ class cronjob {
 			// dont give attacker any hint, so exit with regular code...
 			exit(0);
 		}
-		
+
 		// check if there are jobs waiting...
 		$SQL = sprintf(	"SELECT * FROM %s WHERE %s='0' ORDER BY %s ASC LIMIT 1",
 										$dbNewsProcess->getTableName(),
@@ -117,12 +118,12 @@ class cronjob {
 			$this->setError(sprintf('[%s - %s] %s', __METHOD__, __LINE__, $dbNewsProcess->getError()));
 			exit($this->getError());
 		}
-		
+
 		$process_newsletter = false;
-		
+
 		if (count($cronjob) == 1) {
 		    // processing newsletters has priority!
-			$cronjob = $cronjob[0];				
+			$cronjob = $cronjob[0];
 			// jobs to do...
 			if (!empty($cronjob[dbKITnewsletterProcess::field_register_ids])) {
 				// process newsletter
@@ -145,13 +146,13 @@ class cronjob {
 					$this->setError(sprintf('[%s - %s] %s', __METHOD__, __LINE__, $dbNewsProcess->getError()));
 					exit($this->getError());
 				}
-				// log error		
-				$this->setError(sprintf('[%s - %s] %s', __METHOD__, __LINE__, 
+				// log error
+				$this->setError(sprintf('[%s - %s] %s', __METHOD__, __LINE__,
 												sprintf("Neither Newsletter ID's nor Distribution ID's to process in record <b>%d</b>, job killed!", $cronjob[dbKITnewsletterProcess::field_id])));
 				exit($this->getError());
 			}
 		}
-		
+
 		if (!$process_newsletter) {
 		    // there was no newsletter to process, so look what else is to do...
 		    if (file_exists(WB_PATH.'/modules/kit_idea/class.cronjob.php')) {
@@ -163,11 +164,11 @@ class cronjob {
 		            exit($ideaCronjob->getError());
 		        }
 		        exit($result);
-		    } 
+		    }
 		}
 		exit(0);
 	} // action()
-	
+
 	/**
 	 * Write Log Entry for processing of each Newsletter Mail
 	 * @param INT $process_id
@@ -175,7 +176,7 @@ class cronjob {
 	 * @param INT $kit_id
 	 * @param INT $status
 	 * @param STR $error
-	 * @return BOOL 
+	 * @return BOOL
 	 */
 	private function writeNewsletterLog($process_id, $email, $kit_id, $status, $error) {
 		global $dbCronjobNewsLog;
@@ -189,10 +190,10 @@ class cronjob {
 		if (!$dbCronjobNewsLog->sqlInsertRecord($data)) {
 			$this->setError(sprintf('[%s - %s] %s', __METHOD__, __LINE__, $dbCronjobNewsLog->getError()));
 			exit($this->getError());
-		}		
+		}
 		return true;
 	} // writeNewsletterLog()
-	
+
 	private function processNewsletter($cronjob=array()) {
 		global $dbNewsletterArchive;
   	global $dbProvider;
@@ -202,13 +203,13 @@ class cronjob {
   	global $dbRegister;
     global $dbNewsletterCfg;
     global $dbNewsProcess;
-		
+
     if (!isset($cronjob[dbKITnewsletterProcess::field_archiv_id])) {
     	// Fehler, Aufruf ohne Archiv ID
     	$this->setError(sprintf('[%s -%s] %s', __METHOD__, __LINE__, 'call function without valid Newsletter Archive ID!'));
     	exit($this->getError());
     }
-    
+
 		// Newsletter auslesen
   	$where = array();
   	$where[dbKITnewsletterArchive::field_id] = $cronjob[dbKITnewsletterProcess::field_archiv_id];
@@ -236,7 +237,7 @@ class cronjob {
   		exit($this->getError());
 		}
 		$provider = $provider[0];
-		
+
 		// Template
 		$where = array();
 		$where[dbKITnewsletterTemplates::field_id] = $newsletter[dbKITnewsletterArchive::field_template];
@@ -250,7 +251,7 @@ class cronjob {
 			exit($this->getError());
 		}
 		$template = $template[0];
-		
+
 		$worker = explode(',', $cronjob[dbKITnewsletterProcess::field_register_ids]);
 		$in_ids = '';
 		foreach ($worker as $id) {
@@ -266,9 +267,9 @@ class cronjob {
 			$this->setError(sprintf('[%s - %s] %s', __METHOD__, __LINE__, $dbRegister->getError()));
 			exit($this->getError());
 		}
-		
+
 		$transmitted = 0;
-		
+
 		foreach ($addresses as $address) {
 			// E-Mail Programm starten
     	$kitMail = new kitMail($provider[dbKITprovider::field_id]);
@@ -283,7 +284,7 @@ class cronjob {
 			}
 			else {
 				$this->setError(sprintf('[%s - %s] %s', __METHOD__, __LINE__, $newsletterCommands->getError()));
-				exit($this->getError()); 
+				exit($this->getError());
 			}
 
 			// TEXT body generieren
@@ -302,10 +303,10 @@ class cronjob {
 
       if ($cronjob[dbKITnewsletterProcess::field_simulate] == 1) {
         // Versand wird nur simuliert!
-        $this->writeNewsletterLog($cronjob[dbKITnewsletterProcess::field_id], 
-        													$address[dbKITregister::field_email], 
-        													$address[dbKITregister::field_contact_id], 
-        													dbCronjobNewsletterLog::status_simulation, 
+        $this->writeNewsletterLog($cronjob[dbKITnewsletterProcess::field_id],
+        													$address[dbKITregister::field_email],
+        													$address[dbKITregister::field_contact_id],
+        													dbCronjobNewsletterLog::status_simulation,
         													'');
       }
       else {
@@ -327,9 +328,9 @@ class cronjob {
             $this->setError(sprintf('[%s - %s] %s', __METHOD__, __LINE, $dbContact->getError()));
             exit($this->getError());
           }
-          $this->writeNewsletterLog($cronjob[dbKITnewsletterProcess::field_id], 
-          													$address[dbKITregister::field_email], 
-          													$address[dbKITregister::field_contact_id], 
+          $this->writeNewsletterLog($cronjob[dbKITnewsletterProcess::field_id],
+          													$address[dbKITregister::field_email],
+          													$address[dbKITregister::field_contact_id],
         														dbCronjobNewsletterLog::status_ok,
         														'');
         }
@@ -342,16 +343,16 @@ class cronjob {
             $this->setError(sprintf('[%s - %s] %s', __METHOD__, __LINE, $dbContact->getError()));
             exit($this->getError());
           }
-          $this->writeNewsletterLog($cronjob[dbKITnewsletterProcess::field_id], 
-          													$address[dbKITregister::field_email], 
-          													$address[dbKITregister::field_contact_id], 
+          $this->writeNewsletterLog($cronjob[dbKITnewsletterProcess::field_id],
+          													$address[dbKITregister::field_email],
+          													$address[dbKITregister::field_contact_id],
         														dbCronjobNewsletterLog::status_error,
         														$kitMail->getMailError());
         }
       } // send Newsletter
 			$kitMail->__destruct();
 		}
-		
+
 		// Protocoll schreiben
 		$where = array(dbKITnewsletterProcess::field_id => $cronjob[dbKITnewsletterProcess::field_id]);
 		$cronjob[dbKITnewsletterProcess::field_job_done_dt] = date('Y-m-d H:i:s');
@@ -364,7 +365,7 @@ class cronjob {
 		}
 		exit('OK');
 	} // processNewsletter()
-	
+
 	private function processDistribution($cronjob=array()) {
 		global $dbNewsletterArchive;
   	global $dbProvider;
@@ -373,13 +374,13 @@ class cronjob {
   	global $newsletterCommands;
   	global $dbNewsletterCfg;
     global $dbNewsProcess;
-		
+
     if (!isset($cronjob[dbKITnewsletterProcess::field_archiv_id])) {
     	// Fehler, Aufruf ohne Archiv ID
     	$this->setError(sprintf('[%s -%s] %s', __METHOD__, __LINE__, 'call function without valid Newsletter Archive ID!'));
     	exit($this->getError());
     }
-    
+
 		// Newsletter auslesen
   	$where = array();
   	$where[dbKITnewsletterArchive::field_id] = $cronjob[dbKITnewsletterProcess::field_archiv_id];
@@ -407,7 +408,7 @@ class cronjob {
   		exit($this->getError());
 		}
 		$provider = $provider[0];
-		
+
 		// Template
 		$where = array();
 		$where[dbKITnewsletterTemplates::field_id] = $newsletter[dbKITnewsletterArchive::field_template];
@@ -421,7 +422,7 @@ class cronjob {
 			exit($this->getError());
 		}
 		$template = $template[0];
-		
+
 		$worker = explode(',', $cronjob[dbKITnewsletterProcess::field_distribution_ids]);
 		$in_ids = '';
 		foreach ($worker as $id) {
@@ -437,9 +438,9 @@ class cronjob {
 			$this->setError(sprintf('[%s - %s] %s', __METHOD__, __LINE__, $dbContact->getError()));
 			exit($this->getError());
 		}
-		
+
 		$transmitted = 0;
-		
+
 		foreach ($addresses as $address) {
 			// E-Mail Programm starten
     	$kitMail = new kitMail($provider[dbKITprovider::field_id]);
@@ -470,15 +471,15 @@ class cronjob {
 				$this->setError(sprintf('[%s - %s] %s', __METHOD__, __LINE__, $newsletterCommands->getError()));
 				exit($this->getError());
 			}
-			
+
 			// use standard email address
 			$email_address = $dbContact->getStandardEMailByID($address[dbKITcontact::field_id]);
-        
+
       if ($cronjob[dbKITnewsletterProcess::field_simulate] == 1) {
         // Versand wird nur simuliert!
-        $this->writeNewsletterLog($cronjob[dbKITnewsletterProcess::field_id], 
-        													$email_address, 
-        													$address[dbKITcontact::field_id], 
+        $this->writeNewsletterLog($cronjob[dbKITnewsletterProcess::field_id],
+        													$email_address,
+        													$address[dbKITcontact::field_id],
         													dbCronjobNewsletterLog::status_simulation,
         													'');
       }
@@ -501,9 +502,9 @@ class cronjob {
             $this->setError(sprintf('[%s - %s] %s', __METHOD__, __LINE, $dbContact->getError()));
             exit($this->getError());
           }
-          $this->writeNewsletterLog($cronjob[dbKITnewsletterProcess::field_id], 
-          													$email_address, 
-          													$address[dbKITcontact::field_id], 
+          $this->writeNewsletterLog($cronjob[dbKITnewsletterProcess::field_id],
+          													$email_address,
+          													$address[dbKITcontact::field_id],
         														dbCronjobNewsletterLog::status_ok,
         														'');
         }
@@ -516,16 +517,16 @@ class cronjob {
             $this->setError(sprintf('[%s - %s] %s', __METHOD__, __LINE, $dbContact->getError()));
             exit($this->getError());
           }
-          $this->writeNewsletterLog($cronjob[dbKITnewsletterProcess::field_id], 
-          													$email_address, 
-          													$address[dbKITcontact::field_id], 
+          $this->writeNewsletterLog($cronjob[dbKITnewsletterProcess::field_id],
+          													$email_address,
+          													$address[dbKITcontact::field_id],
         														dbCronjobNewsletterLog::status_error,
         														$kitMail->getMailError());
         }
       } // send Newsletter
 			$kitMail->__destruct();
 		}
-		
+
 		// Protocoll schreiben
 		$where = array(dbKITnewsletterProcess::field_id => $cronjob[dbKITnewsletterProcess::field_id]);
 		$cronjob[dbKITnewsletterProcess::field_job_done_dt] = date('Y-m-d H:i:s');
@@ -537,9 +538,9 @@ class cronjob {
 			exit($this->getError());
 		}
 		exit('OK');
-		
+
 	} // processDistribution()
-	
+
 } // class cronjob
 
 ?>

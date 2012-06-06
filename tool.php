@@ -5,27 +5,25 @@
  *
  * @author Ralf Hertsch <ralf.hertsch@phpmanufaktur.de>
  * @link http://phpmanufaktur.de
- * @copyright 2012 - phpManufaktur by Ralf Hertsch
- * @license http://www.gnu.org/licenses/gpl.html GNU Public License (GPL)
- * @version $Id$
- *
- * FOR VERSION- AND RELEASE NOTES PLEASE LOOK AT INFO.TXT!
+ * @copyright 2010 - 2012
+ * @license MIT License (MIT) http://www.opensource.org/licenses/MIT
  */
 
 // include class.secure.php to protect this file and the whole CMS!
 if (defined('WB_PATH')) {
-  if (defined('LEPTON_VERSION')) include (WB_PATH . '/framework/class.secure.php');
+  if (defined('LEPTON_VERSION'))
+    include(WB_PATH.'/framework/class.secure.php');
 }
 else {
   $oneback = "../";
   $root = $oneback;
   $level = 1;
-  while (($level < 10) && (!file_exists($root . '/framework/class.secure.php'))) {
+  while (($level < 10) && (!file_exists($root.'/framework/class.secure.php'))) {
     $root .= $oneback;
     $level += 1;
   }
-  if (file_exists($root . '/framework/class.secure.php')) {
-    include ($root . '/framework/class.secure.php');
+  if (file_exists($root.'/framework/class.secure.php')) {
+    include($root.'/framework/class.secure.php');
   }
   else {
     trigger_error(sprintf("[ <b>%s</b> ] Can't include class.secure.php!", $_SERVER['SCRIPT_NAME']), E_USER_ERROR);
@@ -1051,6 +1049,7 @@ class kitBackend {
    *
    * @todo personal photo/image is not supported yet!
    */
+  /*
   public function dlgContact() {
     global $dbContact;
     global $tools;
@@ -1649,7 +1648,7 @@ class kitBackend {
         'values' => $newsletter_array,
         'newsletter' => $newsletter
     );
-
+*/
     /*
     // Kategorien
 
@@ -1754,7 +1753,7 @@ class kitBackend {
 
     */
     // the data array for the parser
-    $data = array(
+/*    $data = array(
         'form' => array(
             'name' => 'kit_contact',
             'action' => $this->page_link
@@ -1768,12 +1767,12 @@ class kitBackend {
         );
     return $this->getTemplate('contact.lte', $data);
   } // dlgContact()
-
+*/
 
   /**
    * Dialog for creating and editing contacts
    */
-  /*
+
   public function dlgContact() {
     global $dbContact;
     global $tools;
@@ -2615,7 +2614,7 @@ class kitBackend {
         'additional_fields' => $additional);
     return $parser->get($this->template_path.'backend.contact.htt', $data);
   } // dlgContact()
-  */
+
 
   private function getKeyIndexOfValue($array = array(), $item) {
     foreach ($array as $key => $value) {
