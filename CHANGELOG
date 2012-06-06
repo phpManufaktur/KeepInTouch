@@ -18,8 +18,7 @@ Release 0.56 - 2012-05-09
 
 * fixed - uninstall calls the no longer existing class.dialogs.php
 * added - LEPTON I18n language support
-* moved - the old static languages files are renamed to old.* and still in use, 
-  they will be obsolete step by step with the next KIT releases
+* moved - the old static languages files are renamed to old.* and still in use, they will be obsolete step by step with the next KIT releases
 
 Release 0.55 - 2012-02-29
 

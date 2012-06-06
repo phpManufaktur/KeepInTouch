@@ -4484,7 +4484,7 @@ class kitBackend {
         'version' => sprintf('%01.2f', $this->getVersion()),
         'img_url' => WB_URL.'/modules/'.basename(dirname(__FILE__)).'/img/logo-keep-in-touch.jpg',
         'signature' => WB_URL.'/modules/'.basename(dirname(__FILE__)).'/img/rh_schriftzug_small.png',
-        'release_notes' => file_get_contents(WB_PATH.'/modules/'.basename(dirname(__FILE__)).'/info.txt'));
+        'release_notes' => file_get_contents(WB_PATH.'/modules/'.basename(dirname(__FILE__)).'/CHANGELOG'));
     return $parser->get($this->template_path.'backend.about.htt', $data);
   } // dlgAbout()
 
