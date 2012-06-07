@@ -274,7 +274,7 @@ class cronjob {
 			// E-Mail Programm starten
     	$kitMail = new kitMail($provider[dbKITprovider::field_id]);
     	// HTML body generieren
-			$html = utf8_encode($newsletter[dbKITnewsletterArchive::field_html]);
+			$html = $newsletter[dbKITnewsletterArchive::field_html];
 			if ($newsletterCommands->parseCommands($html, '', $address[dbKITregister::field_contact_id], $newsletter)) {
 				$html_content = $template[dbKITnewsletterTemplates::field_html];
 				if (!$newsletterCommands->parseCommands($html_content, $html, $address[dbKITregister::field_contact_id], $newsletter)) {
@@ -288,7 +288,7 @@ class cronjob {
 			}
 
 			// TEXT body generieren
-			$text = utf8_encode($newsletter[dbKITnewsletterArchive::field_text]);
+			$text = $newsletter[dbKITnewsletterArchive::field_text];
 			if ($newsletterCommands->parseCommands($text, '', $address[dbKITregister::field_contact_id], $newsletter)) {
 				$text_content = $template[dbKITnewsletterTemplates::field_text];
 				if (!$newsletterCommands->parseCommands($text_content, $text, $address[dbKITregister::field_contact_id], $newsletter)) {
@@ -445,7 +445,7 @@ class cronjob {
 			// E-Mail Programm starten
     	$kitMail = new kitMail($provider[dbKITprovider::field_id]);
     	// HTML body generieren
-			$html = utf8_encode($newsletter[dbKITnewsletterArchive::field_html]);
+			$html = $newsletter[dbKITnewsletterArchive::field_html];
 			if ($newsletterCommands->parseCommands($html, '', $address[dbKITcontact::field_id], $newsletter)) {
 				$html_content = $template[dbKITnewsletterTemplates::field_html];
 				if (!$newsletterCommands->parseCommands($html_content, $html, $address[dbKITcontact::field_id], $newsletter)) {
@@ -459,7 +459,7 @@ class cronjob {
 			}
 
 			// TEXT body generieren
-			$text = utf8_encode($newsletter[dbKITnewsletterArchive::field_text]);
+			$text = $newsletter[dbKITnewsletterArchive::field_text];
 			if ($newsletterCommands->parseCommands($text, '', $address[dbKITcontact::field_id], $newsletter)) {
 				$text_content = $template[dbKITnewsletterTemplates::field_text];
 				if (!$newsletterCommands->parseCommands($text_content, $text, $address[dbKITcontact::field_id], $newsletter)) {

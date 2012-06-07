@@ -34,12 +34,12 @@ else {
 $module_directory = 'kit';
 $module_name = 'KeepInTouch';
 $module_function = 'tool';
-$module_version = '0.55';
+$module_version = '0.58';
 $module_status = 'beta';
 $module_languages = 'DE';
 $module_platform = '2.8';
-$module_author = 'phpManufaktur, Berlin (Germany)';
-$module_license = 'GNU Public License';
-$module_description = 'Contact management for WebsiteBaker';
+$module_author = 'Ralf Hertsch, Berlin (Germany)';
+$module_license = 'MIT License (MIT)';
+$module_description = 'Customer Relationship Management (CRM)';
 $module_home = 'http://phpmanufaktur.de';
 $module_guid = 'B8AF0EA2-26BD-4512-91D4-07B97A2E8DCA';
