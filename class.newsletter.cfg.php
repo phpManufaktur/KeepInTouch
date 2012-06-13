@@ -33,7 +33,7 @@ else {
 
 require_once(WB_PATH.'/modules/'.basename(dirname(__FILE__)).'/initialize.php');
 
-$dbNewsletterCfg = new dbKITnewsletterCfg();
+global $dbNewsletterCfg;
 
 class dbKITnewsletterCfg extends dbConnectLE {
 
@@ -335,6 +335,8 @@ class dbKITnewsletterCfg extends dbConnectLE {
   }
 
 } // class dbKITnewsletterCfg
+
+$dbNewsletterCfg = new dbKITnewsletterCfg();
 
 
 ?>
