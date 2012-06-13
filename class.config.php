@@ -34,14 +34,6 @@ else {
 
 require_once (WB_PATH . '/modules/' . basename(dirname(__FILE__)) . '/initialize.php');
 
-if (!defined('KIT_INSTALL_RUNNING')) {
-    global $dbCfg;
-    if (! is_object($dbCfg)) $dbCfg = new dbKITcfg();
-
-    //	define('USE_CUSTOM_FILES', $dbCfg->getValue(dbKITcfg::cfgUseCustomFiles));
-    define('KIT_SESSION_ID', $dbCfg->getValue(dbKITcfg::cfgSessionID));
-}
-
 class dbKITcfg extends dbConnectLE {
 
     const field_id = 'cfg_id';
@@ -554,6 +546,14 @@ class dbKITcfg extends dbConnectLE {
     }
 
 } // class dbKITcfg
+
+if (!defined('KIT_INSTALL_RUNNING')) {
+  global $dbCfg;
+  if (! is_object($dbCfg)) $dbCfg = new dbKITcfg();
+
+  //	define('USE_CUSTOM_FILES', $dbCfg->getValue(dbKITcfg::cfgUseCustomFiles));
+  define('KIT_SESSION_ID', $dbCfg->getValue(dbKITcfg::cfgSessionID));
+}
 
 
 ?>
