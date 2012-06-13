@@ -716,75 +716,22 @@ class kitTools {
 		return false;
   }
 
+  /**
+   * OLD USAGE of Google Maps - no longer in use!
+   *
+   * @param string $name
+   * @param string $address
+   * @param integer $zoom
+   * @param integer $width
+   * @param integer $height
+   * @param string $pos
+   * @return string
+   *
+   * @deprecated this function is no longer in use!
+   */
   public function showOSMmap($name='Berlin', $address='Brandenburger Tor', $zoom=14, $width=500, $height=400, $pos='') {
-  	global $dbCfg;
-  	$this->googleMapsAPIkey = $dbCfg->getValue(dbKITcfg::cfgGoogleMapsAPIkey);
-  	if (empty($this->googleMapsAPIkey)) {
-  		return '<div id="map" style="width:'.$width.'px;height:'.$height.'px;'.$pos.'">'.kit_error_google_maps_api_key_missing.'</div>';
-  	}
-  	if ($pos == strtolower('r')) {
-  		$pos = "float:right;";
-  	}
-  	elseif ($pos == strtolower('l')) {
-  		$pos = "float:left;";
-  	}
-  	else {
-  		$pos = '';
-  	}
-  	$result = '<script src="http://maps.google.de/maps?file=api&amp;v=2&amp;key=%s" type="text/javascript"></script>
-			<script type="text/javascript" src="http://www.openlayers.org/api/OpenLayers.js"></script>
-			<script type="text/javascript" src="http://www.openstreetmap.org/openlayers/OpenStreetMap.js"></script>
-  		<div id="map" style="width:%dpx;height:%dpx;%s"></div>
-			<script type="text/javascript">
-			  var map;
-			  function showMap(name,address,zoom){
-			    var geocoder=new GClientGeocoder();
-			    name=name.replace(/^"/,"");
-			    name=name.replace(/"$/,"");
-			    if(name==""){name=" ";}
-			    address=address.replace(/^"/,"");
-			    address=address.replace(/"$/,"");
-			    geocoder.getLatLng(address,function(point){
-			      if(!point){
-			        map=document.getElementById("map");
-			        map.innerHTML="<span class=\"map_error\">%s</span>";
-			      }
-			      else{
-			        var pLng = point.lng();
-			        var pLat = point.lat();
-			        map = new OpenLayers.Map("map", {
-			          maxExtent: new OpenLayers.Bounds(-20037508.34,-20037508.34,20037508.34,20037508.34),
-			          numZoomLevels: 19,
-			          maxResolution: 156543.0399,
-			          units: "m",
-			          projection: new OpenLayers.Projection("EPSG:900913"),
-			          displayProjection: new OpenLayers.Projection("EPSG:4326") });
-			        var layerMapnik = new OpenLayers.Layer.OSM.Mapnik("Mapnik (updated weekly)");
-			        var layerTah = new OpenLayers.Layer.OSM.Osmarender("Tiles@Home");
-			        map.addLayers([layerMapnik,layerTah]);
-			        map.setCenter(new OpenLayers.LonLat(pLng,pLat).transform(new OpenLayers.Projection("EPSG:4326"), new OpenLayers.Projection("EPSG:900913")), zoom);
-			        map.addLayer(new OpenLayers.Layer.Markers());
-			        var marker = new OpenLayers.Marker(map.getCenter());
-			        marker.events.register("mousedown", marker, function(evt) {
-			          alert(name+"\\n"+address);
-			          OpenLayers.Event.stop(evt); });
-			        map.layers[map.layers.length-1].addMarker(marker);
-			      }
-			    });
-			  }
-			  showMap("%s", "%s", %s);
-			</script>';
-  	$result = sprintf($result,
-  										$this->googleMapsAPIkey,
-  										$width,
-  										$height,
-  										$pos,
-  										sprintf(kit_error_map_address_invalid, $address),
-  										$name,
-  										$address,
-  										$zoom
-  										);
-  	return $result;
+    // return an empty div container
+    return '<div id="map" style="width:'.$width.'px;height:'.$height.'px;'.$pos.'"></div>';
   } // showOSMmap
 
 
