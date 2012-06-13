@@ -417,10 +417,12 @@ class kitBackend {
         if ($key == self::action_help) {
           // Spezial: pruefen, ob zusaetzliche TAB's einzufuegen sind...
           $tab_array = $dbCfg->getValue(dbKITcfg::cfgAddAppTab);
-          foreach ($tab_array as $item) {
-            $tab = explode('|', $item);
-            if (count($tab) > 1)
-              $result .= sprintf('<li class="extra_tab"><a href="%s">%s</a></li>', $tab[1], $tab[0]);
+          if (is_array($tab_array)) {
+            foreach ($tab_array as $item) {
+              $tab = explode('|', $item);
+              if (count($tab) > 1)
+                $result .= sprintf('<li class="extra_tab"><a href="%s">%s</a></li>', $tab[1], $tab[0]);
+            }
           }
         }
         ($key == $action) ? $selected = ' class="selected"' : $selected = '';
