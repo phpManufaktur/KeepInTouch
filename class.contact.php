@@ -31,35 +31,6 @@ else {
 }
 // end include class.secure.php
 
-if (!defined('KIT_INSTALL_RUNNING')) {
-	global $tools;
-	global $dbRegister;
-	global $dbProvider;
-	global $dbProtocol;
-	global $dbMemos;
-	global $dbCountries;
-	global $dbContactArrayCfg;
-	global $dbContactAddress;
-	global $dbContact;
-	global $dbWBusers;
-	global $dbWBgroups;
-	global $dbCfg;
-	global $dbLanguages;
-
-	if (!is_object($tools)) $tools = new kitTools();
-	if (!is_object($dbCfg)) $dbCfg = new dbKITcfg();
-	if (!is_object($dbRegister)) $dbRegister = new dbKITregister();
-	if (!is_object($dbProvider)) $dbProvider = new dbKITprovider();
-	if (!is_object($dbProtocol)) $dbProtocol = new dbKITprotocol();
-	if (!is_object($dbMemos)) $dbMemos = new dbKITmemos();
-	if (!is_object($dbCountries)) $dbCountries = new dbKITcountries();
-	if (!is_object($dbContactArrayCfg)) $dbContactArrayCfg = new dbKITcontactArrayCfg();
-	if (!is_object($dbContactAddress)) $dbContactAddress = new dbKITcontactAddress();
-	if (!is_object($dbWBusers)) $dbWBusers = new dbWBusers();
-	if (!is_object($dbWBgroups)) $dbWBgroups = new dbWBgroups();
-	if (!is_object($dbContact)) $dbContact = new dbKITcontact();
-	if (!is_object($dbLanguages)) $dbLanguages = new dbKITlanguages();
-}
 
 /**
  * General data container for all contacts
@@ -1459,5 +1430,35 @@ class dbWBgroups extends dbConnectLE {
 	}
 
 } // class dbWBgroups
+
+if (!defined('KIT_INSTALL_RUNNING')) {
+  global $tools;
+  global $dbRegister;
+  global $dbProvider;
+  global $dbProtocol;
+  global $dbMemos;
+  global $dbCountries;
+  global $dbContactArrayCfg;
+  global $dbContactAddress;
+  global $dbContact;
+  global $dbWBusers;
+  global $dbWBgroups;
+  global $dbCfg;
+  global $dbLanguages;
+
+  if (!is_object($tools)) $tools = new kitTools();
+  if (!is_object($dbCfg)) $dbCfg = new dbKITcfg();
+  if (!is_object($dbRegister)) $dbRegister = new dbKITregister();
+  if (!is_object($dbProvider)) $dbProvider = new dbKITprovider();
+  if (!is_object($dbProtocol)) $dbProtocol = new dbKITprotocol();
+  if (!is_object($dbMemos)) $dbMemos = new dbKITmemos();
+  if (!is_object($dbCountries)) $dbCountries = new dbKITcountries();
+  if (!is_object($dbContactArrayCfg)) $dbContactArrayCfg = new dbKITcontactArrayCfg();
+  if (!is_object($dbContactAddress)) $dbContactAddress = new dbKITcontactAddress();
+  if (!is_object($dbWBusers)) $dbWBusers = new dbWBusers();
+  if (!is_object($dbWBgroups)) $dbWBgroups = new dbWBgroups();
+  if (!is_object($dbContact)) $dbContact = new dbKITcontact();
+  if (!is_object($dbLanguages)) $dbLanguages = new dbKITlanguages();
+}
 
 ?>
