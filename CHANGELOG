@@ -3,6 +3,13 @@
 Ralf Hertsch, Stockholmer Str. 31, 13359 Berlin (Germany)
 http://phpManufaktur.de - ralf.hertsch@phpManufaktur.de
 
+Release 0.59 - 2012-06-13
+
+* Changed order of initialisation in class.newsletter.cfg.php, class.config.php,
+  class.newsletter.php and class.contact.php (PHP 5.3.x compatibility)
+* marked showOSMmap() as deprecated, Google Maps v2 are no longer supported 
+* changed extending of class PHPMailer for usage with WebsiteBaker 2.8.3
+* added some additional checks and remarks 
 
 Release 0.58 - 2012-06-07
 
