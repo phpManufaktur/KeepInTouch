@@ -36,9 +36,9 @@ if (defined('LEPTON_VERSION')) {
 	// LEPTON
 	require_once WB_PATH.'/framework/addon.precheck.inc.php';
 	$PRECHECK['PHP_VERSION'] = array('VERSION' => '5.2.0', 'OPERATOR' => '>=');
-	$PRECHECK['WB_ADDONS']['dbconnect_le'] = array('VERSION' => '0.64', 'OPERATOR' => '>=');
+	$PRECHECK['WB_ADDONS']['dbconnect_le'] = array('VERSION' => '0.69', 'OPERATOR' => '>=');
 	if (versionCompare(LEPTON_VERSION, '2.0.0', '<')) {
-		$PRECHECK['WB_ADDONS']['dwoo'] = array('VERSION' => '0.11', 'OPERATOR' => '>=');
+		$PRECHECK['WB_ADDONS']['dwoo'] = array('VERSION' => '0.13', 'OPERATOR' => '>=');
 	}
 }
 else {
@@ -46,8 +46,8 @@ else {
 	$PRECHECK['WB_VERSION'] = array('VERSION' => '2.8', 'OPERATOR' => '>=');
 	$PRECHECK['PHP_VERSION'] = array('VERSION' => '5.2.0', 'OPERATOR' => '>=');
 	$PRECHECK['WB_ADDONS'] = array(
-		'dbconnect_le'	=> array('VERSION' => '0.64', 'OPERATOR' => '>='),
-		'dwoo' => array('VERSION' => '0.10', 'OPERATOR' => '>=')
+		'dbconnect_le'	=> array('VERSION' => '0.69', 'OPERATOR' => '>='),
+		'dwoo' => array('VERSION' => '0.13', 'OPERATOR' => '>=')
 	);
 }
 
