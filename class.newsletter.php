@@ -58,15 +58,6 @@ global $dbCronjobErrorLog;
 global $dbCronjobNewsletterLog;
 global $dbNewsletterLinks;
 
-if (!is_object($dbNewsletterArchive)) $dbNewsletterArchive = new dbKITnewsletterArchive();
-if (!is_object($dbNewsletterPreview)) $dbNewsletterPreview = new dbKITnewsletterPreview();
-if (!is_object($dbNewsletterTemplates)) $dbNewsletterTemplates = new dbKITnewsletterTemplates();
-if (!is_object($newsletterCommands)) $newsletterCommands = new kitNewsletterCommands();
-if (!is_object($dbNewsletterProcess)) $dbNewsletterProcess = new dbKITnewsletterProcess();
-if (!is_object($dbCronjobData)) $dbCronjobData = new dbCronjobData();
-if (!is_object($dbCronjobErrorLog)) $dbCronjobErrorLog = new dbCronjobErrorLog();
-if (!is_object($dbCronjobNewsletterLog)) $dbCronjobNewsletterLog = new dbCronjobNewsletterLog();
-//if (!is_object($dbNewsletterLinks)) $dbNewsletterLinks = new dbKITnewsletterLinks();
 
 class dbKITnewsletterTemplates extends dbConnectLE {
 
@@ -2428,5 +2419,15 @@ class kitNewsletterDialog {
   } // dlgCronjobsProtocoll()
 
 } // kitNewsletterDialog
+
+
+if (!is_object($dbNewsletterArchive)) $dbNewsletterArchive = new dbKITnewsletterArchive();
+if (!is_object($dbNewsletterPreview)) $dbNewsletterPreview = new dbKITnewsletterPreview();
+if (!is_object($dbNewsletterTemplates)) $dbNewsletterTemplates = new dbKITnewsletterTemplates();
+if (!is_object($newsletterCommands)) $newsletterCommands = new kitNewsletterCommands();
+if (!is_object($dbNewsletterProcess)) $dbNewsletterProcess = new dbKITnewsletterProcess();
+if (!is_object($dbCronjobData)) $dbCronjobData = new dbCronjobData();
+if (!is_object($dbCronjobErrorLog)) $dbCronjobErrorLog = new dbCronjobErrorLog();
+if (!is_object($dbCronjobNewsletterLog)) $dbCronjobNewsletterLog = new dbCronjobNewsletterLog();
 
 ?>
