@@ -3,6 +3,10 @@
 Ralf Hertsch, Stockholmer Str. 31, 13359 Berlin (Germany)
 http://phpManufaktur.de - ralf.hertsch@phpManufaktur.de
 
+Release 0.60
+
+* changed WebsiteBaker version check
+
 Release 0.59 - 2012-06-13
 
 * Changed order of initialisation in class.newsletter.cfg.php, class.config.php,
