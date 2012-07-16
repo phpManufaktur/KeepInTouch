@@ -3,9 +3,11 @@
 Ralf Hertsch, Stockholmer Str. 31, 13359 Berlin (Germany)
 http://phpManufaktur.de - ralf.hertsch@phpManufaktur.de
 
-Release 0.60
+Release 0.60 - NOT PUBLISHED - IN PROGRESS!
 
 * changed WebsiteBaker version check
+* fixed a problem in newsletter processing - the error handling of KIT was too
+  strict and caused interrupts and a loop in the package sending.
 
 Release 0.59 - 2012-06-13
 

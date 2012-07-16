@@ -216,10 +216,14 @@ class cronjob {
   	$newsletter = array();
   	if (!$dbNewsletterArchive->sqlSelectRecord($where, $newsletter)) {
   		$this->setError(sprintf('[%s - %s] %s', __METHOD__, __LINE__, $dbNewsletterArchive->getError()));
+  		// finish newsletter process with actual status
+  		$this->processNewsletterStatus($cronjob[dbKITnewsletterProcess::field_archiv_id], 0);
   		exit($this->getError());
   	}
   	if (count($newsletter) < 1) {
   		$this->setError(sprintf('[%s - %s] %s', __METHOD__, __LINE__, sprintf(kit_error_item_id, $cronjob[dbKITnewsletterProcess::field_archiv_id])));
+  		// finish newsletter process with actual status
+  		$this->processNewsletterStatus($cronjob[dbKITnewsletterProcess::field_archiv_id], 0);
   		exit($this->getError());
   	}
   	$newsletter = $newsletter[0];
@@ -230,10 +234,14 @@ class cronjob {
 		$provider = array();
 		if (!$dbProvider->sqlSelectRecord($where, $provider)) {
 			$this->setError(sprintf('[%s - %s] %s', __METHOD__, __LINE__, $dbProvider->getError()));
-			exit($this->getError());
+			// finish newsletter process with actual status
+  		$this->processNewsletterStatus($cronjob[dbKITnewsletterProcess::field_archiv_id], 0);
+  		exit($this->getError());
 		}
 		if (count($provider) < 1) {
 			$this->setError(sprintf('[%s - %s] %s', __METHOD__, __LINE__, sprintf(kit_error_item_id, $newsletter[dbKITnewsletterArchive::field_provider])));
+  		// finish newsletter process with actual status
+  		$this->processNewsletterStatus($cronjob[dbKITnewsletterProcess::field_archiv_id], 0);
   		exit($this->getError());
 		}
 		$provider = $provider[0];
@@ -244,11 +252,15 @@ class cronjob {
 		$template = array();
 		if (!$dbNewsletterTemplates->sqlSelectRecord($where, $template)) {
 			$this->setError(sprintf('[%s - %s] %s', __METHOD__, __LINE__, $dbNewsletterTemplates->getError()));
-			exit($this->getError());
+			// finish newsletter process with actual status
+  		$this->processNewsletterStatus($cronjob[dbKITnewsletterProcess::field_archiv_id], 0);
+  		exit($this->getError());
 		}
 		if (count($template) < 1) {
 			$this->setError(sprintf('[%s - %s] %s', __METHOD__, __LINE__, sprintf(kit_error_item_id, $newsletter[dbKITnewsletterArchive::field_template])));
-			exit($this->getError());
+			// finish newsletter process with actual status
+  		$this->processNewsletterStatus($cronjob[dbKITnewsletterProcess::field_archiv_id], 0);
+  		exit($this->getError());
 		}
 		$template = $template[0];
 
@@ -265,7 +277,9 @@ class cronjob {
 		$addresses = array();
 		if (!$dbRegister->sqlExec($SQL, $addresses)) {
 			$this->setError(sprintf('[%s - %s] %s', __METHOD__, __LINE__, $dbRegister->getError()));
-			exit($this->getError());
+			// finish newsletter process with actual status
+  		$this->processNewsletterStatus($cronjob[dbKITnewsletterProcess::field_archiv_id], 0);
+  		exit($this->getError());
 		}
 
 		$transmitted = 0;
@@ -279,12 +293,14 @@ class cronjob {
 				$html_content = $template[dbKITnewsletterTemplates::field_html];
 				if (!$newsletterCommands->parseCommands($html_content, $html, $address[dbKITregister::field_contact_id], $newsletter)) {
 					$this->setError(sprintf('[%s - %s] %s', __METHOD__, __LINE__, $newsletterCommands->getError()));
-					exit($this->getError());
+					// important: dont leave on error, continue the process!
+					continue;
 				}
 			}
 			else {
 				$this->setError(sprintf('[%s - %s] %s', __METHOD__, __LINE__, $newsletterCommands->getError()));
-				exit($this->getError());
+				// important: dont leave on error, continue the process!
+			  continue;
 			}
 
 			// TEXT body generieren
@@ -293,12 +309,14 @@ class cronjob {
 				$text_content = $template[dbKITnewsletterTemplates::field_text];
 				if (!$newsletterCommands->parseCommands($text_content, $text, $address[dbKITregister::field_contact_id], $newsletter)) {
 					$this->setError(sprintf('[%s - %s] %s', __METHOD__, __LINE__, $newsletterCommands->getError()));
-					exit($this->getError());
+					// important: dont leave on error, continue the process!
+					continue;
 				}
 			}
 			else {
 				$this->setError(sprintf('[%s - %s] %s', __METHOD__, __LINE__, $newsletterCommands->getError()));
-				exit($this->getError());
+				// important: dont leave on error, continue the process!
+				continue;
 			}
 
       if ($cronjob[dbKITnewsletterProcess::field_simulate] == 1) {
@@ -326,7 +344,8 @@ class cronjob {
                                                             $address[dbKITregister::field_email]);
           if (!$dbContact->addSystemNotice($address[dbKITregister::field_contact_id], $protocol)) {
             $this->setError(sprintf('[%s - %s] %s', __METHOD__, __LINE, $dbContact->getError()));
-            exit($this->getError());
+            // important: dont leave on error, continue the process!
+					  continue;
           }
           $this->writeNewsletterLog($cronjob[dbKITnewsletterProcess::field_id],
           													$address[dbKITregister::field_email],
@@ -341,7 +360,8 @@ class cronjob {
                                                             $address[dbKITregister::field_email],
                                                             $kitMail->getMailError()))) {
             $this->setError(sprintf('[%s - %s] %s', __METHOD__, __LINE, $dbContact->getError()));
-            exit($this->getError());
+            // important: dont leave on error, continue the process!
+					  continue;
           }
           $this->writeNewsletterLog($cronjob[dbKITnewsletterProcess::field_id],
           													$address[dbKITregister::field_email],
@@ -353,18 +373,31 @@ class cronjob {
 			$kitMail->__destruct();
 		}
 
-		// Protocoll schreiben
-		$where = array(dbKITnewsletterProcess::field_id => $cronjob[dbKITnewsletterProcess::field_id]);
-		$cronjob[dbKITnewsletterProcess::field_job_done_dt] = date('Y-m-d H:i:s');
-		$cronjob[dbKITnewsletterProcess::field_is_done] = 1;
-		$cronjob[dbKITnewsletterProcess::field_send] = $transmitted;
-		$cronjob[dbKITnewsletterProcess::field_job_process_time] = (microtime(true) - $this->start_script);
-		if (!$dbNewsProcess->sqlUpdateRecord($cronjob, $where)) {
-			$this->setError(sprintf('[%s - %s] %s', __METHOD__, __LINE__, $dbNewsProcess->getError()));
-			exit($this->getError());
-		}
+		// write newsletter process status
+		$this->processNewsletterStatus($cronjob[dbKITnewsletterProcess::field_id], $transmitted);
 		exit('OK');
 	} // processNewsletter()
+
+	/**
+	 * Update the Newsletter process table
+	 *
+	 * @param integer $id
+	 * @param integer $transmitted
+	 */
+	private function processNewsletterStatus($id, $transmitted) {
+	  global $dbNewsProcess;
+	  // Protocoll schreiben
+	  $where = array(dbKITnewsletterProcess::field_id => $id);
+	  $cronjob[dbKITnewsletterProcess::field_job_done_dt] = date('Y-m-d H:i:s');
+	  $cronjob[dbKITnewsletterProcess::field_is_done] = 1;
+	  $cronjob[dbKITnewsletterProcess::field_send] = $transmitted;
+	  $cronjob[dbKITnewsletterProcess::field_job_process_time] = (microtime(true) - $this->start_script);
+	  if (!$dbNewsProcess->sqlUpdateRecord($cronjob, $where)) {
+	    $this->setError(sprintf('[%s - %s] %s', __METHOD__, __LINE__, $dbNewsProcess->getError()));
+	    exit($this->getError());
+	  }
+	  return true;
+	} // processNewsletterStatus()
 
 	private function processDistribution($cronjob=array()) {
 		global $dbNewsletterArchive;
@@ -387,10 +420,14 @@ class cronjob {
   	$newsletter = array();
   	if (!$dbNewsletterArchive->sqlSelectRecord($where, $newsletter)) {
   		$this->setError(sprintf('[%s - %s] %s', __METHOD__, __LINE__, $dbNewsletterArchive->getError()));
+  		// finish newsletter process with actual status
+  		$this->processNewsletterStatus($cronjob[dbKITnewsletterProcess::field_archiv_id], 0);
   		exit($this->getError());
   	}
   	if (count($newsletter) < 1) {
   		$this->setError(sprintf('[%s - %s] %s', __METHOD__, __LINE__, sprintf(kit_error_item_id, $cronjob[dbKITnewsletterProcess::field_archiv_id])));
+  		// finish newsletter process with actual status
+  		$this->processNewsletterStatus($cronjob[dbKITnewsletterProcess::field_archiv_id], 0);
   		exit($this->getError());
   	}
   	$newsletter = $newsletter[0];
@@ -401,10 +438,14 @@ class cronjob {
 		$provider = array();
 		if (!$dbProvider->sqlSelectRecord($where, $provider)) {
 			$this->setError(sprintf('[%s - %s] %s', __METHOD__, __LINE__, $dbProvider->getError()));
-			exit($this->getError());
+			// finish newsletter process with actual status
+  		$this->processNewsletterStatus($cronjob[dbKITnewsletterProcess::field_archiv_id], 0);
+  		exit($this->getError());
 		}
 		if (count($provider) < 1) {
 			$this->setError(sprintf('[%s - %s] %s', __METHOD__, __LINE__, sprintf(kit_error_item_id, $newsletter[dbKITnewsletterArchive::field_provider])));
+  		// finish newsletter process with actual status
+  		$this->processNewsletterStatus($cronjob[dbKITnewsletterProcess::field_archiv_id], 0);
   		exit($this->getError());
 		}
 		$provider = $provider[0];
@@ -415,11 +456,15 @@ class cronjob {
 		$template = array();
 		if (!$dbNewsletterTemplates->sqlSelectRecord($where, $template)) {
 			$this->setError(sprintf('[%s - %s] %s', __METHOD__, __LINE__, $dbNewsletterTemplates->getError()));
-			exit($this->getError());
+			// finish newsletter process with actual status
+  		$this->processNewsletterStatus($cronjob[dbKITnewsletterProcess::field_archiv_id], 0);
+  		exit($this->getError());
 		}
 		if (count($template) < 1) {
 			$this->setError(sprintf('[%s - %s] %s', __METHOD__, __LINE__, sprintf(kit_error_item_id, $newsletter[dbKITnewsletterArchive::field_template])));
-			exit($this->getError());
+			// finish newsletter process with actual status
+  		$this->processNewsletterStatus($cronjob[dbKITnewsletterProcess::field_archiv_id], 0);
+  		exit($this->getError());
 		}
 		$template = $template[0];
 
@@ -436,7 +481,9 @@ class cronjob {
 		$addresses = array();
 		if (!$dbContact->sqlExec($SQL, $addresses)) {
 			$this->setError(sprintf('[%s - %s] %s', __METHOD__, __LINE__, $dbContact->getError()));
-			exit($this->getError());
+			// finish newsletter process with actual status
+  		$this->processNewsletterStatus($cronjob[dbKITnewsletterProcess::field_archiv_id], 0);
+  		exit($this->getError());
 		}
 
 		$transmitted = 0;
@@ -450,12 +497,14 @@ class cronjob {
 				$html_content = $template[dbKITnewsletterTemplates::field_html];
 				if (!$newsletterCommands->parseCommands($html_content, $html, $address[dbKITcontact::field_id], $newsletter)) {
 					$this->setError(sprintf('[%s - %s] %s', __METHOD__, __LINE__, $newsletterCommands->getError()));
-					exit($this->getError());
+					// important: dont leave on error, continue the process!
+			    continue;
 				}
 			}
 			else {
 				$this->setError(sprintf('[%s - %s] %s', __METHOD__, __LINE__, $newsletterCommands->getError()));
-				exit($this->getError());
+				// important: dont leave on error, continue the process!
+			  continue;
 			}
 
 			// TEXT body generieren
@@ -464,12 +513,14 @@ class cronjob {
 				$text_content = $template[dbKITnewsletterTemplates::field_text];
 				if (!$newsletterCommands->parseCommands($text_content, $text, $address[dbKITcontact::field_id], $newsletter)) {
 					$this->setError(sprintf('[%s - %s] %s', __METHOD__, __LINE__, $newsletterCommands->getError()));
-					exit($this->getError());
+					// important: dont leave on error, continue the process!
+			    continue;
 				}
 			}
 			else {
 				$this->setError(sprintf('[%s - %s] %s', __METHOD__, __LINE__, $newsletterCommands->getError()));
-				exit($this->getError());
+				// important: dont leave on error, continue the process!
+			  continue;
 			}
 
 			// use standard email address
@@ -500,7 +551,8 @@ class cronjob {
                                                             $email_address);
           if (!$dbContact->addSystemNotice($address[dbKITcontact::field_id], $protocol)) {
             $this->setError(sprintf('[%s - %s] %s', __METHOD__, __LINE, $dbContact->getError()));
-            exit($this->getError());
+            // important: dont leave on error, continue the process!
+			      continue;
           }
           $this->writeNewsletterLog($cronjob[dbKITnewsletterProcess::field_id],
           													$email_address,
@@ -515,7 +567,8 @@ class cronjob {
                                                             $email_address,
                                                             $kitMail->getMailError()))) {
             $this->setError(sprintf('[%s - %s] %s', __METHOD__, __LINE, $dbContact->getError()));
-            exit($this->getError());
+            // important: dont leave on error, continue the process!
+			      continue;
           }
           $this->writeNewsletterLog($cronjob[dbKITnewsletterProcess::field_id],
           													$email_address,
@@ -527,18 +580,9 @@ class cronjob {
 			$kitMail->__destruct();
 		}
 
-		// Protocoll schreiben
-		$where = array(dbKITnewsletterProcess::field_id => $cronjob[dbKITnewsletterProcess::field_id]);
-		$cronjob[dbKITnewsletterProcess::field_job_done_dt] = date('Y-m-d H:i:s');
-		$cronjob[dbKITnewsletterProcess::field_is_done] = 1;
-		$cronjob[dbKITnewsletterProcess::field_send] = $transmitted;
-		$cronjob[dbKITnewsletterProcess::field_job_process_time] = (microtime(true) - $this->start_script);
-		if (!$dbNewsProcess->sqlUpdateRecord($cronjob, $where)) {
-			$this->setError(sprintf('[%s - %s] %s', __METHOD__, __LINE__, $dbNewsProcess->getError()));
-			exit($this->getError());
-		}
+		// write newsletter process status
+		$this->processNewsletterStatus($cronjob[dbKITnewsletterProcess::field_id], $transmitted);
 		exit('OK');
-
 	} // processDistribution()
 
 } // class cronjob
