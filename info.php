@@ -34,12 +34,12 @@ else {
 $module_directory = 'kit';
 $module_name = 'KeepInTouch';
 $module_function = 'tool';
-$module_version = '0.59';
+$module_version = '0.60';
 $module_status = 'beta';
 $module_languages = 'DE';
 $module_platform = '2.8';
 $module_author = 'Ralf Hertsch, Berlin (Germany)';
 $module_license = 'MIT License (MIT)';
 $module_description = 'Customer Relationship Management (CRM)';
-$module_home = 'http://phpmanufaktur.de';
+$module_home = 'https://addons.phpmanufaktur.de/KeepInTouch';
 $module_guid = 'B8AF0EA2-26BD-4512-91D4-07B97A2E8DCA';
