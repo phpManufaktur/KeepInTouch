@@ -808,13 +808,19 @@ class kitContactInterface {
    *
    * @param INT $contact_id
    * @param ARRAY REFERENCE $contact_array
+   * @param boolean $get_deleted get also a deleted and inactive contact
    * @return BOOL
    */
-  public function getContact($contact_id, &$contact_array = array()) {
+  public function getContact($contact_id, &$contact_array = array(), $get_deleted=false) {
     global $dbContact;
     global $dbContactAddress;
 
-    $SQL = sprintf("SELECT * FROM %s WHERE %s='%s' AND %s!='%s'", $dbContact->getTableName(), dbKITcontact::field_id, $contact_id, dbKITcontact::field_status, dbKITcontact::status_deleted);
+    if ($get_deleted) {
+      $SQL = sprintf("SELECT * FROM %s WHERE %s='%s'", $dbContact->getTableName(), dbKITcontact::field_id, $contact_id);
+    }
+    else {
+      $SQL = sprintf("SELECT * FROM %s WHERE %s='%s' AND %s!='%s'", $dbContact->getTableName(), dbKITcontact::field_id, $contact_id, dbKITcontact::field_status, dbKITcontact::status_deleted);
+    }
     $contact = array();
     if (!$dbContact->sqlExec($SQL, $contact)) {
       $this->setError(sprintf('[%s - %s] %s', __METHOD__, __LINE__, $dbContact->getError()));
