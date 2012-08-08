@@ -3,7 +3,7 @@
 Ralf Hertsch, Stockholmer Str. 31, 13359 Berlin (Germany)
 http://phpManufaktur.de - ralf.hertsch@phpManufaktur.de
 
-Release 0.61 - NOT PUBLISHED
+Release 0.61 - 2012-08-08
 
 * added optional parameter $get_deleted to getContact() in kitContactInterface
   to enable getting also informations about deleted contacts
