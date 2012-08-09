@@ -82,10 +82,20 @@ class dbKITnewsletterTemplates extends dbConnectLE {
 
 	public $create_tables = false;
 
+	protected static $config_file = 'config.json';
+	protected static $table_prefix = TABLE_PREFIX;
+
 	function __construct($create_tables=false) {
-		parent::__construct();
 		$this->create_tables = $create_tables;
-		$this->setTableName('mod_kit_newsletter_template');
+		// use another table prefix?
+    if (file_exists(WB_PATH.'/modules/'.basename(dirname(__FILE__)).'/config.json')) {
+      $config = json_decode(file_get_contents(WB_PATH.'/modules/'.basename(dirname(__FILE__)).'/config.json'), true);
+      if (isset($config['table_prefix']))
+        self::$table_prefix = $config['table_prefix'];
+    }
+    parent::__construct();
+    $this->setTablePrefix(self::$table_prefix);
+    $this->setTableName('mod_kit_newsletter_template');
 		$this->addFieldDefinition(self::field_id, "INT NOT NULL AUTO_INCREMENT", true);
 		$this->addFieldDefinition(self::field_name, "VARCHAR(255) NOT NULL DEFAULT ''");
 		$this->addFieldDefinition(self::field_description, "TEXT NOT NULL DEFAULT ''");
@@ -128,10 +138,20 @@ class dbKITnewsletterArchive extends dbConnectLE {
 
 	public $create_tables = false;
 
+	protected static $config_file = 'config.json';
+	protected static $table_prefix = TABLE_PREFIX;
+
 	function __construct($create_tables=false) {
-		parent::__construct();
 		$this->create_tables = $create_tables;
-		$this->setTableName('mod_kit_newsletter_archive');
+		// use another table prefix?
+    if (file_exists(WB_PATH.'/modules/'.basename(dirname(__FILE__)).'/config.json')) {
+      $config = json_decode(file_get_contents(WB_PATH.'/modules/'.basename(dirname(__FILE__)).'/config.json'), true);
+      if (isset($config['table_prefix']))
+        self::$table_prefix = $config['table_prefix'];
+    }
+    parent::__construct();
+    $this->setTablePrefix(self::$table_prefix);
+    $this->setTableName('mod_kit_newsletter_archive');
 		$this->addFieldDefinition(self::field_id, "INT NOT NULL AUTO_INCREMENT", true);
 		$this->addFieldDefinition(self::field_description, "VARCHAR(255) NOT NULL DEFAULT ''");
 		$this->addFieldDefinition(self::field_template, "INT NOT NULL DEFAULT '-1'");
@@ -174,10 +194,20 @@ class dbKITnewsletterPreview extends dbConnectLE {
 	const array_separator					= '[:item:]';
 	const array_separator_value		= '[:split:]';
 
+	protected static $config_file = 'config.json';
+	protected static $table_prefix = TABLE_PREFIX;
+
 	function __construct($create_tables=false) {
-		parent::__construct();
 		$this->create_tables = $create_tables;
-		$this->setTableName('mod_kit_newsletter_preview');
+		// use another table prefix?
+    if (file_exists(WB_PATH.'/modules/'.basename(dirname(__FILE__)).'/config.json')) {
+      $config = json_decode(file_get_contents(WB_PATH.'/modules/'.basename(dirname(__FILE__)).'/config.json'), true);
+      if (isset($config['table_prefix']))
+        self::$table_prefix = $config['table_prefix'];
+    }
+    parent::__construct();
+    $this->setTablePrefix(self::$table_prefix);
+    $this->setTableName('mod_kit_newsletter_preview');
 		$this->addFieldDefinition(self::field_id, "INT NOT NULL AUTO_INCREMENT", true);
 		$this->addFieldDefinition(self::field_view, "LONGTEXT NOT NULL DEFAULT ''", false, false, true);
 		$this->addFieldDefinition(self::field_update_when, "TIMESTAMP");
@@ -214,10 +244,20 @@ class dbKITnewsletterProcess extends dbConnectLE {
 
 	public $create_tables = false;
 
+	protected static $config_file = 'config.json';
+	protected static $table_prefix = TABLE_PREFIX;
+
 	function __construct($create_tables=false) {
-		parent::__construct();
 		$this->create_tables = $create_tables;
-		$this->setTableName('mod_kit_newsletter_process');
+		// use another table prefix?
+    if (file_exists(WB_PATH.'/modules/'.basename(dirname(__FILE__)).'/config.json')) {
+      $config = json_decode(file_get_contents(WB_PATH.'/modules/'.basename(dirname(__FILE__)).'/config.json'), true);
+      if (isset($config['table_prefix']))
+        self::$table_prefix = $config['table_prefix'];
+    }
+    parent::__construct();
+    $this->setTablePrefix(self::$table_prefix);
+    $this->setTableName('mod_kit_newsletter_process');
 		$this->addFieldDefinition(self::field_id, "INT NOT NULL AUTO_INCREMENT", true);
 		$this->addFieldDefinition(self::field_archiv_id, "INT(11) NOT NULL DEFAULT '-1'");
 		$this->addFieldDefinition(self::field_register_ids, "TEXT NOT NULL DEFAULT ''");

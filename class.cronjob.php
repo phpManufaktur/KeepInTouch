@@ -46,10 +46,20 @@ class dbCronjobData extends dbConnectLE {
 
 	public $create_tables = false;
 
+	protected static $config_file = 'config.json';
+	protected static $table_prefix = TABLE_PREFIX;
+
 	public function __construct($create_tables=false) {
-		parent::__construct();
 		$this->create_tables = $create_tables;
-		$this->setTableName('mod_kit_cronjob_data');
+  		// use another table prefix?
+      if (file_exists(WB_PATH.'/modules/'.basename(dirname(__FILE__)).'/config.json')) {
+        $config = json_decode(file_get_contents(WB_PATH.'/modules/'.basename(dirname(__FILE__)).'/config.json'), true);
+        if (isset($config['table_prefix']))
+          self::$table_prefix = $config['table_prefix'];
+      }
+      parent::__construct();
+      $this->setTablePrefix(self::$table_prefix);
+      $this->setTableName('mod_kit_cronjob_data');
 		$this->addFieldDefinition(self::field_id, "INT NOT NULL AUTO_INCREMENT", true);
 		$this->addFieldDefinition(self::field_item, "VARCHAR(30) NOT NULL DEFAULT ''");
 		$this->addFieldDefinition(self::field_value, "VARCHAR(80) NOT NULL DEFAULT ''");
@@ -95,10 +105,20 @@ class dbCronjobErrorLog extends dbConnectLE {
 
 	public $create_tables = false;
 
+	protected static $config_file = 'config.json';
+	protected static $table_prefix = TABLE_PREFIX;
+
 	function __construct($create_tables=false) {
-		parent::__construct();
 		$this->create_tables = $create_tables;
-		$this->setTableName('mod_kit_cronjob_error');
+		// use another table prefix?
+    if (file_exists(WB_PATH.'/modules/'.basename(dirname(__FILE__)).'/config.json')) {
+      $config = json_decode(file_get_contents(WB_PATH.'/modules/'.basename(dirname(__FILE__)).'/config.json'), true);
+      if (isset($config['table_prefix']))
+        self::$table_prefix = $config['table_prefix'];
+    }
+    parent::__construct();
+    $this->setTablePrefix(self::$table_prefix);
+    $this->setTableName('mod_kit_cronjob_error');
 		$this->addFieldDefinition(self::field_id, "INT NOT NULL AUTO_INCREMENT", true);
 		$this->addFieldDefinition(self::field_error, "TEXT NOT NULL DEFAULT ''");
 		$this->addFieldDefinition(self::field_timestamp, "TIMESTAMP");
@@ -140,10 +160,20 @@ class dbCronjobNewsletterLog extends dbConnectLE {
 
 	public $create_tables = false;
 
+	protected static $config_file = 'config.json';
+	protected static $table_prefix = TABLE_PREFIX;
+
 	function __construct($create_tables=false) {
-		parent::__construct();
 		$this->create_tables = $create_tables;
-		$this->setTableName('mod_kit_cronjob_nl_log');
+		// use another table prefix?
+    if (file_exists(WB_PATH.'/modules/'.basename(dirname(__FILE__)).'/config.json')) {
+      $config = json_decode(file_get_contents(WB_PATH.'/modules/'.basename(dirname(__FILE__)).'/config.json'), true);
+      if (isset($config['table_prefix']))
+        self::$table_prefix = $config['table_prefix'];
+    }
+    parent::__construct();
+    $this->setTablePrefix(self::$table_prefix);
+    $this->setTableName('mod_kit_cronjob_nl_log');
 		$this->addFieldDefinition(self::field_id, "INT NOT NULL AUTO_INCREMENT", true);
 		$this->addFieldDefinition(self::field_nl_process_id, "INT(11) NOT NULL DEFAULT '-1'");
 		$this->addFieldDefinition(self::field_email, "VARCHAR(80) NOT NULL DEFAULT ''");

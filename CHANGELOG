@@ -3,6 +3,11 @@
 Ralf Hertsch, Stockholmer Str. 31, 13359 Berlin (Germany)
 http://phpManufaktur.de - ralf.hertsch@phpManufaktur.de
 
+Release 0.62 - JUST IN PROGRESS
+
+* added ability to change the table prefix easy via config.json, please read
+  <http://yals.de/OQRv0Y> for more informations
+
 Release 0.61 - 2012-08-08
 
 * added optional parameter $get_deleted to getContact() in kitContactInterface

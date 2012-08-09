@@ -109,10 +109,20 @@ class dbKITnewsletterCfg extends dbConnectLE {
     array('kit_label_cfg_nl_max_package_size', self::cfgMaxPackageSize, self::type_integer, '50', 'kit_desc_cfg_nl_max_package_size')
   );
 
+  protected static $config_file = 'config.json';
+  protected static $table_prefix = TABLE_PREFIX;
+
   public function __construct($createTables = false) {
   	$this->createTables = $createTables;
-  	parent::__construct();
-  	$this->setTableName('mod_kit_newsletter_cfg');
+		// use another table prefix?
+    if (file_exists(WB_PATH.'/modules/'.basename(dirname(__FILE__)).'/config.json')) {
+      $config = json_decode(file_get_contents(WB_PATH.'/modules/'.basename(dirname(__FILE__)).'/config.json'), true);
+      if (isset($config['table_prefix']))
+        self::$table_prefix = $config['table_prefix'];
+    }
+    parent::__construct();
+    $this->setTablePrefix(self::$table_prefix);
+    $this->setTableName('mod_kit_newsletter_cfg');
   	$this->addFieldDefinition(self::field_id, "INT(11) NOT NULL AUTO_INCREMENT", true);
   	$this->addFieldDefinition(self::field_name, "VARCHAR(32) NOT NULL DEFAULT ''");
   	$this->addFieldDefinition(self::field_type, "TINYINT UNSIGNED NOT NULL DEFAULT '".self::type_undefined."'");

@@ -197,14 +197,25 @@ class dbKITcontact extends dbConnectLE {
 
 	public $create_tables = false;
 
+	protected static $config_file = 'config.json';
+	protected static $table_prefix = TABLE_PREFIX;
+
+
   /**
    * Constructor for dbContact
    * @param bool $create_tables
    */
 	public function __construct($create_tables = false) {
-		parent::__construct();
 		$this->create_tables = $create_tables;
-		$this->setTableName('mod_kit_contact');
+		// use another table prefix?
+    if (file_exists(WB_PATH.'/modules/'.basename(dirname(__FILE__)).'/config.json')) {
+      $config = json_decode(file_get_contents(WB_PATH.'/modules/'.basename(dirname(__FILE__)).'/config.json'), true);
+      if (isset($config['table_prefix']))
+        self::$table_prefix = $config['table_prefix'];
+    }
+    parent::__construct();
+    $this->setTablePrefix(self::$table_prefix);
+    $this->setTableName('mod_kit_contact');
 		$this->addFieldDefinition(self::field_id, "INT NOT NULL AUTO_INCREMENT", true);
 		$this->addFieldDefinition(self::field_type, "VARCHAR(30) NOT NULL DEFAULT '".self::type_person."'");
 		$this->addFieldDefinition(self::field_access, "VARCHAR(30) NOT NULL DEFAULT '".self::access_internal."'");
@@ -718,10 +729,20 @@ class dbKITcontactArrayCfg extends dbConnectLE {
 
 	public $create_tables = false;
 
+	protected static $config_file = 'config.json';
+	protected static $table_prefix = TABLE_PREFIX;
+
 	public function __construct($create_tables = false) {
-		parent::__construct();
 		$this->create_tables = $create_tables;
-		$this->setTableName('mod_kit_contact_array_cfg');
+		// use another table prefix?
+    if (file_exists(WB_PATH.'/modules/'.basename(dirname(__FILE__)).'/config.json')) {
+      $config = json_decode(file_get_contents(WB_PATH.'/modules/'.basename(dirname(__FILE__)).'/config.json'), true);
+      if (isset($config['table_prefix']))
+        self::$table_prefix = $config['table_prefix'];
+    }
+    parent::__construct();
+    $this->setTablePrefix(self::$table_prefix);
+    $this->setTableName('mod_kit_contact_array_cfg');
 		$this->addFieldDefinition(self::field_id, "INT NOT NULL AUTO_INCREMENT", true);
 		$this->addFieldDefinition(self::field_type, "VARCHAR(30) NULL DEFAULT '".self::type_undefined."'");
 		$this->addFieldDefinition(self::field_identifier, "VARCHAR(30) NOT NULL DEFAULT ''");
@@ -843,10 +864,20 @@ class dbKITcontactAddress extends dbConnectLE {
 
 	public $create_tables = false;
 
+	protected static $config_file = 'config.json';
+	protected static $table_prefix = TABLE_PREFIX;
+
 	public function __construct($create_tables = false) {
-		parent::__construct();
 		$this->create_tables = $create_tables;
-		$this->setTableName('mod_kit_contact_address');
+		// use another table prefix?
+    if (file_exists(WB_PATH.'/modules/'.basename(dirname(__FILE__)).'/config.json')) {
+      $config = json_decode(file_get_contents(WB_PATH.'/modules/'.basename(dirname(__FILE__)).'/config.json'), true);
+      if (isset($config['table_prefix']))
+        self::$table_prefix = $config['table_prefix'];
+    }
+    parent::__construct();
+    $this->setTablePrefix(self::$table_prefix);
+    $this->setTableName('mod_kit_contact_address');
 		$this->addFieldDefinition(self::field_id, "INT NOT NULL AUTO_INCREMENT", true);
 		$this->addFieldDefinition(self::field_contact_id, "INT NOT NULL DEFAULT '-1'");
 		$this->addFieldDefinition(self::field_type, "VARCHAR(30) NOT NULL DEFAULT '".self::type_undefined."'");
@@ -915,10 +946,20 @@ class dbKITcountries extends dbConnectLE {
 
 	public $create_tables = false;
 
+	protected static $config_file = 'config.json';
+	protected static $table_prefix = TABLE_PREFIX;
+
 	function __construct($create_tables = false) {
-		parent::__construct();
 		$this->create_tables = $create_tables;
-		$this->setTableName('mod_kit_countries');
+		// use another table prefix?
+    if (file_exists(WB_PATH.'/modules/'.basename(dirname(__FILE__)).'/config.json')) {
+      $config = json_decode(file_get_contents(WB_PATH.'/modules/'.basename(dirname(__FILE__)).'/config.json'), true);
+      if (isset($config['table_prefix']))
+        self::$table_prefix = $config['table_prefix'];
+    }
+    parent::__construct();
+    $this->setTablePrefix(self::$table_prefix);
+    $this->setTableName('mod_kit_countries');
 		$this->addFieldDefinition(self::field_id, "INT NOT NULL AUTO_INCREMENT", true);
 		$this->addFieldDefinition(self::field_land_kfz, "VARCHAR(2) NOT NULL DEFAULT ''");
 		$this->addFieldDefinition(self::field_land_name, "VARCHAR(50) NOT NULL DEFAULT ''");
@@ -965,15 +1006,25 @@ class dbKITlanguages extends dbConnectLE {
 
 	public $create_tables = false;
 
+	protected static $config_file = 'config.json';
+	protected static $table_prefix = TABLE_PREFIX;
+
 	/**
 	 * Constructor
 	 *
 	 * @param boolean $create_tables - create table if not exists
 	 */
 	public function __construct($create_tables = false) {
-		parent::__construct();
 		$this->create_tables = $create_tables;
-		$this->setTableName('mod_kit_languages');
+		// use another table prefix?
+    if (file_exists(WB_PATH.'/modules/'.basename(dirname(__FILE__)).'/config.json')) {
+      $config = json_decode(file_get_contents(WB_PATH.'/modules/'.basename(dirname(__FILE__)).'/config.json'), true);
+      if (isset($config['table_prefix']))
+        self::$table_prefix = $config['table_prefix'];
+    }
+    parent::__construct();
+    $this->setTablePrefix(self::$table_prefix);
+    $this->setTableName('mod_kit_languages');
 		$this->addFieldDefinition(self::FIELD_ID, "INT(11) NOT NULL AUTO_INCREMENT", true);
 		$this->addFieldDefinition(self::FIELD_ISO, "VARCHAR(2) NOT NULL DEFAULT 'nn'");
 		$this->addFieldDefinition(self::FIELD_LOCAL, "VARCHAR(64) NOT NULL DEFAULT '-undefined-'");
@@ -1032,10 +1083,20 @@ class dbKITmemos extends dbConnectLE {
 
 	public $create_tables = false;
 
+	protected static $config_file = 'config.json';
+	protected static $table_prefix = TABLE_PREFIX;
+
 	public function __construct($create_tables = false) {
-		parent::__construct();
 		$this->create_tables = $create_tables;
-		$this->setTableName('mod_kit_contact_memos');
+		// use another table prefix?
+    if (file_exists(WB_PATH.'/modules/'.basename(dirname(__FILE__)).'/config.json')) {
+      $config = json_decode(file_get_contents(WB_PATH.'/modules/'.basename(dirname(__FILE__)).'/config.json'), true);
+      if (isset($config['table_prefix']))
+        self::$table_prefix = $config['table_prefix'];
+    }
+    parent::__construct();
+    $this->setTablePrefix(self::$table_prefix);
+    $this->setTableName('mod_kit_contact_memos');
 		$this->addFieldDefinition(self::field_id, "INT NOT NULL AUTO_INCREMENT", true);
 		$this->addFieldDefinition(self::field_memo, "TEXT NOT NULL DEFAULT ''");
 		$this->addFieldDefinition(self::field_contact_id, "INT NOT NULL DEFAULT '-1'");
@@ -1105,10 +1166,20 @@ class dbKITprotocol extends dbConnectLE {
 
 	public $create_tables = false;
 
+	protected static $config_file = 'config.json';
+	protected static $table_prefix = TABLE_PREFIX;
+
 	public function __construct($create_tables = false) {
-		parent::__construct();
 		$this->create_tables = $create_tables;
-		$this->setTableName('mod_kit_contact_protocol');
+		// use another table prefix?
+    if (file_exists(WB_PATH.'/modules/'.basename(dirname(__FILE__)).'/config.json')) {
+      $config = json_decode(file_get_contents(WB_PATH.'/modules/'.basename(dirname(__FILE__)).'/config.json'), true);
+      if (isset($config['table_prefix']))
+        self::$table_prefix = $config['table_prefix'];
+    }
+    parent::__construct();
+    $this->setTablePrefix(self::$table_prefix);
+    $this->setTableName('mod_kit_contact_protocol');
 		$this->addFieldDefinition(self::field_id, "INT NOT NULL AUTO_INCREMENT", true);
 		$this->addFieldDefinition(self::field_contact_id, "INT NOT NULL DEFAULT '-1'");
 		$this->addFieldDefinition(self::field_date, "DATETIME NOT NULL DEFAULT '0000-00-00 00:00:00'");
@@ -1190,10 +1261,20 @@ class dbKITprovider extends dbConnectLE {
 
     public $create_tables = false;
 
+    protected static $config_file = 'config.json';
+    protected static $table_prefix = TABLE_PREFIX;
+
     public function __construct($create_tables = false) {
-        parent::__construct();
-        $this->create_tables = $create_tables;
-        $this->setTableName('mod_kit_provider');
+      $this->create_tables = $create_tables;
+  		// use another table prefix?
+      if (file_exists(WB_PATH.'/modules/'.basename(dirname(__FILE__)).'/config.json')) {
+        $config = json_decode(file_get_contents(WB_PATH.'/modules/'.basename(dirname(__FILE__)).'/config.json'), true);
+        if (isset($config['table_prefix']))
+          self::$table_prefix = $config['table_prefix'];
+      }
+      parent::__construct();
+      $this->setTablePrefix(self::$table_prefix);
+      $this->setTableName('mod_kit_provider');
         $this->addFieldDefinition(self::field_id, "INT NOT NULL AUTO_INCREMENT", true);
         $this->addFieldDefinition(self::field_name, "VARCHAR(50) NOT NULL DEFAULT ''");
         $this->addFieldDefinition(self::field_identifier, "VARCHAR(50) NOT NULL DEFAULT ''");
@@ -1286,10 +1367,20 @@ class dbKITregister extends dbConnectLE {
 
 	public $create_tables = false;
 
+	protected static $config_file = 'config.json';
+	protected static $table_prefix = TABLE_PREFIX;
+
 	public function __construct($create_tables = false) {
-		parent::__construct();
 		$this->create_tables = $create_tables;
-		$this->setTableName('mod_kit_register');
+  		// use another table prefix?
+      if (file_exists(WB_PATH.'/modules/'.basename(dirname(__FILE__)).'/config.json')) {
+        $config = json_decode(file_get_contents(WB_PATH.'/modules/'.basename(dirname(__FILE__)).'/config.json'), true);
+        if (isset($config['table_prefix']))
+          self::$table_prefix = $config['table_prefix'];
+      }
+      parent::__construct();
+      $this->setTablePrefix(self::$table_prefix);
+      $this->setTableName('mod_kit_register');
 		$this->addFieldDefinition(self::field_id, "INT NOT NULL AUTO_INCREMENT", true);
 		$this->addFieldDefinition(self::field_email, "VARCHAR(128) NOT NULL DEFAULT ''");
 		$this->addFieldDefinition(self::field_username, "VARCHAR(64) NOT NULL DEFAULT ''");
