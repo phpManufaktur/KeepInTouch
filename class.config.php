@@ -97,6 +97,7 @@ class dbKITcfg extends dbConnectLE {
     const cfgGMapStaticHeight = 'cfgGMapStaticHeight';
     const cfgGMapStaticZoom = 'cfgGMapStaticZoom';
     const cfgGMapStaticMarkerColor = 'cfgGMapStaticMarkerColor';
+    const cfgContactListColumns = 'cfgContactListColumns';
 
     public $config_array = array(
         array(
@@ -253,6 +254,12 @@ class dbKITcfg extends dbConnectLE {
             '0xda251d',
             'kit_desc_cfg_gmap_static_marker_color'
             ),
+        array(
+            'kit_label_cfg_contact_list_columns',
+            self::cfgContactListColumns,
+            self::type_array,
+            'kit_id,kit_last_name,kit_first_name,kit_email,kit_phone,kit_status,kit_newsletter',
+            'kit_desc_cfg_contact_list_columns'            )
         );
 
     protected static $config_file = 'config.json';
