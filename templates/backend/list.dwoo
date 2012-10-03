@@ -14,58 +14,41 @@
  * Use {dump()} to get a list of all in this template available variables!
  *}
 <div class="kit_contact">
-  <form name="{$form.name}" action="{$form.action}" method="post">
-    <input type="hidden" name="{$action.name}" value="{$action.value}" />
-    <input type="hidden" name="{$contact.id.name}" value="{$contact.id.value}" />
-    <input type="hidden" name="address_array" value="{$contact.addresses.value}" />
-    <input type="hidden" name="email_array" value="{$contact.emails.value}" />
-    <input type="hidden" name="phone_array" value="{$contact.phones.value}" />
-    <input type="hidden" name="internet_array" value="{$contact.internet.value}" />
-    <input type="hidden" id="language" name="language" value="{$language}" />
-    
-    <div class="kc_intro">
-       
-    </div>
-    <div class="container_full">
-      {include('include/contact/information.lte')}
-    </div>
-    
-    <div class="kc_clear"></div>
-    
-    <div class="container_left">
-      {include('include/contact/person.lte')}
-      {include('include/contact/email.lte')}
-      {include('include/contact/phone.lte')}
-      {include('include/contact/internet.lte')}
-    </div>
-    
-    <div class="container_middle">
-      {include('include/contact/contact_since.lte')}
-      {include('include/contact/company.lte')}
-      {include('include/contact/addresses.lte')}
-    </div>
-    
-    <div class="container_right">
-      {include('include/contact/map.lte')}
-      {include('include/contact/notes.lte')}
-    </div>
-    
-    <div class="kc_clear"></div>
-    
-    <div class="container_left">
-      {include('include/contact/categories.lte')}
-      {include('include/contact/distribution.lte')}
-    </div>
-    
-    <div class="container_middle">
-      {include('include/contact/newsletter.lte')}
-    </div>
-    
-    <div class="kc_clear"></div>
-
-    <div class="kc_submit">
-      <input type="submit" value="{translate('OK')}" />&nbsp;
-      <input type="button" value="{translate('Abort')}" onclick="javascript: window.location = '{$form.action}'; return false;" />
-    </div>
-  </form>
+{dump()}
+  <div class="kc_intro">
+    {translate('the complete contact list')}
+  </div>
+  <table class="display" id="dataTable" width="100%">
+    <thead>
+      {foreach $fields field}
+      <th>{translate($field)}</th>
+      {/foreach}
+    </thead>
+    <tbody>
+      {foreach $contacts contact}
+      <tr>
+        {foreach $fields field}
+        <td>
+        {if $field == 'kit_id' || $field == 'kit_last_name'}
+          <a href="{$contact.link.edit}">{$contact.$field}</a>
+        {elseif $field == 'kit_email'}
+          <a href="mailto:{$contact.$field}">{$contact.$field}</a>
+        {elseif $field == 'kit_status'}
+          {translate($contact.$field)}
+        {elseif $field == 'kit_newsletter' || $field == 'kit_intern' || $field == 'kit_distribution' || $field == 'kit_categories'}
+          {$i=0}{foreach $contact.$field item}{if $i>0}, {/if}{translate($item)}{$i=$i+1}{/foreach}
+        {else}
+          {$contact.$field}
+        {/if}
+        {/foreach}
+        </td>
+      </tr>
+      {/foreach}
+    </tbody>
+    <tfoot>
+      {foreach $fields field}
+      <th>{translate($field)}</th>
+      {/foreach}
+    </tfoot>
+  </table>
 </div>   
