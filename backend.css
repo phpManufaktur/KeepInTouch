@@ -12,6 +12,7 @@
 @import "include/jquery/themes/smoothness/ui.accordion.css";
 @import "include/jquery/themes/smoothness/ui.datepicker.css";
 
+
 /*
 td,th,input,textarea,select {
 	font-family: Verdana, Arial, Helvetica, sans-serif;
@@ -65,6 +66,14 @@ select
   width: 98%;
   font-size:8pt;
 }
+select[name=dataTable_length] {
+  width: 50px;
+  text-align: right;
+}
+#dataTable_filter input[type=text] {
+  width: 200px;
+}
+
 textarea
 {
   width: 98%;
