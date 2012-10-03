@@ -7,6 +7,9 @@ Release 0.62 - JUST IN PROGRESS
 
 * added ability to change the table prefix easy via config.json, please read
   <http://yals.de/OQRv0Y> for more informations
+* added free fields and free notes to the contact array returned by the 
+  class.interface.php
+* changed implementation of the Dwoo Template Engine  
 
 Release 0.61 - 2012-08-08
 
