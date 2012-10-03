@@ -139,6 +139,7 @@ define('kit_desc_cfg_clear_compile_dir', 'Sie können die von der Dwoo Template 
 define('kit_desc_cfg_connect_wb_users', 'U kunt KIT verbinden met het WB gebruikersbeheer. Als de verbinding tot stand is gekomen dan neemt KIT automatisch nieuw toegevoegde gebruikers over en blokkeert in het gebruikersbeheer van KIT, geblokkeerde of verwijderede gebruikers. Contacten, die in KIT de categorie <b>catWBUser</b> toekent krijgen, worden in de WB gebruikersbeheer gekoppeld aan de groep <b>kitContact</b>. U moet zelf de geblokkeerde gebruikers verwijderen. <i>Administratoren</i> kunnen uit veiligheid gronden niet met KIT verbonden worden.');
 define('kit_desc_cfg_contact_language_default', 'Sprache, die als Voreinstellung für neue Kontakte verwendet werden soll');
 define('kit_desc_cfg_contact_language_select', "Legen Sie fest, wie die Auswahl der Kontakt Sprache in Dialogen angezeigt werden soll: '<b>local</b>' verwendet die lokale Bezeichnung, z.B. <i>Deutsch</i>, '<b>english</b>' verwendet die internationale Bezeichnung in <i>Englisch</i> und '<b>iso</b>' verwendet das ISO 639-1 Länderkürzel, z.B. <i>DE</i>.<br />Voreinstellung ist <b>local</b>");
+define('kit_desc_cfg_contact_list_columns', 'Legen Sie die Spalten fest, die in der Übersichtsliste angezeigt werden sollen.');
 define('kit_desc_cfg_cronjob_key', 'Om te voorkomen dat cronjobs worden uitgevoerd door een eenvoudige oproep aan de cronjob.php moet de aangegeven sleutels doorgegeven worden als parameter. De oproep van het bestand is <b>cronjob.php?key=<i>SLEUTEL</i></b>.');
 define('kit_desc_cfg_developer_mode', 'Mogelijkheid voor de programmeur om configuratieparameters toe te voegen.');
 define('kit_desc_cfg_google_maps_api_key', 'Voor het gebruik en weergave van de kaarten die je nodig hebt een link <a href="http://code.google.com/intl/nl-NL/apis/maps/signup.html" target="_blank">Google Maps API Key</a>.');
@@ -317,6 +318,7 @@ define('kit_label_cfg_clear_compile_dir', 'Templates zurücksetzen');
 define('kit_label_cfg_connect_wb_users', 'Met WB gebruikers verbinden');
 define('kit_label_cfg_contact_language_default', 'Kontakt Sprache, Vorgabe');
 define('kit_label_cfg_contact_language_select', 'Kontakt Sprache, Auswahl');
+define('kit_label_cfg_contact_list_columns', 'Kontaktliste, Spalten');
 define('kit_label_cfg_cronjob_key', 'Sleutel voor de Cronjobs');
 define('kit_label_cfg_developer_mode', 'Developer Mode');
 define('kit_label_cfg_google_maps_api_key', 'Google Maps API Key');

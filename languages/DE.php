@@ -49,12 +49,16 @@ $LANG = array(
       => 'Abbruch',
     'Academic title'
       => 'Titel',
+    'academicNone'
+      => '',
     'Additional'
       => 'Zusatz',
     'Addresses'
       => 'Adressen',
     'Birthday'
       => 'Geburtstag',
+    'business'
+      => 'Dienstlich',
     'Categories'
       => 'Kategorien',
     'Check to set this address as default'
@@ -95,6 +99,32 @@ $LANG = array(
       => 'Funktion',
     'Information'
       => 'Information',
+    'kit_categories'
+      => 'Kategorien',
+    'kit_city'
+      => 'Ort',
+    'kit_email'
+      => 'E-Mail',
+    'kit_first_name'
+      => 'Vorname',
+    'kit_id'
+      => 'ID',
+    'kit_intern'
+      => 'Intern',
+    'kit_last_name'
+      => 'Nachname',
+    'kit_newsletter'
+      => 'Newsletter',
+    'kit_note'
+      => 'Anmerkungen',
+    'kit_phone'
+      => 'Telefon',
+    'kit_status'
+      => 'Status',
+    'kit_street'
+      => 'Straße',
+    'kit_zip'
+      => 'PLZ',
     'Last name'
       => 'Nachname',
     'Map'
@@ -105,6 +135,14 @@ $LANG = array(
       => 'Person',
     'Phone'
       => 'Telefon',
+    'private'
+      => 'Privat',
+    'statusActive'
+      => 'Aktiv',
+    'statusLocked'
+      => 'Gesperrt',
+    'statusDeleted'
+      => 'Gelöscht',
     'Street'
       => 'Straße',
     'Title'

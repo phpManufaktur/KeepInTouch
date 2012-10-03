@@ -139,6 +139,7 @@ define('kit_desc_cfg_clear_compile_dir', 'Sie können die von der Dwoo Template 
 define('kit_desc_cfg_connect_wb_users', 'Sie können KIT mit der WB Benutzerverwaltung verbinden. Wenn gesetzt, übernimmt KIT automatisch neu angelegte Benutzer und sperrt in KIT in der Benutzerverwaltung gesperrte oder gelöschte Benutzer. Kontakte, denen Sie in KIT die Kategorie <b>catWBUser</b> zuordnen werden in der WB Benutzerverwaltung mit der Gruppe <b>kitContact</b> angelegt, entfernen Sie die Zuordnung werden die Kontakte in der Benutzerverwaltung gesperrt. <i>Administratoren</i> können aus Sicherheitsgründen nicht mit KIT verbunden werden.');
 define('kit_desc_cfg_contact_language_default', 'Sprache, die als Voreinstellung für neue Kontakte verwendet werden soll. Die Angabe erfolgt mit der ISO 639-1 Angabe des Sprachkürzel, z.B. <i>de</i>.');
 define('kit_desc_cfg_contact_language_select', "Legen Sie fest, wie die Auswahl der Kontakt Sprache in Dialogen angezeigt werden soll: <b>local</b> verwendet die lokale Bezeichnung, z.B. <i>Deutsch</i>, <b>english</b> verwendet die internationale Bezeichnung in <i>Englisch</i> und <b>iso</b> verwendet das ISO 639-1 Sprachkürzel, z.B. <i>DE</i>.<br />Voreinstellung ist <b>local</b>");
+define('kit_desc_cfg_contact_list_columns', 'Legen Sie die Spalten fest, die in der Übersichtsliste angezeigt werden sollen.');
 define('kit_desc_cfg_cronjob_key', 'Um zu verhindern, dass Cronjobs durch einen einfachen Aufruf der <b>cronjob.php</b> ausgeführt werden, muss der angegebene Schlüssel als Parameter übergeben werden. Der Aufruf der Datei lautet <b>cronjob.php?key=<i>SCHLÜSSEL</i></b>.');
 define('kit_desc_cfg_developer_mode', 'Ermöglicht dem Programmierer das Hinzufügen von Konfigurationsparametern.');
 define('kit_desc_cfg_gmap_static_use', 'Google Maps (statisch) verwenden.');
@@ -317,6 +318,7 @@ define('kit_label_cfg_clear_compile_dir', 'Templates zurücksetzen');
 define('kit_label_cfg_connect_wb_users', 'Mit WB Benutzern verbinden');
 define('kit_label_cfg_contact_language_default', 'Kontakt Sprache, Vorgabe');
 define('kit_label_cfg_contact_language_select', 'Kontakt Sprache, Auswahl');
+define('kit_label_cfg_contact_list_columns', 'Kontaktliste, Spalten');
 define('kit_label_cfg_cronjob_key', 'Schlüssel für Cronjobs');
 define('kit_label_cfg_developer_mode', 'Developer Mode');
 define('kit_label_cfg_gmap_static_height', 'Google Map, Höhe');
