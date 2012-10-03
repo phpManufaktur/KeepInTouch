@@ -149,7 +149,8 @@ class kitBackend {
 
   private $swNavHide = array();
 
-  private $lang = NULL;
+  protected $lang = NULL;
+  protected static $table_prefix = TABLE_PREFIX;
 
   /**
    * Constructor for kitBackend
@@ -164,6 +165,14 @@ class kitBackend {
     $this->template_path = WB_PATH.'/modules/'.basename(dirname(__FILE__)).'/htt/';
     $this->help_path = WB_PATH.'/modules/'.basename(dirname(__FILE__)).'/languages/';
     $this->img_url = WB_URL.'/modules/'.basename(dirname(__FILE__)).'/img/';
+
+    // use another table prefix?
+    if (file_exists(WB_PATH.'/modules/'.basename(dirname(__FILE__)).'/config.json')) {
+      $config = json_decode(file_get_contents(WB_PATH.'/modules/'.basename(dirname(__FILE__)).'/config.json'), true);
+      if (isset($config['table_prefix']))
+        self::$table_prefix = $config['table_prefix'];
+    }
+
   } // __construct()
 
   /**
@@ -411,6 +420,7 @@ class kitBackend {
    */
   public function getNavigation($action) {
     global $dbCfg;
+
     $result = '';
     foreach ($this->tab_navigation_array as $key => $value) {
       if (!in_array($key, $this->swNavHide)) {
@@ -480,7 +490,8 @@ class kitBackend {
   /**
    * Ausgabe einer sortierten Liste aller Eintraege
    */
-  public function dlgList() {
+
+  public function dlgList_old() {
     global $dbContact;
     global $dbContactAddress;
     global $parser;
@@ -1044,6 +1055,61 @@ class kitBackend {
         'rows' => $rows
     		);
     return $parser->get($this->template_path.'backend.contact.list.htt', $data);
+  } // dlgList_old()
+
+
+  protected function dlgList() {
+    global $database;
+    global $kitContactInterface;
+    global $dbCfg;
+
+    require_once WB_PATH.'/modules/kit/class.interface.php';
+
+    $get_deleted = false;
+
+    $SQL = "SELECT `contact_id` FROM `".self::$table_prefix."mod_kit_contact` WHERE `contact_status` != 'statusDeleted'";
+    if (null == ($query = $database->query($SQL))) {
+      $this->setError(sprintf('[%s - %s] %s', __METHOD__, __LINE__, $database->get_error()));
+      return false;
+    }
+
+    $contact_array = array();
+
+    while (false !== ($con = $query->fetchRow(MYSQL_ASSOC))) {
+      $contact = array();
+      if (!$kitContactInterface->getContact($con['contact_id'], $contact, $get_deleted)) {
+        $this->setError(sprintf('[%s - %s] %s', __METHOD__, __LINE__, $kitContactInterface->getError()));
+        return false;
+      }
+      $contact['link'] = array(
+          'edit' => sprintf('%s&%s', $this->page_link, http_build_query(array(
+              self::request_action => self::action_contact,
+              dbKITcontact::field_id => $contact['kit_id']
+              ))),
+          );
+      $contact_array[$contact['kit_id']] = $contact;
+    }
+
+    // check if libraryAdmin exists
+    if (file_exists(WB_PATH.'/modules/libraryadmin/inc/class.LABackend.php')) {
+      require_once WB_PATH.'/modules/libraryadmin/inc/class.LABackend.php';
+      // create instance; if you're not using OOP, use a simple var, like $la
+      $libraryAdmin = new LABackend();
+      // load the preset
+      $libraryAdmin->loadPreset(array(
+          'module' => 'kit',
+          'lib'    => 'lib_jquery',
+          'preset' => 'dataTable'
+      ));
+      // print the preset
+      $libraryAdmin->printPreset();
+    }
+
+    $data = array(
+        'fields' => $dbCfg->getValue(dbKITcfg::cfgContactListColumns),
+        'contacts' => $contact_array
+        );
+    return $this->getTemplate('list.dwoo', $data);
   } // dlgList()
 
   /**
@@ -1051,7 +1117,7 @@ class kitBackend {
    *
    * @todo personal photo/image is not supported yet!
    */
-  /*
+/*
   public function dlgContact() {
     global $dbContact;
     global $tools;
@@ -1650,8 +1716,8 @@ class kitBackend {
         'values' => $newsletter_array,
         'newsletter' => $newsletter
     );
-*/
-    /*
+
+ */   /*
     // Kategorien
 
     $categories = '';
@@ -1755,7 +1821,7 @@ class kitBackend {
 
     */
     // the data array for the parser
-/*    $data = array(
+ /*   $data = array(
         'form' => array(
             'name' => 'kit_contact',
             'action' => $this->page_link
