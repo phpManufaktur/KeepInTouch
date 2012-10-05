@@ -14,14 +14,13 @@
  * Use {dump()} to get a list of all in this template available variables!
  *}
 <div class="kit_contact">
-{dump()}
-  <div class="kc_intro">
-    {translate('the complete contact list')}
-  </div>
   <table class="display" id="dataTable" width="100%">
     <thead>
       {foreach $fields field}
-      <th>{translate($field)}</th>
+        {if $field == 'kit_free_field_1' || $field == 'kit_free_field_2' || $field == 'kit_free_field_3' || $field == 'kit_free_field_4' || $field == 'kit_free_field_5' || $field == 'kit_free_note_1' || $field == 'kit_free_note_2'}
+          <th>{translate($translation.$field)}</th>
+        {else}
+          <th>{translate($field)}</th>
       {/foreach}
     </thead>
     <tbody>
@@ -29,14 +28,20 @@
       <tr>
         {foreach $fields field}
         <td>
-        {if $field == 'kit_id' || $field == 'kit_last_name'}
+        {if $field == 'kit_id' || $field == 'kit_last_name' || $field == 'kit_identifier'}
           <a href="{$contact.link.edit}">{$contact.$field}</a>
         {elseif $field == 'kit_email'}
           <a href="mailto:{$contact.$field}">{$contact.$field}</a>
-        {elseif $field == 'kit_status'}
+        {elseif $field == 'kit_status' || $field == 'kit_address_type'}
           {translate($contact.$field)}
         {elseif $field == 'kit_newsletter' || $field == 'kit_intern' || $field == 'kit_distribution' || $field == 'kit_categories'}
           {$i=0}{foreach $contact.$field item}{if $i>0}, {/if}{translate($item)}{$i=$i+1}{/foreach}
+        {elseif $field == 'kit_birthday' || $field == 'kit_contact_since'}
+          {if $language == 'DE'}
+            {date_format($contact.$field, '%d.%m.%Y')}
+          {else}
+            {date_format($contact.$field, '%Y-%m-%d')}
+          {/if}
         {else}
           {$contact.$field}
         {/if}
@@ -47,7 +52,10 @@
     </tbody>
     <tfoot>
       {foreach $fields field}
-      <th>{translate($field)}</th>
+        {if $field == 'kit_free_field_1' || $field == 'kit_free_field_2' || $field == 'kit_free_field_3' || $field == 'kit_free_field_4' || $field == 'kit_free_field_5' || $field == 'kit_free_note_1' || $field == 'kit_free_note_2'}
+          <th>{translate($translation.$field)}</th>
+        {else}
+          <th>{translate($field)}</th>
       {/foreach}
     </tfoot>
   </table>
