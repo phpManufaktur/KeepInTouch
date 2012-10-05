@@ -129,20 +129,6 @@ class dbKITcfg extends dbConnectLE {
             'kit_desc_cfg_session_id'
             ),
         array(
-            'kit_label_cfg_sort_contact_list',
-            self::cfgSortContactList,
-            self::type_integer,
-            '0',
-            'kit_desc_cfg_sort_contact_list'
-            ),
-        array(
-            'kit_label_cfg_limit_contact_list',
-            self::cfgLimitContactList,
-            self::type_integer,
-            '50',
-            'kit_desc_cfg_limit_contact_list'
-            ),
-        array(
             'kit_label_cfg_connect_wb_users',
             self::cfgConnectWBusers,
             self::type_boolean,
