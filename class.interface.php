@@ -46,6 +46,7 @@ class kitContactInterface {
   const kit_city = 'kit_city';
   const kit_company = 'kit_company';
   const kit_contact_language = 'kit_contact_language';
+  const kit_contact_since = 'kit_contact_since';
   const kit_country = 'kit_country';
   const kit_department = 'kit_department';
   const kit_distribution = 'kit_distribution';
@@ -61,6 +62,7 @@ class kitContactInterface {
   const kit_free_note_1 = 'kit_free_note_1';
   const kit_free_note_2 = 'kit_free_note_2';
   const kit_id = 'kit_id';
+  const kit_identifier = 'kit_identifier';
   const kit_intern = 'kit_intern'; // interner Verteiler, für Gruppenzuordnungen von Shops etc.
   const kit_last_name = 'kit_last_name';
   const kit_newsletter = 'kit_newsletter';
@@ -83,6 +85,7 @@ class kitContactInterface {
       self::kit_city => kit_label_address_city,
       self::kit_company => kit_label_company_name,
       self::kit_contact_language => kit_label_contact_language,
+      self::kit_contact_since => kit_label_contact_since,
   		self::kit_country => kit_label_country,
       self::kit_department => kit_label_company_department,
       self::kit_distribution => kit_label_distribution,
@@ -97,6 +100,7 @@ class kitContactInterface {
       self::kit_free_field_5 => kit_label_free_field_5,
       self::kit_free_note_1 => kit_label_free_note_1,
       self::kit_free_note_2 => kit_label_free_note_2,
+      self::kit_identifier => kit_label_contact_identifier,
       self::kit_intern => kit_label_categories,
       self::kit_last_name => kit_label_person_last_name,
       self::kit_newsletter => kit_label_newsletter,
@@ -118,6 +122,7 @@ class kitContactInterface {
       self::kit_city => dbKITcontactAddress::field_city,
       self::kit_company => dbKITcontact::field_company_name,
       self::kit_contact_language => dbKITcontact::field_contact_language,
+      self::kit_contact_since => dbKITcontact::field_contact_since,
   		self::kit_country => dbKITcontactAddress::field_country,
       self::kit_department => dbKITcontact::field_company_department,
       self::kit_distribution => dbKITcontact::field_distribution,
@@ -130,6 +135,7 @@ class kitContactInterface {
       self::kit_free_note_1 => dbKITcontact::field_free_note_1,
       self::kit_free_note_2 => dbKITcontact::field_free_note_2,
       self::kit_id => dbKITcontact::field_id,
+      self::kit_identifier => dbKITcontact::field_contact_identifier,
       self::kit_intern => dbKITcontact::field_category,
   		self::kit_last_name => dbKITcontact::field_person_last_name,
       self::kit_note => dbKITcontact::field_contact_note,
@@ -930,23 +936,15 @@ class kitContactInterface {
     // loop through the datafields
     foreach ($this->field_array as $kit_field => $label) {
       switch ($kit_field) :
+      case self::kit_birthday:
+      case self::kit_contact_since:
+      case self::kit_identifier:
         case self::kit_status:
-        case self::kit_title:
-        case self::kit_title_academic:
         case self::kit_first_name:
         case self::kit_last_name:
         case self::kit_company:
         case self::kit_department:
           $contact_array[$kit_field] = $contact[$this->field_assign[$kit_field]];
-          break;
-        case self::kit_free_field_1:
-        case self::kit_free_field_2:
-        case self::kit_free_field_3:
-        case self::kit_free_field_4:
-        case self::kit_free_field_5:
-        case self::kit_free_note_1:
-        case self::kit_free_note_2:
-          $contact_array[$kit_field] = ($contact[$this->field_assign[$kit_field]] != -1) ? $contact[$this->field_assign[$kit_field]] : '';
           break;
         case self::kit_address_type:
           //$contact_array[$kit_field] = ($contact[dbKITcontact::field_type] == dbKITcontact::type_person) ? $this->address_type_array[self::address_type_private] : $this->address_type_array[self::address_type_business];
@@ -1022,9 +1020,16 @@ class kitContactInterface {
           }
           $contact_array[$kit_field] = $items;
           break;
+        case self::kit_free_field_1:
+        case self::kit_free_field_2:
+        case self::kit_free_field_3:
+        case self::kit_free_field_4:
+        case self::kit_free_field_5:
+        case self::kit_free_note_1:
+        case self::kit_free_note_2:
         case self::kit_note:
           // get the contact memo field
-          $memo_id = $contact[dbKITcontact::field_contact_note];
+          $memo_id = $contact[$this->field_assign[$kit_field]];
           if ($memo_id > 0) {
             $SQL = "SELECT `memo_memo` FROM `".self::$table_prefix."mod_kit_contact_memos` WHERE `memo_id`='$memo_id'";
             if (null == ($contact_array[$kit_field] = $database->get_one($SQL, MYSQL_ASSOC))) {
@@ -1034,6 +1039,18 @@ class kitContactInterface {
           }
           else
             $contact_array[$kit_field] = '';
+          break;
+        case self::kit_title:
+        case self::kit_title_academic:
+          // get the field values from dbCfg
+          $type = ($kit_field == self::kit_title) ? 'typePersonTitle' : 'typePersonAcademic';
+          $SQL = "SELECT `array_value` FROM `".self::$table_prefix."mod_kit_contact_array_cfg` WHERE `array_type`='$type' AND `array_identifier`='{$contact[$this->field_assign[$kit_field]]}'";
+          $contact_array[$kit_field] = $database->get_one($SQL, MYSQL_ASSOC);
+          if ($database->is_error()) {
+            $this->setError(sprintf('[%s - %s] %s', __METHOD__, __LINE__, $database->get_error()));
+            return false;
+          }
+          break;
         default:
         // nothing to do...
           break;
