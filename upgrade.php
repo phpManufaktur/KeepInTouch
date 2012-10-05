@@ -284,9 +284,22 @@ if (!$dbKITcfg->sqlDeleteRecord($where)) {
   $error .= sprintf('<p>[UPDATE CONFIG TABLE mod_kit_config] %s</p>', $dbKITcfg->getError());
 }
 
+/**
+ * Release 0.62
+ */
+$where = array(dbKITcfg::field_name => 'cfgSortContactList');
+if (!$dbKITcfg->sqlDeleteRecord($where)) {
+  $error .= sprintf('<p>[UPDATE CONFIG TABLE mod_kit_config] %s</p>', $dbKITcfg->getError());
+}
+$where = array(dbKITcfg::field_name => 'cfgLimitContactList');
+if (!$dbKITcfg->sqlDeleteRecord($where)) {
+  $error .= sprintf('<p>[UPDATE CONFIG TABLE mod_kit_config] %s</p>', $dbKITcfg->getError());
+}
+
 // Prompt Errors
 if (!empty($error)) {
 	$admin->print_error($error);
 }
+
 
 ?>
