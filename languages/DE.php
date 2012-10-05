@@ -99,16 +99,42 @@ $LANG = array(
       => 'Funktion',
     'Information'
       => 'Information',
+    'kit_address_type'
+      => 'Adresstyp',
+    'kit_birthday'
+      => 'Geburtstag',
     'kit_categories'
       => 'Kategorien',
     'kit_city'
       => 'Ort',
+    'kit_company'
+      => 'Firma',
+    'kit_contact_since'
+      => 'Kontakt seit',
+    'kit_country'
+      => 'Land',
+    'kit_department'
+      => 'Abteilung',
     'kit_email'
       => 'E-Mail',
+    'kit_fax'
+      => 'Telefax',
     'kit_first_name'
       => 'Vorname',
+    'kit_free_field_1'
+      => 'Freies Feld 1',
+    'kit_free_field_2'
+      => 'Freies Feld 2',
+    'kit_free_field_3'
+      => 'Freies Feld 3',
+    'kit_free_field_4'
+      => 'Freies Feld 4',
+    'kit_free_field_5'
+      => 'Freies Feld 5',
     'kit_id'
       => 'ID',
+    'kit_identifier'
+      => 'Kontakt Bezeichner',
     'kit_intern'
       => 'Intern',
     'kit_last_name'
@@ -119,10 +145,16 @@ $LANG = array(
       => 'Anmerkungen',
     'kit_phone'
       => 'Telefon',
+    'kit_phone_mobile'
+      => 'Mobil',
     'kit_status'
       => 'Status',
     'kit_street'
       => 'Straße',
+    'kit_title'
+      => 'Anrede',
+    'kit_title_academic'
+      => 'Titel',
     'kit_zip'
       => 'PLZ',
     'Last name'
