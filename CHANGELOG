@@ -3,13 +3,16 @@
 Ralf Hertsch, Stockholmer Str. 31, 13359 Berlin (Germany)
 http://phpManufaktur.de - ralf.hertsch@phpManufaktur.de
 
-Release 0.62 - JUST IN PROGRESS
+Release 0.62 - 05.10.2012
 
 * added ability to change the table prefix easy via config.json, please read
   <http://yals.de/OQRv0Y> for more informations
 * added free fields and free notes to the contact array returned by the 
   class.interface.php
 * changed implementation of the Dwoo Template Engine  
+* changed contact list: add any field in any order, sort, filter and search
+  all contacts, copy to clipboard, export as CSV or tabbed CSV fo Excel, create
+  a PDF or print the table.
 
 Release 0.61 - 2012-08-08
 
