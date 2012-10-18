@@ -975,7 +975,13 @@ class kitContactInterface {
           break;
         case self::kit_email:
           $email_array = explode(';', $contact[dbKITcontact::field_email]);
-          list($type, $email) = explode('|', $email_array[$contact[dbKITcontact::field_email_standard]]);
+          if (empty($email_array[$contact[dbKITcontact::field_email_standard]]) || !strpos($email_array[$contact[dbKITcontact::field_email_standard]], '|')) {
+            // missing the email address - set a non existing !!!
+            $email = 'undefined@email.tld';
+          }
+          else {
+            list($type, $email) = explode('|', $email_array[$contact[dbKITcontact::field_email_standard]]);
+          }
           $contact_array[$kit_field] = $email;
           break;
         case self::kit_newsletter:

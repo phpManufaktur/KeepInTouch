@@ -3,6 +3,10 @@
 Ralf Hertsch, Stockholmer Str. 31, 13359 Berlin (Germany)
 http://phpManufaktur.de - ralf.hertsch@phpManufaktur.de
 
+Release 0.63 - JUST IN PROGRESS
+
+* fixed a problem getting a not existing email address in class.interface.php
+
 Release 0.62 - 05.10.2012
 
 * added ability to change the table prefix easy via config.json, please read

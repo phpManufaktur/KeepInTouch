@@ -519,10 +519,10 @@ class kitBackend {
       $contact['link'] = array(
           'edit' => sprintf('%s&%s', $this->page_link, http_build_query(array(
               self::request_action => self::action_contact,
-              dbKITcontact::field_id => $contact['kit_id']
+              dbKITcontact::field_id => $con['contact_id']
               ))),
           );
-      $contact_array[$contact['kit_id']] = $contact;
+      $contact_array[$con['contact_id']] = $contact;
     }
 
     // get the names of the free fields and free notes
