@@ -29,7 +29,11 @@
         {foreach $fields field}
         <td>
         {if $field == 'kit_id' || $field == 'kit_last_name' || $field == 'kit_identifier'}
-          <a href="{$contact.link.edit}">{$contact.$field}</a>
+          {if $field == 'kit_id'} 
+            <a href="{$contact.link.edit}">{string_format($contact.$field, '%05d')}</a>
+          {else}
+            <a href="{$contact.link.edit}">{$contact.$field}</a>
+          {/if}
         {elseif $field == 'kit_email'}
           <a href="mailto:{$contact.$field}">{$contact.$field}</a>
         {elseif $field == 'kit_status' || $field == 'kit_address_type'}
