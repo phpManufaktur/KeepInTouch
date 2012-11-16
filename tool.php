@@ -119,8 +119,8 @@ class kitBackend {
       self::action_list_phone => kit_list_sort_phone,
       self::action_list_street => kit_list_sort_street,
       self::action_list_unsorted => kit_list_sort_unsorted,
-  		self::action_list_language => kit_list_sort_language
-  		);
+      self::action_list_language => kit_list_sort_language
+      );
 
   private $tab_navigation_array = array(
       self::action_start => kit_tab_start,
@@ -181,25 +181,25 @@ class kitBackend {
    * @return boolean true on success
    */
   public function checkDependency() {
-  	// check dependency for KIT
-  	global $PRECHECK;
-  	global $database;
+    // check dependency for KIT
+    global $PRECHECK;
+    global $database;
 
-  	if (file_exists(WB_PATH.'/modules/kit_dirlist/info.php')) {
-  		// check only if kitDirList is installed
-  		require_once(WB_PATH.'/modules/'.basename(dirname(__FILE__)).'/precheck.php');
+    if (file_exists(WB_PATH.'/modules/kit_dirlist/info.php')) {
+      // check only if kitDirList is installed
+      require_once(WB_PATH.'/modules/'.basename(dirname(__FILE__)).'/precheck.php');
 
-  		if (isset($PRECHECK['KIT']['kit_dirlist'])) {
-  			$table = TABLE_PREFIX.'addons';
-  			$version = $database->get_one("SELECT `version` FROM $table WHERE `directory`='kit_dirlist'", MYSQL_ASSOC);
-  			if (!version_compare($version, $PRECHECK['KIT']['kit_dirlist']['VERSION'], $PRECHECK['KIT']['kit_dirlist']['OPERATOR'])) {
-  				$this->setError(sprintf('[%s - %s] %s', __METHOD__, __LINE__,
-  						sprintf(kit_error_please_update, 'kitDirList', $version, $PRECHECK['KIT']['kit_dirlist']['VERSION'])));
-  				return false;
-  			}
-  		}
-  	} // if file_exists()
-  	return true;
+      if (isset($PRECHECK['KIT']['kit_dirlist'])) {
+        $table = TABLE_PREFIX.'addons';
+        $version = $database->get_one("SELECT `version` FROM $table WHERE `directory`='kit_dirlist'", MYSQL_ASSOC);
+        if (!version_compare($version, $PRECHECK['KIT']['kit_dirlist']['VERSION'], $PRECHECK['KIT']['kit_dirlist']['OPERATOR'])) {
+          $this->setError(sprintf('[%s - %s] %s', __METHOD__, __LINE__,
+              sprintf(kit_error_please_update, 'kitDirList', $version, $PRECHECK['KIT']['kit_dirlist']['VERSION'])));
+          return false;
+        }
+      }
+    } // if file_exists()
+    return true;
   } // checkDependency()
 
 
@@ -1372,25 +1372,25 @@ class kitBackend {
     // contact language
     $languages = array();
     if (!$dbLanguages->sqlExec(sprintf("SELECT * FROM %s", $dbLanguages->getTableName()), $languages)) {
-    	$this->setError(sprintf('[%s - %s] %s', __METHOD__, __LINE__, $dbLanguages->getError()));
-    	return false;
+      $this->setError(sprintf('[%s - %s] %s', __METHOD__, __LINE__, $dbLanguages->getError()));
+      return false;
     }
     $select = '';
     $lang_select = $dbCfg->getValue(dbKITcfg::cfgContactLanguageSelect);
     $lang_select = strtolower(trim($lang_select));
     foreach ($languages as $language) {
-    	$selected = ($language[dbKITlanguages::FIELD_ISO] == $item[dbKITcontact::field_contact_language]) ? ' selected="selected"' : '';
-    	if ($lang_select == 'iso') {
-    		$lang = $language[dbKITlanguages::FIELD_ISO];
-    	}
-    	elseif ($lang_select == 'english') {
-    		$lang = $language[dbKITlanguages::FIELD_ENGLISH];
-    	}
-    	else {
-    		// use local settings
-    		$lang = $language[dbKITlanguages::FIELD_LOCAL];
-    	}
-    	$select .= sprintf('<option value="%s"%s>%s</option>', $language[dbKITlanguages::FIELD_ISO], $selected, $lang);
+      $selected = ($language[dbKITlanguages::FIELD_ISO] == $item[dbKITcontact::field_contact_language]) ? ' selected="selected"' : '';
+      if ($lang_select == 'iso') {
+        $lang = $language[dbKITlanguages::FIELD_ISO];
+      }
+      elseif ($lang_select == 'english') {
+        $lang = $language[dbKITlanguages::FIELD_ENGLISH];
+      }
+      else {
+        // use local settings
+        $lang = $language[dbKITlanguages::FIELD_LOCAL];
+      }
+      $select .= sprintf('<option value="%s"%s>%s</option>', $language[dbKITlanguages::FIELD_ISO], $selected, $lang);
     }
     $contact_languages = sprintf('<select name="%s">%s</select>', dbKITcontact::field_contact_language, $select);
 
@@ -2069,9 +2069,9 @@ class kitBackend {
         'label_access' => kit_label_contact_access,
         'value_access' => $access,
         'class_access' => dbKITcontact::field_access,
-    		'label_language' => kit_label_contact_language,
-    		'value_language' => $contact_languages,
-    		'class_language' => dbKITcontact::field_contact_language,
+        'label_language' => kit_label_contact_language,
+        'value_language' => $contact_languages,
+        'class_language' => dbKITcontact::field_contact_language,
         'label_status' => kit_label_contact_status,
         'value_status' => $status,
         'class_status' => dbKITcontact::field_status,
@@ -2163,7 +2163,7 @@ class kitBackend {
         dbKITcontact::field_access => dbKITcontact::access_internal,
         dbKITcontact::field_status => dbKITcontact::status_active,
         dbKITcontact::field_contact_identifier => '',
-    		dbKITcontact::field_contact_language => '',
+        dbKITcontact::field_contact_language => '',
         dbKITcontact::field_company_title => '',
         dbKITcontact::field_company_name => '',
         dbKITcontact::field_company_department => '',
