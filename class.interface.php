@@ -86,7 +86,7 @@ class kitContactInterface {
       self::kit_company => kit_label_company_name,
       self::kit_contact_language => kit_label_contact_language,
       self::kit_contact_since => kit_label_contact_since,
-  		self::kit_country => kit_label_country,
+      self::kit_country => kit_label_country,
       self::kit_department => kit_label_company_department,
       self::kit_distribution => kit_label_distribution,
       self::kit_email => kit_label_contact_email,
@@ -123,7 +123,7 @@ class kitContactInterface {
       self::kit_company => dbKITcontact::field_company_name,
       self::kit_contact_language => dbKITcontact::field_contact_language,
       self::kit_contact_since => dbKITcontact::field_contact_since,
-  		self::kit_country => dbKITcontactAddress::field_country,
+      self::kit_country => dbKITcontactAddress::field_country,
       self::kit_department => dbKITcontact::field_company_department,
       self::kit_distribution => dbKITcontact::field_distribution,
       self::kit_first_name => dbKITcontact::field_person_first_name,
@@ -137,7 +137,7 @@ class kitContactInterface {
       self::kit_id => dbKITcontact::field_id,
       self::kit_identifier => dbKITcontact::field_contact_identifier,
       self::kit_intern => dbKITcontact::field_category,
-  		self::kit_last_name => dbKITcontact::field_person_last_name,
+      self::kit_last_name => dbKITcontact::field_person_last_name,
       self::kit_note => dbKITcontact::field_contact_note,
       self::kit_status => dbKITcontact::field_status,
       self::kit_street => dbKITcontactAddress::field_street,
@@ -175,7 +175,7 @@ class kitContactInterface {
       self::kit_free_field_5 => 35,
       self::kit_free_note_1 => 36,
       self::kit_free_note_2 => 37,
-  		self::kit_contact_language => 38 // last added field
+      self::kit_contact_language => 38 // last added field
   );
 
   const address_type_private = 'private';
@@ -276,8 +276,8 @@ class kitContactInterface {
    * @return mixed value in the desired format of the config value
    */
   public function getConfigurationValue($value) {
-  	global $dbCfg;
-  	return $dbCfg->getValue($value);
+    global $dbCfg;
+    return $dbCfg->getValue($value);
   } // getConfigurationValue()
 
   /**
@@ -396,21 +396,21 @@ class kitContactInterface {
     $newsletter_array = array();
 
     foreach ($newsletters as $key => $value) {
-    	if ($use_language_marker) {
-    		// look for matches of language markers, i.e. "[DE]" or "[EN]"
-    		preg_match('/\[[[A-Z,a-z][A-Z,a-z]\]/', $value, $match);
-    		if (isset($match[0])) {
-    			$lang = $match[0];
-    			$lang = str_replace(array('[',']',' '), '', $lang);
-    			if (strtoupper($lang) == LANGUAGE) {
-    				// language match, remove the marker an spaces
-    				$value = str_replace($match, '', $value);
-    				$value = trim($value);
-    			}
-    			// language of the newsletter does not match, continue
-    			else continue;
-    		}
-    	}
+      if ($use_language_marker) {
+        // look for matches of language markers, i.e. "[DE]" or "[EN]"
+        preg_match('/\[[[A-Z,a-z][A-Z,a-z]\]/', $value, $match);
+        if (isset($match[0])) {
+          $lang = $match[0];
+          $lang = str_replace(array('[',']',' '), '', $lang);
+          if (strtoupper($lang) == LANGUAGE) {
+            // language match, remove the marker an spaces
+            $value = str_replace($match, '', $value);
+            $value = trim($value);
+          }
+          // language of the newsletter does not match, continue
+          else continue;
+        }
+      }
       $newsletter_array[$key] = array(
           'value' => $key,
           'text' => $value,
@@ -496,14 +496,14 @@ class kitContactInterface {
             }
             break;
           case self::kit_contact_language:
-          	if (isset($contact_array[$field])) {
-          		$lg = strtolower(trim($contact_array[$field]));
-          		if ($lg !== $contact[$this->field_assign[$field]]) {
-          			$contact[$this->field_assign[$field]] = $lg;
-          			$contact_changed = true;
-          		}
-          	}
-          	break;
+            if (isset($contact_array[$field])) {
+              $lg = strtolower(trim($contact_array[$field]));
+              if ($lg !== $contact[$this->field_assign[$field]]) {
+                $contact[$this->field_assign[$field]] = $lg;
+                $contact_changed = true;
+              }
+            }
+            break;
           case self::kit_first_name:
           case self::kit_last_name:
           case self::kit_company:
@@ -755,11 +755,11 @@ class kitContactInterface {
           $contact[$key] = dbKITcontact::status_active;
           break;
         case dbKITcontact::field_contact_language:
-        	// set contact language
-        	$def_lang = $dbCfg->getValue(dbKITcfg::cfgContactLanguageDefault);
-        	$def_lang = strtolower(trim($def_lang));
-        	$contact[$key] = (isset($contact_array[self::kit_contact_language])) ? strtolower(trim($contact_array[self::kit_contact_language])) : $def_lang;
-        	break;
+          // set contact language
+          $def_lang = $dbCfg->getValue(dbKITcfg::cfgContactLanguageDefault);
+          $def_lang = strtolower(trim($def_lang));
+          $contact[$key] = (isset($contact_array[self::kit_contact_language])) ? strtolower(trim($contact_array[self::kit_contact_language])) : $def_lang;
+          break;
         default:
           // nothing to do...
           break;
@@ -1062,7 +1062,6 @@ class kitContactInterface {
           break;
       endswitch;
     }
-
     // Gruppen des Kontakts auslesen und in einem Array ablegen
     $contact_array[self::kit_categories] = array_merge(
         isset($contact_array[self::kit_intern]) ? $contact_array[self::kit_intern] : array(),
