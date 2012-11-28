@@ -6,6 +6,7 @@ http://phpManufaktur.de - ralf.hertsch@phpManufaktur.de
 Release 0.63 - JUST IN PROGRESS
 
 * fixed a problem getting a not existing email address in class.interface.php
+* added field kit_contact_language to the KIT interface output array
 
 Release 0.62 - 05.10.2012
 

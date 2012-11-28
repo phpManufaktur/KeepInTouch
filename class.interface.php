@@ -938,15 +938,16 @@ class kitContactInterface {
       switch ($kit_field) :
       case self::kit_birthday:
       case self::kit_contact_since:
+      case self::kit_contact_language:
       case self::kit_identifier:
-        case self::kit_status:
-        case self::kit_first_name:
-        case self::kit_last_name:
-        case self::kit_company:
-        case self::kit_department:
-          $contact_array[$kit_field] = $contact[$this->field_assign[$kit_field]];
-          break;
-        case self::kit_address_type:
+      case self::kit_status:
+      case self::kit_first_name:
+      case self::kit_last_name:
+      case self::kit_company:
+      case self::kit_department:
+        $contact_array[$kit_field] = $contact[$this->field_assign[$kit_field]];
+        break;
+      case self::kit_address_type:
           //$contact_array[$kit_field] = ($contact[dbKITcontact::field_type] == dbKITcontact::type_person) ? $this->address_type_array[self::address_type_private] : $this->address_type_array[self::address_type_business];
           $contact_array[$kit_field] = ($contact[dbKITcontact::field_type] == dbKITcontact::type_person) ? self::address_type_private : self::address_type_business;
           break;
@@ -975,7 +976,7 @@ class kitContactInterface {
           break;
         case self::kit_email:
           $email_array = explode(';', $contact[dbKITcontact::field_email]);
-          if (empty($email_array[$contact[dbKITcontact::field_email_standard]]) || !strpos($email_array[$contact[dbKITcontact::field_email_standard]], '|')) {
+          if (!isset($email_array[$contact[dbKITcontact::field_email_standard]]) || empty($email_array[$contact[dbKITcontact::field_email_standard]]) || !strpos($email_array[$contact[dbKITcontact::field_email_standard]], '|')) {
             // missing the email address - set a non existing !!!
             $email = 'undefined@email.tld';
           }
