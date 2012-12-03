@@ -109,6 +109,8 @@ $LANG = array(
       => 'Ort',
     'kit_company'
       => 'Firma',
+    'kit_contact_language'
+      => 'Sprache',
     'kit_contact_since'
       => 'Kontakt seit',
     'kit_country'
