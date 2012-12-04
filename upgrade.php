@@ -296,10 +296,34 @@ if (!$dbKITcfg->sqlDeleteRecord($where)) {
   $error .= sprintf('<p>[UPDATE CONFIG TABLE mod_kit_config] %s</p>', $dbKITcfg->getError());
 }
 
+/**
+ * Release 0.63
+ */
+// create the kit_link table
+$SQL = "CREATE TABLE IF NOT EXISTS `".TABLE_PREFIX."mod_kit_links` ( ".
+    "`id` INT(11) NOT NULL AUTO_INCREMENT, ".
+    "`url` TEXT NOT NULL, ".
+    "`guid` VARCHAR(128) NOT NULL DEFAULT '', ".
+    "`type` ENUM('DOWNLOAD','UPLOAD','UNDEFINED') NOT NULL DEFAULT 'UNDEFINED', ".
+    "`option` ENUM('THROW-AWAY','PERMANENT') NOT NULL DEFAULT 'THROW-AWAY', ".
+    "`status` ENUM('ACTIVE','LOCKED','DELETED') NOT NULL DEFAULT 'ACTIVE', ".
+    "`last_call` DATETIME NOT NULL DEFAULT '0000-00-00 00:00:00', ".
+    "`kit_id` INT(11) NOT NULL DEFAULT '-1', ".
+    "`timestamp` TIMESTAMP, ".
+    "PRIMARY KEY (`id`), ".
+    "KEY (`guid`,`kit_id`)".
+    ") ENGINE=MyIsam AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci";
+$database->query($SQL);
+if ($database->is_error()) {
+  $error .= sprintf('[INSTALLATION kit_links] %s', $database->get_error());
+}
+
+
 // Prompt Errors
 if (!empty($error)) {
 	$admin->print_error($error);
 }
+
 
 
 ?>

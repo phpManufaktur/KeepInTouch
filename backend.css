@@ -179,6 +179,10 @@ textarea
 .kccr_value,
 .kccl_value {
 }
+.kccl_help {
+  font-style: italic;
+  font-size: smaller;
+}
 .kccl_empty_row,
 .kccr_empty_row {
   display: inline-block;
@@ -278,6 +282,8 @@ input[name=nl_sft]
 img[name=cal_img_2] {
   margin: 0 10px 0 0;
 }
+select[name=uppid],
+select[name=upopt], 
 select[name=sub],
 select[name=protocol_type] {
   width:250px;

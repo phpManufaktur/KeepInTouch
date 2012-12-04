@@ -75,6 +75,13 @@ class kitBackend {
   const request_limit_start = 'lims';
   const request_limit_end = 'lime';
   const request_page = 'pg';
+  const REQUEST_DOWNLOAD_PAGE_ID = 'dlpid';
+  const REQUEST_DOWNLOAD_OPTION = 'dlopt';
+  const REQUEST_SPECIAL_CREATE_DOWNLOAD_LINK = 'scdl';
+  const REQUEST_UPLOAD_PAGE_ID = 'uppid';
+  const REQUEST_UPLOAD_OPTION = 'upopt';
+  const REQUEST_SPECIAL_CREATE_UPLOAD_LINK = 'scul';
+  const REQUEST_SPECIAL_LINK = 'ksl'; // KIT Special Link = KSL
 
   const action_default = 'def';
   const action_help = 'hlp';
@@ -2133,16 +2140,123 @@ class kitBackend {
         // Verteiler
         'label_distribution' => kit_label_distribution,
         'value_distribution' => $distribution,
+        // Special
+        'special' => $this->getSpecialDlg($id),
         // Protokoll
         'label_protocol' => kit_label_protocol,
         'value_protocol' => $protocol,
         // Administration
         'administration' => $administration,
         // additional fields & notes
-        'additional_fields' => $additional);
+        'additional_fields' => $additional
+        );
     return $parser->get($this->template_path.'backend.contact.htt', $data);
   } // dlgContact()
 
+  /**
+   * Special functions for the KIT Contact Dialog
+   *
+   * @param integer $id
+   * @return string
+   */
+  private function getSpecialDlg($id) {
+    global $database;
+    // first check if kitForm is installed
+    if (!file_exists(WB_PATH.'/modules/kit_form/class.frontend.php')) {
+      return $this->lang->translate('<p>For the special functions kitform must be installed!</p>');
+    }
+    $SQL = "SELECT `page_id`, `link`, `page_title` FROM `".TABLE_PREFIX."pages` ORDER BY `page_title` ASC";
+    $query = $database->query($SQL);
+    if ($database->is_error()) {
+      $this->setError(sprintf('[%s - %s] %s', __METHOD__, __LINE__, $database->get_error()));
+      return false;
+    }
+    // create pages array
+    $pages = array();
+    $pages[] = array(
+        'id' => -1,
+        'title' => $this->lang->translate('- please select -'),
+        'link' => ''
+        );
+    while (false !== ($page = $query->fetchRow(MYSQL_ASSOC))) {
+      $pages[$page['page_id']] = array(
+          'id' => $page['page_id'],
+          'title' => $page['page_title'],
+          'link' => $page['link']
+          );
+    }
+    // create option array
+    $options = array();
+    $options[] = array(
+        'value' => 'THROW-AWAY',
+        'text' => $this->lang->translate('throw-away link')
+        );
+    $options[] = array(
+        'value' => 'PERMANENT',
+        'text' => $this->lang->translate('permanent link')
+        );
+
+    $data = array(
+        'upload_links' => array(
+            'pages' => array(
+                'name' => self::REQUEST_UPLOAD_PAGE_ID,
+                'value' => -1,
+                'items' => $pages
+                ),
+            'option' => array(
+                'name' => self::REQUEST_UPLOAD_OPTION,
+                'value' => -1,
+                'items' => $options
+                ),
+            'create_link' => array(
+                'name' => self::REQUEST_SPECIAL_CREATE_UPLOAD_LINK
+                )
+            )
+        );
+    return $this->getTemplate('special.dwoo', $data);
+  } // getSpecialDlg()
+
+
+  /**
+   * Check the special settings
+   *
+   * @param integer $id
+   * @param string $messages
+   */
+  private function checkSpecialDlg($kit_id, &$message) {
+    global $tools;
+    global $database;
+
+    if (isset($_REQUEST[self::REQUEST_SPECIAL_CREATE_UPLOAD_LINK])) {
+      // create a download link
+      if (!isset($_REQUEST[self::REQUEST_UPLOAD_PAGE_ID]) || ($_REQUEST[self::REQUEST_UPLOAD_PAGE_ID] < 1)) {
+        $message .= $this->lang->translate('<p>Please select a page with a kitForm Upload script!</p>');
+        return false;
+      }
+      // get the page_id for the target
+      $page_id = (int) $_REQUEST[self::REQUEST_UPLOAD_PAGE_ID];
+      // get the upload option
+      $option = $_REQUEST[self::REQUEST_UPLOAD_OPTION];
+      // generate a GUID
+      $guid = $tools->createGUID();
+      // get the link
+      $link = $database->get_one("SELECT `link` FROM `".TABLE_PREFIX."pages` WHERE `page_id`='$page_id'", MYSQL_ASSOC);
+      if ($database->is_error()) {
+        $this->setError(sprintf('[%s - %s] %s', __METHOD__, __LINE__, $database->get_error()));
+        return false;
+      }
+      $url = WB_URL.PAGES_DIRECTORY.$link.PAGE_EXTENSION.'?'.self::REQUEST_SPECIAL_LINK.'='.$guid;
+      $SQL = "INSERT INTO `".TABLE_PREFIX."mod_kit_links` (`url`,`guid`,`type`,`option`,`status`,`kit_id`) VALUES ".
+          "('$url','$guid','UPLOAD','$option','ACTIVE','$kit_id')";
+      $database->query($SQL);
+      if ($database->is_error()) {
+        $this->setError(sprintf('[%s - %s] %s', __METHOD__, __LINE__, $database->get_error()));
+        return false;
+      }
+      $message .= $this->lang->translate('<p>The upload link was created, please check at the special functions!</p>');
+    }
+    $message .= '<p>check!</p>';
+  }
 
   private function getKeyIndexOfValue($array = array(), $item) {
     foreach ($array as $key => $value) {
@@ -2667,6 +2781,9 @@ class kitBackend {
         $message .= kit_msg_register_status_updated;
       }
     }
+
+    // check special functions
+    $this->checkSpecialDlg($this->contact_array[dbKITcontact::field_id], $message);
 
     $this->setMessage($message);
     return true;

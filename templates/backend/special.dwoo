@@ -1,0 +1,38 @@
+{*
+ * KeepInTouch
+ *
+ * @author Ralf Hertsch <ralf.hertsch@phpmanufaktur.de>
+ * @link http://phpmanufaktur.de
+ * @copyright 2010 - 2012
+ * @license MIT License (MIT) http://www.opensource.org/licenses/MIT
+ *}
+<div class="kit_contact_special">
+  <fieldset clss="fs_special_upload">
+    <legend>{translate('File Upload')}</legend>
+    <div class="kccl_help">
+      {translate('<p>Select a page where a droplet with a referrer to kitForm Upload Script reside. This page may be hidden.</p><p>KIT generate a link which enable the contact to upload a file into the protected file area.</p>')}
+    </div>
+    <div class="kccl_label">{translate('Select the page')}</div>
+    <div class="kccl_value">
+      <select name="{$upload_links.pages.name}">
+      {foreach $upload_links.pages.items page}
+      <option value="{$page.id}">{$page.title}</option>
+      {/foreach}
+      </select>
+    </div>
+    <div class="kc_clear"></div>
+    <div class="kccl_label">{translate('Select option')}</div>
+    <div class="kccl_value">
+      <select name="{$upload_links.option.name}">
+        {foreach $upload_links.option.items opt}
+        <option value="{$opt.value}">{translate($opt.text)}</option>
+        {/foreach}
+      </select>
+    </div>
+    <div class="kc_clear"></div>
+    <div class="kccl_label">&nbsp;</div>
+    <div class="kccl_value">
+      <input type="checkbox" name="{$upload_links.create_link.name}" value="1" /> {translate('Create upload link')}
+    </div>
+  </fieldset>
+</div>

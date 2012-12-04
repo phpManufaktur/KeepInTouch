@@ -45,6 +45,8 @@ $module_translation_by = 'Ralf Hertsch (phpManufaktur)';
 $LANG = array(
     '- new contact -'
       => '- neuer Kontakt -',
+    '- please select -'
+      => '- bitte auswählen -',
     'Abort'
       => 'Abbruch',
     'Academic title'
@@ -89,12 +91,18 @@ $LANG = array(
       => 'Kontakt Status',
     'Contact type'
       => 'Kontakt Typ',
+    'Create download link'
+      => 'Download Link erzeugen',
     'Department'
       => 'Abteilung',
     'Distribution'
       => 'Verteiler',
+    'File Upload'
+      => 'Datenübertragung',
     'First name'
       => 'Vorname',
+    '<p>For the special functions kitform must be installed!</p>'
+      => '<p><em>- Für die speziellen Funktionen wird kitForm benötigt! -</em></p>',
     'Function'
       => 'Funktion',
     'Information'
@@ -165,12 +173,24 @@ $LANG = array(
       => 'Karte',
     'Notes'
       => 'Notizen',
+    'permanent link'
+      => 'Permanent-Link',
     'Person'
       => 'Person',
     'Phone'
       => 'Telefon',
+    '<p>Please select a page with a kitForm Upload script!</p>'
+      => 'Bitte wählen Sie eine Seite mit einem kitForm Upload Script aus!</p>',
     'private'
       => 'Privat',
+    '<p>Select a page where a droplet with a referrer to kitForm Upload Script reside. This page may be hidden.</p><p>KIT generate a link which enable the contact to upload a file into the protected file area.</p>'
+      => '<p>Wählen Sie eine Seite aus, auf der sich ein Droplet mit einem Verweis auf ein kitForm Upload Script befindet. Die Seite kann versteckt sein.<br />KIT erzeugt einen Link, der es dem Kontakt ermöglicht eine Datei in das von KIT geschützte Verzeichnis zu übertragen.',
+    'Select option'
+      => 'Option auswählen',
+    'Select the page'
+      => 'Seite auswählen',
+    'Special'
+      => 'Spezielle Funktionen',
     'statusActive'
       => 'Aktiv',
     'statusLocked'
@@ -179,8 +199,12 @@ $LANG = array(
       => 'Gelöscht',
     'Street'
       => 'Straße',
+    '<p>The upload link was created, please check at the special functions!</p>'
+      => '<p>Der Upload Link wurde erzeugt, bitte prüfen Sie den Link bei den <em>Speziellen Funktionen</em></p>',
     'Title'
       => 'Anrede',
+    'throw-away link'
+      => 'Wegwerf-Link',
     'ZIP, City'
       => 'PLZ, Stadt',
     );
