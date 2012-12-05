@@ -63,6 +63,10 @@ class kitBackend {
   const basket_to = 'bat';
   const basket_bcc = 'babcc';
 
+  // settings for mod_kit_links
+  const KIT_LINKS_ID_ADD = 10000; // int to add to the ID for generating a GUID
+  const KIT_LINKS_TO_BASE = 36; // base used for generating the GUID
+
   const request_action = 'act';
   const request_csv_export = 'csvex';
   const request_csv_import = 'csvim';
@@ -2237,8 +2241,17 @@ class kitBackend {
       $page_id = (int) $_REQUEST[self::REQUEST_UPLOAD_PAGE_ID];
       // get the upload option
       $option = $_REQUEST[self::REQUEST_UPLOAD_OPTION];
-      // generate a GUID
-      $guid = $tools->createGUID();
+      // create a new entry in mod_kit_links
+      $SQL = "INSERT INTO `".TABLE_PREFIX."mod_kit_links` (`type`,`option`,`status`,`kit_id`) VALUES ".
+          "('UPLOAD','$option','LOCKED','$kit_id')";
+      $database->query($SQL);
+      if ($database->is_error()) {
+        $this->setError(sprintf('[%s - %s] %s', __METHOD__, __LINE__, $database->get_error()));
+        return false;
+      }
+      // get the last inserted ID
+      $upload_id = mysql_insert_id();
+      $guid = base_convert($upload_id+self::KIT_LINKS_ID_ADD, 10, self::KIT_LINKS_TO_BASE);
       // get the link
       $link = $database->get_one("SELECT `link` FROM `".TABLE_PREFIX."pages` WHERE `page_id`='$page_id'", MYSQL_ASSOC);
       if ($database->is_error()) {
@@ -2246,8 +2259,8 @@ class kitBackend {
         return false;
       }
       $url = WB_URL.PAGES_DIRECTORY.$link.PAGE_EXTENSION.'?'.self::REQUEST_SPECIAL_LINK.'='.$guid;
-      $SQL = "INSERT INTO `".TABLE_PREFIX."mod_kit_links` (`url`,`guid`,`type`,`option`,`status`,`kit_id`) VALUES ".
-          "('$url','$guid','UPLOAD','$option','ACTIVE','$kit_id')";
+      // update mod_kit_links
+      $SQL = "UPDATE `".TABLE_PREFIX."mod_kit_links` SET `guid`='$guid', `url`='$url', `status`='ACTIVE' WHERE `id`='$upload_id'";
       $database->query($SQL);
       if ($database->is_error()) {
         $this->setError(sprintf('[%s - %s] %s', __METHOD__, __LINE__, $database->get_error()));
@@ -2255,7 +2268,6 @@ class kitBackend {
       }
       $message .= $this->lang->translate('<p>The upload link was created, please check at the special functions!</p>');
     }
-    $message .= '<p>check!</p>';
   }
 
   private function getKeyIndexOfValue($array = array(), $item) {

@@ -38,99 +38,101 @@ require_once(WB_PATH.'/modules/'.basename(dirname(__FILE__)).'/class.mail.php');
 require_once(WB_PATH.'/modules/'.basename(dirname(__FILE__)).'/class.newsletter.php');
 require_once(WB_PATH.'/modules/'.basename(dirname(__FILE__)).'/class.cronjob.php');
 require_once(WB_PATH.'/modules/'.basename(dirname(__FILE__)).'/class.import.php');
+
 global $admin;
+global $database;
 
 $error = '';
 
 // first install configuration table!
 $dbConfig = new dbKITcfg(true);
 if ($dbConfig->isError()) {
-	$error .= sprintf('<p>[Installation] %s</p>', $dbConfig->getError());
+  $error .= sprintf('<p>[Installation] %s</p>', $dbConfig->getError());
 }
 
 $dbKITcontact = new dbKITcontact(true);
 if ($dbKITcontact->isError()) {
-	$error .= sprintf('<p>[Installation] %s</p>', $dbKITcontact->getError());
+  $error .= sprintf('<p>[Installation] %s</p>', $dbKITcontact->getError());
 }
 
 $dbKITcontactAddress = new dbKITcontactAddress(true);
 if ($dbKITcontactAddress->isError()) {
-	$error .= sprintf('<p>[Installation] %s</p>', $dbKITcontactAddress->getError());
+  $error .= sprintf('<p>[Installation] %s</p>', $dbKITcontactAddress->getError());
 }
 
 $dbKITprovider = new dbKITprovider(true);
 if ($dbKITprovider->isError()) {
-	$error .= sprintf('<p>[Installation] %s</p>', $dbKITprovider->getError());
+  $error .= sprintf('<p>[Installation] %s</p>', $dbKITprovider->getError());
 }
 
 $dbKITmail = new dbKITmail(true);
 if ($dbKITmail->isError()) {
-	$error .= sprintf('<p>[Installation] %s</p>', $dbKITmail->getError());
+  $error .= sprintf('<p>[Installation] %s</p>', $dbKITmail->getError());
 }
 
 $dbKITregister = new dbKITregister(true);
 if ($dbKITregister->isError()) {
-	$error .= sprintf('<p>[Installation] %s</p>', $dbKITregister->getError());
+  $error .= sprintf('<p>[Installation] %s</p>', $dbKITregister->getError());
 }
 
 // Install tables for newsletter module
 $dbKITnewsletterTemplates = new dbKITnewsletterTemplates(true);
 if ($dbKITnewsletterTemplates->isError()) {
-	$error .= sprintf('<p>[Installation] %s</p>', $dbKITnewsletterTemplates->getError());
+  $error .= sprintf('<p>[Installation] %s</p>', $dbKITnewsletterTemplates->getError());
 }
 
 $dbKITnewsletterPreview = new dbKITnewsletterPreview(true);
 if ($dbKITnewsletterPreview->isError()) {
-	$error .= sprintf('<p>[Installation] %s</p>', $dbKITnewsletterPreview->getError());
+  $error .= sprintf('<p>[Installation] %s</p>', $dbKITnewsletterPreview->getError());
 }
 
 $dbKITnewsletterCfg = new dbKITnewsletterCfg(true);
 if ($dbKITnewsletterCfg->isError()) {
-	$error .= sprintf('<p>[Installation] %s</p>', $dbKITnewsletterCfg->getError());
+  $error .= sprintf('<p>[Installation] %s</p>', $dbKITnewsletterCfg->getError());
 }
 
 $dbKITnewsletterArchive = new dbKITnewsletterArchive(true);
 if ($dbKITnewsletterArchive->isError()) {
-	$error .= sprintf('<p>[Installation] %s</p>', $dbKITnewsletterArchive->getError());
+  $error .= sprintf('<p>[Installation] %s</p>', $dbKITnewsletterArchive->getError());
 }
 
 $dbKITnewsletterProcess = new dbKITnewsletterProcess(true);
 if ($dbKITnewsletterProcess->isError()) {
-	$error .= sprintf('<p>[Installation] %s</p>', $dbKITnewsletterProcess->getError());
+  $error .= sprintf('<p>[Installation] %s</p>', $dbKITnewsletterProcess->getError());
 }
 
 $dbCronjobData = new dbCronjobData(true);
 if ($dbCronjobData->isError()) {
-	$error .= sprintf('<p>[Installation] %s</p>', $dbCronjobData->getError());
+  $error .= sprintf('<p>[Installation] %s</p>', $dbCronjobData->getError());
 }
 // Blindwerte eintragen
 $datas = array(	array(dbCronjobData::field_item => dbCronjobData::item_last_call, dbCronjobData::field_value => ''),
-								array(dbCronjobData::field_item => dbCronjobData::item_last_job, dbCronjobData::field_value => ''),
-								array(dbCronjobData::field_item => dbCronjobData::item_last_nl_id, dbCronjobData::field_value => ''));
+                array(dbCronjobData::field_item => dbCronjobData::item_last_job, dbCronjobData::field_value => ''),
+                array(dbCronjobData::field_item => dbCronjobData::item_last_nl_id, dbCronjobData::field_value => ''));
 foreach ($datas as $data) {
-	if (!$dbCronjobData->sqlInsertRecord($data)) {
-		$error .= sprintf('<p>[Installation] %s</p>', $dbCronjobData->getError());
-	}
+  if (!$dbCronjobData->sqlInsertRecord($data)) {
+    $error .= sprintf('<p>[Installation] %s</p>', $dbCronjobData->getError());
+  }
 }
 
 $dbCronjobNewsletterLog = new dbCronjobNewsletterLog(true);
 if ($dbCronjobNewsletterLog->isError()) {
-	$error .= sprintf('<p>[Installation] %s</p>', $dbCronjobNewsletterLog->getError());
+  $error .= sprintf('<p>[Installation] %s</p>', $dbCronjobNewsletterLog->getError());
 }
 
 $dbCronjobErrorLog = new dbCronjobErrorLog(true);
 if ($dbCronjobErrorLog->isError()) {
-	$error .= sprintf('<p>[Installation] %s</p>', $dbCronjobErrorLog->getError());
+  $error .= sprintf('<p>[Installation] %s</p>', $dbCronjobErrorLog->getError());
 }
 
 $dbImport = new dbKITimport(true);
 if ($dbImport->isError()) {
-	$error .= sprintf('<p>[Installation] %s</p>', $dbImport->getError());
+  $error .= sprintf('<p>[Installation] %s</p>', $dbImport->getError());
 }
 
 $dbLanguages = new dbKITlanguages(true);
 if ($dbLanguages->isError()) {
-	$error .= sprintf('<p>[Installation] %s</p>', $dbLanguages->getError());
+  $error .= sprintf('<p>[Installation] %s</p>', $dbLanguages->getError());
 }
 
 // create the kit_link table
@@ -141,6 +143,8 @@ $SQL = "CREATE TABLE IF NOT EXISTS `".TABLE_PREFIX."mod_kit_links` ( ".
     "`type` ENUM('DOWNLOAD','UPLOAD','UNDEFINED') NOT NULL DEFAULT 'UNDEFINED', ".
     "`option` ENUM('THROW-AWAY','PERMANENT') NOT NULL DEFAULT 'THROW-AWAY', ".
     "`status` ENUM('ACTIVE','LOCKED','DELETED') NOT NULL DEFAULT 'ACTIVE', ".
+    "`file_url` TEXT NOT NULL, ".
+    "`count` INT(11) NOT NULL DEFAULT '0', ".
     "`last_call` DATETIME NOT NULL DEFAULT '0000-00-00 00:00:00', ".
     "`kit_id` INT(11) NOT NULL DEFAULT '-1', ".
     "`timestamp` TIMESTAMP, ".
@@ -154,7 +158,7 @@ if ($database->is_error()) {
 
 // Prompt Errors
 if (!empty($error)) {
-	$admin->print_error($error);
+  $admin->print_error($error);
 }
 
 ?>
