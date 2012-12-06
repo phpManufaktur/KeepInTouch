@@ -86,6 +86,7 @@ class kitBackend {
   const REQUEST_UPLOAD_OPTION = 'upopt';
   const REQUEST_SPECIAL_CREATE_UPLOAD_LINK = 'scul';
   const REQUEST_SPECIAL_LINK = 'ksl'; // KIT Special Link = KSL
+  const REQUEST_UPLOAD_LINK = 'upl';
 
   const action_default = 'def';
   const action_help = 'hlp';
@@ -199,7 +200,6 @@ class kitBackend {
     if (file_exists(WB_PATH.'/modules/kit_dirlist/info.php')) {
       // check only if kitDirList is installed
       require_once(WB_PATH.'/modules/'.basename(dirname(__FILE__)).'/precheck.php');
-
       if (isset($PRECHECK['KIT']['kit_dirlist'])) {
         $table = TABLE_PREFIX.'addons';
         $version = $database->get_one("SELECT `version` FROM $table WHERE `directory`='kit_dirlist'", MYSQL_ASSOC);
@@ -210,6 +210,21 @@ class kitBackend {
         }
       }
     } // if file_exists()
+
+    if (file_exists(WB_PATH.'/modules/kit_form/info.php')) {
+      // check only if kitform is installed!
+      require_once(WB_PATH.'/modules/'.basename(dirname(__FILE__)).'/precheck.php');
+      if (isset($PRECHECK['KIT']['kit_form'])) {
+        $table = TABLE_PREFIX.'addons';
+        $version = $database->get_one("SELECT `version` FROM $table WHERE `directory`='kit_form'", MYSQL_ASSOC);
+        if (!version_compare($version, $PRECHECK['KIT']['kit_form']['VERSION'], $PRECHECK['KIT']['kit_form']['OPERATOR'])) {
+          $this->setError(sprintf('[%s - %s] %s', __METHOD__, __LINE__,
+              sprintf(kit_error_please_update, 'kitForm', $version, $PRECHECK['KIT']['kit_form']['VERSION'])));
+          return false;
+        }
+      }
+    } // if file_exists()
+
     return true;
   } // checkDependency()
 
@@ -2163,19 +2178,37 @@ class kitBackend {
    * @param integer $id
    * @return string
    */
-  private function getSpecialDlg($id) {
+  private function getSpecialDlg($kit_id) {
     global $database;
+
     // first check if kitForm is installed
     if (!file_exists(WB_PATH.'/modules/kit_form/class.frontend.php')) {
-      return $this->lang->translate('<p>For the special functions kitform must be installed!</p>');
+      return $this->lang->translate('<p>For the special functions <b>kitform<(b> must be installed!</p>');
     }
+
+    // get the primary email address for this contact
+    $SQL = "SELECT `contact_email`, `contact_email_standard` FROM `".TABLE_PREFIX."mod_kit_contact` WHERE `contact_id`='$kit_id'";
+    $query = $database->query($SQL);
+    if ($database->is_error()) {
+      $this->setError(sprintf('[%s - %s] %s', __METHOD__, __LINE__, $database->get_error()));
+      return false;
+    }
+    $contact = $query->fetchRow(MYSQL_ASSOC);
+    $email_array = explode(';', $contact['contact_email']);
+    if (isset($email_array[$contact['contact_email_standard']])) {
+      list($email_type, $email) = explode('|', $email_array[$contact[dbKITcontact::field_email_standard]]);
+    }
+    else {
+      $email = 'undefined@email.tld';
+    }
+
+    // create pages array
     $SQL = "SELECT `page_id`, `link`, `page_title` FROM `".TABLE_PREFIX."pages` ORDER BY `page_title` ASC";
     $query = $database->query($SQL);
     if ($database->is_error()) {
       $this->setError(sprintf('[%s - %s] %s', __METHOD__, __LINE__, $database->get_error()));
       return false;
     }
-    // create pages array
     $pages = array();
     $pages[] = array(
         'id' => -1,
@@ -2190,17 +2223,38 @@ class kitBackend {
           );
     }
     // create option array
-    $options = array();
-    $options[] = array(
+    $upload_options = array();
+    $upload_options[] = array(
         'value' => 'THROW-AWAY',
         'text' => $this->lang->translate('throw-away link')
         );
-    $options[] = array(
+    $upload_options[] = array(
         'value' => 'PERMANENT',
         'text' => $this->lang->translate('permanent link')
         );
 
+    // get the created upload links
+    $SQL = "SELECT * FROM  `".TABLE_PREFIX."mod_kit_links` WHERE `kit_id`='$kit_id' AND `type`='UPLOAD' AND `status`!='DELETED' ORDER BY `timestamp` DESC";
+    $query = $database->query($SQL);
+    if ($database->is_error()) {
+      $this->setError(sprintf('[%s - %s] %s', __METHOD__, __LINE__, $database->get_error()));
+      return false;
+    }
+    // build the links array
+    $upload_links = array();
+    while (false !== ($link = $query->fetchRow(MYSQL_ASSOC))) {
+      $upload_links[$link['id']] = $link;
+      $message_data = array(
+          'link' => array(
+              'url' => $link['url']
+              )
+          );
+      $upload_links[$link['id']]['message'] = rawurlencode($this->getTemplate('special.email.upload.dwoo', $message_data));
+    }
     $data = array(
+        'images' => array(
+            'url' => $this->img_url
+            ),
         'upload_links' => array(
             'pages' => array(
                 'name' => self::REQUEST_UPLOAD_PAGE_ID,
@@ -2210,11 +2264,17 @@ class kitBackend {
             'option' => array(
                 'name' => self::REQUEST_UPLOAD_OPTION,
                 'value' => -1,
-                'items' => $options
+                'items' => $upload_options
                 ),
             'create_link' => array(
                 'name' => self::REQUEST_SPECIAL_CREATE_UPLOAD_LINK
-                )
+                ),
+            'links' => array(
+                'email' => $email,
+                'name' => self::REQUEST_UPLOAD_LINK,
+                'count' => count($upload_links),
+                'items' => $upload_links
+                ),
             )
         );
     return $this->getTemplate('special.dwoo', $data);
@@ -2232,7 +2292,7 @@ class kitBackend {
     global $database;
 
     if (isset($_REQUEST[self::REQUEST_SPECIAL_CREATE_UPLOAD_LINK])) {
-      // create a download link
+      // create a upload link
       if (!isset($_REQUEST[self::REQUEST_UPLOAD_PAGE_ID]) || ($_REQUEST[self::REQUEST_UPLOAD_PAGE_ID] < 1)) {
         $message .= $this->lang->translate('<p>Please select a page with a kitForm Upload script!</p>');
         return false;
@@ -2268,7 +2328,20 @@ class kitBackend {
       }
       $message .= $this->lang->translate('<p>The upload link was created, please check at the special functions!</p>');
     }
-  }
+    if (isset($_REQUEST[self::REQUEST_UPLOAD_LINK])) {
+      // delete one or more upload links
+      $delete = $_REQUEST[self::REQUEST_UPLOAD_LINK];
+      foreach ($delete as $link_guid) {
+        $SQL = "UPDATE `".TABLE_PREFIX."mod_kit_links` SET `status`='DELETED' WHERE `guid`='$link_guid'";
+        $database->query($SQL);
+        if ($database->is_error()) {
+          $this->setError(sprintf('[%s - %s] %s', __METHOD__, __LINE__, $database->get_error()));
+          return false;
+        }
+        $message .= $this->lang->translate('<p>The link with the GUID <b>{{ guid }}</b> was deleted.</p>', array('guid' => $link_guid));
+      }
+    }
+  } // checkSpecialDlg()
 
   private function getKeyIndexOfValue($array = array(), $item) {
     foreach ($array as $key => $value) {

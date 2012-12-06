@@ -44,7 +44,8 @@ $PRECHECK['PHP_VERSION'] = array(
 
 // check dependencies for KIT at runtime but not at installation!
 $PRECHECK['KIT'] = array(
-    'kit_dirlist' => array('VERSION' => '0.28', 'OPERATOR' => '>=')
+    'kit_dirlist' => array('VERSION' => '0.28', 'OPERATOR' => '>='),
+    'kit_form' => array('VERSION' => '0.40', 'OPERATOR' => '>=')
 );
 
 // modified precheck array
@@ -132,39 +133,3 @@ if (!$checked) {
       'STATUS' => false
   );
 }
-
-
-/*
-// Checking Requirements
-if (defined('LEPTON_VERSION')) {
-	// LEPTON
-	require_once WB_PATH.'/framework/addon.precheck.inc.php';
-	$PRECHECK['PHP_VERSION'] = array('VERSION' => '5.2.0', 'OPERATOR' => '>=');
-	$PRECHECK['WB_ADDONS']['dbconnect_le'] = array('VERSION' => '0.69', 'OPERATOR' => '>=');
-	if (versionCompare(LEPTON_VERSION, '2.0.0', '<')) {
-		$PRECHECK['WB_ADDONS']['dwoo'] = array('VERSION' => '0.13', 'OPERATOR' => '>=');
-	}
-}
-else {
-	// WebsiteBaker
-	$PRECHECK['PHP_VERSION'] = array('VERSION' => '5.2.0', 'OPERATOR' => '>=');
-	$PRECHECK['WB_ADDONS'] = array(
-		'dbconnect_le'	=> array('VERSION' => '0.69', 'OPERATOR' => '>='),
-		'dwoo' => array('VERSION' => '0.13', 'OPERATOR' => '>=')
-	);
-}
-
-// SPECIAL: check dependency at runtime but not at installation!
-$PRECHECK['KIT']['kit_dirlist'] = array('VERSION' => '0.28', 'OPERATOR' => '>=');
-
-global $database;
-$sql = "SELECT * FROM ".TABLE_PREFIX."settings WHERE name='default_charset'";
-$result = $database->query($sql);
-if ($result) {
-	$data = $result->fetchRow();
-	($data['value'] == 'utf-8') ? $status = true : $status = false;
-	$PRECHECK['CUSTOM_CHECKS']['Default Charset'] = array('REQUIRED' => 'utf-8', 'ACTUAL' => $data['value'], 'STATUS' => $status);
-}
-
-
-?> */

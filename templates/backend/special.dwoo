@@ -6,7 +6,7 @@
  * @copyright 2010 - 2012
  * @license MIT License (MIT) http://www.opensource.org/licenses/MIT
  *}
-<div class="kit_contact_special">
+<div class="kit_contact_special"> 
   <fieldset clss="fs_special_upload">
     <legend>{translate('File Upload')}</legend>
     <div class="kccl_help">
@@ -32,7 +32,44 @@
     <div class="kc_clear"></div>
     <div class="kccl_label">&nbsp;</div>
     <div class="kccl_value">
-      <input type="checkbox" name="{$upload_links.create_link.name}" value="1" /> {translate('Create upload link')}
+      <input type="checkbox" name="{$upload_links.create_link.name}" value="1" />&nbsp;{translate('Create upload link')}&nbsp;&nbsp;<input type="submit" value="{translate('Create')}" />
     </div>
+    <div class="kc_clear"></div>
+    {if $upload_links.links.count > 0}
+      <!--<div class="kccl_label">&nbsp;</div>-->
+      <div>
+        <table style="width:90%;">
+          <thead>
+            <tr>
+              <th>{translate('Mail')}</th>
+              <th>{translate('GUID')}</th>
+              <th>{translate('Created')}</th>
+              <th>{translate('Type')}</th>
+              <th>{translate('Option')}</th>
+              <th>{translate('Status')}</th>
+              <th>{translate('Downloads')}</th>
+              <th>{translate('Timestamp')}</th>
+              <th>{translate('Delete')}</th>
+            </tr>
+          </thead>
+          <tbody>
+            {foreach $upload_links.links.items link}
+            <tr>
+              <td><a href="mailto:{$upload_links.links.email}&subject={translate('Upload Link')}&body={$link.message}"><img src="{$images.url}/email-icon-black-13x10.png" width="13" height="10" /></a></td>
+              <td><a href="{$link.url}" target="_blank">{$link.guid}</a></td>
+              <td>{date_format $link.timestamp "%d.%m.%Y - %H:%M"}</td>
+              <td>{translate($link.type)}</td>
+              <td>{translate($link.option)}</td>
+              <td>{translate($link.status)}</td>
+              <td>{$link.count}</td>
+              <td>{date_format $link.last_call "%d.%m.%Y - %H:%M"}</td>
+              <td><input type="checkbox" name="{$upload_links.links.name}[]" value="{$link.guid}"/></td>
+            </tr>
+            {/foreach}
+          </tbody>
+        </table>
+      </div>
+      <div class="kc_clear"></div>
+    {/if}
   </fieldset>
 </div>

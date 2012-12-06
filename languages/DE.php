@@ -53,6 +53,8 @@ $LANG = array(
       => 'Titel',
     'academicNone'
       => '',
+    'ACTIVE'
+      => 'Aktiv',
     'Additional'
       => 'Zusatz',
     'Addresses'
@@ -91,8 +93,18 @@ $LANG = array(
       => 'Kontakt Status',
     'Contact type'
       => 'Kontakt Typ',
+    'Create'
+      => 'Erstellen',
     'Create download link'
       => 'Download Link erzeugen',
+    'Create upload link'
+      => 'Upload Link erzeugen',
+    'Created'
+      => 'Angelegt',
+    'Delete'
+      => 'Löschen',
+    'DELETED'
+      => 'Gelöscht',
     'Department'
       => 'Abteilung',
     'Distribution'
@@ -101,8 +113,8 @@ $LANG = array(
       => 'Datenübertragung',
     'First name'
       => 'Vorname',
-    '<p>For the special functions kitform must be installed!</p>'
-      => '<p><em>- Für die speziellen Funktionen wird kitForm benötigt! -</em></p>',
+    '<p>For the special functions <b>kitform</b> must be installed!</p>'
+      => '<p><em>- Für die speziellen Funktionen wird <b>kitForm</b> benötigt! -</em></p>',
     'Function'
       => 'Funktion',
     'Information'
@@ -169,10 +181,14 @@ $LANG = array(
       => 'PLZ',
     'Last name'
       => 'Nachname',
+    'LOCKED'
+      => 'Gesperrt',
     'Map'
       => 'Karte',
     'Notes'
       => 'Notizen',
+    'PERMANENT'
+      => 'Permanent',
     'permanent link'
       => 'Permanent-Link',
     'Person'
@@ -199,12 +215,22 @@ $LANG = array(
       => 'Gelöscht',
     'Street'
       => 'Straße',
+    '<p>The link with the GUID <b>{{ guid }}</b> was deleted.</p>'
+      => '<p>Der Link mit der GUID <b>{{ guid }}</b> wurde gelöscht!</p>',
     '<p>The upload link was created, please check at the special functions!</p>'
       => '<p>Der Upload Link wurde erzeugt, bitte prüfen Sie den Link bei den <em>Speziellen Funktionen</em></p>',
+    'Timestamp'
+      => 'Letzter Aufruf',
     'Title'
       => 'Anrede',
+    'THROW-AWAY'
+      => 'Einweg',
     'throw-away link'
       => 'Wegwerf-Link',
+    'Type'
+      => 'Typ',
+    'UPLOAD'
+      => 'Upload',
     'ZIP, City'
       => 'PLZ, Stadt',
     );
