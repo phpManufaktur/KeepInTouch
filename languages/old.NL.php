@@ -32,8 +32,8 @@ else {
 // end include class.secure.php
 
 if ('á' != "\xc3\xa1") {
-	// important: language files must be saved as UTF-8 (without BOM)
-	trigger_error('The language file <b>'.basename(__FILE__).'</b> is damaged, it must be saved <b>UTF-8</b> encoded!', E_USER_ERROR);
+  // important: language files must be saved as UTF-8 (without BOM)
+  trigger_error('The language file <b>'.basename(__FILE__).'</b> is damaged, it must be saved <b>UTF-8</b> encoded!', E_USER_ERROR);
 }
 
 define('kit_btn_abort', 'Afbreken');
@@ -166,6 +166,7 @@ define('kit_desc_cfg_register_dlg', 'Dialoogvenster dat wordt aangeroepen wannee
 define('kit_desc_cfg_register_dlg_unsubscribe', 'Dialoogvenster dat wordt aangeroepen wanneer een abonnement zich wil uitschrijven voor een nieuwsbrief of meerdere nieuwsbrieven');
 define('kit_desc_cfg_session_id', 'ID voor de unieke identificatie van de sessie variabelen die worden gebruikt door KeepInTouch.');
 define('kit_desc_cfg_sort_contact_list', 'Voorkeur voor het sorteren van de lijst met contactpersonen: 0 = ongesorteerd, 1 = E-mail ... 3 = achternaam - de mogelijke cijfers worden weergegeven in de keuzelijst voor het sorteren.');
+define('kit_desc_cfg_special_links_download_directories', 'Sie können zusätzlich zu dem persönlichen Verzeichnis des Kontakt in /media/kit_protected weitere Verzeichnisse unterhalb von /media/kit_protected angeben, die in der Auswahlliste für Downloads in den <i>speziellen Funktionen</i> angezeigt werden.<br />Geben Sie das Unterverzeichnis an und fügen Sie weitere Verzeichnisse durch ein Komma getrennt an.');
 define('kit_desc_cfg_use_captcha', 'Beslis of de diaglogen gebruik maken van de Frontend CAPTCHA spam bescherming ');
 define('kit_desc_cfg_use_custom_files', 'Indien ingesteld, kunt u gebruik maken van op maat gemaakte templates en taal bestanden. De bestanden beginnen met "custom", bijvoorbeeld "Custom.NL.php", deze bestanden worden niet overschreven tijdens een update.');
 define('kit_desc_cfg_use_ssl', 'Falls gesetzt verwendet KIT, sofern möglich, Secure Sockets Layer (SSL) für den Aufruf von URL\'s (HTTPS://).');
@@ -345,6 +346,7 @@ define('kit_label_cfg_register_dlg', 'Gebruikers, Registratie');
 define('kit_label_cfg_register_dlg_unsubscribe', 'Gebruiker, Nieuwsbrief afmelding');
 define('kit_label_cfg_session_id', 'Sessie ID');
 define('kit_label_cfg_sort_contact_list', 'Contact lijst sorteren');
+define('kit_label_cfg_special_links_download_directories', 'Downloadverzeichnisse');
 define('kit_label_cfg_temp_dir', 'Tijdelijke directory');
 define('kit_label_cfg_use_captcha', 'CAPTCHA gebruiken');
 define('kit_label_cfg_use_custom_files', 'Aangepaste gegevensbestanden gebruiken');

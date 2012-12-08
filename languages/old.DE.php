@@ -32,8 +32,8 @@ else {
 // end include class.secure.php
 
 if ('á' != "\xc3\xa1") {
-	// important: language files must be saved as UTF-8 (without BOM)
-	trigger_error('The language file <b>'.basename(__FILE__).'</b> is damaged, it must be saved <b>UTF-8</b> encoded!', E_USER_ERROR);
+  // important: language files must be saved as UTF-8 (without BOM)
+  trigger_error('The language file <b>'.basename(__FILE__).'</b> is damaged, it must be saved <b>UTF-8</b> encoded!', E_USER_ERROR);
 }
 
 define('kit_btn_abort', 'Abbruch');
@@ -166,6 +166,7 @@ define('kit_desc_cfg_register_dlg', 'Dialog, der aufgerufen wird, wenn sich Besu
 define('kit_desc_cfg_register_dlg_unsubscribe', 'Dialog, der aufgerufen wird, wenn sich ein Abonnent von einem Newsletter oder mehreren Newslettern abmelden möchte');
 define('kit_desc_cfg_session_id', 'ID zur eindeutigen Kennzeichnung von Session Variablen die durch KeepInTouch verwendet werden.');
 define('kit_desc_cfg_sort_contact_list', 'Voreinstellung für die Sortierung der Kontakt Liste: 0=unsortiert, 1=E-Mail ... 3=Nachname - die möglichen Ziffern werden in der Dropdown Liste für die Sortierung angezeigt.');
+define('kit_desc_cfg_special_links_download_directories', 'Sie können zusätzlich zu dem persönlichen Verzeichnis des Kontakt in /media/kit_protected weitere Verzeichnisse unterhalb von /media/kit_protected angeben, die in der Auswahlliste für Downloads in den <i>speziellen Funktionen</i> angezeigt werden.<br />Geben Sie das Unterverzeichnis an und fügen Sie weitere Verzeichnisse durch ein Komma getrennt an.');
 define('kit_desc_cfg_use_captcha', 'Legen Sie fest, ob die Dialoge im Frontend CAPTCHA zum Schutz vor Spam verwenden sollen');
 define('kit_desc_cfg_use_custom_files', 'Falls gesetzt, können Sie individuell angepasste Templates und Sprachdateien verwenden. Den Dateien wird "custom." vorangestellt, z.B. "custom.DE.php", diese Dateien werden bei einem Update nicht überschrieben.');
 define('kit_desc_cfg_use_ssl', 'Falls gesetzt verwendet KIT, sofern möglich, Secure Sockets Layer (SSL) für den Aufruf von URL\'s (HTTPS://).');
@@ -345,6 +346,7 @@ define('kit_label_cfg_register_dlg', 'Benutzer, Registrierung');
 define('kit_label_cfg_register_dlg_unsubscribe', 'Benutzer, Newsletter Abmeldung');
 define('kit_label_cfg_session_id', 'Session Kennung');
 define('kit_label_cfg_sort_contact_list', 'Kontakt Liste sortieren');
+define('kit_label_cfg_special_links_download_directories', 'Downloadverzeichnisse');
 define('kit_label_cfg_temp_dir', 'Temporäres Verzeichnis');
 define('kit_label_cfg_use_captcha', 'CAPTCHA verwenden');
 define('kit_label_cfg_use_custom_files', 'Angepasste Dateien zulassen');

@@ -3,18 +3,23 @@
 Ralf Hertsch, Stockholmer Str. 31, 13359 Berlin (Germany)
 http://phpManufaktur.de - ralf.hertsch@phpManufaktur.de
 
-Release 0.63 - JUST IN PROGRESS
+Release 0.64 - 08.12.2012
+
+* added field kit_contact_language to the KIT interface output array
+* added KIT special functions to enable the contacts to upload and download
+  files directly to and from the protected directories below /media/kit_protected
+
+Release 0.63 - 18.10.2012
 
 * fixed a problem getting a not existing email address in class.interface.php
-* added field kit_contact_language to the KIT interface output array
 
 Release 0.62 - 05.10.2012
 
 * added ability to change the table prefix easy via config.json, please read
   <http://yals.de/OQRv0Y> for more informations
-* added free fields and free notes to the contact array returned by the 
+* added free fields and free notes to the contact array returned by the
   class.interface.php
-* changed implementation of the Dwoo Template Engine  
+* changed implementation of the Dwoo Template Engine
 * changed contact list: add any field in any order, sort, filter and search
   all contacts, copy to clipboard, export as CSV or tabbed CSV fo Excel, create
   a PDF or print the table.
@@ -34,9 +39,9 @@ Release 0.59 - 2012-06-13
 
 * Changed order of initialisation in class.newsletter.cfg.php, class.config.php,
   class.newsletter.php and class.contact.php (PHP 5.3.x compatibility)
-* marked showOSMmap() as deprecated, Google Maps v2 are no longer supported 
+* marked showOSMmap() as deprecated, Google Maps v2 are no longer supported
 * changed extending of class PHPMailer for usage with WebsiteBaker 2.8.3
-* added some additional checks and remarks 
+* added some additional checks and remarks
 
 Release 0.58 - 2012-06-07
 
@@ -58,42 +63,42 @@ Release 0.56 - 2012-05-09
 
 * fixed - uninstall calls the no longer existing class.dialogs.php
 * added - LEPTON I18n language support
-* moved - the old static languages files are renamed to old.* and still in use, 
+* moved - the old static languages files are renamed to old.* and still in use,
   they will be obsolete step by step with the next KIT releases
 
 Release 0.55 - 2012-02-29
 
-* added - KIT option cfgNewsletterAccountInfo enables to switch on/off the 
+* added - KIT option cfgNewsletterAccountInfo enables to switch on/off the
   account information for the user.
 
 Release 0.54 - 2012-02-19
 
 * added - language table (ISO 639-1) for prefered languages
 * added - field "contact language" in KIT contact dialog
-* added - field "kit_contact_language" in KIT interface 
+* added - field "kit_contact_language" in KIT interface
 * added - KIT options cfgContactLanguageDefault and cfgContactLanguageSelect
-* added - KIT option cfgNewsletterLanguageMarkers enables to define language 
+* added - KIT option cfgNewsletterLanguageMarkers enables to define language
   depending newsletters
 
 Release 0.53 - 2012-02-14
 
 * removed - frontend.css is no longer needed
-* changed - introduce $_SESSION['KIT_HTML_REQUEST'] to mark fields which should 
+* changed - introduce $_SESSION['KIT_HTML_REQUEST'] to mark fields which should
   not processed by xssPrevent()
 * added - check the language files for correct UTF-8 encoding
 
 Release 0.52 - 2012-02-04
 
 * added - Country support for the KIT interface
-* fixed - problem inserting and updating addresses, KIT interface sets wrong 
+* fixed - problem inserting and updating addresses, KIT interface sets wrong
   defaults
 * added - Birthday date support for the KIT interface
 
 Release 0.51 - 2012-02-02
 
 * changed - reply-to handling in class.mail.php
-* added - switch for email provider to enable relaying. If relaying is disabled, 
-  KIT will use a reply-to header instead. 
+* added - switch for email provider to enable relaying. If relaying is disabled,
+  KIT will use a reply-to header instead.
 
 Release 0.50 - 2011-12-22
 
@@ -107,58 +112,58 @@ Release 0.49 - 2011-12-17
 Release 0.48 - 2011-12-07
 
 * changed - some typos in class.interface.php
-* added - KIT framework for cross compatibillity to kitDirList 
-* added - kdl.php (from kitDirList) enables KIT to link to uploaded files from 
+* added - KIT framework for cross compatibillity to kitDirList
+* added - kdl.php (from kitDirList) enables KIT to link to uploaded files from
   the user account log
-* added - option clear compile directories enables to reset the precompiled Dwoo 
+* added - option clear compile directories enables to reset the precompiled Dwoo
   templates and force a rewrite of the templates
 
 Release 0.47 - 2011-11-18
 
-* added - edting contacts allows now access to the kitRegistry data - to view 
-  the date registered, confirmed registration, registration key, failed logins, 
-  lock and unlock user, set user to active if registration fail, set new 
-  passwords a.s.o. 
+* added - edting contacts allows now access to the kitRegistry data - to view
+  the date registered, confirmed registration, registration key, failed logins,
+  lock and unlock user, set user to active if registration fail, set new
+  passwords a.s.o.
 
 Release 0.46 - 2011-11-14
 
 * fixed - avoid duplicate declaration of class kitMail (only WebsiteBaker)
-* fixed - uninstall.php tried to delete no longer existing dialogs register 
+* fixed - uninstall.php tried to delete no longer existing dialogs register
   class
 * fixed - KIT does not perform a check for logical errors in salutation strings
-* added - getAdmins() in class.interface.php returns the primary e-mail 
+* added - getAdmins() in class.interface.php returns the primary e-mail
   addresses of the defined KIT administrators
 * added - set default timezone in class dbKITcfg
 * extended - cronjob.php search for additional jobs of kitIdea
 
 Release 0.45 - 2011-10-11
 
-* fixed - parseCommands() in class.newsletter.php tried to call the no longer 
+* fixed - parseCommands() in class.newsletter.php tried to call the no longer
   existing function getUnsubscribeLink()
 
 Release 0.44 - 2011-10-03
 
-* changed - KeepInTouch no longer use the internal dialogs for subscribing and 
-  unsubscribing for newsletter or for the access to the KIT account - use the 
+* changed - KeepInTouch no longer use the internal dialogs for subscribing and
+  unsubscribing for newsletter or for the access to the KIT account - use the
   more powerful and flexible dialogs of the KIT extension kitForm instead!
 * removed - class.dialogs.php and complete directory /dialogs
-* removed - class.request.php, class.response.php, kit.php, class.droplets.php 
+* removed - class.request.php, class.response.php, kit.php, class.droplets.php
   and complete directory /droplets
-* changed - preview method for viewing newsletter templates and the newsletter 
+* changed - preview method for viewing newsletter templates and the newsletter
   themselves (no longer use kit.php)
-* added - support for english language /languages/EN.php - many thanks to 
+* added - support for english language /languages/EN.php - many thanks to
   skywriter for translation!
-* removed - directory /languages/unsupported with no longer supported language 
-  files 
-* removed - language depending about dialogs in /languages, using the language 
+* removed - directory /languages/unsupported with no longer supported language
+  files
+* removed - language depending about dialogs in /languages, using the language
   independend /htt/backend.about.htt instead
-* extended - class.interface.php now also support the login with LEPTON user 
-  account and automatically switching to the KIT account (needed by some KIT 
+* extended - class.interface.php now also support the login with LEPTON user
+  account and automatically switching to the KIT account (needed by some KIT
   extensions)
 * fixed - some smaller bugs and problems in class.interface.php
-* fixed - the javascript methods of select filter in contact list, select 
-  previous newsletter in create newsletter, select template in create template 
-  and select service provider in service provider must be adapted to LEPTON's 
+* fixed - the javascript methods of select filter in contact list, select
+  previous newsletter in create newsletter, select template in create template
+  and select service provider in service provider must be adapted to LEPTON's
   CSFR prevention method
 
 Release 0.43 - 2011-08-29
@@ -167,7 +172,7 @@ Release 0.43 - 2011-08-29
 
 Release 0.42 - 2011-08-12
 
-* fixed - class.interface.php - improper data check and incomplete contact 
+* fixed - class.interface.php - improper data check and incomplete contact
   update on subscribe/unsubscribe newsletter
 
 Release 0.41 - 2011-07-21
@@ -187,7 +192,7 @@ Release 0.39
 
 Release 0.38 - 2011-05-20
 
-* fixed - class.interface.php - getting contact returns invalid values for 
+* fixed - class.interface.php - getting contact returns invalid values for
   kit_newsletter and kit_title
 
 Release 0.37 - 2011-05-12
@@ -207,32 +212,32 @@ Release 0.35 - 2011-03-15
 
 Release 0.34 - 2011-03-13
 
-* fixed - when deleting a contact a new entry in dbKITregister will be added 
+* fixed - when deleting a contact a new entry in dbKITregister will be added
   (security leak)
 * added - KIT Admins can be defined at the configuration dialog
 
 Release 0.33 - 2011-03-09
 
-* fixed - class.config.php may be initialized too late if class.contact.php is 
+* fixed - class.config.php may be initialized too late if class.contact.php is
   called directly
 
 Release 0.32 - 2011-03-09
 
 * added - link for Google Maps API Key at the configuration dialog
 * fixed - problem checking empty e-mail fields in class.contact.php
-* changed - language files for EN and NO are no longer supported because they 
+* changed - language files for EN and NO are no longer supported because they
   are outdated since a couple of releases!
-* fixed - changing the status of dbKITcontact was not looped through 
+* fixed - changing the status of dbKITcontact was not looped through
   dbKITregister and caused an error processing newsletters
-* added - now you can redirect from login dialog with $_SESSION['KIT_REDIRECT'] 
-  to any URL 
+* added - now you can redirect from login dialog with $_SESSION['KIT_REDIRECT']
+  to any URL
 * added - connection between WB USERS and KIT
 
 Release 0.31 - 2011-01-30
 
 * added - option for config the default sorting of the contact list
 * added - additional filters for sorting the contact list
-* added - splitting the contact list in multiple pages, size of pages can be 
+* added - splitting the contact list in multiple pages, size of pages can be
   set by options
 
 Release 0.30 - 2011-01-19
@@ -243,20 +248,20 @@ Release 0.30 - 2011-01-19
 * fixed - changing provider has not changed smtp access
 * changed - processing group mail is now using bcc for sending, but logging #
   each email
-* changed - kitCommand {$newsletter_unsubscribe} now generate an individual link 
+* changed - kitCommand {$newsletter_unsubscribe} now generate an individual link
   for easy unsubscribing
-* added - dialog_unsubscribe for easy unsubscribing from newsletter and/or 
-  distribution lists 
+* added - dialog_unsubscribe for easy unsubscribing from newsletter and/or
+  distribution lists
 
 Release 0.29 - 2010-11-28
 
-* changed - import addresses from massmail now into a KIT newsletter group and 
+* changed - import addresses from massmail now into a KIT newsletter group and
   no longer into a KIT category
-* fixed - problem in Newsletter HTML Preview with special chars within the 
-  template 
+* fixed - problem in Newsletter HTML Preview with special chars within the
+  template
 * fixed - switching between Preview and Editing Newsletter disturb HTML code
-* changed - after creating a newsletter the dialog now redirect to the list of 
-  active cronjobs 
+* changed - after creating a newsletter the dialog now redirect to the list of
+  active cronjobs
 * added - distribution lists may be defined and will be send beside newsletter
 * fixed - wrong response string in dialog_newsletter when key already send
 * fixed - using undefined $_SERVER variable in class.service.php
@@ -282,13 +287,13 @@ Release 0.26 - 2010-11-18
 
 Release 0.25 - 2010-11-18
 
-* added - switch for check and update of associated tables when sending 
+* added - switch for check and update of associated tables when sending
   newsletters
 * added - switch for simulation of newsletter sending
 
 Release 0.24 - 2010-11-18
 
-* added - automated check and update of associated tables when sending 
+* added - automated check and update of associated tables when sending
   newsletters
 
 Release 0.23 - 2010-11-17
@@ -296,7 +301,7 @@ Release 0.23 - 2010-11-17
 * changed - getContactByID() can now also search for deleted records
 * added - Newsletter can now send with specified items
 * added - Newsletter is logging success and failures on sending
- 
+
 Release 0.22 - 2010-10-16
 
 * bugfix - access to old database connector functions in upgrade.php
@@ -304,7 +309,7 @@ Release 0.22 - 2010-10-16
 Release 0.21 - 2010-10-16
 
 * changed - database connector to dbConnectLE
-* bugfix - checking optional TAB's  
+* bugfix - checking optional TAB's
 * added - additional address types for delivery and p.o. boxes
 
 Release 0.20 - 2010-09-28
@@ -330,7 +335,7 @@ Release 0.16 - 2010-05-31
 
 Release 0.15 - 2010-05-27
 
-* bugfix - error checking changed phone or cell phone 
+* bugfix - error checking changed phone or cell phone
 * enabled - requesting for multilanguage websites
 
 Release 0.14 - 2010-05-26
@@ -346,7 +351,7 @@ Release 0.13 - 2010-05-24
 * added - Frontend Userinterface
 * added - Dialogs Interface
 * added - Newsletter: Subscribe, Change, Unsubscribe
-* added - Droplet for Newsletter Dialog 
+* added - Droplet for Newsletter Dialog
 
 Release 0.12 - 2010-03-21
 

@@ -60,16 +60,16 @@ class dbKITcfg extends dbConnectLE {
     const type_url = 8;
 
     public $type_array = array(
-    		self::type_undefined => '-UNDEFINED-',
+        self::type_undefined => '-UNDEFINED-',
         self::type_array => 'ARRAY',
-    		self::type_boolean => 'BOOLEAN',
+        self::type_boolean => 'BOOLEAN',
         self::type_email => 'E-MAIL',
-    		self::type_float => 'FLOAT',
+        self::type_float => 'FLOAT',
         self::type_integer => 'INTEGER',
-    		self::type_path => 'PATH',
+        self::type_path => 'PATH',
         self::type_string => 'STRING',
-    		self::type_url => 'URL'
-    		);
+        self::type_url => 'URL'
+        );
 
     private $createTables = false;
     private $message = '';
@@ -98,6 +98,7 @@ class dbKITcfg extends dbConnectLE {
     const cfgGMapStaticZoom = 'cfgGMapStaticZoom';
     const cfgGMapStaticMarkerColor = 'cfgGMapStaticMarkerColor';
     const cfgContactListColumns = 'cfgContactListColumns';
+    const cfgSpecialLinksDownlodDirectories = 'cfgSLDownlodDirectories';
 
     public $config_array = array(
         array(
@@ -170,27 +171,27 @@ class dbKITcfg extends dbConnectLE {
             '',
             'kit_desc_cfg_additional_notes'
             ),
-    		array(
-    				'kit_label_cfg_contact_language_default',
-    				self::cfgContactLanguageDefault,
-    				self::type_string,
-    				'de',
-    				'kit_desc_cfg_contact_language_default'
-    				),
-    		array(
-    				'kit_label_cfg_contact_language_select',
-    				self::cfgContactLanguageSelect,
-    				self::type_string,
-    				'locale',
-    				'kit_desc_cfg_contact_language_select'
-    				),
-    		array(
-    				'kit_label_cfg_newsletter_language_marker',
-    				self::cfgNewsletterLanguageMarkers,
-    				self::type_boolean,
-    				'1',
-    				'kit_desc_cfg_newsletter_language_marker'
-    				),
+        array(
+            'kit_label_cfg_contact_language_default',
+            self::cfgContactLanguageDefault,
+            self::type_string,
+            'de',
+            'kit_desc_cfg_contact_language_default'
+            ),
+        array(
+            'kit_label_cfg_contact_language_select',
+            self::cfgContactLanguageSelect,
+            self::type_string,
+            'locale',
+            'kit_desc_cfg_contact_language_select'
+            ),
+        array(
+            'kit_label_cfg_newsletter_language_marker',
+            self::cfgNewsletterLanguageMarkers,
+            self::type_boolean,
+            '1',
+            'kit_desc_cfg_newsletter_language_marker'
+            ),
         array(
             'kit_label_cfg_newsletter_account_info',
             self::cfgNewsletterAccountInfo,
@@ -245,7 +246,15 @@ class dbKITcfg extends dbConnectLE {
             self::cfgContactListColumns,
             self::type_array,
             'kit_id,kit_last_name,kit_first_name,kit_email,kit_phone,kit_status,kit_newsletter',
-            'kit_desc_cfg_contact_list_columns'            )
+            'kit_desc_cfg_contact_list_columns'
+            ),
+        array(
+            'kit_label_cfg_special_links_download_directories',
+            self::cfgSpecialLinksDownlodDirectories,
+            self::type_array,
+            '',
+            'kit_desc_cfg_special_links_download_directories'
+            )
         );
 
     protected static $config_file = 'config.json';

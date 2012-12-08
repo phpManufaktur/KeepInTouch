@@ -282,8 +282,13 @@ input[name=nl_sft]
 img[name=cal_img_2] {
   margin: 0 10px 0 0;
 }
+select[name=dlf],
+select[name=dlopt],
 select[name=uppid],
-select[name=upopt], 
+select[name=upopt] {
+  width:400px;
+  margin: 0 0 0 5px;
+} 
 select[name=sub],
 select[name=protocol_type] {
   width:250px;

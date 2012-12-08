@@ -79,7 +79,7 @@ class kitBackend {
   const request_limit_start = 'lims';
   const request_limit_end = 'lime';
   const request_page = 'pg';
-  const REQUEST_DOWNLOAD_PAGE_ID = 'dlpid';
+  const REQUEST_DOWNLOAD_FILE = 'dlf';
   const REQUEST_DOWNLOAD_OPTION = 'dlopt';
   const REQUEST_SPECIAL_CREATE_DOWNLOAD_LINK = 'scdl';
   const REQUEST_UPLOAD_PAGE_ID = 'uppid';
@@ -87,6 +87,7 @@ class kitBackend {
   const REQUEST_SPECIAL_CREATE_UPLOAD_LINK = 'scul';
   const REQUEST_SPECIAL_LINK = 'ksl'; // KIT Special Link = KSL
   const REQUEST_UPLOAD_LINK = 'upl';
+  const REQUEST_DOWNLOAD_LINK = 'dll';
 
   const action_default = 'def';
   const action_help = 'hlp';
@@ -2173,6 +2174,40 @@ class kitBackend {
   } // dlgContact()
 
   /**
+   * Iterate directory tree very efficient
+   * Function postet from donovan.pp@gmail.com at
+   * http://www.php.net/manual/de/function.scandir.php
+   *
+   * @param STR $dir
+   * @return ARRAY - directoryTree
+   */
+  public function directoryTree($dir) {
+    if (substr($dir,-1) == "/") $dir = substr($dir,0,-1);
+    $path = array();
+    $stack = array();
+    $stack[] = $dir;
+    while ($stack) {
+      $thisdir = array_pop($stack);
+      if (false !== ($dircont = scandir($thisdir))) {
+        $i=0;
+        while (isset($dircont[$i])) {
+          if ($dircont[$i] !== '.' && $dircont[$i] !== '..') {
+            $current_file = "{$thisdir}/{$dircont[$i]}";
+            if (is_file($current_file)) {
+              $path[] = "{$thisdir}/{$dircont[$i]}";
+            }
+            elseif (is_dir($current_file)) {
+              $stack[] = $current_file;
+            }
+          }
+          $i++;
+        }
+      }
+    }
+    return $path;
+  } // directoryTree()
+
+  /**
    * Special functions for the KIT Contact Dialog
    *
    * @param integer $id
@@ -2180,6 +2215,7 @@ class kitBackend {
    */
   private function getSpecialDlg($kit_id) {
     global $database;
+    global $dbCfg;
 
     // first check if kitForm is installed
     if (!file_exists(WB_PATH.'/modules/kit_form/class.frontend.php')) {
@@ -2210,11 +2246,6 @@ class kitBackend {
       return false;
     }
     $pages = array();
-    $pages[] = array(
-        'id' => -1,
-        'title' => $this->lang->translate('- please select -'),
-        'link' => ''
-        );
     while (false !== ($page = $query->fetchRow(MYSQL_ASSOC))) {
       $pages[$page['page_id']] = array(
           'id' => $page['page_id'],
@@ -2251,6 +2282,64 @@ class kitBackend {
           );
       $upload_links[$link['id']]['message'] = rawurlencode($this->getTemplate('special.email.upload.dwoo', $message_data));
     }
+
+    // download links
+    $download_directories = array();
+    $directories = $dbCfg->getValue(dbKITcfg::cfgSpecialLinksDownlodDirectories);
+
+    foreach ($directories as $directory) {
+      $download_directories[] = array(
+          'type' => 'GLOBAL',
+          'directory' => $directory,
+          'path' => WB_PATH.MEDIA_DIRECTORY.'/kit_protected/'.$directory
+          );
+    }
+    $download_directories[] = array(
+        'type' => 'ADMIN',
+        'directory' => 'contacts/'.$email[0]."/$email/admin",
+        'path' => WB_PATH.MEDIA_DIRECTORY.'/kit_protected/contacts/'.$email[0]."/$email/admin"
+        );
+    $download_directories[] = array(
+        'type' => 'USER',
+        'directory' => 'contacts/'.$email[0]."/$email/user",
+        'path' => WB_PATH.MEDIA_DIRECTORY.'/kit_protected/contacts/'.$email[0]."/$email/user"
+    );
+
+    $download_files = array();
+    foreach ($download_directories as $directory) {
+      if (file_exists($directory['path'])) {
+          $add_files = $this->directoryTree($directory['path']);
+          foreach ($add_files as $file) {
+            $url = WB_URL.substr($file, strlen(WB_PATH));
+            $download_files[] = array(
+                'url' => $url,
+                'path' => $file,
+                'type' => $directory['type'],
+                'file' => substr($file, strlen($directory['path']))
+                );
+          }
+      }
+    }
+
+    // get the created download links
+    $SQL = "SELECT * FROM  `".TABLE_PREFIX."mod_kit_links` WHERE `kit_id`='$kit_id' AND `type`='DOWNLOAD' AND `status`!='DELETED' ORDER BY `timestamp` DESC";
+    $query = $database->query($SQL);
+    if ($database->is_error()) {
+      $this->setError(sprintf('[%s - %s] %s', __METHOD__, __LINE__, $database->get_error()));
+      return false;
+    }
+    // build the links array
+    $download_links = array();
+    while (false !== ($link = $query->fetchRow(MYSQL_ASSOC))) {
+      $download_links[$link['id']] = $link;
+      $message_data = array(
+          'link' => array(
+              'url' => $link['url']
+          )
+      );
+      $download_links[$link['id']]['message'] = rawurlencode($this->getTemplate('special.email.download.dwoo', $message_data));
+    }
+
     $data = array(
         'images' => array(
             'url' => $this->img_url
@@ -2275,6 +2364,27 @@ class kitBackend {
                 'count' => count($upload_links),
                 'items' => $upload_links
                 ),
+            ),
+        'download_links' => array(
+            'files' => array(
+                'name' => self::REQUEST_DOWNLOAD_FILE,
+                'value' => -1,
+                'items' => $download_files
+                ),
+            'option' => array(
+                'name' => self::REQUEST_DOWNLOAD_OPTION,
+                'value' => -1,
+                'items' => $upload_options // they are still identical!
+                ),
+            'create_link' => array(
+                'name' => self::REQUEST_SPECIAL_CREATE_DOWNLOAD_LINK
+                ),
+            'links' => array(
+                'email' => $email,
+                'name' => self::REQUEST_DOWNLOAD_LINK,
+                'count' => count($download_links),
+                'items' => $download_links
+                )
             )
         );
     return $this->getTemplate('special.dwoo', $data);
@@ -2291,6 +2401,7 @@ class kitBackend {
     global $tools;
     global $database;
 
+    // check UPLOAD links
     if (isset($_REQUEST[self::REQUEST_SPECIAL_CREATE_UPLOAD_LINK])) {
       // create a upload link
       if (!isset($_REQUEST[self::REQUEST_UPLOAD_PAGE_ID]) || ($_REQUEST[self::REQUEST_UPLOAD_PAGE_ID] < 1)) {
@@ -2328,9 +2439,59 @@ class kitBackend {
       }
       $message .= $this->lang->translate('<p>The upload link was created, please check at the special functions!</p>');
     }
+    // delete UPLOAD links
     if (isset($_REQUEST[self::REQUEST_UPLOAD_LINK])) {
       // delete one or more upload links
       $delete = $_REQUEST[self::REQUEST_UPLOAD_LINK];
+      foreach ($delete as $link_guid) {
+        $SQL = "UPDATE `".TABLE_PREFIX."mod_kit_links` SET `status`='DELETED' WHERE `guid`='$link_guid'";
+        $database->query($SQL);
+        if ($database->is_error()) {
+          $this->setError(sprintf('[%s - %s] %s', __METHOD__, __LINE__, $database->get_error()));
+          return false;
+        }
+        $message .= $this->lang->translate('<p>The link with the GUID <b>{{ guid }}</b> was deleted.</p>', array('guid' => $link_guid));
+      }
+    }
+
+    // check DOWNLOAD links
+    if (isset($_REQUEST[self::REQUEST_SPECIAL_CREATE_DOWNLOAD_LINK])) {
+      // create a download link
+      if (!isset($_REQUEST[self::REQUEST_DOWNLOAD_FILE]) || ($_REQUEST[self::REQUEST_DOWNLOAD_FILE] == '-1')) {
+        $message .= $this->lang->translate('<p>Please select the file which should be downloaded!</p>');
+        return false;
+      }
+      // get the file URL
+      $file_url = $_REQUEST[self::REQUEST_DOWNLOAD_FILE];
+      // get the download option
+      $option = $_REQUEST[self::REQUEST_DOWNLOAD_OPTION];
+      // create a new entry in mod_kit_links
+      $SQL = "INSERT INTO `".TABLE_PREFIX."mod_kit_links` (`type`,`option`,`status`,`kit_id`,`file_url`) VALUES ".
+          "('DOWNLOAD','$option','LOCKED','$kit_id','$file_url')";
+      $database->query($SQL);
+      if ($database->is_error()) {
+        $this->setError(sprintf('[%s - %s] %s', __METHOD__, __LINE__, $database->get_error()));
+        return false;
+      }
+      // get the last inserted ID
+      $download_id = mysql_insert_id();
+      // take the determined ID addition and change the id from base 10 to base 36
+      $guid = base_convert($download_id+self::KIT_LINKS_ID_ADD, 10, self::KIT_LINKS_TO_BASE);
+      // create the download link
+      $download_url = WB_URL.'/modules/kit/sl.php?guid='.$guid;
+      // update mod_kit_links
+      $SQL = "UPDATE `".TABLE_PREFIX."mod_kit_links` SET `guid`='$guid', `url`='$download_url', `status`='ACTIVE' WHERE `id`='$download_id'";
+      $database->query($SQL);
+      if ($database->is_error()) {
+        $this->setError(sprintf('[%s - %s] %s', __METHOD__, __LINE__, $database->get_error()));
+        return false;
+      }
+      $message .= $this->lang->translate('<p>The download link was created, please check at the special functions!</p>');
+    }
+    // delete DOWNLOAD links
+    if (isset($_REQUEST[self::REQUEST_DOWNLOAD_LINK])) {
+      // delete one or more upload links
+      $delete = $_REQUEST[self::REQUEST_DOWNLOAD_LINK];
       foreach ($delete as $link_guid) {
         $SQL = "UPDATE `".TABLE_PREFIX."mod_kit_links` SET `status`='DELETED' WHERE `guid`='$link_guid'";
         $database->query($SQL);

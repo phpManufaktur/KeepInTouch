@@ -32,8 +32,8 @@ else {
 // end include class.secure.php
 
 if ('á' != "\xc3\xa1") {
-	// important: language files must be saved as UTF-8 (without BOM)
-	trigger_error('The language file <b>'.basename(__FILE__).'</b> is damaged, it must be saved <b>UTF-8</b> encoded!', E_USER_ERROR);
+  // important: language files must be saved as UTF-8 (without BOM)
+  trigger_error('The language file <b>'.basename(__FILE__).'</b> is damaged, it must be saved <b>UTF-8</b> encoded!', E_USER_ERROR);
 }
 
 define('kit_btn_abort', 'Abort');
@@ -166,6 +166,7 @@ define('kit_desc_cfg_register_dlg', 'dialogue, which is invoked when users want 
 define('kit_desc_cfg_register_dlg_unsubscribe', 'dialogue, which is invoked when a subscriber wants to unsubscribe from a newsletter or more newsletters');
 define('kit_desc_cfg_session_id', 'ID to uniquely identify the session variables are used by KeepInTouch.');
 define('kit_desc_cfg_sort_contact_list', 'default setting for sorting the contact list: 0 = unsorted, 1 = E-mail ... 3 = last name - the possible digits are displayed in the drop down list for sorting. ');
+define('kit_desc_cfg_special_links_download_directories', 'Sie können zusätzlich zu dem persönlichen Verzeichnis des Kontakt in /media/kit_protected weitere Verzeichnisse unterhalb von /media/kit_protected angeben, die in der Auswahlliste für Downloads in den <i>speziellen Funktionen</i> angezeigt werden.<br />Geben Sie das Unterverzeichnis an und fügen Sie weitere Verzeichnisse durch ein Komma getrennt an.');
 define('kit_desc_cfg_use_captcha', 'Specify whether to use the dialogues in front CAPTCHA spam protection to');
 define('kit_desc_cfg_use_custom_files', 'If set, you can use individually customized templates and language files, the files will be "custom." prefixed, eg "custom.DE.php", these files are not overwritten during an update. ');
 define('kit_desc_cfg_use_ssl', 'Falls gesetzt verwendet KIT, sofern möglich, Secure Sockets Layer (SSL) für den Aufruf von URL\'s (HTTPS://).');
@@ -345,6 +346,7 @@ define('kit_label_cfg_register_dlg', 'user registration');
 define('kit_label_cfg_register_dlg_unsubscribe', 'users unsubscribe newsletter');
 define('kit_label_cfg_session_id', 'Session ID');
 define('kit_label_cfg_sort_contact_list', 'Contact list sort');
+define('kit_label_cfg_special_links_download_directories', 'Downloadverzeichnisse');
 define('kit_label_cfg_temp_dir', 'Temporary directory');
 define('kit_label_cfg_use_captcha', 'Use CAPTCHA');
 define('kit_label_cfg_use_custom_files', 'Custom files allow');

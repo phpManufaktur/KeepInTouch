@@ -32,8 +32,8 @@ else {
 // end include class.secure.php
 
 if ('á' != "\xc3\xa1") {
-	// important: language files must be saved as UTF-8 (without BOM)
-	trigger_error('The language file <b>'.basename(__FILE__).'</b> is damaged, it must be saved <b>UTF-8</b> encoded!', E_USER_ERROR);
+  // important: language files must be saved as UTF-8 (without BOM)
+  trigger_error('The language file <b>'.basename(__FILE__).'</b> is damaged, it must be saved <b>UTF-8</b> encoded!', E_USER_ERROR);
 }
 
 // Deutsche Modulbeschreibung
@@ -109,8 +109,10 @@ $LANG = array(
       => 'Abteilung',
     'Distribution'
       => 'Verteiler',
+    'File Download'
+      => 'Dateien vom Server herunterladen',
     'File Upload'
-      => 'Datenübertragung',
+      => 'Dateien auf den Server übertragen',
     'First name'
       => 'Vorname',
     '<p>For the special functions <b>kitform</b> must be installed!</p>'
@@ -203,6 +205,8 @@ $LANG = array(
       => '<p>Wählen Sie eine Seite aus, auf der sich ein Droplet mit einem Verweis auf ein kitForm Upload Script befindet. Die Seite kann versteckt sein.<br />KIT erzeugt einen Link, der es dem Kontakt ermöglicht eine Datei in das von KIT geschützte Verzeichnis zu übertragen.',
     'Select option'
       => 'Option auswählen',
+    'Select the file'
+      => 'Datei auswählen',
     'Select the page'
       => 'Seite auswählen',
     'Special'
@@ -215,6 +219,8 @@ $LANG = array(
       => 'Gelöscht',
     'Street'
       => 'Straße',
+    '<p>The contact can download files from the protected area <strong>/media/kit_protected</strong>. Just select the file, set the option and email the link to the contact. By default the files from the <strong>/admin</strong> and the <strong>/user</strong> section of the active contact are available, you can add additional paths at the KIT settings.</p>'
+      => '<p>Der Kontakt kann Dateien aus dem geschützten Bereich <strong>/media/kit_protected</strong> herunterladen. Hierzu wählen Sie die gewünschte Datei aus, setzen die Option und senden dem Kontakt den Link per E-Mail. In der Voreinstellung werden die Dateien aus dem <strong>/admin</strong> und dem <strong>/user</strong> Verzeichnis aus dem geschützten Bereich des Kontakts angezeigt. Sie können über die KIT Einstellungen weitere Verzeichnisse hinzufügen.</p>',
     '<p>The link with the GUID <b>{{ guid }}</b> was deleted.</p>'
       => '<p>Der Link mit der GUID <b>{{ guid }}</b> wurde gelöscht!</p>',
     '<p>The upload link was created, please check at the special functions!</p>'
