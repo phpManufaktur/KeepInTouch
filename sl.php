@@ -17,11 +17,22 @@ if (!file_exists($config_path)) {
 
 require_once($config_path);
 
+// use LEPTON 2.x I18n for access to language files
+require_once WB_PATH.'/modules/kit/framework/LEPTON/Helper/I18n.php';
+
+global $I18n;
+if (!is_object($I18n)) {
+  $I18n = new LEPTON_Helper_I18n(array('lang' => LANGUAGE));
+}
+else {
+  $I18n->addFile('DE.php', WB_PATH.'/modules/kit/languages/');
+}
+
 global $database;
 
 // check if the GUID isset
 if (!isset($_GET['guid']))
-  exit(sprintf('[ %s ] Invalid call, missing GUID!', __LINE__));
+  exit($I18n->translate('[ {{ line }} ] Invalid call, missing GUID!', array('line' => __LINE__)));
 
 $guid = trim($_GET['guid']);
 
@@ -32,22 +43,23 @@ if ($database->is_error())
   exit(sprintf('[ %s ] %s', __LINE__, $database->get_error()));
 
 if ($query->numRows() != 1)
-  exit(sprintf('[ %s ] Invalid GUID, please contact the webmaster.', __LINE__));
+  exit($I18n->translate('[ {{ line }} ] Invalid GUID, please contact the webmaster.', array('line' => __LINE__)));
 
 $link = $query->fetchRow(MYSQL_ASSOC);
 
+
 if ($link['type'] != 'DOWNLOAD')
-  exit(sprintf('[ %s ] This is no valid download link, please contact the webmaster.', __LINE__));
+  exit($I18n->translate('[ {{ line }} ] This is no valid download link, please contact the webmaster.', array('line' => __LINE__)));
 
 if ($link['status'] != 'ACTIVE')
-  exit(sprintf('[ %s ] This download link is no longer valid, please contact the webmaster to get a new one!', __LINE__));
+  exit($I18n->translate('[ {{ line }} ] This download link is no longer valid, please contact the webmaster to get a new one!', array('line' => __LINE__)));
 
 $file_path = WB_PATH . substr($link['file_url'], strlen(WB_URL));
 
 if (!file_exists($file_path))
-  exit(sprintf('[ %d ] Oooops, missing the requested file. Please contact the webmaster!'));
+  exit($I18n->translate('[ {{ line }} ] Oooops, missing the requested file. Please contact the webmaster!', array('line' => __LINE__)));
 
-// update the record
+// update the mod_kit_links record
 $status = ($link['option'] == 'THROW-AWAY') ? 'LOCKED' : 'ACTIVE';
 $count = $link['count'] +1;
 $last_call = date('Y-m-d H:i:s');
@@ -56,6 +68,16 @@ $SQL = "UPDATE `".TABLE_PREFIX."mod_kit_links` SET `status`='$status', `count`='
 $database->query($SQL);
 if ($database->is_error())
   exit(sprintf('[ %s ] %s', __LINE__, $database->get_error()));
+
+// update the KIT contact protocol
+$log = $I18n->translate('The contact has downloaded the file <b>{{ file }}</b> with the GUID <b>{{ guid }}</b>.',
+    array('file' => basename($link['file_url']), 'guid' => $guid));
+$SQL = "INSERT INTO `".TABLE_PREFIX."mod_kit_contact_protocol` (`contact_id`,`protocol_memo`,`protocol_date`,`protocol_type`,`protocol_update_when`) ".
+    "VALUES('{$link['kit_id']}', '$log', '$last_call', 'typeMemo', '$last_call')";
+$database->query($SQL);
+if ($database->is_error())
+  exit(sprintf('[ %s ] %s', __LINE__, $database->get_error()));
+
 
 // start download
 header('Content-type: application/force-download');

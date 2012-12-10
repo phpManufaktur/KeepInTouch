@@ -121,6 +121,10 @@ $LANG = array(
       => 'Funktion',
     'Information'
       => 'Information',
+    '[ {{ line }} ] Invalid call, missing GUID!'
+      => '[ {{ line }} ] Ungueltiger Aufruf, es wurde keine GUID uebergeben!',
+    '[ {{ line }} ] Invalid GUID, please contact the webmaster.'
+      => '[ {{ line }} ] Ungueltige GUID, bitte kontaktieren Sie den Webmaster!',
     'kit_address_type'
       => 'Adresstyp',
     'kit_birthday'
@@ -189,6 +193,8 @@ $LANG = array(
       => 'Karte',
     'Notes'
       => 'Notizen',
+    '[ {{ line }} ] Oooops, missing the requested file. Please contact the webmaster!'
+      => '[ {{ line }} ] Uuuups, die angeforderte Datei steht nicht mehr zur Verfügung. Bitte nehmen Sie Kontakt mit dem Webmaster auf.',
     'PERMANENT'
       => 'Permanent',
     'permanent link'
@@ -221,12 +227,18 @@ $LANG = array(
       => 'Straße',
     '<p>The contact can download files from the protected area <strong>/media/kit_protected</strong>. Just select the file, set the option and email the link to the contact. By default the files from the <strong>/admin</strong> and the <strong>/user</strong> section of the active contact are available, you can add additional paths at the KIT settings.</p>'
       => '<p>Der Kontakt kann Dateien aus dem geschützten Bereich <strong>/media/kit_protected</strong> herunterladen. Hierzu wählen Sie die gewünschte Datei aus, setzen die Option und senden dem Kontakt den Link per E-Mail. In der Voreinstellung werden die Dateien aus dem <strong>/admin</strong> und dem <strong>/user</strong> Verzeichnis aus dem geschützten Bereich des Kontakts angezeigt. Sie können über die KIT Einstellungen weitere Verzeichnisse hinzufügen.</p>',
+    'The contact has downloaded the file <b>{{ file }}</b> with the GUID <b>{{ guid }}</b>.'
+      => 'Der Kontakt hat die Datei <b>{{ file }}</b> mit der GUID <b>{{ guid }}</b> heruntergeladen.',
     '<p>The download link was created, please check at the special functions!</p>'
       => '<p>Der Download Link wurde angelegt, bitte prüfen Sie den Link bei den <em>Speziellen Funktionen</em>.</p>',
     '<p>The link with the GUID <b>{{ guid }}</b> was deleted.</p>'
       => '<p>Der Link mit der GUID <b>{{ guid }}</b> wurde gelöscht!</p>',
     '<p>The upload link was created, please check at the special functions!</p>'
       => '<p>Der Upload Link wurde angelegt, bitte prüfen Sie den Link bei den <em>Speziellen Funktionen</em></p>',
+    '[ {{ line }} ] This download link is no longer valid, please contact the webmaster to get a new one!'
+      => '[ {{ line }} ] Dieser Download Link steht nicht mehr zur Verfuegung, bitte kontaktieren Sie den Webmaster um einen neuen Link zu erhalten!',
+    '[ {{ line }} ] This is no valid download link, please contact the webmaster.'
+      => '[ {{ line }} ] Dies ist kein gueltiger Download Link, bitte nehmen Sie Kontakt mit dem Webmaster auf!',
     'Timestamp'
       => 'Letzter Aufruf',
     'Title'
