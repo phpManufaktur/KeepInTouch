@@ -615,3 +615,24 @@ fieldset.fs_person {
   color: #800000;
   background-color: transparent;
 }
+
+fieldset.kit_import_fieldset {
+  color: #000;
+  background-color: #e3e3e3;
+  margin: 20px 30px 10px 0;
+  padding: 20px;
+  border: 1px solid #a0a0a0;
+}
+.kit_import_label {
+  float: left;
+  width: 200px;
+}
+.kit_import_value {
+  float: left;
+  width: 400px;
+}
+.kit_import_clear {
+  clear: both;
+  height: 3px;
+  width: 1px;
+}
