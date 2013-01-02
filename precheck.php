@@ -57,7 +57,7 @@ $check = array(
         ),
     'Dwoo' => array(
         'directory' => 'dwoo',
-        'version' => '0.16',
+        'version' => '0.17',
         'problem' => 'Dwoo => <b><a href="https://addons.phpmanufaktur.de/download.php?file=Dwoo" target="_blank">Download actual version</a></b>'
         ),
     'wbLib' => array(
