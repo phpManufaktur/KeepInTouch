@@ -1,0 +1,43 @@
+{*
+ * KeepInTouch
+ *
+ * @author Ralf Hertsch <ralf.hertsch@phpmanufaktur.de>
+ * @link http://phpmanufaktur.de
+ * @copyright 2010 - 2012
+ * @license MIT License (MIT) http://www.opensource.org/licenses/MIT
+ *}
+<div class="kit_import">
+  <h2>{translate('Assign the fields')}</h2>
+  {if $message.active == 1}
+  <div class="message">{$message.text}</div>
+  {else}
+  <div class="intro">{translate('<p>In this dialog you assign the CSV fields to the KIT fields.</p><p>At least you must assign an <i>email address</i> to the KIT field <i>kit_email</i> as unique identifier.</p><p>The import can add and update KIT records. If an email adress already exists the KIT record will be updated. You can also use the <i>KIT ID</i>, assigned to the field <i>kit_id</i> to update existing KIT records.</p><p>Please check the <a href="https://addons.phpmanufaktur.de/de/name/keepintouch/documentation.php">KIT documentation</a> for further informations!</p>')}</div>
+  {/if}
+  <form name="{$form.name}" action="{$form.action}" method="post" enctype="multipart/form-data">
+    <input type="hidden" name="{$action.name}" value="{$action.value}" />
+    <input type="hidden" name="{$import.file.name}" value="{$import.file.value}" />
+    <input type="hidden" name="{$import.charset.name}" value="{$import.charset.value}" />
+    <input type="hidden" name="{$import.separator.name}" value="{$import.separator.value}" />
+    <input type="hidden" name="{$import.fields.count.name}" value="{$import.fields.count.value}" />
+    <input type="hidden" name="{$kit.fields.name}" value="{$kit.fields.value}" />
+    <fieldset class="kit_import_fieldset">
+      <legend>{translate('Assign the CSV fields to the KIT fields')}</legend>
+      {foreach $import.fields.names field}
+      <div class="kit_import_label">{$field.value}</div>
+      <div class="kit_import_value">
+        <select name="{$field.name}">
+          <option value="-1">{translate('- not assigned -')}</option>
+          {foreach $kit.fields.array kit_field}
+          <option value="{$kit_field}">{$kit_field}</option>
+          {/foreach}
+        </select>
+      </div>
+      <div class="kit_import_clear"></div>
+      {/foreach}
+      <div class="kit_import_clear"></div>
+      <div class="kit_import_label">&nbsp;</div>
+      <div class="kit_import_value"><input type="submit" value="{translate('Start import')}" /></div>
+      <div class="kit_import_clear"></div>
+    </fieldset>
+  </form>
+</div>

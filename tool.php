@@ -34,7 +34,6 @@ else {
 require_once(WB_PATH.'/modules/'.basename(dirname(__FILE__)).'/initialize.php');
 require_once(WB_PATH.'/modules/'.basename(dirname(__FILE__)).'/class.mail.php');
 require_once(WB_PATH.'/modules/'.basename(dirname(__FILE__)).'/class.editor.php');
-require_once(WB_PATH.'/modules/'.basename(dirname(__FILE__)).'/class.import.php');
 require_once(WB_PATH.'/modules/'.basename(dirname(__FILE__)).'/class.newsletter.php');
 
 if (DEBUG_MODE) {
@@ -147,9 +146,11 @@ class kitBackend {
   private $tab_config_array = array(
       self::action_cfg_tab_general => kit_tab_cfg_general,
       self::action_cfg_tab_provider => kit_tab_cfg_provider,
-      self::action_cfg_tab_array => kit_tab_cfg_array)//self::action_cfg_tab_import		=> kit_tab_cfg_import,
-  //self::action_cfg_tab_export		=> kit_tab_cfg_export
-  ;
+      self::action_cfg_tab_array => kit_tab_cfg_array,
+      self::action_cfg_tab_import		=> kit_tab_cfg_import
+      );
+
+      //self::action_cfg_tab_export		=> kit_tab_cfg_export
 
   private $page_link = '';
   private $img_url = '';
@@ -3659,8 +3660,15 @@ class kitBackend {
         $result = $this->saveConfigArray();
         break;
       case self::action_cfg_tab_import:
-        $kitImportDlg = new kitImportDialog();
-        $result = $kitImportDlg->action();
+        // load the import dialog
+        require_once WB_PATH.'/modules/kit/class.import.csv.php';
+        $pageLink = sprintf('%s&%s', $this->page_link, http_build_query(array(
+            self::request_action => self::action_cfg,
+            self::request_cfg_tab => self::action_cfg_tab_import)));
+        $import = new kitCSVimport($pageLink);
+        $result = $import->action();
+        if ($import->isError())
+          $this->setError($import->getError());
         break;
       /*
        * Massmail Import wird nicht laenger verwendet!
