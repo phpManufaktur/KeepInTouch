@@ -126,6 +126,7 @@ class kitContactInterface {
       self::kit_country => dbKITcontactAddress::field_country,
       self::kit_department => dbKITcontact::field_company_department,
       self::kit_distribution => dbKITcontact::field_distribution,
+      self::kit_email => dbKITcontact::field_email,
       self::kit_first_name => dbKITcontact::field_person_first_name,
       self::kit_free_field_1 => dbKITcontact::field_free_1,
       self::kit_free_field_2 => dbKITcontact::field_free_2,
@@ -138,6 +139,7 @@ class kitContactInterface {
       self::kit_identifier => dbKITcontact::field_contact_identifier,
       self::kit_intern => dbKITcontact::field_category,
       self::kit_last_name => dbKITcontact::field_person_last_name,
+      self::kit_newsletter => dbKITcontact::field_newsletter,
       self::kit_note => dbKITcontact::field_contact_note,
       self::kit_status => dbKITcontact::field_status,
       self::kit_street => dbKITcontactAddress::field_street,
@@ -703,6 +705,7 @@ class kitContactInterface {
         case dbKITcontact::field_free_5:
         case dbKITcontact::field_free_note_1:
         case dbKITcontact::field_free_note_2:
+        case dbKITcontact::field_birthday:
           $contact[$key] = (isset($contact_array[array_search($key, $this->field_assign)])) ? $contact_array[array_search($key, $this->field_assign)] : '';
           break;
         case dbKITcontact::field_company_title:
@@ -781,7 +784,7 @@ class kitContactInterface {
       $address = array(
           dbKITcontactAddress::field_city => isset($contact_array[self::kit_city]) ? $contact_array[self::kit_city] : '',
           dbKITcontactAddress::field_contact_id => $contact_id,
-          dbKITcontactAddress::field_country => isset($contact_array[self::kit_country]) ? $contact_array[self::kit_country] : 'DE',
+          dbKITcontactAddress::field_country => isset($contact_array[self::kit_country]) ? strtoupper(trim($contact_array[self::kit_country])) : 'DE',
           dbKITcontactAddress::field_street => isset($contact_array[self::kit_street]) ? $contact_array[self::kit_street] : '',
           dbKITcontactAddress::field_zip => isset($contact_array[self::kit_zip]) ? $contact_array[self::kit_zip] : '',
           dbKITcontactAddress::field_type => (isset($contact_array[self::kit_address_type]) && ($contact_array[self::kit_address_type] == self::address_type_business)) ? dbKITcontactAddress::type_business : dbKITcontactAddress::type_private,
