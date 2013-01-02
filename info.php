@@ -5,7 +5,7 @@
  *
  * @author Ralf Hertsch <ralf.hertsch@phpmanufaktur.de>
  * @link http://phpmanufaktur.de
- * @copyright 2010 - 2012
+ * @copyright 2010 - 2013
  * @license MIT License (MIT) http://www.opensource.org/licenses/MIT
  */
 
@@ -34,7 +34,7 @@ else {
 $module_directory = 'kit';
 $module_name = 'KeepInTouch';
 $module_function = 'tool';
-$module_version = '0.64';
+$module_version = '0.65';
 $module_status = 'beta';
 $module_languages = 'DE';
 $module_platform = '2.8';

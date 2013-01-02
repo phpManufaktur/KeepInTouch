@@ -3,6 +3,10 @@
 Ralf Hertsch, Stockholmer Str. 31, 13359 Berlin (Germany)
 http://phpManufaktur.de - ralf.hertsch@phpManufaktur.de
 
+Release 0.65 - 02.01.2013
+
+* added import dialog, please read <http://yals.de/VAu8gI> for more information
+
 Release 0.64 - 08.12.2012
 
 * added field kit_contact_language to the KIT interface output array
@@ -16,7 +20,7 @@ Release 0.63 - 18.10.2012
 Release 0.62 - 05.10.2012
 
 * added ability to change the table prefix easy via config.json, please read
-  <http://yals.de/OQRv0Y> for more informations
+  <http://yals.de/OQRv0Y> for more information
 * added free fields and free notes to the contact array returned by the
   class.interface.php
 * changed implementation of the Dwoo Template Engine
