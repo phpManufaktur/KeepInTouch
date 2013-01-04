@@ -99,6 +99,7 @@ class kitBackend {
   const action_cfg_tab_general = 'cftg';
   const action_cfg_tab_array = 'cfta';
   const action_cfg_tab_array_save = 'cftas';
+  const ACTION_CFG_TAB_EXPORT = 'cftx';
   const action_cfg_tab_import = 'cfti';
   const action_cfg_tab_provider = 'cftp';
   const action_cfg_tab_provider_save = 'cfgsp';
@@ -147,10 +148,9 @@ class kitBackend {
       self::action_cfg_tab_general => kit_tab_cfg_general,
       self::action_cfg_tab_provider => kit_tab_cfg_provider,
       self::action_cfg_tab_array => kit_tab_cfg_array,
-      self::action_cfg_tab_import		=> kit_tab_cfg_import
+      self::action_cfg_tab_import		=> kit_tab_cfg_import,
+      self::ACTION_CFG_TAB_EXPORT => kit_tab_cfg_export
       );
-
-      //self::action_cfg_tab_export		=> kit_tab_cfg_export
 
   private $page_link = '';
   private $img_url = '';
@@ -3483,163 +3483,6 @@ class kitBackend {
   } // dlgConfigArray()
 
   /**
-   * Importieren von Daten
-   */
-  public function dlgConfigImport() {
-    global $dbContact;
-    global $parser;
-
-    $dbMassmail = new dbMassMailAddresses();
-    $items = '';
-    if ($dbMassmail->sqlTableExists()) {
-      $dbMassmailGroups = new dbMassMailGroups();
-      if (!$dbMassmailGroups->sqlTableExists()) {
-        // fataler Fehler, Gruppen Tabelle fehlt!
-        $this->setError(sprintf('[%s - %s] %s', __METHOD__, __LINE__, kit_error_import_massmail_grp_missing));
-        return false;
-      }
-      $where = array();
-      $group_array = array();
-      if (!$dbMassmailGroups->sqlSelectRecord($where, $group_array)) {
-        $this->setError(sprintf('[%s - %s] %s', __METHOD__, __LINE__, $dbMassmailGroups->getError()));
-        return false;
-      }
-
-      $option = '';
-      foreach ($group_array as $group) {
-        $option .= sprintf('<option value="%s">%s</option>', $group[dbMassmailGroups::field_group_id], utf8_decode($group[dbMassmailGroups::field_group_name]));
-      }
-      $select_massmail_group = sprintf('<select name="%s">%s</select>', dbMassmailGroups::field_group_name, $option);
-
-      $option = '';
-      foreach ($dbContact->newsletter_array as $key => $value) {
-        $option .= sprintf('<option value="%s">%s</option>', $key, $value);
-      }
-      $select_kit_newsletter = sprintf('<select name="%s">%s</select>', dbKITcontact::field_newsletter, $option);
-
-      $option = '';
-      foreach ($dbContact->email_array as $key => $value) {
-        $option .= sprintf('<option value="%s">%s</option>', $key, $value);
-      }
-      $select_email_type = sprintf('<select name="%s">%s</select>', dbKITcontact::field_email, $option);
-      $data = array(
-          'header_massmail' => kit_label_massmail,
-          'form_name' => 'import_massmail',
-          'form_action' => $this->page_link,
-          'action_name' => self::request_action,
-          'action_value' => self::action_cfg,
-          'cfg_name' => self::request_cfg_tab,
-          'cfg_value' => self::action_cfg_tab_import,
-          'import_name' => self::request_import,
-          'import_value' => self::action_import_massmail,
-          'massmail_group' => sprintf('%s %s', kit_text_from_massmail_group, $select_massmail_group),
-          'kit_group' => sprintf('%s %s<br />%s %s', kit_text_to_category, $select_kit_newsletter, kit_text_as_email_type, $select_email_type),
-          'import' => kit_btn_import);
-      $items .= $parser->get($this->template_path.'backend.config.import.massmail.htt', $data);
-    }
-    else {
-      $items .= $parser->get($this->template_path.'backend.config.import.massmail.tr.htt', array(
-          'label' => kit_label_massmail,
-          'value' => kit_msg_massmail_not_installed));
-    }
-    // Mitteilungen anzeigen
-    if ($this->isMessage()) {
-      $intro = sprintf('<div class="message">%s</div>', $this->getMessage());
-    }
-    else {
-      $intro = sprintf('<div class="intro">%s</div>', kit_intro_cfg_import);
-    }
-    $data = array(
-        'header' => kit_header_cfg_import,
-        'intro' => $intro,
-        'header_import' => kit_label_import_from,
-        'header_action' => kit_label_import_action,
-        'items' => $items);
-    return $parser->get($this->template_path.'backend.config.import.htt', $data);
-  } // dlgConfigImport()
-
-  /**
-   * Fuehrt den Import von Massmail Daten durch und gibt Meldungen ueber den Verlauf aus.
-   *
-   * @return STR dlgConfigImport()
-   */
-  public function execImportMassmail() {
-    global $tools;
-    global $dbContact;
-
-    if (!isset($_REQUEST[dbMassmailGroups::field_group_name]) || !isset($_REQUEST[dbKITcontact::field_newsletter]) || !isset($_REQUEST[dbKITcontact::field_email])) {
-      // Fataler Fehler: nicht alle Variablen gesetzt
-      $this->setError(kit_error_import_massmail_missing_vars);
-      return false;
-    }
-    $message = '';
-    $dbMassmail = new dbMassMailAddresses();
-    $where = array();
-    $where[dbMassMailAddresses::field_group_id] = $_REQUEST[dbMassMailGroups::field_group_name];
-    $massmail_data = array();
-    if (!$dbMassmail->sqlSelectRecord($where, $massmail_data)) {
-      $this->setError(sprintf('[%s - %s] %s', __METHOD__, __LINE__, $dbMassmail));
-      return false;
-    }
-    if (count($massmail_data) < 1) {
-      // Gruppe enthaelt keine Daten
-      $this->setMessage(sprintf(kit_msg_massmail_group_no_data, $_REQUEST[dbMassMailGroups::field_group_name]));
-      return $this->dlgConfigImport();
-    }
-    else {
-      // Import starten
-      $add_emails = array();
-      $ignore_emails = array();
-      foreach ($massmail_data as $massmail) {
-        $SQL = sprintf("SELECT %s FROM %s WHERE %s LIKE '%%%s%%'", dbKITcontact::field_id, $dbContact->getTableName(), dbKITcontact::field_email, $massmail[dbMassmailAddresses::field_mail_to]);
-        $kitCheck = array();
-        if (!$dbContact->sqlExec($SQL, $kitCheck)) {
-          $this->setError(sprintf('[%s - %s] %s', __METHOD__, __LINE__, $dbContact->getError()));
-          return false;
-        }
-        if (count($kitCheck) > 0) {
-          // E-Mail Adresse existiert bereits
-          $ignore_emails[] = sprintf('%s (ID %05d)', $massmail[dbMassmailAddresses::field_mail_to], $kitCheck[0][dbKITcontact::field_id]);
-        }
-        else {
-          // E-Mail Adresse uebernehmen
-          $data = array();
-          $data[dbKITcontact::field_email] = sprintf('%s|%s', $_REQUEST[dbKITcontact::field_email], strtolower($massmail[dbMassmailAddresses::field_mail_to]));
-          $data[dbKITcontact::field_email_standard] = 0;
-          $data[dbKITcontact::field_contact_identifier] = strtolower($massmail[dbMassmailAddresses::field_mail_to]);
-          $data[dbKITcontact::field_status] = dbKITcontact::status_active;
-          $data[dbKITcontact::field_access] = dbKITcontact::access_internal;
-          //$data[dbKITcontact::field_category] = $_REQUEST[dbKITcontact::field_category];
-          $data[dbKITcontact::field_newsletter] = $_REQUEST[dbKITcontact::field_newsletter];
-          $data[dbKITcontact::field_update_by] = $tools->getDisplayName();
-          $data[dbKITcontact::field_update_when] = date('Y-m-d H:i:s');
-          $id = -1;
-          if (!$dbContact->sqlInsertRecord($data, $id)) {
-            $this->setError(sprintf('[%s - %s] %s', __METHOD__, __LINE__, $dbContact->getError()));
-            return false;
-          }
-          $add_emails[] = $massmail[dbMassmailAddresses::field_mail_to];
-          $dbContact->addSystemNotice($id, sprintf(kit_protocol_create_contact_massmail, $massmail[dbMassmailAddresses::field_mail_to]));
-        }
-      }
-      if (count($ignore_emails) > 0) {
-        // ignorierte E-Mails anzeigen
-        $message .= sprintf(kit_msg_massmail_email_skipped, implode(', ', $ignore_emails));
-      }
-      if (count($add_emails) > 0) {
-        // importierte E-Mails anzeigen
-        $message .= sprintf(kit_msg_massmail_emails_imported, count($add_emails), implode(', ', $add_emails));
-      }
-      else {
-        // keine E-Mails uebernommen
-        $message .= kit_msg_massmail_no_emails_imported;
-      }
-      $this->setMessage($message);
-      return $this->dlgConfigImport();
-    }
-  } // execImportMassmail()
-
-  /**
    * Dialog for configuring KIT
    *
    * @return STR
@@ -3670,20 +3513,17 @@ class kitBackend {
         if ($import->isError())
           $this->setError($import->getError());
         break;
-      /*
-       * Massmail Import wird nicht laenger verwendet!
-       *
-      (isset($_REQUEST[self::request_import])) ? $import = $_REQUEST[self::request_import] : $import = '';
-      switch ($import):
-      case self::action_import_massmail:
-      $result = $this->execImportMassmail();
-      break;
-      default:
-      $result = $this->dlgConfigImport();
-      break;
-      endswitch;
-      break;
-       */
+      case self::ACTION_CFG_TAB_EXPORT:
+        // load the export dialog
+        require_once WB_PATH.'/modules/kit/class.export.csv.php';
+        $pageLink = sprintf('%s&%s', $this->page_link, http_build_query(array(
+            self::request_action => self::action_cfg,
+            self::request_cfg_tab => self::ACTION_CFG_TAB_EXPORT)));
+        $export = new kitCSVexport($pageLink);
+        $result = $export->action();
+        if ($export->isError())
+          $this->setError($export->getError());
+        break;
       case self::action_cfg_tab_provider:
         $result = $this->dlgConfigProvider();
         break;
