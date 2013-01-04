@@ -47,6 +47,8 @@ $LANG = array(
       => '- nicht zugeordnet -',
     '- new contact -'
       => '- neuer Kontakt -',
+    '- not installed -'
+      => '- nicht installiert -',
     '- please select -'
       => '- bitte auswählen -',
 
@@ -138,6 +140,12 @@ $LANG = array(
 
     '<p>Error reading the CSV file {{ file }}!</p>'
       => '<p>Fehler beim Einlesen der CSV Datei {{ file }}!</p>',
+    'Export CSV file'
+      => 'Exportiere CSV Datei',
+    'Export CSV file from selected source'
+      => 'CSV Datei aus einer ausgewählten Quelle exportieren',
+    '<p>Exported {{ count }} {{ export }} records as CSV file.</p><p>Please download <a href="{{ url }}">{{ file }}</a>.</p>'
+      => '<p>Es wurden {{ count }} {{ export }} Datensätze als CSV Datei exportiert.</p><p>Bitte laden Sie sich die Datei <a href="{{ url }}">{{ file }}</a> zur weiteren Verarbeitung herunter.</p>',
 
     'File Download'
       => 'Dateien vom Server herunterladen',
@@ -234,6 +242,8 @@ $LANG = array(
 
     '<p>No CSV file uploaded!</p>'
       => '<p>Es wurde keine CSV Datei übermittelt!</p>',
+    '<p>No data source selected!</p>'
+      => '<p>Es wurde keine Datenquelle ausgewählt!</p>',
     'Notes'
       => 'Notizen',
 
@@ -275,6 +285,10 @@ $LANG = array(
       => '<p>Zeile {{ line }} übersprungen, die Anzahl der Spalten weicht von der CSV Definition ab!</p>',
     '<p>Skipped line <i>{{ line }}</i>, the KIT ID <b>{{ kit_id }}</b> does not exists!</p>'
       => '<p>Zeile <i>{{ line }}</i> übersprungen, die KIT ID <b>{{ kit_id }}</b> existiert nicht!</p>',
+    'Source data'
+      => 'Quelldaten',
+    'Start export'
+      => 'Export starten',
     'Start import'
       => 'Import starten',
     'statusActive'
@@ -290,6 +304,8 @@ $LANG = array(
       => '<p>Der Kontakt kann Dateien aus dem geschützten Bereich <strong>/media/kit_protected</strong> herunterladen. Hierzu wählen Sie die gewünschte Datei aus, setzen die Option und senden dem Kontakt den Link per E-Mail. In der Voreinstellung werden die Dateien aus dem <strong>/admin</strong> und dem <strong>/user</strong> Verzeichnis aus dem geschützten Bereich des Kontakts angezeigt. Sie können über die KIT Einstellungen weitere Verzeichnisse hinzufügen.</p>',
     'The contact has downloaded the file <b>{{ file }}</b> with the GUID <b>{{ guid }}</b>.'
       => 'Der Kontakt hat die Datei <b>{{ file }}</b> mit der GUID <b>{{ guid }}</b> heruntergeladen.',
+    '<p>The CSV export for {{ export }} is not supported!</p>'
+      => '<p>Der CSV Export für {{ export }} wird nicht unterstützt!</p>',
     '<p>The CSV file {{ file }} does not have any columns, please check the file!</p>'
       => '<p>Die CSV Datei {{ file }} enthält keine Spalten, bitte prüfen Sie die Datei!</p>',
     '<p>The download link was created, please check at the special functions!</p>'
@@ -302,6 +318,8 @@ $LANG = array(
       => '<p>Der Link mit der GUID <b>{{ guid }}</b> wurde gelöscht!</p>',
     '<p>The upload link was created, please check at the special functions!</p>'
       => '<p>Der Upload Link wurde angelegt, bitte prüfen Sie den Link bei den <em>Speziellen Funktionen</em></p>',
+    '<p>There are no data records to export for {{ export }}.</p>'
+      => '<p>Für <b>{{ export }}</b> sind keine Datensätze zum exportieren vorhanden.</p>',
     '[ {{ line }} ] This download link is no longer valid, please contact the webmaster to get a new one!'
       => '[ {{ line }} ] Dieser Download Link steht nicht mehr zur Verfuegung, bitte kontaktieren Sie den Webmaster um einen neuen Link zu erhalten!',
     '[ {{ line }} ] This is no valid download link, please contact the webmaster.'
@@ -316,8 +334,13 @@ $LANG = array(
       => 'Wegwerf-Link',
     'Type'
       => 'Typ',
+
     'UPLOAD'
       => 'Upload',
+
+    '<p>You can export all your contact and address data records from different addons in comma separated textfiles (CSV).</p><p>You can open and edit these CSV files with any texteditor but also with programs like Excel.</p><p>Additional, KeepInTouch support the import of CSV files.</p>'
+      => '<p>Mit Hilfe dieses Dialog können Sie die Adress- und Kontaktdaten von verschiedenen WebsiteBaker bzw. LEPTON Addons als Komma getrennte Textdateien (CSV Format) exportieren.</p><p>Dateien im CSV Format können mit jedem beliebigen Texteditor oder im Tabellenformat mit Programmen wie Microsoft Excel oder OpenOffice Calc geöffnet und bearbeitet werden.</p><p>Über die Import Funktion können Sie CSV Dateien in KeepInTouch einlesen.</p><p>Falls Sie Microsoft Excel für die Kontrolle und Weiterverarbeitung der CSV Dateien verwenden, übernehmen Sie bitte die Voreinstellungen <i>Semikolon</i> und <i>ANSI</i>, ansonsten passen Sie die Voreinstellungen nach Bedarf an.</p>',
+
     'ZIP, City'
       => 'PLZ, Stadt',
     );
