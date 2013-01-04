@@ -301,7 +301,7 @@ class kitCSVimport {
     fclose($handle);
 
     // create the KIT fields
-    $kit_fields = array();
+    $kit_fields = array('kit_id');
     $ignore = array('kit_email_retype', 'kit_zip_city', 'kit_password_retype', 'kit_password');
     foreach ($kitContactInterface->index_array as $field => $assign) {
       if (in_array($field, $ignore)) continue;

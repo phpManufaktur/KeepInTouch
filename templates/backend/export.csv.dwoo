@@ -1,0 +1,49 @@
+{*
+ * KeepInTouch
+ *
+ * @author Ralf Hertsch <ralf.hertsch@phpmanufaktur.de>
+ * @link http://phpmanufaktur.de
+ * @copyright 2010 - 2013
+ * @license MIT License (MIT) http://www.opensource.org/licenses/MIT
+ *}
+<div class="kit_import">
+  <h2>{translate('Import CSV file')}</h2>
+  {if $message.active == 1}
+  <div class="message">{$message.text}</div>
+  {else}
+  <div class="intro">{translate('<p>Import CSV files i.e. from Excel into KeepInTouch.</p><p>If you are using excel, the preselection with <i>semicolon</i> and <i>ANSI</i> is well, otherwise set the correct values.</p><p>The import expect the field names as first line!</p>')}</div>
+  {/if}
+  <form name="{$form.name}" action="{$form.action}" method="post" enctype="multipart/form-data">
+    <input type="hidden" name="{$action.name}" value="{$action.value}" />
+    <fieldset class="kit_import_fieldset">
+      <legend>{translate('Import CSV file')}</legend>
+      <div class="kit_import_label">{translate('Separator')}</div>
+      <div class="kit_import_value">
+        <select name="{$csv.separator.name}">
+          <option value=";">{translate('Semicolon')}</option>
+          <option value=",">{translate('Comma')}</option>
+        </select>
+      </div>
+      <div class="kit_import_clear"></div>
+      <div class="kit_import_label">{translate('Charset')}</div>
+      <div class="kit_import_value">
+        <select name="{$csv.charset.name}">
+          <option value="ANSI">{translate('ANSI')}</option>
+          <option value="UTF-8">{translate('UTF-8')}</option>
+        </select>
+      </div>
+      <div class="kit_import_clear"></div>
+      <div class="kit_import_label">{translate('CSV file')}</div>
+      <div class="kit_import_value">
+        <input type="file" name="{$csv.file.name}" />
+      </div>
+      <div class="kit_import_clear"></div>
+      <div class="kit_import_clear"></div>
+      <div class="kit_import_label">&nbsp;</div>
+      <div class="kit_import_value">
+        <input type="submit" value="{translate('Assign fields')}" />
+      </div>
+      <div class="kit_import_clear"></div>
+    </fieldset>
+  </form>
+</div>
