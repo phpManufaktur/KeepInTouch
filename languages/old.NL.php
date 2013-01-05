@@ -36,39 +36,6 @@ if ('á' != "\xc3\xa1") {
   trigger_error('The language file <b>'.basename(__FILE__).'</b> is damaged, it must be saved <b>UTF-8</b> encoded!', E_USER_ERROR);
 }
 
-define('kit_btn_abort', 'Afbreken');
-define('kit_btn_edit', 'Bewerken');
-define('kit_btn_export', 'Exporteren');
-define('kit_btn_import', 'Importeren');
-define('kit_btn_mail_bcc', 'BCC geadresseerde:');
-define('kit_btn_mail_from', 'Van:');
-define('kit_btn_mail_to', 'An:');
-define('kit_btn_next_step', 'Volgende stap');
-define('kit_btn_no', 'Nee');
-define('kit_btn_ok', 'Overnemen');
-define('kit_btn_preview', 'Inkijken');
-define('kit_btn_register', 'Registreren');
-define('kit_btn_save', 'Opslaan');
-define('kit_btn_send', 'Versturen');
-define('kit_btn_yes', 'Ja');
-
-define('kit_cmd_nl_account_email', 'E-Mail adres abonnee');
-define('kit_cmd_nl_account_first_name', 'Voornaam abonnee');
-define('kit_cmd_nl_account_id', 'ID abonnee account (Account)');
-define('kit_cmd_nl_account_last_name', 'Achternaam abonnee');
-define('kit_cmd_nl_account_login', 'URL: Link op het login dialoog van het abonnee-account  (Account)');
-define('kit_cmd_nl_account_newsletter', 'Abonnement op nieuwsbrief, comma gescheiden');
-define('kit_cmd_nl_account_register_key', 'Registersleutel abonnee-account');
-define('kit_cmd_nl_account_title', 'Aanroep abonnee (Heer of Mevrouw)');
-define('kit_cmd_nl_account_title_academic', 'Titel abonnee (v.b. Dr. of Prof.');
-define('kit_cmd_nl_account_username', 'Gebruikersnaam abonnee (Username)');
-define('kit_cmd_nl_contact_id', 'ID vermelding in de contactendatabase (Contact)');
-define('kit_cmd_nl_content', 'De eigenlijke tekst van de nieuwsbrief zal worden ingevoegd op dit punt ');
-define('kit_cmd_nl_kit_info', 'Geeft informatie over KeepInTouch (KIT)');
-define('kit_cmd_nl_kit_release', 'Geeft release nummer van KeepInTouch (KIT) ');
-define('kit_cmd_nl_newsletter_unsubscribe', 'URL: Link voor afmelden van de nieuwsbriefs');
-define('kit_cmd_nl_salutation', 'Groetvormen 1-10, de aanhefvariaties worden in de voorkeuren ingesteld (Aanhef) ');
-
 define('kit_contact_access_internal', 'Intern');
 define('kit_contact_access_public', 'Publiek');
 define('kit_contact_category_wb_user', 'WB Gebruiker');

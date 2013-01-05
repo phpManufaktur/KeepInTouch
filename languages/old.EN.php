@@ -36,39 +36,6 @@ if ('á' != "\xc3\xa1") {
   trigger_error('The language file <b>'.basename(__FILE__).'</b> is damaged, it must be saved <b>UTF-8</b> encoded!', E_USER_ERROR);
 }
 
-define('kit_btn_abort', 'Abort');
-define('kit_btn_edit', 'Edit');
-define('kit_btn_export', 'Export');
-define('kit_btn_import', 'Import');
-define('kit_btn_mail_bcc', 'BCC Recipients:');
-define('kit_btn_mail_from', 'from:');
-define('kit_btn_mail_to', 'To:');
-define('kit_btn_next_step', 'Next Step');
-define('kit_btn_no', 'No');
-define('kit_btn_ok', 'Okay');
-define('kit_btn_preview', 'Preview');
-define('kit_btn_register', 'Register');
-define('kit_btn_save', 'Save');
-define('kit_btn_send', 'Send');
-define('kit_btn_yes', 'Yes');
-
-define('kit_cmd_nl_account_email', 'E-Mail Address');
-define('kit_cmd_nl_account_first_name', 'First Name');
-define('kit_cmd_nl_account_id', 'ID of the Subscriber (Account)');
-define('kit_cmd_nl_account_last_name', 'Last Name');
-define('kit_cmd_nl_account_login', 'URL: Link on the login dialog of the subscriber (Account)');
-define('kit_cmd_nl_account_newsletter', 'Newsletter Subscription comma separated');
-define('kit_cmd_nl_account_register_key', 'Registered subscribers of the key account');
-define('kit_cmd_nl_account_title', 'Title of subscribers (Mr. or Ms.)');
-define('kit_cmd_nl_account_title_academic', 'Title of the subscriber (for example, Dr. or Prof. ');
-define('kit_cmd_nl_account_username', 'User name of the subscriber (user name)');
-define('kit_cmd_nl_contact_id', 'ID of the entry in the Contact Database (Contact)');
-define('kit_cmd_nl_content', 'The actual text of the newsletter will be inserted at this point');
-define('kit_cmd_nl_kit_info', 'Gives information about KeepInTouch (KIT) from');
-define('kit_cmd_nl_kit_release', 'Returns the release number of KeepInTouch (KIT) from');
-define('kit_cmd_nl_newsletter_unsubscribe', 'URL: link to unsubscribe to the newsletter');
-define('kit_cmd_nl_salutation', 'Greetings 1-10, the salutation variations are defined in the preferences (Salutation)');
-
 define('kit_contact_access_internal', 'Internal');
 define('kit_contact_access_public', 'Public');
 define('kit_contact_category_wb_user', 'WB Users');
