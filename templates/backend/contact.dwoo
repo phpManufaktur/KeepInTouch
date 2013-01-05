@@ -27,38 +27,38 @@
        
     </div>
     <div class="container_full">
-      {include('include/contact/information.lte')}
+      {include('include/contact/information.dwoo')}
     </div>
     
     <div class="kc_clear"></div>
     
     <div class="container_left">
-      {include('include/contact/person.lte')}
-      {include('include/contact/email.lte')}
-      {include('include/contact/phone.lte')}
-      {include('include/contact/internet.lte')}
+      {include('include/contact/person.dwoo')}
+      {include('include/contact/email.dwoo')}
+      {include('include/contact/phone.dwoo')}
+      {include('include/contact/internet.dwoo')}
     </div>
     
     <div class="container_middle">
-      {include('include/contact/contact_since.lte')}
-      {include('include/contact/company.lte')}
-      {include('include/contact/addresses.lte')}
+      {include('include/contact/contact_since.dwoo')}
+      {include('include/contact/company.dwoo')}
+      {include('include/contact/addresses.dwoo')}
     </div>
     
     <div class="container_right">
-      {include('include/contact/map.lte')}
-      {include('include/contact/notes.lte')}
+      {include('include/contact/map.dwoo')}
+      {include('include/contact/notes.dwoo')}
     </div>
     
     <div class="kc_clear"></div>
     
     <div class="container_left">
-      {include('include/contact/categories.lte')}
-      {include('include/contact/distribution.lte')}
+      {include('include/contact/categories.dwoo')}
+      {include('include/contact/distribution.dwoo')}
     </div>
     
     <div class="container_middle">
-      {include('include/contact/newsletter.lte')}
+      {include('include/contact/newsletter.dwoo')}
     </div>
     
     <div class="kc_clear"></div>
