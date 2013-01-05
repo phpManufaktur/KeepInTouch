@@ -138,6 +138,10 @@ $LANG = array(
     'Distribution'
       => 'Verteiler',
 
+    'Edit'
+      => 'Bearbeiten',
+    'E-Mail Address'
+      => 'E-Mail Adresse',
     '<p>Error reading the CSV file {{ file }}!</p>'
       => '<p>Fehler beim Einlesen der CSV Datei {{ file }}!</p>',
     'Export CSV file'
@@ -260,9 +264,13 @@ $LANG = array(
       => 'Telefon',
     '<p>Please select a page with a kitForm Upload script!</p>'
       => 'Bitte wählen Sie eine Seite mit einem kitForm Upload Script aus!</p>',
+    'Preview'
+      => 'Vorschau',
     'private'
       => 'Privat',
 
+    'Save'
+      => 'Speichern',
     '<p>Select a page where a droplet with a referrer to kitForm Upload Script reside. This page may be hidden.</p><p>KIT generate a link which enable the contact to upload a file into the protected file area.</p>'
       => '<p>Wählen Sie eine Seite aus, auf der sich ein Droplet mit einem Verweis auf ein kitForm Upload Script befindet. Die Seite kann versteckt sein.<br />KIT erzeugt einen Link, der es dem Kontakt ermöglicht eine Datei in das von KIT geschützte Verzeichnis zu übertragen.',
     'Select option'
@@ -273,6 +281,8 @@ $LANG = array(
       => 'Seite auswählen',
     'Semicolon'
       => 'Semikolon',
+    'Send'
+      => 'Übermitteln',
     'Separator'
       => 'Trennzeichen',
     'Special'
