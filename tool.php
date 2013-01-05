@@ -1205,7 +1205,7 @@ class kitBackend {
         'newsletter' => $newsletter
     );
 
- */   /*
+    /*
     // Kategorien
 
     $categories = '';
@@ -1309,7 +1309,7 @@ class kitBackend {
 
     */
     // the data array for the parser
- /*   $data = array(
+/*    $data = array(
         'form' => array(
             'name' => 'kit_contact',
             'action' => $this->page_link
@@ -1321,7 +1321,7 @@ class kitBackend {
         'language' => (LANGUAGE == 'EN') ? '' : strtolower(LANGUAGE),
         'contact' => $contact_array
         );
-    return $this->getTemplate('contact.lte', $data);
+    return $this->getTemplate('contact.dwoo', $data);
   } // dlgContact()
 */
 
@@ -2067,8 +2067,8 @@ class kitBackend {
         'action_name' => self::request_action,
         'action_value' => self::action_contact_save,
         'language' => (LANGUAGE == 'EN') ? '' : strtolower(LANGUAGE),
-        'btn_ok' => kit_btn_ok,
-        'btn_abort' => kit_btn_abort,
+        'btn_ok' => $this->lang->translate('OK'),
+        'btn_abort' => $this->lang->translate('Abort'),
         'abort_location' => $this->page_link,
         'id_name' => dbKITcontact::field_id,
         'id_value' => $id,
@@ -3376,8 +3376,8 @@ class kitBackend {
         'intro' => $intro,
         'items' => $items,
         'add' => '',
-        'btn_ok' => kit_btn_ok,
-        'btn_abort' => kit_btn_abort,
+        'btn_ok' => $this->lang->translate('OK'),
+        'btn_abort' => $this->lang->translate('Abort'),
         'abort_location' => $this->page_link);
     return $parser->get($this->template_path.'backend.config.general.htt', $data);
   } // dlgConfigGeneral()
@@ -3476,8 +3476,8 @@ class kitBackend {
         'items' => $items,
         'add_title' => kit_label_cfg_array_add_items,
         'add' => $add,
-        'btn_ok' => kit_btn_ok,
-        'btn_abort' => kit_btn_abort,
+        'btn_ok' => $this->lang->translate('OK'),
+        'btn_abort' => $this->lang->translate('Abort'),
         'abort_location' => $this->page_link);
     return $parser->get($this->template_path.'backend.config.array.htt', $data);
   } // dlgConfigArray()
@@ -3861,8 +3861,8 @@ class kitBackend {
         'value_enable_relaying' => $value[dbKITprovider::field_relaying],
         'label_status' => kit_label_status,
         'value_status' => $value[dbKITprovider::field_status],
-        'btn_ok' => kit_btn_ok,
-        'btn_abort' => kit_btn_abort,
+        'btn_ok' => $this->lang->translate('OK'),
+        'btn_abort' => $this->lang->translate('Abort'),
         'abort_location' => $this->page_link,
         'header_help' => kit_header_help_documentation);
     return $parser->get($this->template_path.'backend.config.provider.htt', $data);
@@ -4074,8 +4074,8 @@ class kitBackend {
         'items' => $items,
         'value_editor' => $editor,
         'header_help' => kit_header_help_documentation,
-        'btn_send' => kit_btn_send,
-        'btn_abort' => kit_btn_abort,
+        'btn_send' => $this->lang->translate('Send'),
+        'btn_abort' => $this->lang->translate('Abort'),
         'abort_location' => $this->page_link);
     return $parser->get($this->template_path.'backend.email.dlg.htt', $data);
   } // dlgEMail()
