@@ -320,6 +320,36 @@ if ($database->is_error()) {
   $error .= sprintf('[INSTALLATION kit_links] %s', $database->get_error());
 }
 
+/**
+ * Release 0.67
+ */
+
+@unlink(WB_PATH.'/modules/kit/htt/backend.config.import.htt');
+@unlink(WB_PATH.'/modules/kit/htt/backend.config.import.massmail.htt');
+@unlink(WB_PATH.'/modules/kit/htt/backend.config.import.massmail.tr.htt');
+@unlink(WB_PATH.'/modules/kit/htt/backend.import.step.1.htt');
+@unlink(WB_PATH.'/modules/kit/htt/backend.import.step.1.tr.htt');
+@unlink(WB_PATH.'/modules/kit/htt/backend.import.step.2.htt');
+@unlink(WB_PATH.'/modules/kit/htt/backend.import.step.2.th.htt');
+@unlink(WB_PATH.'/modules/kit/htt/backend.import.step.2.tr.htt');
+@unlink(WB_PATH.'/modules/kit/htt/backend.newsletter.config.csv.htt');
+@unlink(WB_PATH.'/modules/kit/htt/backend.start.register.dlg.htt');
+@unlink(WB_PATH.'/modules/kit/htt/backend.start.register.dlg.tr.htt');
+@unlink(WB_PATH.'/modules/kit/htt/newsletter.sample.wbugb.htt');
+@unlink(WB_PATH.'/modules/kit/htt/frontend.error.htt');
+@unlink(WB_PATH.'/modules/kit/templates/backend/include/contact/addresses.lte');
+@unlink(WB_PATH.'/modules/kit/templates/backend/include/contact/categories.lte');
+@unlink(WB_PATH.'/modules/kit/templates/backend/include/contact/company.lte');
+@unlink(WB_PATH.'/modules/kit/templates/backend/include/contact/contact_since.lte');
+@unlink(WB_PATH.'/modules/kit/templates/backend/include/contact/distribution.lte');
+@unlink(WB_PATH.'/modules/kit/templates/backend/include/contact/email.lte');
+@unlink(WB_PATH.'/modules/kit/templates/backend/include/contact/information.lte');
+@unlink(WB_PATH.'/modules/kit/templates/backend/include/contact/internet.lte');
+@unlink(WB_PATH.'/modules/kit/templates/backend/include/contact/map.lte');
+@unlink(WB_PATH.'/modules/kit/templates/backend/include/contact/newsletter.lte');
+@unlink(WB_PATH.'/modules/kit/templates/backend/include/contact/notes.lte');
+@unlink(WB_PATH.'/modules/kit/templates/backend/include/contact/person.lte');
+@unlink(WB_PATH.'/modules/kit/templates/backend/include/contact/phone.lte');
 
 // Prompt Errors
 if (!empty($error)) {
