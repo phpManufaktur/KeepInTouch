@@ -3,6 +3,10 @@
 Ralf Hertsch, Stockholmer Str. 31, 13359 Berlin (Germany)
 http://phpManufaktur.de - ralf.hertsch@phpManufaktur.de
 
+Release 0.67 - NOT PUBLISHED
+
+* KIT interface does not add the country to the contact array
+
 Release 0.66 - 2013-01-04
 
 * added export dialog, please read <http://yals.de/WpBd3v> for more information

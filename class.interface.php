@@ -954,6 +954,7 @@ class kitContactInterface {
           //$contact_array[$kit_field] = ($contact[dbKITcontact::field_type] == dbKITcontact::type_person) ? $this->address_type_array[self::address_type_private] : $this->address_type_array[self::address_type_business];
           $contact_array[$kit_field] = ($contact[dbKITcontact::field_type] == dbKITcontact::type_person) ? self::address_type_private : self::address_type_business;
           break;
+      case self::kit_country:
         case self::kit_street:
         case self::kit_zip:
         case self::kit_city:

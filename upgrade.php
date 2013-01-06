@@ -350,6 +350,7 @@ if ($database->is_error()) {
 @unlink(WB_PATH.'/modules/kit/templates/backend/include/contact/notes.lte');
 @unlink(WB_PATH.'/modules/kit/templates/backend/include/contact/person.lte');
 @unlink(WB_PATH.'/modules/kit/templates/backend/include/contact/phone.lte');
+@unlink(WB_PATH.'/modules/kit/templates/backend/backend.contact.lte');
 
 // Prompt Errors
 if (!empty($error)) {
