@@ -37,7 +37,6 @@ require_once(WB_PATH.'/modules/'.basename(dirname(__FILE__)).'/initialize.php');
 require_once(WB_PATH.'/modules/'.basename(dirname(__FILE__)).'/class.mail.php');
 require_once(WB_PATH.'/modules/'.basename(dirname(__FILE__)).'/class.newsletter.php');
 require_once(WB_PATH.'/modules/'.basename(dirname(__FILE__)).'/class.cronjob.php');
-require_once(WB_PATH.'/modules/'.basename(dirname(__FILE__)).'/class.import.php');
 
 global $admin;
 global $database;
@@ -123,11 +122,6 @@ if ($dbCronjobNewsletterLog->isError()) {
 $dbCronjobErrorLog = new dbCronjobErrorLog(true);
 if ($dbCronjobErrorLog->isError()) {
   $error .= sprintf('<p>[Installation] %s</p>', $dbCronjobErrorLog->getError());
-}
-
-$dbImport = new dbKITimport(true);
-if ($dbImport->isError()) {
-  $error .= sprintf('<p>[Installation] %s</p>', $dbImport->getError());
 }
 
 $dbLanguages = new dbKITlanguages(true);
