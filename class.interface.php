@@ -576,6 +576,14 @@ class kitContactInterface {
               }
             }
             break;
+          case self::kit_distribution:
+            if (isset($contact_array[$field]))  {
+              if ($contact_array[$field] != $contact[dbKITcontact::field_distribution]) {
+                $contact[dbKITcontact::field_distribution] = $contact_array[$field];
+                $contact_changed = true;
+              }
+            }
+            break;
         endswitch;
       }
       if ($address_changed) {
@@ -729,6 +737,9 @@ class kitContactInterface {
           break;
         case dbKITcontact::field_newsletter:
           $contact[$key] = (isset($contact_array[self::kit_newsletter])) ? $contact_array[self::kit_newsletter] : '';
+          break;
+        case dbKITcontact::field_distribution:
+          $contact[$key] = (isset($contact_array[self::kit_distribution])) ? $contact_array[self::kit_distribution] : '';
           break;
         case dbKITcontact::field_person_title:
           $contact[$key] = (isset($contact_array[self::kit_title])) ? $contact_array[self::kit_title] : dbKITcontact::person_title_mister;
@@ -1081,9 +1092,10 @@ class kitContactInterface {
    *
    * @param INT $contact_id
    * @param ARRAY $categories
+   * @param boolean $use_keys if true return structured $categories
    * @return BOOL
    */
-  public function getCategories($contact_id, &$categories = array()) {
+  public function getCategories($contact_id, &$categories = array(), $use_keys=false) {
     global $dbContact;
 
     $SQL = sprintf("SELECT %s,%s,%s FROM %s WHERE %s='%s' AND %s='%s'", dbKITcontact::field_category, dbKITcontact::field_distribution, dbKITcontact::field_newsletter, $dbContact->getTableName(), dbKITcontact::field_id, $contact_id, dbKITcontact::field_status, dbKITcontact::status_active);
@@ -1099,18 +1111,49 @@ class kitContactInterface {
     }
     $cats = $cats[0];
     $ga = array(
-        dbKITcontact::field_category,
-        dbKITcontact::field_distribution,
-        dbKITcontact::field_newsletter);
-    foreach ($ga as $grp) {
+        dbKITcontact::field_category => 'kit_category',
+        dbKITcontact::field_distribution => 'kit_disctribution',
+        dbKITcontact::field_newsletter => 'kit_newsletter'
+        );
+    foreach ($ga as $grp => $field) {
       $x = explode(',', $cats[$grp]);
       foreach ($x as $i) {
-        if (!empty($i))
-          $categories[] = $i;
+        if (!empty($i)) {
+          if ($use_keys) {
+            $categories[] = array(
+                'type' => $field,
+                'value' => $i
+                );
+          }
+          else
+            $categories[] = $i;
+        }
       }
     }
     return true;
   } // getCategories()
+
+  /**
+   * Get contact ID's for the specified category identifier
+   *
+   * @param string $identifier
+   * @param array $contacts
+   * @return boolean
+   */
+  public function getContactsByCategory($identifier, &$contacts=array()) {
+      global $database;
+
+      $SQL = "SELECT `contact_id` FROM `".self::$table_prefix."mod_kit_contact` WHERE ((`contact_distribution_ids`='$identifier') OR ".
+                      "(`contact_distribution_ids` LIKE '%,$identifier') OR (`contact_distribution_ids` LIKE '%,$identifier,%') OR ".
+                      "(`contact_distribution_ids` LIKE '$identifier,%')) AND `contact_status`='statusActive'";
+      if (null === ($query = $database->query($SQL))) {
+          $this->setError(sprintf('[%s - %s] %s', __METHOD__, __LINE__, $database->get_error()));
+          return false;
+      }
+      while (false !== ($contact_id = $query->fetchRow(MYSQL_ASSOC)))
+          $contacts[] = $contact_id['contact_id'];
+      return true;
+  } // getContactsByCategory()
 
   /**
    * Ueberprueft ob fuer den angegebenen $category_type:

@@ -3,6 +3,14 @@
 Ralf Hertsch, Stockholmer Str. 31, 13359 Berlin (Germany)
 http://phpManufaktur.de - ralf.hertsch@phpManufaktur.de
 
+Release 0.68 - 2013-01-14
+
+* added: KIT interface now handles KIT categories of type DISTRIBUTION
+* changed: kitContactInterface::getCategories() added parameter $use_keys return
+  a structured categories array
+* added: kitContactInterface::getContactsByCategory return all KIT_ID's of the
+  members of the specified KIT category
+
 Release 0.67 - 2013-01-08
 
 * fixed: KIT interface does not add the country to the contact array
