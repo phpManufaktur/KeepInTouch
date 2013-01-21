@@ -309,7 +309,6 @@ class kitCSVimport {
     }
     // sort alphabetical
     sort($kit_fields);
-
     $data = array(
         'form' => array(
             'name' => 'kit_csv_import',
@@ -406,7 +405,15 @@ class kitCSVimport {
 
     $title_array = $dbContact->person_title_array;
     $academic_array = $dbContact->person_title_academic_array;
-    $newsletter_array = $dbContact->newsletter_array;
+    $newsletter_array = array();
+    $x = $dbContact->newsletter_array;
+    foreach ($x as $key => $value)
+      $newsletter_array[] = $key;
+
+    $distribution_array = array();
+    $x = $dbContact->distribution_array;
+    foreach ($x as $key => $value)
+      $distribution_array[] = $key;
 
     // now we loop through the CSV file and import the data
     $line = 0;
@@ -451,13 +458,22 @@ class kitCSVimport {
             foreach ($nl as $news) {
               $news = trim($news);
               if (empty($news)) continue;
-              if (false !== ($add = array_search($news, $newsletter_array)))
-                $newsletter[] = $add;
-              else
-                $message .= $this->lang->translate('<p>Skipped invalid entry <b>{{ newsletter }}</b> for <i>kit_newsletter</i> in line <i>{{ line }}</i>.</p>',
-                    array('newsletter' => $news, 'line' => $line));
+              if (in_array($news, $newsletter_array))
+                $newsletter[] = $news;
             }
             $contact[$columns[$i]] = implode(',', $newsletter);
+            break;
+          case 'kit_distribution':
+            // check for distributions
+            $dl = explode(',', $data[$i]);
+            $distribution = array();
+            foreach ($dl as $dist) {
+              $dist = trim($dist);
+              if (empty($dist)) continue;
+              if (in_array($dist, $distribution_array))
+                $distribution[] = $dist;
+            }
+            $contact[$columns[$i]] = implode(',', $distribution);
             break;
           case 'kit_birthday':
             // set the contact birthday

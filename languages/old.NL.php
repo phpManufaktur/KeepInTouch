@@ -267,6 +267,8 @@ define('kit_intro_register_installation', '<p>Registreer uw KeepInTouch Installa
 define('kit_label_add_new_address', 'Voeg extra Adres toe');
 define('kit_label_additional_fields', 'Benutzerdefinierte Felder');
 define('kit_label_address_city', 'plaats');
+define('kit_label_address_extra', 'Adresszusatz');
+define('kit_label_address_region', 'Region, Bereich');
 define('kit_label_address_street', 'Straat');
 define('kit_label_address_type', 'type Adres');
 define('kit_label_address_type_private', 'Particulier');

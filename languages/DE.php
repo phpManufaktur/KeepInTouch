@@ -64,6 +64,8 @@ $LANG = array(
       => '<p><b>{{ add }}</b> Datensätze hinzugefügt, <b>{{ update }}</b> Datensätze aktualisiert.</p>',
     'Additional'
       => 'Zusatz',
+    'Address extra'
+      => 'Adresszusatz',
     'Addresses'
       => 'Adressen',
     'Assign fields'
@@ -268,6 +270,9 @@ $LANG = array(
       => 'Vorschau',
     'private'
       => 'Privat',
+
+    'Region or area'
+      => 'Region, Kanton, Bereich',
 
     'Save'
       => 'Speichern',

@@ -300,6 +300,8 @@ define('kit_intro_register_installation', '<p>Registrieren Sie Ihre KeepInTouch 
 define('kit_label_add_new_address', 'Zusätzliche Anschrift hinzufügen');
 define('kit_label_additional_fields', 'Benutzerdefinierte Felder');
 define('kit_label_address_city', 'Stadt');
+define('kit_label_address_extra', 'Adresszusatz');
+define('kit_label_address_region', 'Region, Bereich');
 define('kit_label_address_street', 'Straße');
 define('kit_label_address_type', 'Art der Adresse');
 define('kit_label_address_type_private', 'Privat');

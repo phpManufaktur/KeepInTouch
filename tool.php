@@ -1495,12 +1495,16 @@ class kitBackend {
         (isset($_REQUEST[dbKITcontactAddress::field_street.'_'.$addr])) ? $street = $_REQUEST[dbKITcontactAddress::field_street.'_'.$addr] : $street = '';
         (isset($_REQUEST[dbKITcontactAddress::field_zip.'_'.$addr])) ? $zip = $_REQUEST[dbKITcontactAddress::field_zip.'_'.$addr] : $zip = '';
         (isset($_REQUEST[dbKITcontactAddress::field_city.'_'.$addr])) ? $city = $_REQUEST[dbKITcontactAddress::field_city.'_'.$addr] : $city = '';
+        (isset($_REQUEST[dbKITcontactAddress::field_extra.'_'.$addr])) ? $address_extra = $_REQUEST[dbKITcontactAddress::field_extra.'_'.$addr] : $address_extra = '';
+        (isset($_REQUEST[dbKITcontactAddress::field_region.'_'.$addr])) ? $address_region = $_REQUEST[dbKITcontactAddress::field_region.'_'.$addr] : $address_region = '';
         (isset($_REQUEST[dbKITcontactAddress::field_country.'_'.$addr])) ? $country = $_REQUEST[dbKITcontactAddress::field_country.'_'.$addr] : $country = 'DE';
         (isset($_REQUEST[dbKITcontactAddress::field_type.'_'.$addr])) ? $addr_type = $_REQUEST[dbKITcontactAddress::field_type.'_'.$addr] : $addr_type = dbKITcontactAddress::type_undefined;
         $addr_values[dbKITcontactAddress::field_id] = $addr;
         $addr_values[dbKITcontactAddress::field_street] = $street;
         $addr_values[dbKITcontactAddress::field_zip] = $zip;
         $addr_values[dbKITcontactAddress::field_city] = $city;
+        $addr_values[dbKITcontactAddress::field_extra] = $address_extra;
+        $addr_values[dbKITcontactAddress::field_region] = $address_region;
         $addr_values[dbKITcontactAddress::field_country] = $country;
         $addr_values[dbKITcontactAddress::field_type] = $addr_type;
         $addr_values[dbKITcontactAddress::field_status] = dbKITcontactAddress::status_active;
@@ -1526,6 +1530,8 @@ class kitBackend {
         $street = sprintf('<input type="text" name="%s" value="%s" />', dbKITcontactAddress::field_street.'_'.$addr_values[dbKITcontactAddress::field_id], $addr_values[dbKITcontactAddress::field_street]);
         $zip = sprintf('<input type="text" name="%s" value="%s" />', dbKITcontactAddress::field_zip.'_'.$addr_values[dbKITcontactAddress::field_id], $addr_values[dbKITcontactAddress::field_zip]);
         $city = sprintf('<input type="text" name="%s" value="%s" />', dbKITcontactAddress::field_city.'_'.$addr_values[dbKITcontactAddress::field_id], $addr_values[dbKITcontactAddress::field_city]);
+        $extra = sprintf('<input type="text" name="%s" value="%s" />', dbKITcontactAddress::field_extra.'_'.$addr_values[dbKITcontactAddress::field_id], $addr_values[dbKITcontactAddress::field_extra]);
+        $region = sprintf('<input type="text" name="%s" value="%s" />', dbKITcontactAddress::field_region.'_'.$addr_values[dbKITcontactAddress::field_id], $addr_values[dbKITcontactAddress::field_region]);
         $additional = '';
         $select = '';
         foreach ($countries as $key => $name) {
@@ -1563,11 +1569,17 @@ class kitBackend {
             'label_street' => kit_label_address_street,
             'value_street' => $street,
             'class_street' => dbKITcontactAddress::field_street,
+            'label_extra' => $this->lang->translate('Address extra'),
+            'value_extra' => $extra,
+            'class_extra' => dbKITcontactAddress::field_extra,
             'label_zip_city' => kit_label_address_zip_city,
             'value_city' => $city,
             'class_city' => dbKITcontactAddress::field_city,
             'value_zip' => $zip,
             'class_zip' => dbKITcontactAddress::field_zip,
+            'label_region' => $this->lang->translate('Region or area'),
+            'value_region' => $region,
+            'class_region' => dbKITcontactAddress::field_region,
             'label_add' => '&nbsp;',
             'value_add' => $additional);
         $addresses .= $parser->get($addr_template, $addr_array);
@@ -2704,6 +2716,10 @@ class kitBackend {
             $data = array();
             $data[dbKITcontactAddress::field_street] = $_REQUEST[dbKITcontactAddress::field_street.'_'.$addr_id];
             unset($_REQUEST[dbKITcontactAddress::field_street.'_'.$addr_id]);
+            $data[dbKITcontactAddress::field_extra] = $_REQUEST[dbKITcontactAddress::field_extra.'_'.$addr_id];
+            unset($_REQUEST[dbKITcontactAddress::field_extra.'_'.$addr_id]);
+            $data[dbKITcontactAddress::field_region] = $_REQUEST[dbKITcontactAddress::field_region.'_'.$addr_id];
+            unset($_REQUEST[dbKITcontactAddress::field_region.'_'.$addr_id]);
             $data[dbKITcontactAddress::field_zip] = $_REQUEST[dbKITcontactAddress::field_zip.'_'.$addr_id];
             unset($_REQUEST[dbKITcontactAddress::field_zip.'_'.$addr_id]);
             $data[dbKITcontactAddress::field_city] = $_REQUEST[dbKITcontactAddress::field_city.'_'.$addr_id];
@@ -2734,10 +2750,20 @@ class kitBackend {
               return false;
             }
             $addr_old = $addr_old[0];
-            if (($addr_old[dbKITcontactAddress::field_street] != $_REQUEST[dbKITcontactAddress::field_street.'_'.$addr_id]) || ($addr_old[dbKITcontactAddress::field_zip] != $_REQUEST[dbKITcontactAddress::field_zip.'_'.$addr_id]) || ($addr_old[dbKITcontactAddress::field_city] != $_REQUEST[dbKITcontactAddress::field_city.'_'.$addr_id]) || ($addr_old[dbKITcontactAddress::field_country] != $_REQUEST[dbKITcontactAddress::field_country.'_'.$addr_id]) || ($addr_old[dbKITcontactAddress::field_type] != $_REQUEST[dbKITcontactAddress::field_type.'_'.$addr_id]) || ($addr_old[dbKITcontactAddress::field_status] != $_REQUEST[dbKITcontactAddress::field_status.'_'.$addr_id])) {
+            if (($addr_old[dbKITcontactAddress::field_street] != $_REQUEST[dbKITcontactAddress::field_street.'_'.$addr_id]) ||
+                ($addr_old[dbKITcontactAddress::field_zip] != $_REQUEST[dbKITcontactAddress::field_zip.'_'.$addr_id]) ||
+                ($addr_old[dbKITcontactAddress::field_extra] != $_REQUEST[dbKITcontactAddress::field_extra.'_'.$addr_id]) ||
+                ($addr_old[dbKITcontactAddress::field_region] != $_REQUEST[dbKITcontactAddress::field_region.'_'.$addr_id]) ||
+                ($addr_old[dbKITcontactAddress::field_city] != $_REQUEST[dbKITcontactAddress::field_city.'_'.$addr_id]) ||
+                ($addr_old[dbKITcontactAddress::field_country] != $_REQUEST[dbKITcontactAddress::field_country.'_'.$addr_id]) ||
+                ($addr_old[dbKITcontactAddress::field_type] != $_REQUEST[dbKITcontactAddress::field_type.'_'.$addr_id]) ||
+                ($addr_old[dbKITcontactAddress::field_status] != $_REQUEST[dbKITcontactAddress::field_status.'_'.$addr_id])
+                ) {
               // one ore more entries changed...
               $data = array();
               $data[dbKITcontactAddress::field_street] = $_REQUEST[dbKITcontactAddress::field_street.'_'.$addr_id];
+              $data[dbKITcontactAddress::field_extra] = $_REQUEST[dbKITcontactAddress::field_extra.'_'.$addr_id];
+              $data[dbKITcontactAddress::field_region] = $_REQUEST[dbKITcontactAddress::field_region.'_'.$addr_id];
               $data[dbKITcontactAddress::field_zip] = $_REQUEST[dbKITcontactAddress::field_zip.'_'.$addr_id];
               $data[dbKITcontactAddress::field_city] = $_REQUEST[dbKITcontactAddress::field_city.'_'.$addr_id];
               $data[dbKITcontactAddress::field_country] = $_REQUEST[dbKITcontactAddress::field_country.'_'.$addr_id];

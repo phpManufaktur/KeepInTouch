@@ -345,6 +345,23 @@ if ($database->is_error()) {
 @unlink(WB_PATH.'/modules/kit/templates/backend/include/contact/phone.lte');
 @unlink(WB_PATH.'/modules/kit/templates/backend/backend.contact.lte');
 
+/**
+ * Release 0.69
+ */
+
+$dbKITaddress = new dbKITcontactAddress();
+// additional fields for the contact address
+if (!$dbKITaddress->sqlFieldExists(dbKITcontactAddress::field_extra)) {
+  if (!$dbKITaddress->sqlAlterTableAddField(dbKITcontactAddress::field_extra, "VARCHAR(255) NOT NULL DEFAULT ''", dbKITcontactAddress::field_city)) {
+    $error .= sprintf('<p>[ALTER TABLE mod_kit_contact] %s</p>', $dbKITaddress->getError());
+  }
+}
+if (!$dbKITaddress->sqlFieldExists(dbKITcontactAddress::field_region)) {
+  if (!$dbKITaddress->sqlAlterTableAddField(dbKITcontactAddress::field_region, "VARCHAR(255) NOT NULL DEFAULT ''", dbKITcontactAddress::field_extra)) {
+    $error .= sprintf('<p>[ALTER TABLE mod_kit_contact] %s</p>', $dbKITaddress->getError());
+  }
+}
+
 // Prompt Errors
 if (!empty($error)) {
   $admin->print_error($error);

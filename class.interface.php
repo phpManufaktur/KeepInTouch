@@ -41,6 +41,8 @@ if (!is_object($kitContactInterface))
 class kitContactInterface {
 
   const kit_address_type = 'kit_address_type';
+  const kit_address_extra = 'kit_address_extra';
+  const kit_address_region = 'kit_address_region';
   const kit_birthday = 'kit_birthday';
   const kit_categories = 'kit_categories'; // reines Info-Feld - wird nicht in die Feldliste aufgenommen!
   const kit_city = 'kit_city';
@@ -81,6 +83,8 @@ class kitContactInterface {
 
   public $field_array = array(
       self::kit_address_type => kit_label_address_type,
+      self::kit_address_extra => kit_label_address_extra,
+      self::kit_address_region => kit_label_address_region,
       self::kit_birthday => kit_label_birthday,
       self::kit_city => kit_label_address_city,
       self::kit_company => kit_label_company_name,
@@ -118,6 +122,8 @@ class kitContactInterface {
       );
 
   public $field_assign = array(
+      self::kit_address_extra => dbKITcontactAddress::field_extra,
+      self::kit_address_region => dbKITcontactAddress::field_region,
       self::kit_birthday => dbKITcontact::field_birthday,
       self::kit_city => dbKITcontactAddress::field_city,
       self::kit_company => dbKITcontact::field_company_name,
@@ -177,7 +183,10 @@ class kitContactInterface {
       self::kit_free_field_5 => 35,
       self::kit_free_note_1 => 36,
       self::kit_free_note_2 => 37,
-      self::kit_contact_language => 38 // last added field
+      self::kit_contact_language => 38,
+      self::kit_address_extra => 39,
+      self::kit_address_region => 40,
+      self::kit_distribution => 41 // last added field
   );
 
   const address_type_private = 'private';
@@ -473,6 +482,7 @@ class kitContactInterface {
     global $dbContact;
     global $dbContactAddress;
     global $dbRegister;
+    global $database;
 
     $contact = array();
     if ($dbContact->getContactByID($contact_id, $contact)) {
@@ -486,8 +496,10 @@ class kitContactInterface {
           return false;
         }
       }
+      $free_fields = array();
       $contact_changed = false;
       $address_changed = false;
+      $free_fields_changed = false;
       foreach ($this->field_array as $field => $label) {
         switch ($field) :
           case self::kit_title:
@@ -520,9 +532,23 @@ class kitContactInterface {
           case self::kit_city:
           case self::kit_zip:
           case self::kit_country:
-            if (isset($contact_array[$field]) && !empty($contact_array[$field]) && ($contact_array[$field] !== $address[$this->field_assign[$field]])) {
+          case self::kit_address_extra:
+          case self::kit_address_region:
+            if (isset($contact_array[$field]) && !empty($contact_array[$field]) && ($contact_array[$field] != $address[$this->field_assign[$field]])) {
               $address[$this->field_assign[$field]] = $contact_array[$field];
               $address_changed = true;
+            }
+            break;
+          case self::kit_free_field_1:
+          case self::kit_free_field_2:
+          case self::kit_free_field_3:
+          case self::kit_free_field_4:
+          case self::kit_free_field_5:
+          case self::kit_free_note_1:
+          case self::kit_free_note_2:
+            if (isset($contact_array[$field]) && !empty($contact_array[$field])) {
+              $free_fields[$this->field_assign[$field]] = $contact_array[$field];
+              $free_fields_changed = true;
             }
             break;
           case self::kit_phone:
@@ -630,6 +656,31 @@ class kitContactInterface {
           $dbContact->addSystemNotice($contact_id, sprintf(kit_protocol_ki_address_updated, $address[dbKITcontactAddress::field_street], $address[dbKITcontactAddress::field_zip], $address[dbKITcontactAddress::field_city]));
         }
       }
+      // free fields
+      if (count($free_fields) > 0) {
+        foreach ($free_fields as $key => $value) {
+          $memo = self::sanitizeText($value);
+          if ($contact[$key] > 0) {
+            // update the free field
+            $SQL = "UPDATE `".self::$table_prefix."mod_kit_contact_memos` SET `memo_memo`='$memo' WHERE `memo_id`='{$contact[$key]}'";
+            if (null === ($database->query($SQL))) {
+              $this->setError(sprintf('[%s - %s] %s', __METHOD__, __LINE__, $database->get_error()));
+              return false;
+            }
+          }
+          else {
+            // insert a new free field
+            $SQL = "INSERT INTO `".self::$table_prefix."mod_kit_contact_memos` (`contact_id`, `memo_memo`) VALUES ('$contact_id', '$memo')";
+            if (null === ($database->query($SQL))) {
+              $this->setError(sprintf('[%s - %s] %s', __METHOD__, __LINE__, $database->get_error()));
+              return false;
+            }
+            // set the memo_id to the contact array!
+            $contact[$key] = mysql_insert_id();
+            $contact_changed = true;
+          }
+        }
+      }
       if ($contact_changed) {
         $where = array(dbKITcontact::field_id => $contact_id);
         if (!$dbContact->sqlUpdateRecord($contact, $where)) {
@@ -679,6 +730,7 @@ class kitContactInterface {
     global $dbRegister;
     global $tools;
     global $dbCfg;
+    global $database;
 
     if (!isset($contact_array[self::kit_email])) {
       // es wurde keine E-Mail Adresse uebergeben
@@ -693,6 +745,7 @@ class kitContactInterface {
     }
     // neuen Datensatz anlegen
     $contact = $dbContact->getFields();
+    $free_fields = array();
     foreach ($contact as $key => $value) {
       switch ($key) :
         case dbKITcontact::field_address:
@@ -706,6 +759,9 @@ class kitContactInterface {
         case dbKITcontact::field_person_last_name:
         case dbKITcontact::field_company_name:
         case dbKITcontact::field_company_department:
+        case dbKITcontact::field_birthday:
+          $contact[$key] = (isset($contact_array[array_search($key, $this->field_assign)])) ? $contact_array[array_search($key, $this->field_assign)] : '';
+          break;
         case dbKITcontact::field_free_1:
         case dbKITcontact::field_free_2:
         case dbKITcontact::field_free_3:
@@ -713,8 +769,9 @@ class kitContactInterface {
         case dbKITcontact::field_free_5:
         case dbKITcontact::field_free_note_1:
         case dbKITcontact::field_free_note_2:
-        case dbKITcontact::field_birthday:
-          $contact[$key] = (isset($contact_array[array_search($key, $this->field_assign)])) ? $contact_array[array_search($key, $this->field_assign)] : '';
+          if (isset($contact_array[array_search($key, $this->field_assign)])) {
+            $free_fields[$key] = $contact_array[array_search($key, $this->field_assign)];
+          }
           break;
         case dbKITcontact::field_company_title:
           $contact[$key] = dbKITcontact::company_title_none;
@@ -797,6 +854,8 @@ class kitContactInterface {
           dbKITcontactAddress::field_contact_id => $contact_id,
           dbKITcontactAddress::field_country => isset($contact_array[self::kit_country]) ? strtoupper(trim($contact_array[self::kit_country])) : 'DE',
           dbKITcontactAddress::field_street => isset($contact_array[self::kit_street]) ? $contact_array[self::kit_street] : '',
+          dbKITcontactAddress::field_extra => isset($contact_array[self::kit_address_extra]) ? $contact_array[self::kit_address_extra] : '',
+          dbKITcontactAddress::field_region => isset($contact_array[self::kit_address_region]) ? $contact_array[self::kit_address_region] : '',
           dbKITcontactAddress::field_zip => isset($contact_array[self::kit_zip]) ? $contact_array[self::kit_zip] : '',
           dbKITcontactAddress::field_type => (isset($contact_array[self::kit_address_type]) && ($contact_array[self::kit_address_type] == self::address_type_business)) ? dbKITcontactAddress::type_business : dbKITcontactAddress::type_private,
           dbKITcontactAddress::field_status => dbKITcontactAddress::status_active,
@@ -851,6 +910,37 @@ class kitContactInterface {
       return false;
     }
     $register_array[dbKITregister::field_id] = $register_id;
+
+    // free fields
+    if (count($free_fields) > 0) {
+      foreach ($free_fields as $key => $value) {
+        $memo = self::sanitizeText($value);
+        if ($contact[$key] > 0) {
+          // update the free field
+          $SQL = "UPDATE `".self::$table_prefix."mod_kit_contact_memos` SET `memo_memo`='$memo' WHERE `memo_id`='{$contact[$key]}'";
+          if (null === ($database->query($SQL))) {
+            $this->setError(sprintf('[%s - %s] %s', __METHOD__, __LINE__, $database->get_error()));
+            return false;
+          }
+        }
+        else {
+          // insert a new free field
+          $SQL = "INSERT INTO `".self::$table_prefix."mod_kit_contact_memos` (`contact_id`, `memo_memo`) VALUES ('$contact_id', '$memo')";
+          if (null === ($database->query($SQL))) {
+            $this->setError(sprintf('[%s - %s] %s', __METHOD__, __LINE__, $database->get_error()));
+            return false;
+          }
+          // get the created memo_id
+          $memo_id = mysql_insert_id();
+          // update KIT contact!
+          $SQL = "UPDATE `".self::$table_prefix."mod_kit_contact` SET `$key`='$memo_id' WHERE `contact_id`='$contact_id'";
+          if (null === ($database->query($SQL))) {
+            $this->setError(sprintf('[%s - %s] %s', __METHOD__, __LINE__, $database->get_error()));
+            return false;
+          }
+        }
+      }
+    }
 
     return true;
   } // insertContact()
@@ -967,6 +1057,8 @@ class kitContactInterface {
           break;
       case self::kit_country:
         case self::kit_street:
+        case self::kit_address_extra:
+        case self::kit_address_region:
         case self::kit_zip:
         case self::kit_city:
           $contact_array[$kit_field] = $address[$this->field_assign[$kit_field]];
@@ -1054,7 +1146,8 @@ class kitContactInterface {
           $memo_id = $contact[$this->field_assign[$kit_field]];
           if ($memo_id > 0) {
             $SQL = "SELECT `memo_memo` FROM `".self::$table_prefix."mod_kit_contact_memos` WHERE `memo_id`='$memo_id'";
-            if (null == ($contact_array[$kit_field] = $database->get_one($SQL, MYSQL_ASSOC))) {
+            $contact_array[$kit_field] = $database->get_one($SQL, MYSQL_ASSOC);
+            if ($database->is_error()) {
               $this->setError(sprintf('[%s - %s] %s', __METHOD__, __LINE__, $database->get_error()));
               return false;
             }
