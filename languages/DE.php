@@ -321,8 +321,8 @@ $LANG = array(
       => 'Der Kontakt hat die Datei <b>{{ file }}</b> mit der GUID <b>{{ guid }}</b> heruntergeladen.',
     '<p>The CSV export for {{ export }} is not supported!</p>'
       => '<p>Der CSV Export für {{ export }} wird nicht unterstützt!</p>',
-    '<p>The CSV file {{ file }} does not have any columns, please check the file!</p>'
-      => '<p>Die CSV Datei {{ file }} enthält keine Spalten, bitte prüfen Sie die Datei!</p>',
+    '<p>The CSV file {{ file }} does not have any columns, please check the file!</p><p>Perhaps you have assigned the wrong Separator? In this case the program can not proper split the columns!</p>'
+      => '<p>Die CSV Datei {{ file }} enthält keine verwertbaren Spalten, bitte prüfen Sie die Datei!</p><p>Haben Sie das richtige Trennzeichen angegeben? Wenn das Trennzeichen nicht stimmt, kann KIT die Spalten nicht korrekt erkennen!</p>',
     '<p>The download link was created, please check at the special functions!</p>'
       => '<p>Der Download Link wurde angelegt, bitte prüfen Sie den Link bei den <em>Speziellen Funktionen</em>.</p>',
     '<p>The field <b>{{ field }}</b> was assigned twice, please assign each field only once!</p>'

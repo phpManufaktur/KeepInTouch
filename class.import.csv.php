@@ -276,9 +276,9 @@ class kitCSVimport {
       return false;
     }
     $cols = count($data);
-    if ($cols < 1) {
+    if ($cols < 3) {
       // does not contain any columns!
-      $this->setMessage($this->lang->translate('<p>The CSV file {{ file }} does not have any columns, please check the file!</p>',
+      $this->setMessage($this->lang->translate('<p>The CSV file {{ file }} does not have any columns, please check the file!</p><p>Perhaps you have assigned the wrong Separator? In this case the program can not proper split the columns!</p>',
           array('file' => basename($csvFile))));
       return $this->dlgImport();
     }
@@ -391,7 +391,6 @@ class kitCSVimport {
       $this->setMessage($this->lang->translate('<p>At minimum you must assign an email address to <b>kit_email</b> or assign a valid <b>ID</b> to <b>kit_id</b>. Can\'t start the import!</p>'));
       return $this->checkCSVfile();
     }
-
     // open the CSV file
     if (false === ($handle = fopen($csvFile, "r"))) {
       // can't open the file
