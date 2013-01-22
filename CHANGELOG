@@ -3,6 +3,11 @@
 Ralf Hertsch, Stockholmer Str. 31, 13359 Berlin (Germany)
 http://phpManufaktur.de - ralf.hertsch@phpManufaktur.de
 
+Release 0.70 - NOT PUBLISHED
+
+* added: fields kit_identifier and kit_contact_since are now accessible for 
+  the import and for kitForm
+
 Release 0.69 - 2013-01-21
 
 * added: additional address fields EXTRA and REGION

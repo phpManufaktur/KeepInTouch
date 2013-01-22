@@ -186,7 +186,9 @@ class kitContactInterface {
       self::kit_contact_language => 38,
       self::kit_address_extra => 39,
       self::kit_address_region => 40,
-      self::kit_distribution => 41 // last added field
+      self::kit_distribution => 41,
+      self::kit_identifier => 42,
+      self::kit_contact_since => 43 // last added field
   );
 
   const address_type_private = 'private';
@@ -518,11 +520,13 @@ class kitContactInterface {
               }
             }
             break;
+          case self::kit_identifier:
           case self::kit_first_name:
           case self::kit_last_name:
           case self::kit_company:
           case self::kit_department:
           case self::kit_birthday:
+          case self::kit_contact_since:
             if (isset($contact_array[$field]) && !empty($contact_array[$field]) && ($contact_array[$field] != $contact[$this->field_assign[$field]])) {
               $contact[$this->field_assign[$field]] = $contact_array[$field];
               $contact_changed = true;
@@ -777,10 +781,16 @@ class kitContactInterface {
           $contact[$key] = dbKITcontact::company_title_none;
           break;
         case dbKITcontact::field_contact_identifier:
-          $contact[$key] = $contact_email;
+          if (isset($contact_array[array_search($key, $this->field_assign)]))
+            $contact[$key] = $contact_array[array_search($key, $this->field_assign)];
+          else
+            $contact[$key] = $contact_email;
           break;
         case dbKITcontact::field_contact_since:
-          $contact[$key] = date('Y-m-d H:i:s');
+          if (isset($contact_array[array_search($key, $this->field_assign)]))
+            $contact[$key] = $contact_array[array_search($key, $this->field_assign)];
+          else
+            $contact[$key] = date('Y-m-d H:i:s');
           break;
         case dbKITcontact::field_email:
           $type = (isset($contact_array[self::kit_address_type]) && ($contact_array[self::kit_address_type] == self::address_type_business)) ? dbKITcontact::type_company : dbKITcontact::type_person;
