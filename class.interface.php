@@ -40,30 +40,22 @@ if (!is_object($kitContactInterface))
 
 class kitContactInterface {
 
-  const kit_title = 'kit_title';
-  const kit_title_academic = 'kit_title_academic';
-  const kit_first_name = 'kit_first_name';
-  const kit_last_name = 'kit_last_name';
+  const kit_address_type = 'kit_address_type';
+  const kit_address_extra = 'kit_address_extra';
+  const kit_address_region = 'kit_address_region';
+  const kit_birthday = 'kit_birthday';
+  const kit_categories = 'kit_categories'; // reines Info-Feld - wird nicht in die Feldliste aufgenommen!
+  const kit_city = 'kit_city';
   const kit_company = 'kit_company';
+  const kit_contact_language = 'kit_contact_language';
+  const kit_contact_since = 'kit_contact_since';
   const kit_country = 'kit_country';
   const kit_department = 'kit_department';
-  const kit_address_type = 'kit_address_type';
-  const kit_street = 'kit_street';
-  const kit_zip = 'kit_zip';
-  const kit_city = 'kit_city';
-  const kit_zip_city = 'kit_zip_city';
-  const kit_phone = 'kit_phone';
-  const kit_phone_mobile = 'kit_phone_mobile';
-  const kit_fax = 'kit_fax';
+  const kit_distribution = 'kit_distribution';
   const kit_email = 'kit_email';
   const kit_email_retype = 'kit_email_retype';
-  const kit_newsletter = 'kit_newsletter';
-  const kit_password = 'kit_password';
-  const kit_password_retype = 'kit_password_retype';
-  const kit_categories = 'kit_categories'; // reines Info-Feld - wird nicht in die Feldliste aufgenommen!
-  const kit_intern = 'kit_intern'; // interner Verteiler, für Gruppenzuordnungen von Shops etc.
-  const kit_newsletter_subscribe = 'kit_newsletter_subscribe'; // BOOL - fuer die An- und Abmeldung von Newslettern
-  const kit_birthday = 'kit_birthday';
+  const kit_fax = 'kit_fax';
+  const kit_first_name = 'kit_first_name';
   const kit_free_field_1 = 'kit_free_field_1';
   const kit_free_field_2 = 'kit_free_field_2';
   const kit_free_field_3 = 'kit_free_field_3';
@@ -71,30 +63,40 @@ class kitContactInterface {
   const kit_free_field_5 = 'kit_free_field_5';
   const kit_free_note_1 = 'kit_free_note_1';
   const kit_free_note_2 = 'kit_free_note_2';
-  const kit_contact_language = 'kit_contact_language';
+  const kit_id = 'kit_id';
+  const kit_identifier = 'kit_identifier';
+  const kit_intern = 'kit_intern'; // interner Verteiler, für Gruppenzuordnungen von Shops etc.
+  const kit_last_name = 'kit_last_name';
+  const kit_newsletter = 'kit_newsletter';
+  const kit_newsletter_subscribe = 'kit_newsletter_subscribe'; // BOOL - fuer die An- und Abmeldung von Newslettern
+  const kit_note = 'kit_note';
+  const kit_password = 'kit_password';
+  const kit_password_retype = 'kit_password_retype';
+  const kit_phone = 'kit_phone';
+  const kit_phone_mobile = 'kit_phone_mobile';
+  const kit_status = 'kit_status';
+  const kit_street = 'kit_street';
+  const kit_title = 'kit_title';
+  const kit_title_academic = 'kit_title_academic';
+  const kit_zip = 'kit_zip';
+  const kit_zip_city = 'kit_zip_city';
 
   public $field_array = array(
-      self::kit_title => kit_label_person_title,
-      self::kit_title_academic => kit_label_person_title_academic,
-      self::kit_first_name => kit_label_person_first_name,
-      self::kit_last_name => kit_label_person_last_name,
+      self::kit_address_type => kit_label_address_type,
+      self::kit_address_extra => kit_label_address_extra,
+      self::kit_address_region => kit_label_address_region,
+      self::kit_birthday => kit_label_birthday,
+      self::kit_city => kit_label_address_city,
       self::kit_company => kit_label_company_name,
+      self::kit_contact_language => kit_label_contact_language,
+      self::kit_contact_since => kit_label_contact_since,
       self::kit_country => kit_label_country,
       self::kit_department => kit_label_company_department,
-      self::kit_address_type => kit_label_address_type,
-      self::kit_street => kit_label_address_street,
-      self::kit_zip => kit_label_address_zip,
-      self::kit_city => kit_label_address_city,
-      self::kit_zip_city => kit_label_address_zip_city,
-      self::kit_phone => kit_label_contact_phone,
-      self::kit_phone_mobile => kit_label_contact_phone_mobile,
-      self::kit_fax => kit_label_contact_fax,
+      self::kit_distribution => kit_label_distribution,
       self::kit_email => kit_label_contact_email,
       self::kit_email_retype => kit_label_contact_email_retype,
-      self::kit_newsletter => kit_label_newsletter,
-      self::kit_password => kit_label_password,
-      self::kit_password_retype => kit_label_password_retype,
-      self::kit_birthday => kit_label_birthday,
+      self::kit_fax => kit_label_contact_fax,
+      self::kit_first_name => kit_label_person_first_name,
       self::kit_free_field_1 => kit_label_free_field_1,
       self::kit_free_field_2 => kit_label_free_field_2,
       self::kit_free_field_3 => kit_label_free_field_3,
@@ -102,21 +104,36 @@ class kitContactInterface {
       self::kit_free_field_5 => kit_label_free_field_5,
       self::kit_free_note_1 => kit_label_free_note_1,
       self::kit_free_note_2 => kit_label_free_note_2,
-  		self::kit_contact_language => kit_label_contact_language
-  		);
+      self::kit_identifier => kit_label_contact_identifier,
+      self::kit_intern => kit_label_categories,
+      self::kit_last_name => kit_label_person_last_name,
+      self::kit_newsletter => kit_label_newsletter,
+      self::kit_note => kit_label_contact_note,
+      self::kit_password => kit_label_password,
+      self::kit_password_retype => kit_label_password_retype,
+      self::kit_phone => kit_label_contact_phone,
+      self::kit_phone_mobile => kit_label_contact_phone_mobile,
+      self::kit_status => kit_label_status,
+      self::kit_street => kit_label_address_street,
+      self::kit_title => kit_label_person_title,
+      self::kit_title_academic => kit_label_person_title_academic,
+      self::kit_zip => kit_label_address_zip,
+      self::kit_zip_city => kit_label_address_zip_city,
+      );
 
   public $field_assign = array(
-      self::kit_title => dbKITcontact::field_person_title,
-      self::kit_title_academic => dbKITcontact::field_person_title_academic,
-      self::kit_first_name => dbKITcontact::field_person_first_name,
-      self::kit_last_name => dbKITcontact::field_person_last_name,
-      self::kit_company => dbKITcontact::field_company_name,
-      self::kit_department => dbKITcontact::field_company_department,
-      self::kit_street => dbKITcontactAddress::field_street,
-      self::kit_zip => dbKITcontactAddress::field_zip,
-      self::kit_city => dbKITcontactAddress::field_city,
-      self::kit_country => dbKITcontactAddress::field_country,
+      self::kit_address_extra => dbKITcontactAddress::field_extra,
+      self::kit_address_region => dbKITcontactAddress::field_region,
       self::kit_birthday => dbKITcontact::field_birthday,
+      self::kit_city => dbKITcontactAddress::field_city,
+      self::kit_company => dbKITcontact::field_company_name,
+      self::kit_contact_language => dbKITcontact::field_contact_language,
+      self::kit_contact_since => dbKITcontact::field_contact_since,
+      self::kit_country => dbKITcontactAddress::field_country,
+      self::kit_department => dbKITcontact::field_company_department,
+      self::kit_distribution => dbKITcontact::field_distribution,
+      self::kit_email => dbKITcontact::field_email,
+      self::kit_first_name => dbKITcontact::field_person_first_name,
       self::kit_free_field_1 => dbKITcontact::field_free_1,
       self::kit_free_field_2 => dbKITcontact::field_free_2,
       self::kit_free_field_3 => dbKITcontact::field_free_3,
@@ -124,8 +141,18 @@ class kitContactInterface {
       self::kit_free_field_5 => dbKITcontact::field_free_5,
       self::kit_free_note_1 => dbKITcontact::field_free_note_1,
       self::kit_free_note_2 => dbKITcontact::field_free_note_2,
-  		self::kit_contact_language => dbKITcontact::field_contact_language
-  		);
+      self::kit_id => dbKITcontact::field_id,
+      self::kit_identifier => dbKITcontact::field_contact_identifier,
+      self::kit_intern => dbKITcontact::field_category,
+      self::kit_last_name => dbKITcontact::field_person_last_name,
+      self::kit_newsletter => dbKITcontact::field_newsletter,
+      self::kit_note => dbKITcontact::field_contact_note,
+      self::kit_status => dbKITcontact::field_status,
+      self::kit_street => dbKITcontactAddress::field_street,
+      self::kit_title => dbKITcontact::field_person_title,
+      self::kit_title_academic => dbKITcontact::field_person_title_academic,
+      self::kit_zip => dbKITcontactAddress::field_zip,
+      );
 
   public $index_array = array(
       self::kit_title => 10,
@@ -156,7 +183,12 @@ class kitContactInterface {
       self::kit_free_field_5 => 35,
       self::kit_free_note_1 => 36,
       self::kit_free_note_2 => 37,
-  		self::kit_contact_language => 38 // last added field
+      self::kit_contact_language => 38,
+      self::kit_address_extra => 39,
+      self::kit_address_region => 40,
+      self::kit_distribution => 41,
+      self::kit_identifier => 42,
+      self::kit_contact_since => 43 // last added field
   );
 
   const address_type_private = 'private';
@@ -184,6 +216,18 @@ class kitContactInterface {
   // CONFIGURATION constants
   const CONFIG_PASSWORD_MINIMUM_LENGHT = dbKITcfg::cfgMinPwdLen;
   const CONFIG_MAX_INVALID_LOGINS = dbKITcfg::cfgMaxInvalidLogin;
+
+  protected static $table_prefix = TABLE_PREFIX;
+
+
+  public function __construct() {
+    // use another table prefix?
+    if (file_exists(WB_PATH.'/modules/'.basename(dirname(__FILE__)).'/config.json')) {
+      $config = json_decode(file_get_contents(WB_PATH.'/modules/'.basename(dirname(__FILE__)).'/config.json'), true);
+      if (isset($config['table_prefix']))
+        self::$table_prefix = $config['table_prefix'];
+    }
+  } // __construct()
 
   /**
    * Set $this->error to $error
@@ -245,8 +289,8 @@ class kitContactInterface {
    * @return mixed value in the desired format of the config value
    */
   public function getConfigurationValue($value) {
-  	global $dbCfg;
-  	return $dbCfg->getValue($value);
+    global $dbCfg;
+    return $dbCfg->getValue($value);
   } // getConfigurationValue()
 
   /**
@@ -365,21 +409,21 @@ class kitContactInterface {
     $newsletter_array = array();
 
     foreach ($newsletters as $key => $value) {
-    	if ($use_language_marker) {
-    		// look for matches of language markers, i.e. "[DE]" or "[EN]"
-    		preg_match('/\[[[A-Z,a-z][A-Z,a-z]\]/', $value, $match);
-    		if (isset($match[0])) {
-    			$lang = $match[0];
-    			$lang = str_replace(array('[',']',' '), '', $lang);
-    			if (strtoupper($lang) == LANGUAGE) {
-    				// language match, remove the marker an spaces
-    				$value = str_replace($match, '', $value);
-    				$value = trim($value);
-    			}
-    			// language of the newsletter does not match, continue
-    			else continue;
-    		}
-    	}
+      if ($use_language_marker) {
+        // look for matches of language markers, i.e. "[DE]" or "[EN]"
+        preg_match('/\[[[A-Z,a-z][A-Z,a-z]\]/', $value, $match);
+        if (isset($match[0])) {
+          $lang = $match[0];
+          $lang = str_replace(array('[',']',' '), '', $lang);
+          if (strtoupper($lang) == LANGUAGE) {
+            // language match, remove the marker an spaces
+            $value = str_replace($match, '', $value);
+            $value = trim($value);
+          }
+          // language of the newsletter does not match, continue
+          else continue;
+        }
+      }
       $newsletter_array[$key] = array(
           'value' => $key,
           'text' => $value,
@@ -440,6 +484,7 @@ class kitContactInterface {
     global $dbContact;
     global $dbContactAddress;
     global $dbRegister;
+    global $database;
 
     $contact = array();
     if ($dbContact->getContactByID($contact_id, $contact)) {
@@ -453,8 +498,10 @@ class kitContactInterface {
           return false;
         }
       }
+      $free_fields = array();
       $contact_changed = false;
       $address_changed = false;
+      $free_fields_changed = false;
       foreach ($this->field_array as $field => $label) {
         switch ($field) :
           case self::kit_title:
@@ -465,19 +512,21 @@ class kitContactInterface {
             }
             break;
           case self::kit_contact_language:
-          	if (isset($contact_array[$field])) {
-          		$lg = strtolower(trim($contact_array[$field]));
-          		if ($lg !== $contact[$this->field_assign[$field]]) {
-          			$contact[$this->field_assign[$field]] = $lg;
-          			$contact_changed = true;
-          		}
-          	}
-          	break;
+            if (isset($contact_array[$field])) {
+              $lg = strtolower(trim($contact_array[$field]));
+              if ($lg !== $contact[$this->field_assign[$field]]) {
+                $contact[$this->field_assign[$field]] = $lg;
+                $contact_changed = true;
+              }
+            }
+            break;
+          case self::kit_identifier:
           case self::kit_first_name:
           case self::kit_last_name:
           case self::kit_company:
           case self::kit_department:
           case self::kit_birthday:
+          case self::kit_contact_since:
             if (isset($contact_array[$field]) && !empty($contact_array[$field]) && ($contact_array[$field] != $contact[$this->field_assign[$field]])) {
               $contact[$this->field_assign[$field]] = $contact_array[$field];
               $contact_changed = true;
@@ -487,9 +536,23 @@ class kitContactInterface {
           case self::kit_city:
           case self::kit_zip:
           case self::kit_country:
-            if (isset($contact_array[$field]) && !empty($contact_array[$field]) && ($contact_array[$field] !== $address[$this->field_assign[$field]])) {
+          case self::kit_address_extra:
+          case self::kit_address_region:
+            if (isset($contact_array[$field]) && !empty($contact_array[$field]) && ($contact_array[$field] != $address[$this->field_assign[$field]])) {
               $address[$this->field_assign[$field]] = $contact_array[$field];
               $address_changed = true;
+            }
+            break;
+          case self::kit_free_field_1:
+          case self::kit_free_field_2:
+          case self::kit_free_field_3:
+          case self::kit_free_field_4:
+          case self::kit_free_field_5:
+          case self::kit_free_note_1:
+          case self::kit_free_note_2:
+            if (isset($contact_array[$field]) && !empty($contact_array[$field])) {
+              $free_fields[$this->field_assign[$field]] = $contact_array[$field];
+              $free_fields_changed = true;
             }
             break;
           case self::kit_phone:
@@ -543,6 +606,14 @@ class kitContactInterface {
               }
             }
             break;
+          case self::kit_distribution:
+            if (isset($contact_array[$field]))  {
+              if ($contact_array[$field] != $contact[dbKITcontact::field_distribution]) {
+                $contact[dbKITcontact::field_distribution] = $contact_array[$field];
+                $contact_changed = true;
+              }
+            }
+            break;
         endswitch;
       }
       if ($address_changed) {
@@ -587,6 +658,31 @@ class kitContactInterface {
             return false;
           }
           $dbContact->addSystemNotice($contact_id, sprintf(kit_protocol_ki_address_updated, $address[dbKITcontactAddress::field_street], $address[dbKITcontactAddress::field_zip], $address[dbKITcontactAddress::field_city]));
+        }
+      }
+      // free fields
+      if (count($free_fields) > 0) {
+        foreach ($free_fields as $key => $value) {
+          $memo = self::sanitizeText($value);
+          if ($contact[$key] > 0) {
+            // update the free field
+            $SQL = "UPDATE `".self::$table_prefix."mod_kit_contact_memos` SET `memo_memo`='$memo' WHERE `memo_id`='{$contact[$key]}'";
+            if (null === ($database->query($SQL))) {
+              $this->setError(sprintf('[%s - %s] %s', __METHOD__, __LINE__, $database->get_error()));
+              return false;
+            }
+          }
+          else {
+            // insert a new free field
+            $SQL = "INSERT INTO `".self::$table_prefix."mod_kit_contact_memos` (`contact_id`, `memo_memo`) VALUES ('$contact_id', '$memo')";
+            if (null === ($database->query($SQL))) {
+              $this->setError(sprintf('[%s - %s] %s', __METHOD__, __LINE__, $database->get_error()));
+              return false;
+            }
+            // set the memo_id to the contact array!
+            $contact[$key] = mysql_insert_id();
+            $contact_changed = true;
+          }
         }
       }
       if ($contact_changed) {
@@ -638,6 +734,7 @@ class kitContactInterface {
     global $dbRegister;
     global $tools;
     global $dbCfg;
+    global $database;
 
     if (!isset($contact_array[self::kit_email])) {
       // es wurde keine E-Mail Adresse uebergeben
@@ -652,6 +749,7 @@ class kitContactInterface {
     }
     // neuen Datensatz anlegen
     $contact = $dbContact->getFields();
+    $free_fields = array();
     foreach ($contact as $key => $value) {
       switch ($key) :
         case dbKITcontact::field_address:
@@ -665,16 +763,34 @@ class kitContactInterface {
         case dbKITcontact::field_person_last_name:
         case dbKITcontact::field_company_name:
         case dbKITcontact::field_company_department:
+        case dbKITcontact::field_birthday:
           $contact[$key] = (isset($contact_array[array_search($key, $this->field_assign)])) ? $contact_array[array_search($key, $this->field_assign)] : '';
+          break;
+        case dbKITcontact::field_free_1:
+        case dbKITcontact::field_free_2:
+        case dbKITcontact::field_free_3:
+        case dbKITcontact::field_free_4:
+        case dbKITcontact::field_free_5:
+        case dbKITcontact::field_free_note_1:
+        case dbKITcontact::field_free_note_2:
+          if (isset($contact_array[array_search($key, $this->field_assign)])) {
+            $free_fields[$key] = $contact_array[array_search($key, $this->field_assign)];
+          }
           break;
         case dbKITcontact::field_company_title:
           $contact[$key] = dbKITcontact::company_title_none;
           break;
         case dbKITcontact::field_contact_identifier:
-          $contact[$key] = $contact_email;
+          if (isset($contact_array[array_search($key, $this->field_assign)]))
+            $contact[$key] = $contact_array[array_search($key, $this->field_assign)];
+          else
+            $contact[$key] = $contact_email;
           break;
         case dbKITcontact::field_contact_since:
-          $contact[$key] = date('Y-m-d H:i:s');
+          if (isset($contact_array[array_search($key, $this->field_assign)]))
+            $contact[$key] = $contact_array[array_search($key, $this->field_assign)];
+          else
+            $contact[$key] = date('Y-m-d H:i:s');
           break;
         case dbKITcontact::field_email:
           $type = (isset($contact_array[self::kit_address_type]) && ($contact_array[self::kit_address_type] == self::address_type_business)) ? dbKITcontact::type_company : dbKITcontact::type_person;
@@ -688,6 +804,9 @@ class kitContactInterface {
           break;
         case dbKITcontact::field_newsletter:
           $contact[$key] = (isset($contact_array[self::kit_newsletter])) ? $contact_array[self::kit_newsletter] : '';
+          break;
+        case dbKITcontact::field_distribution:
+          $contact[$key] = (isset($contact_array[self::kit_distribution])) ? $contact_array[self::kit_distribution] : '';
           break;
         case dbKITcontact::field_person_title:
           $contact[$key] = (isset($contact_array[self::kit_title])) ? $contact_array[self::kit_title] : dbKITcontact::person_title_mister;
@@ -717,11 +836,11 @@ class kitContactInterface {
           $contact[$key] = dbKITcontact::status_active;
           break;
         case dbKITcontact::field_contact_language:
-        	// set contact language
-        	$def_lang = $dbCfg->getValue(dbKITcfg::cfgContactLanguageDefault);
-        	$def_lang = strtolower(trim($def_lang));
-        	$contact[$key] = (isset($contact_array[self::kit_contact_language])) ? strtolower(trim($contact_array[self::kit_contact_language])) : $def_lang;
-        	break;
+          // set contact language
+          $def_lang = $dbCfg->getValue(dbKITcfg::cfgContactLanguageDefault);
+          $def_lang = strtolower(trim($def_lang));
+          $contact[$key] = (isset($contact_array[self::kit_contact_language])) ? strtolower(trim($contact_array[self::kit_contact_language])) : $def_lang;
+          break;
         default:
           // nothing to do...
           break;
@@ -743,8 +862,10 @@ class kitContactInterface {
       $address = array(
           dbKITcontactAddress::field_city => isset($contact_array[self::kit_city]) ? $contact_array[self::kit_city] : '',
           dbKITcontactAddress::field_contact_id => $contact_id,
-          dbKITcontactAddress::field_country => isset($contact_array[self::kit_country]) ? $contact_array[self::kit_country] : 'DE',
+          dbKITcontactAddress::field_country => isset($contact_array[self::kit_country]) ? strtoupper(trim($contact_array[self::kit_country])) : 'DE',
           dbKITcontactAddress::field_street => isset($contact_array[self::kit_street]) ? $contact_array[self::kit_street] : '',
+          dbKITcontactAddress::field_extra => isset($contact_array[self::kit_address_extra]) ? $contact_array[self::kit_address_extra] : '',
+          dbKITcontactAddress::field_region => isset($contact_array[self::kit_address_region]) ? $contact_array[self::kit_address_region] : '',
           dbKITcontactAddress::field_zip => isset($contact_array[self::kit_zip]) ? $contact_array[self::kit_zip] : '',
           dbKITcontactAddress::field_type => (isset($contact_array[self::kit_address_type]) && ($contact_array[self::kit_address_type] == self::address_type_business)) ? dbKITcontactAddress::type_business : dbKITcontactAddress::type_private,
           dbKITcontactAddress::field_status => dbKITcontactAddress::status_active,
@@ -800,8 +921,79 @@ class kitContactInterface {
     }
     $register_array[dbKITregister::field_id] = $register_id;
 
+    // free fields
+    if (count($free_fields) > 0) {
+      foreach ($free_fields as $key => $value) {
+        $memo = self::sanitizeText($value);
+        if ($contact[$key] > 0) {
+          // update the free field
+          $SQL = "UPDATE `".self::$table_prefix."mod_kit_contact_memos` SET `memo_memo`='$memo' WHERE `memo_id`='{$contact[$key]}'";
+          if (null === ($database->query($SQL))) {
+            $this->setError(sprintf('[%s - %s] %s', __METHOD__, __LINE__, $database->get_error()));
+            return false;
+          }
+        }
+        else {
+          // insert a new free field
+          $SQL = "INSERT INTO `".self::$table_prefix."mod_kit_contact_memos` (`contact_id`, `memo_memo`) VALUES ('$contact_id', '$memo')";
+          if (null === ($database->query($SQL))) {
+            $this->setError(sprintf('[%s - %s] %s', __METHOD__, __LINE__, $database->get_error()));
+            return false;
+          }
+          // get the created memo_id
+          $memo_id = mysql_insert_id();
+          // update KIT contact!
+          $SQL = "UPDATE `".self::$table_prefix."mod_kit_contact` SET `$key`='$memo_id' WHERE `contact_id`='$contact_id'";
+          if (null === ($database->query($SQL))) {
+            $this->setError(sprintf('[%s - %s] %s', __METHOD__, __LINE__, $database->get_error()));
+            return false;
+          }
+        }
+      }
+    }
+
     return true;
   } // insertContact()
+
+  /**
+   * Sanitize variables and prepare them for saving in a MySQL record
+   *
+   * @param mixed $item
+   * @return mixed
+   */
+  public static function sanitizeVariable($item) {
+    if (!is_array($item)) {
+      // undoing 'magic_quotes_gpc = On' directive
+      if (get_magic_quotes_gpc())
+        $item = stripcslashes($item);
+      $item = self::sanitizeText($item);
+    }
+    return $item;
+  } // sanitizeVariable()
+
+  /**
+   * Sanitize a text variable and prepare ist for saving in a MySQL record
+   *
+   * @param string $text
+   * @return string
+   */
+  protected static function sanitizeText($text) {
+    $text = str_replace(array("<",">","\"","'"), array("&lt;","&gt;","&quot;","&#039;"), $text);
+    $text = mysql_real_escape_string($text);
+    return $text;
+  } // sanitizeText()
+
+  /**
+   * Unsanitize a text variable and prepare it for output
+   *
+   * @param string $text
+   * @return string
+   */
+  public static function unsanitizeText($text) {
+    $text = stripcslashes($text);
+    $text = str_replace(array("&lt;","&gt;","&quot;","&#039;"), array("<",">","\"","'"), $text);
+    return $text;
+  } // unsanitizeText()
 
   /**
    * Liefert die Kontaktdaten zu der angegebenen $contact_id
@@ -814,6 +1006,7 @@ class kitContactInterface {
   public function getContact($contact_id, &$contact_array = array(), $get_deleted=false) {
     global $dbContact;
     global $dbContactAddress;
+    global $database;
 
     if ($get_deleted) {
       $SQL = sprintf("SELECT * FROM %s WHERE %s='%s'", $dbContact->getTableName(), dbKITcontact::field_id, $contact_id);
@@ -850,26 +1043,32 @@ class kitContactInterface {
       // kein Eintrag vorhanden, nur die leeren Felder setzen
       $address = $dbContactAddress->getFields();
     }
-    // Interface Datenfelder durchlaufen und setzen
+
+    // create contact array
     $contact_array = array();
+    $contact_array['kit_id'] = $contact_id;
+    // loop through the datafields
     foreach ($this->field_array as $kit_field => $label) {
       switch ($kit_field) :
-        case self::kit_title:
-          $contact_array[$kit_field] = $contact[dbKITcontact::field_person_title]; //$dbContact->person_title_array[$contact[dbKITcontact::field_person_title]];
+      case self::kit_birthday:
+      case self::kit_contact_since:
+      case self::kit_contact_language:
+      case self::kit_identifier:
+      case self::kit_status:
+      case self::kit_first_name:
+      case self::kit_last_name:
+      case self::kit_company:
+      case self::kit_department:
+        $contact_array[$kit_field] = $contact[$this->field_assign[$kit_field]];
+        break;
+      case self::kit_address_type:
+          //$contact_array[$kit_field] = ($contact[dbKITcontact::field_type] == dbKITcontact::type_person) ? $this->address_type_array[self::address_type_private] : $this->address_type_array[self::address_type_business];
+          $contact_array[$kit_field] = ($contact[dbKITcontact::field_type] == dbKITcontact::type_person) ? self::address_type_private : self::address_type_business;
           break;
-        case self::kit_title_academic:
-          $contact_array[$kit_field] = $contact[dbKITcontact::field_person_title_academic]; //$dbContact->person_title_academic_array[$contact[dbKITcontact::field_person_title_academic]];
-          break;
-        case self::kit_first_name:
-        case self::kit_last_name:
-        case self::kit_company:
-        case self::kit_department:
-          $contact_array[$kit_field] = $contact[$this->field_assign[$kit_field]];
-          break;
-        case self::kit_address_type:
-          $contact_array[$kit_field] = ($contact[dbKITcontact::field_type] == dbKITcontact::type_person) ? $this->address_type_array[self::address_type_private] : $this->address_type_array[self::address_type_business];
-          break;
+      case self::kit_country:
         case self::kit_street:
+        case self::kit_address_extra:
+        case self::kit_address_region:
         case self::kit_zip:
         case self::kit_city:
           $contact_array[$kit_field] = $address[$this->field_assign[$kit_field]];
@@ -894,42 +1093,99 @@ class kitContactInterface {
           break;
         case self::kit_email:
           $email_array = explode(';', $contact[dbKITcontact::field_email]);
-          list($type, $email) = explode('|', $email_array[$contact[dbKITcontact::field_email_standard]]);
+          if (!isset($email_array[$contact[dbKITcontact::field_email_standard]]) || empty($email_array[$contact[dbKITcontact::field_email_standard]]) || !strpos($email_array[$contact[dbKITcontact::field_email_standard]], '|')) {
+            // missing the email address - set a non existing !!!
+            $email = 'undefined@email.tld';
+          }
+          else {
+            list($type, $email) = explode('|', $email_array[$contact[dbKITcontact::field_email_standard]]);
+          }
           $contact_array[$kit_field] = $email;
           break;
         case self::kit_newsletter:
-          $news = array();
-          $contact_array[$kit_field] = explode(',', $contact[dbKITcontact::field_newsletter]);
-          /*
-          $news_array = explode(',', $contact[dbKITcontact::field_newsletter]);
-          foreach ($news_array as $nl) {
-          if (!empty($nl)) $news[] = $dbContact->newsletter_array[$nl];
+          $item_array = explode(',', $contact[dbKITcontact::field_newsletter]);
+          $items = array();
+          foreach ($item_array as $item) {
+            $SQL = "SELECT `array_value` FROM `".self::$table_prefix."mod_kit_contact_array_cfg` WHERE `array_type`='typeNewsletter' AND `array_identifier`='$item'";
+            $i = $database->get_one($SQL, MYSQL_ASSOC);
+            if ($database->is_error()) {
+              $this->setError(sprintf('[%s - %s] %s', __METHOD__, __LINE__, $database->get_error()));
+              return false;
+            }
+            if (!is_null($i)) $items[] = $i;
           }
-          $contact_array[$kit_field] = $news;
-           */
+          $contact_array[$kit_field] = $items;
+          break;
+        case self::kit_distribution:
+          $item_array = explode(',', $contact[dbKITcontact::field_distribution]);
+          $items = array();
+          foreach ($item_array as $item) {
+            $SQL = "SELECT `array_value` FROM `".self::$table_prefix."mod_kit_contact_array_cfg` WHERE `array_type`='typeDistribution' AND `array_identifier`='$item'";
+            $i = $database->get_one($SQL, MYSQL_ASSOC);
+            if ($database->is_error()) {
+              $this->setError(sprintf('[%s - %s] %s', __METHOD__, __LINE__, $database->get_error()));
+              return false;
+            }
+            if (!is_null($i)) $items[] = $i;
+          }
+          $contact_array[$kit_field] = $items;
+          break;
+        case self::kit_intern:
+          $item_array = explode(',', $contact[dbKITcontact::field_category]);
+          $items = array();
+          foreach ($item_array as $item) {
+            $SQL = "SELECT `array_value` FROM `".self::$table_prefix."mod_kit_contact_array_cfg` WHERE `array_type`='typeCategory' AND `array_identifier`='$item'";
+            $i = $database->get_one($SQL, MYSQL_ASSOC);
+            if ($database->is_error()) {
+              $this->setError(sprintf('[%s - %s] %s', __METHOD__, __LINE__, $database->get_error()));
+              return false;
+            }
+            if (!is_null($i)) $items[] = $i;
+          }
+          $contact_array[$kit_field] = $items;
+          break;
+        case self::kit_free_field_1:
+        case self::kit_free_field_2:
+        case self::kit_free_field_3:
+        case self::kit_free_field_4:
+        case self::kit_free_field_5:
+        case self::kit_free_note_1:
+        case self::kit_free_note_2:
+        case self::kit_note:
+          // get the contact memo field
+          $memo_id = $contact[$this->field_assign[$kit_field]];
+          if ($memo_id > 0) {
+            $SQL = "SELECT `memo_memo` FROM `".self::$table_prefix."mod_kit_contact_memos` WHERE `memo_id`='$memo_id'";
+            $contact_array[$kit_field] = $database->get_one($SQL, MYSQL_ASSOC);
+            if ($database->is_error()) {
+              $this->setError(sprintf('[%s - %s] %s', __METHOD__, __LINE__, $database->get_error()));
+              return false;
+            }
+          }
+          else
+            $contact_array[$kit_field] = '';
+          break;
+        case self::kit_title:
+        case self::kit_title_academic:
+          // get the field values from dbCfg
+          $type = ($kit_field == self::kit_title) ? 'typePersonTitle' : 'typePersonAcademic';
+          $SQL = "SELECT `array_value` FROM `".self::$table_prefix."mod_kit_contact_array_cfg` WHERE `array_type`='$type' AND `array_identifier`='{$contact[$this->field_assign[$kit_field]]}'";
+          $contact_array[$kit_field] = $database->get_one($SQL, MYSQL_ASSOC);
+          if ($database->is_error()) {
+            $this->setError(sprintf('[%s - %s] %s', __METHOD__, __LINE__, $database->get_error()));
+            return false;
+          }
           break;
         default:
         // nothing to do...
           break;
       endswitch;
     }
-
     // Gruppen des Kontakts auslesen und in einem Array ablegen
-    $ga = array(
-        dbKITcontact::field_category,
-        dbKITcontact::field_distribution,
-        dbKITcontact::field_newsletter);
-    $groups = array();
-    foreach ($ga as $grp) {
-      if (!empty($grp)) {
-        $x = explode(',', $contact[$grp]);
-        foreach ($x as $i) {
-          if (!empty($i))
-            $groups[] = $i;
-        }
-      }
-    }
-    $contact_array[self::kit_categories] = $groups;
+    $contact_array[self::kit_categories] = array_merge(
+        isset($contact_array[self::kit_intern]) ? $contact_array[self::kit_intern] : array(),
+        isset($contact_array[self::kit_distribution]) ? $contact_array[self::kit_distribution] : array(),
+        isset($contact_array[self::kit_newsletter]) ? $contact_array[self::kit_newsletter] : array());
 
     return true;
   } // getContact()
@@ -939,9 +1195,10 @@ class kitContactInterface {
    *
    * @param INT $contact_id
    * @param ARRAY $categories
+   * @param boolean $use_keys if true return structured $categories
    * @return BOOL
    */
-  public function getCategories($contact_id, &$categories = array()) {
+  public function getCategories($contact_id, &$categories = array(), $use_keys=false) {
     global $dbContact;
 
     $SQL = sprintf("SELECT %s,%s,%s FROM %s WHERE %s='%s' AND %s='%s'", dbKITcontact::field_category, dbKITcontact::field_distribution, dbKITcontact::field_newsletter, $dbContact->getTableName(), dbKITcontact::field_id, $contact_id, dbKITcontact::field_status, dbKITcontact::status_active);
@@ -957,18 +1214,49 @@ class kitContactInterface {
     }
     $cats = $cats[0];
     $ga = array(
-        dbKITcontact::field_category,
-        dbKITcontact::field_distribution,
-        dbKITcontact::field_newsletter);
-    foreach ($ga as $grp) {
+        dbKITcontact::field_category => 'kit_category',
+        dbKITcontact::field_distribution => 'kit_disctribution',
+        dbKITcontact::field_newsletter => 'kit_newsletter'
+        );
+    foreach ($ga as $grp => $field) {
       $x = explode(',', $cats[$grp]);
       foreach ($x as $i) {
-        if (!empty($i))
-          $categories[] = $i;
+        if (!empty($i)) {
+          if ($use_keys) {
+            $categories[] = array(
+                'type' => $field,
+                'value' => $i
+                );
+          }
+          else
+            $categories[] = $i;
+        }
       }
     }
     return true;
   } // getCategories()
+
+  /**
+   * Get contact ID's for the specified category identifier
+   *
+   * @param string $identifier
+   * @param array $contacts
+   * @return boolean
+   */
+  public function getContactsByCategory($identifier, &$contacts=array()) {
+      global $database;
+
+      $SQL = "SELECT `contact_id` FROM `".self::$table_prefix."mod_kit_contact` WHERE ((`contact_distribution_ids`='$identifier') OR ".
+                      "(`contact_distribution_ids` LIKE '%,$identifier') OR (`contact_distribution_ids` LIKE '%,$identifier,%') OR ".
+                      "(`contact_distribution_ids` LIKE '$identifier,%')) AND `contact_status`='statusActive'";
+      if (null === ($query = $database->query($SQL))) {
+          $this->setError(sprintf('[%s - %s] %s', __METHOD__, __LINE__, $database->get_error()));
+          return false;
+      }
+      while (false !== ($contact_id = $query->fetchRow(MYSQL_ASSOC)))
+          $contacts[] = $contact_id['contact_id'];
+      return true;
+  } // getContactsByCategory()
 
   /**
    * Ueberprueft ob fuer den angegebenen $category_type:

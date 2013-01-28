@@ -822,6 +822,8 @@ class dbKITcontactAddress extends dbConnectLE {
 	const field_street			= 'address_street';
 	const field_zip					= 'address_zip';
 	const field_city				= 'address_city';
+	const field_extra       = 'address_extra';
+	const field_region      = 'address_region';
 	const field_status			= 'address_status';
 	const field_update_by		= 'address_update_by';
 	const field_update_when	= 'address_update_when';
@@ -885,6 +887,8 @@ class dbKITcontactAddress extends dbConnectLE {
 		$this->addFieldDefinition(self::field_street, "VARCHAR(128) NOT NULL DEFAULT ''");
 		$this->addFieldDefinition(self::field_zip, "VARCHAR(20) NOT NULL DEFAULT ''");
 		$this->addFieldDefinition(self::field_city, "VARCHAR(128) NOT NULL DEFAULT ''");
+		$this->addFieldDefinition(self::field_extra, "VARCHAR(255) NOT NULL DEFAULT ''");
+		$this->addFieldDefinition(self::field_region, "VARCHAR(255) NOT NULL DEFAULT ''");
 		$this->addFieldDefinition(self::field_status, "VARCHAR(30) NOT NULL DEFAULT '".self::status_active."'");
 		$this->addFieldDefinition(self::field_update_by, "VARCHAR(30) NOT NULL DEFAULT 'SYSTEM'");
 		$this->addFieldDefinition(self::field_update_when, "DATETIME NOT NULL DEFAULT '0000-00-00 00:00:00'");

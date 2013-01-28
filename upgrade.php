@@ -35,7 +35,6 @@ require_once(WB_PATH.'/modules/'.basename(dirname(__FILE__)).'/initialize.php');
 require_once(WB_PATH.'/modules/'.basename(dirname(__FILE__)).'/class.mail.php');
 require_once(WB_PATH.'/modules/'.basename(dirname(__FILE__)).'/class.newsletter.php');
 require_once(WB_PATH.'/modules/'.basename(dirname(__FILE__)).'/class.cronjob.php');
-require_once(WB_PATH.'/modules/'.basename(dirname(__FILE__)).'/class.import.php');
 require_once(WB_PATH.'/modules/'.basename(dirname(__FILE__)).'/class.config.php');
 
 require_once(WB_PATH.'/framework/functions.php');
@@ -47,160 +46,154 @@ $error = '';
 
 $dbKITregister = new dbKITregister();
 if (!$dbKITregister->sqlTableExists()) {
-	if (!$dbKITregister->sqlCreateTable()) {
-		$error .= sprintf('<p>[Upgrade] %s </p>', $dbKITregister->getError());
-	}
+  if (!$dbKITregister->sqlCreateTable()) {
+    $error .= sprintf('<p>[Upgrade] %s </p>', $dbKITregister->getError());
+  }
 }
 
 $dbKITprovider = new dbKITprovider();
 if (!$dbKITprovider->sqlFieldExists(dbKITprovider::field_identifier)) {
-	if (!$dbKITprovider->sqlAlterTableAddField(dbKITprovider::field_identifier, "VARCHAR (50) NOT NULL DEFAULT ''", dbKITprovider::field_name)) {
-		$error .= sprintf('<p>[Upgrade] %s </p>', $dbKITprovider->getError());
-	}
+  if (!$dbKITprovider->sqlAlterTableAddField(dbKITprovider::field_identifier, "VARCHAR (50) NOT NULL DEFAULT ''", dbKITprovider::field_name)) {
+    $error .= sprintf('<p>[Upgrade] %s </p>', $dbKITprovider->getError());
+  }
 }
 
 $dbKITcontact = new dbKITcontact();
 if (!$dbKITcontact->sqlFieldExists(dbKITcontact::field_newsletter)) {
-	if (!$dbKITcontact->sqlAlterTableAddField(dbKITcontact::field_newsletter, "VARCHAR (255) NOT NULL DEFAULT ''", dbKITcontact::field_category)) {
-		$error .= sprintf('<p>[Upgrade] %s </p>', $dbKITcontact->getError());
-	}
+  if (!$dbKITcontact->sqlAlterTableAddField(dbKITcontact::field_newsletter, "VARCHAR (255) NOT NULL DEFAULT ''", dbKITcontact::field_category)) {
+    $error .= sprintf('<p>[Upgrade] %s </p>', $dbKITcontact->getError());
+  }
 }
 // check field_distribution --> #0.29
 if (!$dbKITcontact->sqlFieldExists(dbKITcontact::field_distribution)) {
   if (!$dbKITcontact->sqlAlterTableAddField(dbKITcontact::field_distribution, "VARCHAR(255) NOT NULL DEFAULT ''", dbKITcontact::field_newsletter)) {
- 		$error .= sprintf('<p>[Upgrade] %s </p>', $dbKITcontact->getError());
+     $error .= sprintf('<p>[Upgrade] %s </p>', $dbKITcontact->getError());
   }
 }
 
 // install tables for newsletter module
 $dbKITnewsletterTemplates = new dbKITnewsletterTemplates();
 if (!$dbKITnewsletterTemplates->sqlTableExists()) {
-	if (!$dbKITnewsletterTemplates->sqlCreateTable()) {
-		$error .= sprintf('<p>[Upgrade] %s</p>', $dbKITnewsletterTemplates->getError());
-	}
+  if (!$dbKITnewsletterTemplates->sqlCreateTable()) {
+    $error .= sprintf('<p>[Upgrade] %s</p>', $dbKITnewsletterTemplates->getError());
+  }
 }
 
 $dbKITnewsletterPreview = new dbKITnewsletterPreview();
 if (!$dbKITnewsletterPreview->sqlTableExists()) {
-	if (!$dbKITnewsletterPreview->sqlCreateTable()) {
-		$error .= sprintf('<p>[Upgrade] %s</p>', $dbKITnewsletterPreview->getError());
-	}
+  if (!$dbKITnewsletterPreview->sqlCreateTable()) {
+    $error .= sprintf('<p>[Upgrade] %s</p>', $dbKITnewsletterPreview->getError());
+  }
 }
 
 $dbKITnewsletterCfg = new dbKITnewsletterCfg();
 if (!$dbKITnewsletterCfg->sqlTableExists()) {
-	if (!$dbKITnewsletterCfg->sqlCreateTable()) {
-		$error .= sprintf('<p>[Upgrade] %s</p>', $dbKITnewsletterCfg->getError());
-	}
+  if (!$dbKITnewsletterCfg->sqlCreateTable()) {
+    $error .= sprintf('<p>[Upgrade] %s</p>', $dbKITnewsletterCfg->getError());
+  }
 }
 
 $dbKITnewsletterArchive = new dbKITnewsletterArchive();
 if (!$dbKITnewsletterArchive->sqlTableExists()) {
-	if (!$dbKITnewsletterArchive->sqlCreateTable()) {
-		$error .= sprintf('<p>[Upgrade] %s</p>', $dbKITnewsletterArchive->getError());
-	}
+  if (!$dbKITnewsletterArchive->sqlCreateTable()) {
+    $error .= sprintf('<p>[Upgrade] %s</p>', $dbKITnewsletterArchive->getError());
+  }
 }
 // check support for distributions --> #0.29
 if (!$dbKITnewsletterArchive->sqlFieldExists(dbKITnewsletterArchive::field_distributions)) {
   if (!$dbKITnewsletterArchive->sqlAlterTableAddField(dbKITnewsletterArchive::field_distributions, "VARCHAR(255) NOT NULL DEFAULT ''", dbKITnewsletterArchive::field_groups)) {
- 		$error .= sprintf('<p>[Upgrade] %s </p>', $dbKITnewsletterArchive->getError());
+     $error .= sprintf('<p>[Upgrade] %s </p>', $dbKITnewsletterArchive->getError());
   }
 }
 
 
 $dbKITnewsletterProcess = new dbKITnewsletterProcess();
 if (!$dbKITnewsletterProcess->sqlTableExists()) {
-	if (!$dbKITnewsletterProcess->sqlCreateTable()) {
-		$error .= sprintf('<p>[Upgrade] %s</p>', $dbKITnewsletterProcess->getError());
-	}
+  if (!$dbKITnewsletterProcess->sqlCreateTable()) {
+    $error .= sprintf('<p>[Upgrade] %s</p>', $dbKITnewsletterProcess->getError());
+  }
 }
 // check process for distributions --> #0.29
 if (!$dbKITnewsletterProcess->sqlFieldExists(dbKITnewsletterProcess::field_distribution_ids)) {
   if (!$dbKITnewsletterProcess->sqlAlterTableAddField(dbKITnewsletterProcess::field_distribution_ids, "VARCHAR(255) NOT NULL DEFAULT ''", dbKITnewsletterProcess::field_register_ids)) {
- 		$error .= sprintf('<p>[Upgrade] %s </p>', $dbKITnewsletterProcess->getError());
+     $error .= sprintf('<p>[Upgrade] %s </p>', $dbKITnewsletterProcess->getError());
   }
 }
 
 
 $dbCronjobData = new dbCronjobData();
 if (!$dbCronjobData->sqlTableExists()) {
-	if (!$dbCronjobData->sqlCreateTable()) {
-		$error .= sprintf('<p>[Upgrade] %s</p>', $dbCronjobData->getError());
-	}
-	else {
-		// Blindwerte eintragen
-		$datas = array(	array(dbCronjobData::field_item => dbCronjobData::item_last_call, dbCronjobData::field_value => ''),
-										array(dbCronjobData::field_item => dbCronjobData::item_last_job, dbCronjobData::field_value => ''),
-										array(dbCronjobData::field_item => dbCronjobData::item_last_nl_id, dbCronjobData::field_value => ''));
-		foreach ($datas as $data) {
-			if (!$dbCronjobData->sqlInsertRecord($data)) {
-				$error .= sprintf('<p>[Installation] %s</p>', $dbCronjobData->getError());
-			}
-		}
-	}
+  if (!$dbCronjobData->sqlCreateTable()) {
+    $error .= sprintf('<p>[Upgrade] %s</p>', $dbCronjobData->getError());
+  }
+  else {
+    // Blindwerte eintragen
+    $datas = array(	array(dbCronjobData::field_item => dbCronjobData::item_last_call, dbCronjobData::field_value => ''),
+                    array(dbCronjobData::field_item => dbCronjobData::item_last_job, dbCronjobData::field_value => ''),
+                    array(dbCronjobData::field_item => dbCronjobData::item_last_nl_id, dbCronjobData::field_value => ''));
+    foreach ($datas as $data) {
+      if (!$dbCronjobData->sqlInsertRecord($data)) {
+        $error .= sprintf('<p>[Installation] %s</p>', $dbCronjobData->getError());
+      }
+    }
+  }
 }
 
 $dbCronjobNewsletterLog = new dbCronjobNewsletterLog();
 if (!$dbCronjobNewsletterLog->sqlTableExists()) {
-	if (!$dbCronjobNewsletterLog->sqlCreateTable()) {
-		$error .= sprintf('<p>[Upgrade] %s</p>', $dbCronjobNewsletterLog->getError());
-	}
+  if (!$dbCronjobNewsletterLog->sqlCreateTable()) {
+    $error .= sprintf('<p>[Upgrade] %s</p>', $dbCronjobNewsletterLog->getError());
+  }
 }
 
 $dbCronjobErrorLog = new dbCronjobErrorLog();
 if (!$dbCronjobErrorLog->sqlTableExists()) {
-	if (!$dbCronjobErrorLog->sqlCreateTable()) {
-		$error .= sprintf('<p>[Upgrade] %s</p>', $dbCronjobErrorLog->getError());
-	}
-}
-
-$dbImport = new dbKITimport();
-if (!$dbImport->sqlTableExists()) {
-	if (!$dbImport->sqlCreateTable()) {
-		$error .= sprintf('<p>[Upgrade] %s</p>', $dbImport->getError());
-	}
+  if (!$dbCronjobErrorLog->sqlCreateTable()) {
+    $error .= sprintf('<p>[Upgrade] %s</p>', $dbCronjobErrorLog->getError());
+  }
 }
 
 /**
  * BUGFIX correct a problem of KIT < 0.34 with duplicate active entries for the same e-mail address within dbKITregister
  */
 $SQL = sprintf("SELECT %s, %s, COUNT(*) AS cnt FROM %s WHERE %s='%s' GROUP BY %s HAVING cnt>1",
-								dbKITregister::field_contact_id,
-								dbKITregister::field_id,
-								$dbRegister->getTableName(),
-								dbKITregister::field_status,
-								dbKITregister::status_active,
-								dbKITregister::field_email);
+                dbKITregister::field_contact_id,
+                dbKITregister::field_id,
+                $dbKITregister->getTableName(),
+                dbKITregister::field_status,
+                dbKITregister::status_active,
+                dbKITregister::field_email);
+$registers = array();
 if (!$dbKITregister->sqlExec($SQL, $registers)) {
-	$error .= sprintf('<p>[BUGFIX] %s</p>', $dbKITregister->getError());
+  $error .= sprintf('<p>[BUGFIX] %s</p>', $dbKITregister->getError());
 }
 else {
-	foreach ($registers as $register) {
-		$SQL = sprintf( "SELECT %s FROM %s WHERE %s='%s' AND %s='%s'",
-										dbKITcontact::field_id,
-										$dbContact->getTableName(),
-										dbKITcontact::field_id,
-										$register[dbKITregister::field_contact_id],
-										dbKITcontact::field_status,
-										dbKITcontact::status_deleted);
-		$contacts = array();
-		if (!$dbKITcontact->sqlExec($SQL, $contacts)) {
-			$error .= sprintf('<p>[BUGFIX] %s</p>', __METHOD__, __LINE__, $dbKITcontact->getError());
-		}
-		else {
-			if (count($contacts) > 0) {
-				$where = array(dbKITregister::field_id => $register[dbKITregister::field_id]);
-				$data = array(
-					dbKITregister::field_status 			=> dbKITregister::status_deleted,
-					dbKITregister::field_update_by		=> 'UPDATE FIXUP',
-					dbKITregister::field_update_when	=> date('Y-m-d H:i:s')
-				);
-				if (!$dbKITregister->sqlUpdateRecord($data, $where)) {
-					$error .= sprintf('<p>[BUGFIX] %s</p>', $dbKITregister->getError());
-				}
-			}
-		}
-	}
+  foreach ($registers as $register) {
+    $SQL = sprintf( "SELECT %s FROM %s WHERE %s='%s' AND %s='%s'",
+                    dbKITcontact::field_id,
+                    $dbKITcontact->getTableName(),
+                    dbKITcontact::field_id,
+                    $register[dbKITregister::field_contact_id],
+                    dbKITcontact::field_status,
+                    dbKITcontact::status_deleted);
+    $contacts = array();
+    if (!$dbKITcontact->sqlExec($SQL, $contacts)) {
+      $error .= sprintf('<p>[BUGFIX] %s</p>', __METHOD__, __LINE__, $dbKITcontact->getError());
+    }
+    else {
+      if (count($contacts) > 0) {
+        $where = array(dbKITregister::field_id => $register[dbKITregister::field_id]);
+        $data = array(
+          dbKITregister::field_status 			=> dbKITregister::status_deleted,
+          dbKITregister::field_update_by		=> 'UPDATE FIXUP',
+          dbKITregister::field_update_when	=> date('Y-m-d H:i:s')
+        );
+        if (!$dbKITregister->sqlUpdateRecord($data, $where)) {
+          $error .= sprintf('<p>[BUGFIX] %s</p>', $dbKITregister->getError());
+        }
+      }
+    }
+  }
 }
 
 /**
@@ -212,31 +205,31 @@ else {
 $SQL = sprintf("DROP TABLE IF EXISTS %smod_kit_newsletter_links", TABLE_PREFIX);
 $database->query($SQL);
 if ($database->is_error()) {
-	$error .= sprintf('<p>[DROP TABLE mod_kit_newsletter_links] %s</p>', $database->get_error());
+  $error .= sprintf('<p>[DROP TABLE mod_kit_newsletter_links] %s</p>', $database->get_error());
 }
 
 // remove Droplet kit_newsletter
 $SQL = sprintf("DELETE FROM %smod_droplets WHERE name='kit_newsletter'", TABLE_PREFIX);
 $database->query($SQL);
 if ($database->is_error()) {
-	$error .= sprintf('<p>[DELETE DROPLET kit_newsletter] %s</p>', $database->get_error());
+  $error .= sprintf('<p>[DELETE DROPLET kit_newsletter] %s</p>', $database->get_error());
 }
 
 // delete no longer needed entries from mod_kit_config
 $SQL = sprintf("DELETE FROM %smod_kit_config WHERE cfg_name IN ('cfgLicenseKey','cfgKITResponsePage','cfgUseCaptcha','cfgUseCustomFiles','cfgRegisterDlgNL','cfgRegisterDlgACC','cfgRegisterDlgUSUB','cfgKITRequestLink','cfgMaxInvalidLogin','cfgMinPwdLen')", TABLE_PREFIX);
 $database->query($SQL);
 if ($database->is_error()) {
-	$error .= sprintf('<p>[DELETE ENTRIES FROM mod_kit_config] %s</p>', $database->get_error());
+  $error .= sprintf('<p>[DELETE ENTRIES FROM mod_kit_config] %s</p>', $database->get_error());
 }
 
 // delete no longer needed files and directories
 $delete_array = array('kit.php', 'class.newsletter.link.php', 'class.response.php', 'class.request.php', 'droplets', 'class.droplets.php', 'class.dialogs.php', 'dialogs', 'frontend.css');
 foreach ($delete_array as $item) {
-	if (file_exists(WB_PATH.'/modules/kit/'.$item)) {
-		if (!rm_full_dir(WB_PATH.'/modules/kit/'.$item)) {
-			$error .= sprintf('<p>[DELETE FILES/DIRECTORIES] Can\'t delete /modules/kit/%s</p>', $item);
-		}
-	}
+  if (file_exists(WB_PATH.'/modules/kit/'.$item)) {
+    if (!rm_full_dir(WB_PATH.'/modules/kit/'.$item)) {
+      $error .= sprintf('<p>[DELETE FILES/DIRECTORIES] Can\'t delete /modules/kit/%s</p>', $item);
+    }
+  }
 }
 
 /**
@@ -263,15 +256,15 @@ if (!$dbKITprovider->sqlFieldExists(dbKITprovider::field_relaying)) {
 // new table mod_kit_languages
 $dbKITlanguages = new dbKITlanguages();
 if (!$dbKITlanguages->sqlTableExists()) {
-	if (!$dbKITlanguages->initTables()) {
-		$error .= sprintf('<p>[CREATE TABLE mod_kit_languages] %s</p>', $dbKITlanguages->getError());
-	}
+  if (!$dbKITlanguages->initTables()) {
+    $error .= sprintf('<p>[CREATE TABLE mod_kit_languages] %s</p>', $dbKITlanguages->getError());
+  }
 }
 // add field 'contact_language' to contact db
 if (!$dbKITcontact->sqlFieldExists(dbKITcontact::field_contact_language)) {
-	if (!$dbKITcontact->sqlAlterTableAddField(dbKITcontact::field_contact_language, "VARCHAR(2) NOT NULL DEFAULT 'en'", dbKITcontact::field_contact_note)) {
-		$error .= sprintf('<p>[ALTER TABLE mod_kit_contact] %s</p>', $dbKITcontact->getError());
-	}
+  if (!$dbKITcontact->sqlAlterTableAddField(dbKITcontact::field_contact_language, "VARCHAR(2) NOT NULL DEFAULT 'en'", dbKITcontact::field_contact_note)) {
+    $error .= sprintf('<p>[ALTER TABLE mod_kit_contact] %s</p>', $dbKITcontact->getError());
+  }
 }
 
 /**
@@ -284,9 +277,96 @@ if (!$dbKITcfg->sqlDeleteRecord($where)) {
   $error .= sprintf('<p>[UPDATE CONFIG TABLE mod_kit_config] %s</p>', $dbKITcfg->getError());
 }
 
+/**
+ * Release 0.62
+ */
+$where = array(dbKITcfg::field_name => 'cfgSortContactList');
+if (!$dbKITcfg->sqlDeleteRecord($where)) {
+  $error .= sprintf('<p>[UPDATE CONFIG TABLE mod_kit_config] %s</p>', $dbKITcfg->getError());
+}
+$where = array(dbKITcfg::field_name => 'cfgLimitContactList');
+if (!$dbKITcfg->sqlDeleteRecord($where)) {
+  $error .= sprintf('<p>[UPDATE CONFIG TABLE mod_kit_config] %s</p>', $dbKITcfg->getError());
+}
+
+/**
+ * Release 0.63
+ */
+// create the kit_link table
+$SQL = "CREATE TABLE IF NOT EXISTS `".TABLE_PREFIX."mod_kit_links` ( ".
+    "`id` INT(11) NOT NULL AUTO_INCREMENT, ".
+    "`url` TEXT NOT NULL, ".
+    "`guid` VARCHAR(128) NOT NULL DEFAULT '', ".
+    "`type` ENUM('DOWNLOAD','UPLOAD','UNDEFINED') NOT NULL DEFAULT 'UNDEFINED', ".
+    "`option` ENUM('THROW-AWAY','PERMANENT') NOT NULL DEFAULT 'THROW-AWAY', ".
+    "`status` ENUM('ACTIVE','LOCKED','DELETED') NOT NULL DEFAULT 'ACTIVE', ".
+    "`file_url` TEXT NOT NULL, ".
+    "`count` INT(11) NOT NULL DEFAULT '0', ".
+    "`last_call` DATETIME NOT NULL DEFAULT '0000-00-00 00:00:00', ".
+    "`kit_id` INT(11) NOT NULL DEFAULT '-1', ".
+    "`timestamp` TIMESTAMP, ".
+    "PRIMARY KEY (`id`), ".
+    "KEY (`guid`,`kit_id`)".
+    ") ENGINE=MyIsam AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci";
+$database->query($SQL);
+if ($database->is_error()) {
+  $error .= sprintf('[INSTALLATION kit_links] %s', $database->get_error());
+}
+
+/**
+ * Release 0.67
+ */
+
+@unlink(WB_PATH.'/modules/kit/htt/backend.config.import.htt');
+@unlink(WB_PATH.'/modules/kit/htt/backend.config.import.massmail.htt');
+@unlink(WB_PATH.'/modules/kit/htt/backend.config.import.massmail.tr.htt');
+@unlink(WB_PATH.'/modules/kit/htt/backend.import.step.1.htt');
+@unlink(WB_PATH.'/modules/kit/htt/backend.import.step.1.tr.htt');
+@unlink(WB_PATH.'/modules/kit/htt/backend.import.step.2.htt');
+@unlink(WB_PATH.'/modules/kit/htt/backend.import.step.2.th.htt');
+@unlink(WB_PATH.'/modules/kit/htt/backend.import.step.2.tr.htt');
+@unlink(WB_PATH.'/modules/kit/htt/backend.newsletter.config.csv.htt');
+@unlink(WB_PATH.'/modules/kit/htt/backend.start.register.dlg.htt');
+@unlink(WB_PATH.'/modules/kit/htt/backend.start.register.dlg.tr.htt');
+@unlink(WB_PATH.'/modules/kit/htt/newsletter.sample.wbugb.htt');
+@unlink(WB_PATH.'/modules/kit/htt/frontend.error.htt');
+@unlink(WB_PATH.'/modules/kit/templates/backend/include/contact/addresses.lte');
+@unlink(WB_PATH.'/modules/kit/templates/backend/include/contact/categories.lte');
+@unlink(WB_PATH.'/modules/kit/templates/backend/include/contact/company.lte');
+@unlink(WB_PATH.'/modules/kit/templates/backend/include/contact/contact_since.lte');
+@unlink(WB_PATH.'/modules/kit/templates/backend/include/contact/distribution.lte');
+@unlink(WB_PATH.'/modules/kit/templates/backend/include/contact/email.lte');
+@unlink(WB_PATH.'/modules/kit/templates/backend/include/contact/information.lte');
+@unlink(WB_PATH.'/modules/kit/templates/backend/include/contact/internet.lte');
+@unlink(WB_PATH.'/modules/kit/templates/backend/include/contact/map.lte');
+@unlink(WB_PATH.'/modules/kit/templates/backend/include/contact/newsletter.lte');
+@unlink(WB_PATH.'/modules/kit/templates/backend/include/contact/notes.lte');
+@unlink(WB_PATH.'/modules/kit/templates/backend/include/contact/person.lte');
+@unlink(WB_PATH.'/modules/kit/templates/backend/include/contact/phone.lte');
+@unlink(WB_PATH.'/modules/kit/templates/backend/backend.contact.lte');
+
+/**
+ * Release 0.69
+ */
+
+$dbKITaddress = new dbKITcontactAddress();
+// additional fields for the contact address
+if (!$dbKITaddress->sqlFieldExists(dbKITcontactAddress::field_extra)) {
+  if (!$dbKITaddress->sqlAlterTableAddField(dbKITcontactAddress::field_extra, "VARCHAR(255) NOT NULL DEFAULT ''", dbKITcontactAddress::field_city)) {
+    $error .= sprintf('<p>[ALTER TABLE mod_kit_contact] %s</p>', $dbKITaddress->getError());
+  }
+}
+if (!$dbKITaddress->sqlFieldExists(dbKITcontactAddress::field_region)) {
+  if (!$dbKITaddress->sqlAlterTableAddField(dbKITcontactAddress::field_region, "VARCHAR(255) NOT NULL DEFAULT ''", dbKITcontactAddress::field_extra)) {
+    $error .= sprintf('<p>[ALTER TABLE mod_kit_contact] %s</p>', $dbKITaddress->getError());
+  }
+}
+
 // Prompt Errors
 if (!empty($error)) {
-	$admin->print_error($error);
+  $admin->print_error($error);
 }
+
+
 
 ?>

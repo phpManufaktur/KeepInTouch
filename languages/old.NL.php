@@ -32,42 +32,9 @@ else {
 // end include class.secure.php
 
 if ('á' != "\xc3\xa1") {
-	// important: language files must be saved as UTF-8 (without BOM)
-	trigger_error('The language file <b>'.basename(__FILE__).'</b> is damaged, it must be saved <b>UTF-8</b> encoded!', E_USER_ERROR);
+  // important: language files must be saved as UTF-8 (without BOM)
+  trigger_error('The language file <b>'.basename(__FILE__).'</b> is damaged, it must be saved <b>UTF-8</b> encoded!', E_USER_ERROR);
 }
-
-define('kit_btn_abort', 'Afbreken');
-define('kit_btn_edit', 'Bewerken');
-define('kit_btn_export', 'Exporteren');
-define('kit_btn_import', 'Importeren');
-define('kit_btn_mail_bcc', 'BCC geadresseerde:');
-define('kit_btn_mail_from', 'Van:');
-define('kit_btn_mail_to', 'An:');
-define('kit_btn_next_step', 'Volgende stap');
-define('kit_btn_no', 'Nee');
-define('kit_btn_ok', 'Overnemen');
-define('kit_btn_preview', 'Inkijken');
-define('kit_btn_register', 'Registreren');
-define('kit_btn_save', 'Opslaan');
-define('kit_btn_send', 'Versturen');
-define('kit_btn_yes', 'Ja');
-
-define('kit_cmd_nl_account_email', 'E-Mail adres abonnee');
-define('kit_cmd_nl_account_first_name', 'Voornaam abonnee');
-define('kit_cmd_nl_account_id', 'ID abonnee account (Account)');
-define('kit_cmd_nl_account_last_name', 'Achternaam abonnee');
-define('kit_cmd_nl_account_login', 'URL: Link op het login dialoog van het abonnee-account  (Account)');
-define('kit_cmd_nl_account_newsletter', 'Abonnement op nieuwsbrief, comma gescheiden');
-define('kit_cmd_nl_account_register_key', 'Registersleutel abonnee-account');
-define('kit_cmd_nl_account_title', 'Aanroep abonnee (Heer of Mevrouw)');
-define('kit_cmd_nl_account_title_academic', 'Titel abonnee (v.b. Dr. of Prof.');
-define('kit_cmd_nl_account_username', 'Gebruikersnaam abonnee (Username)');
-define('kit_cmd_nl_contact_id', 'ID vermelding in de contactendatabase (Contact)');
-define('kit_cmd_nl_content', 'De eigenlijke tekst van de nieuwsbrief zal worden ingevoegd op dit punt ');
-define('kit_cmd_nl_kit_info', 'Geeft informatie over KeepInTouch (KIT)');
-define('kit_cmd_nl_kit_release', 'Geeft release nummer van KeepInTouch (KIT) ');
-define('kit_cmd_nl_newsletter_unsubscribe', 'URL: Link voor afmelden van de nieuwsbriefs');
-define('kit_cmd_nl_salutation', 'Groetvormen 1-10, de aanhefvariaties worden in de voorkeuren ingesteld (Aanhef) ');
 
 define('kit_contact_access_internal', 'Intern');
 define('kit_contact_access_public', 'Publiek');
@@ -139,6 +106,7 @@ define('kit_desc_cfg_clear_compile_dir', 'Sie können die von der Dwoo Template 
 define('kit_desc_cfg_connect_wb_users', 'U kunt KIT verbinden met het WB gebruikersbeheer. Als de verbinding tot stand is gekomen dan neemt KIT automatisch nieuw toegevoegde gebruikers over en blokkeert in het gebruikersbeheer van KIT, geblokkeerde of verwijderede gebruikers. Contacten, die in KIT de categorie <b>catWBUser</b> toekent krijgen, worden in de WB gebruikersbeheer gekoppeld aan de groep <b>kitContact</b>. U moet zelf de geblokkeerde gebruikers verwijderen. <i>Administratoren</i> kunnen uit veiligheid gronden niet met KIT verbonden worden.');
 define('kit_desc_cfg_contact_language_default', 'Sprache, die als Voreinstellung für neue Kontakte verwendet werden soll');
 define('kit_desc_cfg_contact_language_select', "Legen Sie fest, wie die Auswahl der Kontakt Sprache in Dialogen angezeigt werden soll: '<b>local</b>' verwendet die lokale Bezeichnung, z.B. <i>Deutsch</i>, '<b>english</b>' verwendet die internationale Bezeichnung in <i>Englisch</i> und '<b>iso</b>' verwendet das ISO 639-1 Länderkürzel, z.B. <i>DE</i>.<br />Voreinstellung ist <b>local</b>");
+define('kit_desc_cfg_contact_list_columns', 'Legen Sie die Spalten fest, die in der Übersichtsliste angezeigt werden sollen.');
 define('kit_desc_cfg_cronjob_key', 'Om te voorkomen dat cronjobs worden uitgevoerd door een eenvoudige oproep aan de cronjob.php moet de aangegeven sleutels doorgegeven worden als parameter. De oproep van het bestand is <b>cronjob.php?key=<i>SLEUTEL</i></b>.');
 define('kit_desc_cfg_developer_mode', 'Mogelijkheid voor de programmeur om configuratieparameters toe te voegen.');
 define('kit_desc_cfg_google_maps_api_key', 'Voor het gebruik en weergave van de kaarten die je nodig hebt een link <a href="http://code.google.com/intl/nl-NL/apis/maps/signup.html" target="_blank">Google Maps API Key</a>.');
@@ -165,6 +133,7 @@ define('kit_desc_cfg_register_dlg', 'Dialoogvenster dat wordt aangeroepen wannee
 define('kit_desc_cfg_register_dlg_unsubscribe', 'Dialoogvenster dat wordt aangeroepen wanneer een abonnement zich wil uitschrijven voor een nieuwsbrief of meerdere nieuwsbrieven');
 define('kit_desc_cfg_session_id', 'ID voor de unieke identificatie van de sessie variabelen die worden gebruikt door KeepInTouch.');
 define('kit_desc_cfg_sort_contact_list', 'Voorkeur voor het sorteren van de lijst met contactpersonen: 0 = ongesorteerd, 1 = E-mail ... 3 = achternaam - de mogelijke cijfers worden weergegeven in de keuzelijst voor het sorteren.');
+define('kit_desc_cfg_special_links_download_directories', 'Sie können zusätzlich zu dem persönlichen Verzeichnis des Kontakt in /media/kit_protected weitere Verzeichnisse unterhalb von /media/kit_protected angeben, die in der Auswahlliste für Downloads in den <i>speziellen Funktionen</i> angezeigt werden.<br />Geben Sie das Unterverzeichnis an und fügen Sie weitere Verzeichnisse durch ein Komma getrennt an.');
 define('kit_desc_cfg_use_captcha', 'Beslis of de diaglogen gebruik maken van de Frontend CAPTCHA spam bescherming ');
 define('kit_desc_cfg_use_custom_files', 'Indien ingesteld, kunt u gebruik maken van op maat gemaakte templates en taal bestanden. De bestanden beginnen met "custom", bijvoorbeeld "Custom.NL.php", deze bestanden worden niet overschreven tijdens een update.');
 define('kit_desc_cfg_use_ssl', 'Falls gesetzt verwendet KIT, sofern möglich, Secure Sockets Layer (SSL) für den Aufruf von URL\'s (HTTPS://).');
@@ -298,6 +267,8 @@ define('kit_intro_register_installation', '<p>Registreer uw KeepInTouch Installa
 define('kit_label_add_new_address', 'Voeg extra Adres toe');
 define('kit_label_additional_fields', 'Benutzerdefinierte Felder');
 define('kit_label_address_city', 'plaats');
+define('kit_label_address_extra', 'Adresszusatz');
+define('kit_label_address_region', 'Region, Bereich');
 define('kit_label_address_street', 'Straat');
 define('kit_label_address_type', 'type Adres');
 define('kit_label_address_type_private', 'Particulier');
@@ -317,6 +288,7 @@ define('kit_label_cfg_clear_compile_dir', 'Templates zurücksetzen');
 define('kit_label_cfg_connect_wb_users', 'Met WB gebruikers verbinden');
 define('kit_label_cfg_contact_language_default', 'Kontakt Sprache, Vorgabe');
 define('kit_label_cfg_contact_language_select', 'Kontakt Sprache, Auswahl');
+define('kit_label_cfg_contact_list_columns', 'Kontaktliste, Spalten');
 define('kit_label_cfg_cronjob_key', 'Sleutel voor de Cronjobs');
 define('kit_label_cfg_developer_mode', 'Developer Mode');
 define('kit_label_cfg_google_maps_api_key', 'Google Maps API Key');
@@ -343,6 +315,7 @@ define('kit_label_cfg_register_dlg', 'Gebruikers, Registratie');
 define('kit_label_cfg_register_dlg_unsubscribe', 'Gebruiker, Nieuwsbrief afmelding');
 define('kit_label_cfg_session_id', 'Sessie ID');
 define('kit_label_cfg_sort_contact_list', 'Contact lijst sorteren');
+define('kit_label_cfg_special_links_download_directories', 'Downloadverzeichnisse');
 define('kit_label_cfg_temp_dir', 'Tijdelijke directory');
 define('kit_label_cfg_use_captcha', 'CAPTCHA gebruiken');
 define('kit_label_cfg_use_custom_files', 'Aangepaste gegevensbestanden gebruiken');

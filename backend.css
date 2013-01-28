@@ -12,11 +12,12 @@
 @import "include/jquery/themes/smoothness/ui.accordion.css";
 @import "include/jquery/themes/smoothness/ui.datepicker.css";
 
+
 /*
 td,th,input,textarea,select {
-	font-family: Verdana, Arial, Helvetica, sans-serif;
-	font-size: 12px;
-	margin: 0px;
+  font-family: Verdana, Arial, Helvetica, sans-serif;
+  font-size: 12px;
+  margin: 0px;
 }
 */
 .stichwort_text {
@@ -65,6 +66,14 @@ select
   width: 98%;
   font-size:8pt;
 }
+select[name=dataTable_length] {
+  width: 50px;
+  text-align: right;
+}
+#dataTable_filter input[type=text] {
+  width: 200px;
+}
+
 textarea
 {
   width: 98%;
@@ -170,6 +179,10 @@ textarea
 .kccr_value,
 .kccl_value {
 }
+.kccl_help {
+  font-style: italic;
+  font-size: smaller;
+}
 .kccl_empty_row,
 .kccr_empty_row {
   display: inline-block;
@@ -268,6 +281,13 @@ input[name=nl_sft]
 }
 img[name=cal_img_2] {
   margin: 0 10px 0 0;
+}
+select[name=dlf],
+select[name=dlopt],
+select[name=uppid],
+select[name=upopt] {
+  width:400px;
+  margin: 0 0 0 5px;
 }
 select[name=sub],
 select[name=protocol_type] {
@@ -593,5 +613,35 @@ fieldset.fs_person {
 .fs_phone legend,
 .fs_person legend {
   color: #800000;
+  background-color: transparent;
+}
+
+fieldset.kit_export_fieldset,
+fieldset.kit_import_fieldset {
+  color: #000;
+  background-color: #e3e3e3;
+  margin: 20px 30px 10px 0;
+  padding: 20px;
+  border: 1px solid #a0a0a0;
+}
+.kit_export_label,
+.kit_import_label {
+  float: left;
+  width: 200px;
+}
+.kit_export_value,
+.kit_import_value {
+  float: left;
+  width: 400px;
+}
+.kit_export_clear,
+.kit_import_clear {
+  clear: both;
+  height: 3px;
+  width: 1px;
+}
+.kit_export_disabled {
+  font-style: italic;
+  color: #999999;
   background-color: transparent;
 }

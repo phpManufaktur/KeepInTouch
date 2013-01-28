@@ -133,6 +133,11 @@
           <div class="kccc_value">{$value_distribution|default: ''}</div>
         </div>
       </div>
+      {if $id_value > 0}
+      <div class="accordion_tab"><a href="#">{translate('Special')}</a></div>
+        <!-- SPECIAL -->
+        {$special}
+      {/if}
       <div class="accordion_tab"><a href="#">{$header_protocol}</a></div>
       <div>
         <!-- protocol -->

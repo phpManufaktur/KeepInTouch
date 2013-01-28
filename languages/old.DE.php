@@ -32,42 +32,42 @@ else {
 // end include class.secure.php
 
 if ('á' != "\xc3\xa1") {
-	// important: language files must be saved as UTF-8 (without BOM)
-	trigger_error('The language file <b>'.basename(__FILE__).'</b> is damaged, it must be saved <b>UTF-8</b> encoded!', E_USER_ERROR);
+  // important: language files must be saved as UTF-8 (without BOM)
+  trigger_error('The language file <b>'.basename(__FILE__).'</b> is damaged, it must be saved <b>UTF-8</b> encoded!', E_USER_ERROR);
 }
 
-define('kit_btn_abort', 'Abbruch');
-define('kit_btn_edit', 'Bearbeiten');
-define('kit_btn_export', 'Exportieren');
-define('kit_btn_import', 'Importieren');
-define('kit_btn_mail_bcc', 'BCC Empfänger:');
-define('kit_btn_mail_from', 'Von:');
-define('kit_btn_mail_to', 'An:');
-define('kit_btn_next_step', 'Nächster Schritt');
-define('kit_btn_no', 'Nein');
-define('kit_btn_ok', 'Übernehmen');
-define('kit_btn_preview', 'Vorschau');
-define('kit_btn_register', 'Registrieren');
-define('kit_btn_save', 'Speichern');
-define('kit_btn_send', 'Abschicken');
-define('kit_btn_yes', 'Ja');
+//define('kit_btn_abort', 'Abbruch');
+//define('kit_btn_edit', 'Bearbeiten');
+//define('kit_btn_export', 'Exportieren');
+//define('kit_btn_import', 'Importieren');
+//define('kit_btn_mail_bcc', 'BCC Empfänger:');
+//define('kit_btn_mail_from', 'Von:');
+//define('kit_btn_mail_to', 'An:');
+//define('kit_btn_next_step', 'Nächster Schritt');
+//define('kit_btn_no', 'Nein');
+//define('kit_btn_ok', 'Übernehmen');
+//define('kit_btn_preview', 'Vorschau');
+//define('kit_btn_register', 'Registrieren');
+//define('kit_btn_save', 'Speichern');
+//define('kit_btn_send', 'Abschicken');
+//define('kit_btn_yes', 'Ja');
 
-define('kit_cmd_nl_account_email', 'E-Mail Adresse des Abonnenten');
-define('kit_cmd_nl_account_first_name', 'Vorname des Abonnenten');
-define('kit_cmd_nl_account_id', 'ID des Abonnentenkonto (Account)');
-define('kit_cmd_nl_account_last_name', 'Nachname des Abonnenten');
-define('kit_cmd_nl_account_login', 'URL: Link auf den Login Dialog des Abonnentenkonto (Account)');
-define('kit_cmd_nl_account_newsletter', 'Abonnierte Newsletter, kommasepariert');
-define('kit_cmd_nl_account_register_key', 'Registrierschlüssel des Abonnentenkontos');
-define('kit_cmd_nl_account_title', 'Anrede des Abonnenten (Herr oder Frau)');
-define('kit_cmd_nl_account_title_academic', 'Titel des Abonnenten (z.B. Dr. oder Prof.');
-define('kit_cmd_nl_account_username', 'Benutzername des Abonnenten (Username)');
-define('kit_cmd_nl_contact_id', 'ID des Eintrags in der Kontaktdatenbank (Contact)');
-define('kit_cmd_nl_content', 'Der eigentliche Text des Newsletters wird an dieser Stelle eingefügt');
-define('kit_cmd_nl_kit_info', 'Gibt eine Information über KeepInTouch (KIT) aus');
-define('kit_cmd_nl_kit_release', 'Gibt die Release Nummer von KeepInTouch (KIT) aus');
-define('kit_cmd_nl_newsletter_unsubscribe', 'URL: Link zum Abbestellen des Newsletters');
-define('kit_cmd_nl_salutation', 'Grußformeln 1-10, die Anredevarianten werden in den Einstellungen definiert (Salutation)');
+//define('kit_cmd_nl_account_email', 'E-Mail Adresse des Abonnenten');
+//define('kit_cmd_nl_account_first_name', 'Vorname des Abonnenten');
+//define('kit_cmd_nl_account_id', 'ID des Abonnentenkonto (Account)');
+//define('kit_cmd_nl_account_last_name', 'Nachname des Abonnenten');
+//define('kit_cmd_nl_account_login', 'URL: Link auf den Login Dialog des Abonnentenkonto (Account)');
+//define('kit_cmd_nl_account_newsletter', 'Abonnierte Newsletter, kommasepariert');
+//define('kit_cmd_nl_account_register_key', 'Registrierschlüssel des Abonnentenkontos');
+//define('kit_cmd_nl_account_title', 'Anrede des Abonnenten (Herr oder Frau)');
+//define('kit_cmd_nl_account_title_academic', 'Titel des Abonnenten (z.B. Dr. oder Prof.');
+//define('kit_cmd_nl_account_username', 'Benutzername des Abonnenten (Username)');
+//define('kit_cmd_nl_contact_id', 'ID des Eintrags in der Kontaktdatenbank (Contact)');
+//define('kit_cmd_nl_content', 'Der eigentliche Text des Newsletters wird an dieser Stelle eingefügt');
+//define('kit_cmd_nl_kit_info', 'Gibt eine Information über KeepInTouch (KIT) aus');
+//define('kit_cmd_nl_kit_release', 'Gibt die Release Nummer von KeepInTouch (KIT) aus');
+//define('kit_cmd_nl_newsletter_unsubscribe', 'URL: Link zum Abbestellen des Newsletters');
+//define('kit_cmd_nl_salutation', 'Grußformeln 1-10, die Anredevarianten werden in den Einstellungen definiert (Salutation)');
 
 define('kit_contact_access_internal', 'Intern');
 define('kit_contact_access_public', 'Öffentlich');
@@ -139,6 +139,7 @@ define('kit_desc_cfg_clear_compile_dir', 'Sie können die von der Dwoo Template 
 define('kit_desc_cfg_connect_wb_users', 'Sie können KIT mit der WB Benutzerverwaltung verbinden. Wenn gesetzt, übernimmt KIT automatisch neu angelegte Benutzer und sperrt in KIT in der Benutzerverwaltung gesperrte oder gelöschte Benutzer. Kontakte, denen Sie in KIT die Kategorie <b>catWBUser</b> zuordnen werden in der WB Benutzerverwaltung mit der Gruppe <b>kitContact</b> angelegt, entfernen Sie die Zuordnung werden die Kontakte in der Benutzerverwaltung gesperrt. <i>Administratoren</i> können aus Sicherheitsgründen nicht mit KIT verbunden werden.');
 define('kit_desc_cfg_contact_language_default', 'Sprache, die als Voreinstellung für neue Kontakte verwendet werden soll. Die Angabe erfolgt mit der ISO 639-1 Angabe des Sprachkürzel, z.B. <i>de</i>.');
 define('kit_desc_cfg_contact_language_select', "Legen Sie fest, wie die Auswahl der Kontakt Sprache in Dialogen angezeigt werden soll: <b>local</b> verwendet die lokale Bezeichnung, z.B. <i>Deutsch</i>, <b>english</b> verwendet die internationale Bezeichnung in <i>Englisch</i> und <b>iso</b> verwendet das ISO 639-1 Sprachkürzel, z.B. <i>DE</i>.<br />Voreinstellung ist <b>local</b>");
+define('kit_desc_cfg_contact_list_columns', 'Legen Sie die Spalten und die Reihenfolge fest, die in der Übersichtsliste angezeigt werden sollen. Mögliche Felder sind: kit_address_type, kit_birthday, kit_city, kit_company, kit_contact_since, kit_department, kit_distribution, kit_email, kit_fax, kit_first_name, kit_free_field_1, kit_free_field_2, kit_free_field_3, kit_free_field_4, kit_free_field_5, kit_free_note_1, kit_free_note_2, kit_identifier, kit_intern, kit_last_name, kit_newsletter, kit_note, kit_phone, kit_phone_mobile, kit_status, kit_street, kit_title, kit_title_academic, kit_zip');
 define('kit_desc_cfg_cronjob_key', 'Um zu verhindern, dass Cronjobs durch einen einfachen Aufruf der <b>cronjob.php</b> ausgeführt werden, muss der angegebene Schlüssel als Parameter übergeben werden. Der Aufruf der Datei lautet <b>cronjob.php?key=<i>SCHLÜSSEL</i></b>.');
 define('kit_desc_cfg_developer_mode', 'Ermöglicht dem Programmierer das Hinzufügen von Konfigurationsparametern.');
 define('kit_desc_cfg_gmap_static_use', 'Google Maps (statisch) verwenden.');
@@ -165,6 +166,7 @@ define('kit_desc_cfg_register_dlg', 'Dialog, der aufgerufen wird, wenn sich Besu
 define('kit_desc_cfg_register_dlg_unsubscribe', 'Dialog, der aufgerufen wird, wenn sich ein Abonnent von einem Newsletter oder mehreren Newslettern abmelden möchte');
 define('kit_desc_cfg_session_id', 'ID zur eindeutigen Kennzeichnung von Session Variablen die durch KeepInTouch verwendet werden.');
 define('kit_desc_cfg_sort_contact_list', 'Voreinstellung für die Sortierung der Kontakt Liste: 0=unsortiert, 1=E-Mail ... 3=Nachname - die möglichen Ziffern werden in der Dropdown Liste für die Sortierung angezeigt.');
+define('kit_desc_cfg_special_links_download_directories', 'Sie können zusätzlich zu dem persönlichen Verzeichnis des Kontakt in /media/kit_protected weitere Verzeichnisse unterhalb von /media/kit_protected angeben, die in der Auswahlliste für Downloads in den <i>speziellen Funktionen</i> angezeigt werden.<br />Geben Sie das Unterverzeichnis an und fügen Sie weitere Verzeichnisse durch ein Komma getrennt an.');
 define('kit_desc_cfg_use_captcha', 'Legen Sie fest, ob die Dialoge im Frontend CAPTCHA zum Schutz vor Spam verwenden sollen');
 define('kit_desc_cfg_use_custom_files', 'Falls gesetzt, können Sie individuell angepasste Templates und Sprachdateien verwenden. Den Dateien wird "custom." vorangestellt, z.B. "custom.DE.php", diese Dateien werden bei einem Update nicht überschrieben.');
 define('kit_desc_cfg_use_ssl', 'Falls gesetzt verwendet KIT, sofern möglich, Secure Sockets Layer (SSL) für den Aufruf von URL\'s (HTTPS://).');
@@ -298,6 +300,8 @@ define('kit_intro_register_installation', '<p>Registrieren Sie Ihre KeepInTouch 
 define('kit_label_add_new_address', 'Zusätzliche Anschrift hinzufügen');
 define('kit_label_additional_fields', 'Benutzerdefinierte Felder');
 define('kit_label_address_city', 'Stadt');
+define('kit_label_address_extra', 'Adresszusatz');
+define('kit_label_address_region', 'Region, Bereich');
 define('kit_label_address_street', 'Straße');
 define('kit_label_address_type', 'Art der Adresse');
 define('kit_label_address_type_private', 'Privat');
@@ -317,6 +321,7 @@ define('kit_label_cfg_clear_compile_dir', 'Templates zurücksetzen');
 define('kit_label_cfg_connect_wb_users', 'Mit WB Benutzern verbinden');
 define('kit_label_cfg_contact_language_default', 'Kontakt Sprache, Vorgabe');
 define('kit_label_cfg_contact_language_select', 'Kontakt Sprache, Auswahl');
+define('kit_label_cfg_contact_list_columns', 'Kontaktliste, Spalten');
 define('kit_label_cfg_cronjob_key', 'Schlüssel für Cronjobs');
 define('kit_label_cfg_developer_mode', 'Developer Mode');
 define('kit_label_cfg_gmap_static_height', 'Google Map, Höhe');
@@ -343,6 +348,7 @@ define('kit_label_cfg_register_dlg', 'Benutzer, Registrierung');
 define('kit_label_cfg_register_dlg_unsubscribe', 'Benutzer, Newsletter Abmeldung');
 define('kit_label_cfg_session_id', 'Session Kennung');
 define('kit_label_cfg_sort_contact_list', 'Kontakt Liste sortieren');
+define('kit_label_cfg_special_links_download_directories', 'Downloadverzeichnisse');
 define('kit_label_cfg_temp_dir', 'Temporäres Verzeichnis');
 define('kit_label_cfg_use_captcha', 'CAPTCHA verwenden');
 define('kit_label_cfg_use_custom_files', 'Angepasste Dateien zulassen');

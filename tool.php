@@ -34,7 +34,6 @@ else {
 require_once(WB_PATH.'/modules/'.basename(dirname(__FILE__)).'/initialize.php');
 require_once(WB_PATH.'/modules/'.basename(dirname(__FILE__)).'/class.mail.php');
 require_once(WB_PATH.'/modules/'.basename(dirname(__FILE__)).'/class.editor.php');
-require_once(WB_PATH.'/modules/'.basename(dirname(__FILE__)).'/class.import.php');
 require_once(WB_PATH.'/modules/'.basename(dirname(__FILE__)).'/class.newsletter.php');
 
 if (DEBUG_MODE) {
@@ -63,6 +62,10 @@ class kitBackend {
   const basket_to = 'bat';
   const basket_bcc = 'babcc';
 
+  // settings for mod_kit_links
+  const KIT_LINKS_ID_ADD = 10000; // int to add to the ID for generating a GUID
+  const KIT_LINKS_TO_BASE = 36; // base used for generating the GUID
+
   const request_action = 'act';
   const request_csv_export = 'csvex';
   const request_csv_import = 'csvim';
@@ -75,6 +78,15 @@ class kitBackend {
   const request_limit_start = 'lims';
   const request_limit_end = 'lime';
   const request_page = 'pg';
+  const REQUEST_DOWNLOAD_FILE = 'dlf';
+  const REQUEST_DOWNLOAD_OPTION = 'dlopt';
+  const REQUEST_SPECIAL_CREATE_DOWNLOAD_LINK = 'scdl';
+  const REQUEST_UPLOAD_PAGE_ID = 'uppid';
+  const REQUEST_UPLOAD_OPTION = 'upopt';
+  const REQUEST_SPECIAL_CREATE_UPLOAD_LINK = 'scul';
+  const REQUEST_SPECIAL_LINK = 'ksl'; // KIT Special Link = KSL
+  const REQUEST_UPLOAD_LINK = 'upl';
+  const REQUEST_DOWNLOAD_LINK = 'dll';
 
   const action_default = 'def';
   const action_help = 'hlp';
@@ -87,6 +99,7 @@ class kitBackend {
   const action_cfg_tab_general = 'cftg';
   const action_cfg_tab_array = 'cfta';
   const action_cfg_tab_array_save = 'cftas';
+  const ACTION_CFG_TAB_EXPORT = 'cftx';
   const action_cfg_tab_import = 'cfti';
   const action_cfg_tab_provider = 'cftp';
   const action_cfg_tab_provider_save = 'cfgsp';
@@ -119,8 +132,8 @@ class kitBackend {
       self::action_list_phone => kit_list_sort_phone,
       self::action_list_street => kit_list_sort_street,
       self::action_list_unsorted => kit_list_sort_unsorted,
-  		self::action_list_language => kit_list_sort_language
-  		);
+      self::action_list_language => kit_list_sort_language
+      );
 
   private $tab_navigation_array = array(
       self::action_start => kit_tab_start,
@@ -134,9 +147,10 @@ class kitBackend {
   private $tab_config_array = array(
       self::action_cfg_tab_general => kit_tab_cfg_general,
       self::action_cfg_tab_provider => kit_tab_cfg_provider,
-      self::action_cfg_tab_array => kit_tab_cfg_array)//self::action_cfg_tab_import		=> kit_tab_cfg_import,
-  //self::action_cfg_tab_export		=> kit_tab_cfg_export
-  ;
+      self::action_cfg_tab_array => kit_tab_cfg_array,
+      self::action_cfg_tab_import		=> kit_tab_cfg_import,
+      self::ACTION_CFG_TAB_EXPORT => kit_tab_cfg_export
+      );
 
   private $page_link = '';
   private $img_url = '';
@@ -149,7 +163,8 @@ class kitBackend {
 
   private $swNavHide = array();
 
-  private $lang = NULL;
+  protected $lang = NULL;
+  protected static $table_prefix = TABLE_PREFIX;
 
   /**
    * Constructor for kitBackend
@@ -164,6 +179,14 @@ class kitBackend {
     $this->template_path = WB_PATH.'/modules/'.basename(dirname(__FILE__)).'/htt/';
     $this->help_path = WB_PATH.'/modules/'.basename(dirname(__FILE__)).'/languages/';
     $this->img_url = WB_URL.'/modules/'.basename(dirname(__FILE__)).'/img/';
+
+    // use another table prefix?
+    if (file_exists(WB_PATH.'/modules/'.basename(dirname(__FILE__)).'/config.json')) {
+      $config = json_decode(file_get_contents(WB_PATH.'/modules/'.basename(dirname(__FILE__)).'/config.json'), true);
+      if (isset($config['table_prefix']))
+        self::$table_prefix = $config['table_prefix'];
+    }
+
   } // __construct()
 
   /**
@@ -172,25 +195,39 @@ class kitBackend {
    * @return boolean true on success
    */
   public function checkDependency() {
-  	// check dependency for KIT
-  	global $PRECHECK;
-  	global $database;
+    // check dependency for KIT
+    global $PRECHECK;
+    global $database;
 
-  	if (file_exists(WB_PATH.'/modules/kit_dirlist/info.php')) {
-  		// check only if kitDirList is installed
-  		require_once(WB_PATH.'/modules/'.basename(dirname(__FILE__)).'/precheck.php');
+    if (file_exists(WB_PATH.'/modules/kit_dirlist/info.php')) {
+      // check only if kitDirList is installed
+      require_once(WB_PATH.'/modules/'.basename(dirname(__FILE__)).'/precheck.php');
+      if (isset($PRECHECK['KIT']['kit_dirlist'])) {
+        $table = TABLE_PREFIX.'addons';
+        $version = $database->get_one("SELECT `version` FROM $table WHERE `directory`='kit_dirlist'", MYSQL_ASSOC);
+        if (!version_compare($version, $PRECHECK['KIT']['kit_dirlist']['VERSION'], $PRECHECK['KIT']['kit_dirlist']['OPERATOR'])) {
+          $this->setError(sprintf('[%s - %s] %s', __METHOD__, __LINE__,
+              sprintf(kit_error_please_update, 'kitDirList', $version, $PRECHECK['KIT']['kit_dirlist']['VERSION'])));
+          return false;
+        }
+      }
+    } // if file_exists()
 
-  		if (isset($PRECHECK['KIT']['kit_dirlist'])) {
-  			$table = TABLE_PREFIX.'addons';
-  			$version = $database->get_one("SELECT `version` FROM $table WHERE `directory`='kit_dirlist'", MYSQL_ASSOC);
-  			if (!version_compare($version, $PRECHECK['KIT']['kit_dirlist']['VERSION'], $PRECHECK['KIT']['kit_dirlist']['OPERATOR'])) {
-  				$this->setError(sprintf('[%s - %s] %s', __METHOD__, __LINE__,
-  						sprintf(kit_error_please_update, 'kitDirList', $version, $PRECHECK['KIT']['kit_dirlist']['VERSION'])));
-  				return false;
-  			}
-  		}
-  	} // if file_exists()
-  	return true;
+    if (file_exists(WB_PATH.'/modules/kit_form/info.php')) {
+      // check only if kitform is installed!
+      require_once(WB_PATH.'/modules/'.basename(dirname(__FILE__)).'/precheck.php');
+      if (isset($PRECHECK['KIT']['kit_form'])) {
+        $table = TABLE_PREFIX.'addons';
+        $version = $database->get_one("SELECT `version` FROM $table WHERE `directory`='kit_form'", MYSQL_ASSOC);
+        if (!version_compare($version, $PRECHECK['KIT']['kit_form']['VERSION'], $PRECHECK['KIT']['kit_form']['OPERATOR'])) {
+          $this->setError(sprintf('[%s - %s] %s', __METHOD__, __LINE__,
+              sprintf(kit_error_please_update, 'kitForm', $version, $PRECHECK['KIT']['kit_form']['VERSION'])));
+          return false;
+        }
+      }
+    } // if file_exists()
+
+    return true;
   } // checkDependency()
 
 
@@ -411,6 +448,7 @@ class kitBackend {
    */
   public function getNavigation($action) {
     global $dbCfg;
+
     $result = '';
     foreach ($this->tab_navigation_array as $key => $value) {
       if (!in_array($key, $this->swNavHide)) {
@@ -478,572 +516,88 @@ class kitBackend {
   }
 
   /**
-   * Ausgabe einer sortierten Liste aller Eintraege
+   * Contact List
+   * shows all contacts sortable and much more.
+   *
+   * @return boolean|Ambigous <string, boolean, mixed>
    */
-  public function dlgList() {
-    global $dbContact;
-    global $dbContactAddress;
-    global $parser;
+  protected function dlgList() {
+    global $database;
+    global $kitContactInterface;
     global $dbCfg;
 
-    $form_name = 'contact_list';
-    (isset($_REQUEST[self::request_sub_action])) ? $sub_action = $_REQUEST[self::request_sub_action] : $sub_action = self::action_list_unsorted;
-    // wenn Liste nicht sortiert ist, pruefen ob eine Sortierung ueber die Konfiguration vorgegeben ist
-    if (!isset($_REQUEST[self::request_sub_action])) {
-      $sub_action = $dbCfg->getValue(dbKITcfg::cfgSortContactList);
-    }
-    // letzte Aktion
-    isset($_REQUEST[self::request_last_action]) ? $last_action = $_REQUEST[self::request_last_action] : $last_action = $sub_action;
+    require_once WB_PATH.'/modules/kit/class.interface.php';
 
-    // max. Eintraege pro Seite
-    $max_entries = $dbCfg->getValue(dbKITcfg::cfgLimitContactList);
+    $get_deleted = false;
 
-    if ($last_action != $sub_action) {
-      // Filter geaendert, Seiteneinstellungen zuruecksetzen!
-      $actual_page = 1;
-    }
-    else {
-      // Seite
-      (isset($_REQUEST[self::request_page])) ? $actual_page = $_REQUEST[self::request_page] : $actual_page = 1;
-    }
-    // Sortierauswahl anzeigen
-    $option = '';
-    natcasesort($this->list_sort_array);
-    foreach ($this->list_sort_array as $key => $value) {
-      ($key == $sub_action) ? $selected = ' selected="selected"' : $selected = '';
-      $option .= sprintf('<option value="%s"%s>[%02d] %s</option>', $key, $selected, $key, $value);
-    }
-    $select_sort = sprintf('<div class="%s">%s <select id="%s" name="%s" onchange="%s">%s</select></div>',
-    		self::request_sub_action,
-    		kit_label_list_sort,
-    		self::request_sub_action,
-    		self::request_sub_action,
-    		sprintf("javascript:addSelectToLink('%s&amp;%s=%s%s&amp;%s=','%s'); return false;",
-    				$this->page_link,
-    				self::request_action,
-    				self::action_list,
-    				(defined('LEPTON_VERSION') && isset($_GET['leptoken'])) ? sprintf('&amp;leptoken=%s', $_GET['leptoken']) : '',
-    				self::request_sub_action, self::request_sub_action),
-    		$option
-    		);
-
-    switch ($sub_action) :
-      case self::action_list_city:
-        // sortierte Liste nach Staedten ausgeben
-        $SQL = sprintf("SELECT %s.%s,%s.%s,%s,%s,%s,%s,%s,%s,%s,%s FROM %s, %s WHERE %s!='%s' AND %s!='' AND %s=%s ORDER BY %s ASC",
-        		$dbContact->getTableName(),
-        		dbKITcontact::field_contact_language,
-        		$dbContact->getTableName(),
-        		dbKITcontact::field_id,
-        		dbKITcontact::field_person_last_name,
-        		dbKITcontact::field_person_first_name,
-        		dbKITcontact::field_company_name,
-        		dbKITcontact::field_address_standard,
-        		dbKITcontact::field_email,
-        		dbKITcontact::field_email_standard,
-        		dbKITcontact::field_phone,
-        		dbKITcontact::field_phone_standard,
-        		$dbContact->getTableName(),
-        		$dbContactAddress->getTableName(),
-        		dbKITcontact::field_status,
-        		dbKITcontact::status_deleted,
-        		dbKITcontact::field_address_standard,
-        		dbKITcontact::field_address_standard,
-        		dbKITcontactAddress::field_id,
-        		dbKITcontactAddress::field_city
-        		);
-        $list_array = array();
-        if (!$dbContact->sqlExec($SQL, $list_array)) {
-          $this->setError(sprintf('[%s - %s] %s', __METHOD__, __LINE__, $dbContact->getError()));
-          return false;
-        }
-        break;
-      case self::action_list_company:
-        // sortierte Liste der Firmennamen
-        $SQL = sprintf("SELECT %s.%s,%s.%s,%s,%s,%s,%s,%s,%s,%s,%s FROM %s WHERE %s!='%s' AND %s!='' ORDER BY %s ASC",
-            $dbContact->getTableName(),
-        		dbKITcontact::field_contact_language,
-        		$dbContact->getTableName(),
-            dbKITcontact::field_id,
-            dbKITcontact::field_person_last_name,
-            dbKITcontact::field_person_first_name,
-            dbKITcontact::field_company_name,
-            dbKITcontact::field_address_standard,
-            dbKITcontact::field_email,
-            dbKITcontact::field_email_standard,
-            dbKITcontact::field_phone,
-            dbKITcontact::field_phone_standard,
-            $dbContact->getTableName(),
-            dbKITcontact::field_status,
-            dbKITcontact::status_deleted,
-            dbKITcontact::field_company_name,
-            dbKITcontact::field_company_name
-            );
-        $list_array = array();
-        if (!$dbContact->sqlExec($SQL, $list_array)) {
-          $this->setError(sprintf('[%s - %s] %s', __METHOD__, __LINE__, $dbContact->getError()));
-          return false;
-        }
-        break;
-      case self::action_list_email:
-        // Liste mit E-Mail Adressen auslesen
-        $SQL = sprintf("SELECT %s.%s,%s.%s,%s,%s,%s,%s,%s,%s,%s,%s FROM %s WHERE %s!='%s' AND %s!=''",
-            $dbContact->getTableName(),
-        		dbKITcontact::field_contact_language,
-        		$dbContact->getTableName(),
-            dbKITcontact::field_id,
-            dbKITcontact::field_person_last_name,
-            dbKITcontact::field_person_first_name,
-            dbKITcontact::field_company_name,
-            dbKITcontact::field_address_standard,
-            dbKITcontact::field_email,
-            dbKITcontact::field_email_standard,
-            dbKITcontact::field_phone,
-            dbKITcontact::field_phone_standard,
-            $dbContact->getTableName(),
-            dbKITcontact::field_status,
-            dbKITcontact::status_deleted,
-            dbKITcontact::field_email
-            );
-        $contact_array = array();
-        if (!$dbContact->sqlExec($SQL, $contact_array)) {
-          $this->setError(sprintf('[%s - %s] %s', __METHOD__, __LINE__, $dbContact->getError()));
-          return false;
-        }
-        // E-Mail Adressen ermitteln und in ein Array schreiben
-        $email_array = array();
-        foreach ($contact_array as $contact) {
-          $e_array = explode(';', $contact[dbKITcontact::field_email]);
-          $e_item = explode('|', $e_array[$contact[dbKITcontact::field_email_standard]]);
-          $email_array[] = $e_item[1];
-        }
-        // Array sortieren
-        natcasesort($email_array);
-        $list_array = array();
-        foreach ($email_array as $id => $email) {
-          $list_array[] = $contact_array[$id];
-        }
-        break;
-      case self::action_list_firstname:
-        $SQL = sprintf("SELECT %s.%s,%s.%s,%s,%s,%s,%s,%s,%s,%s,%s FROM %s WHERE %s!='%s' AND %s!='' ORDER BY %s ASC",
-            $dbContact->getTableName(),
-        		dbKITcontact::field_contact_language,
-        		$dbContact->getTableName(),
-            dbKITcontact::field_id,
-            dbKITcontact::field_person_last_name,
-            dbKITcontact::field_person_first_name,
-            dbKITcontact::field_company_name,
-            dbKITcontact::field_address_standard,
-            dbKITcontact::field_email,
-            dbKITcontact::field_email_standard,
-            dbKITcontact::field_phone,
-            dbKITcontact::field_phone_standard,
-            $dbContact->getTableName(),
-            dbKITcontact::field_status,
-            dbKITcontact::status_deleted,
-            dbKITcontact::field_person_first_name,
-            dbKITcontact::field_person_first_name
-            );
-        $list_array = array();
-        if (!$dbContact->sqlExec($SQL, $list_array)) {
-          $this->setError(sprintf('[%s - %s] %s', __METHOD__, __LINE__, $dbContact->getError()));
-          return false;
-        }
-        break;
-      case self::action_list_lastname:
-        // Liste nach Nachnamen sortieren
-        $SQL = sprintf("SELECT %s.%s,%s.%s,%s,%s,%s,%s,%s,%s,%s,%s FROM %s WHERE %s!='%s' AND %s!='' ORDER BY %s ASC",
-            $dbContact->getTableName(),
-        		dbKITcontact::field_contact_language,
-        		$dbContact->getTableName(),
-            dbKITcontact::field_id,
-            dbKITcontact::field_person_last_name,
-            dbKITcontact::field_person_first_name,
-            dbKITcontact::field_company_name,
-            dbKITcontact::field_address_standard,
-            dbKITcontact::field_email,
-            dbKITcontact::field_email_standard,
-            dbKITcontact::field_phone,
-            dbKITcontact::field_phone_standard,
-            $dbContact->getTableName(),
-            dbKITcontact::field_status,
-            dbKITcontact::status_deleted,
-            dbKITcontact::field_person_last_name,
-            dbKITcontact::field_person_last_name
-            );
-        $list_array = array();
-        if (!$dbContact->sqlExec($SQL, $list_array)) {
-          $this->setError(sprintf('[%s - %s] %s', __METHOD__, __LINE__, $dbContact->getError()));
-          return false;
-        }
-        break;
-      case self::action_list_phone:
-        // Liste mit Telefonnummern auslesen
-        $SQL = sprintf("SELECT %s.%s,%s.%s,%s,%s,%s,%s,%s,%s,%s,%s FROM %s WHERE %s!='%s' AND %s!=''",
-            $dbContact->getTableName(),
-        		dbKITcontact::field_contact_language,
-        		$dbContact->getTableName(),
-            dbKITcontact::field_id,
-            dbKITcontact::field_person_last_name,
-            dbKITcontact::field_person_first_name,
-            dbKITcontact::field_company_name,
-            dbKITcontact::field_address_standard,
-            dbKITcontact::field_email,
-            dbKITcontact::field_email_standard,
-            dbKITcontact::field_phone,
-            dbKITcontact::field_phone_standard,
-            $dbContact->getTableName(),
-            dbKITcontact::field_status,
-            dbKITcontact::status_deleted,
-            dbKITcontact::field_phone
-            );
-        $contact_array = array();
-        if (!$dbContact->sqlExec($SQL, $contact_array)) {
-          $this->setError(sprintf('[%s - %s] %s', __METHOD__, __LINE__, $dbContact->getError()));
-          return false;
-        }
-        // Telefonnummern ermitteln und in ein Array schreiben
-        $phone_array = array();
-        foreach ($contact_array as $contact) {
-          $p_array = explode(';', $contact[dbKITcontact::field_phone]);
-          $p_item = explode('|', $p_array[$contact[dbKITcontact::field_phone_standard]]);
-          $phone_array[] = $p_item[1];
-        }
-        // Array sortieren
-        natcasesort($phone_array);
-        $list_array = array();
-        foreach ($phone_array as $id => $phone) {
-          $list_array[] = $contact_array[$id];
-        }
-        break;
-      case self::action_list_street:
-        // sortierte Liste nach Strassennamen ausgeben
-        $SQL = sprintf("SELECT %s.%s,%s.%s,%s,%s,%s,%s,%s,%s,%s,%s FROM %s, %s WHERE %s!='%s' AND %s!='' AND %s=%s ORDER BY %s ASC",
-            $dbContact->getTableName(),
-        		dbKITcontact::field_contact_language,
-        		$dbContact->getTableName(),
-            dbKITcontact::field_id,
-            dbKITcontact::field_person_last_name,
-            dbKITcontact::field_person_first_name,
-            dbKITcontact::field_company_name,
-            dbKITcontact::field_address_standard,
-            dbKITcontact::field_email,
-            dbKITcontact::field_email_standard,
-            dbKITcontact::field_phone,
-            dbKITcontact::field_phone_standard,
-            $dbContact->getTableName(),
-            $dbContactAddress->getTableName(),
-            dbKITcontact::field_status,
-            dbKITcontact::status_deleted,
-            dbKITcontact::field_address_standard,
-            dbKITcontact::field_address_standard,
-            dbKITcontactAddress::field_id,
-            dbKITcontactAddress::field_street
-            );
-        $list_array = array();
-        if (!$dbContact->sqlExec($SQL, $list_array)) {
-          $this->setError(sprintf('[%s - %s] %s', __METHOD__, __LINE__, $dbContact->getError()));
-          return false;
-        }
-        break;
-      case self::action_list_locked:
-        // gesperrte Eintraege anzeigen
-        $SQL = sprintf("SELECT %s.%s,%s.%s,%s,%s,%s,%s,%s,%s,%s,%s FROM %s WHERE %s='%s'",
-            $dbContact->getTableName(),
-        		dbKITcontact::field_contact_language,
-        		$dbContact->getTableName(),
-            dbKITcontact::field_id,
-            dbKITcontact::field_person_last_name,
-            dbKITcontact::field_person_first_name,
-            dbKITcontact::field_company_name,
-            dbKITcontact::field_address_standard,
-            dbKITcontact::field_email,
-            dbKITcontact::field_email_standard,
-            dbKITcontact::field_phone,
-            dbKITcontact::field_phone_standard,
-            $dbContact->getTableName(),
-            dbKITcontact::field_status,
-            dbKITcontact::status_locked
-            );
-        $contact_array = array();
-        if (!$dbContact->sqlExec($SQL, $contact_array)) {
-          $this->setError(sprintf('[%s - %s] %s', __METHOD__, __LINE__, $dbContact->getError()));
-          return false;
-        }
-        // E-Mail Adressen ermitteln und in ein Array schreiben
-        $email_array = array();
-        foreach ($contact_array as $contact) {
-          $e_array = explode(';', $contact[dbKITcontact::field_email]);
-          $e_item = explode('|', $e_array[$contact[dbKITcontact::field_email_standard]]);
-          $email_array[] = $e_item[1];
-        }
-        // Array sortieren
-        natcasesort($email_array);
-        $list_array = array();
-        foreach ($email_array as $id => $email) {
-          $list_array[] = $contact_array[$id];
-        }
-        break;
-      case self::action_list_deleted:
-        // geloeschte Eintraege anzeigen
-        $SQL = sprintf("SELECT %s.%s,%s.%s,%s,%s,%s,%s,%s,%s,%s,%s FROM %s WHERE %s='%s'",
-            $dbContact->getTableName(),
-        		dbKITcontact::field_contact_language,
-        		$dbContact->getTableName(),
-            dbKITcontact::field_id,
-            dbKITcontact::field_person_last_name,
-            dbKITcontact::field_person_first_name,
-            dbKITcontact::field_company_name,
-            dbKITcontact::field_address_standard,
-            dbKITcontact::field_email,
-            dbKITcontact::field_email_standard,
-            dbKITcontact::field_phone,
-            dbKITcontact::field_phone_standard,
-            $dbContact->getTableName(),
-            dbKITcontact::field_status,
-            dbKITcontact::status_deleted
-            );
-        $contact_array = array();
-        if (!$dbContact->sqlExec($SQL, $contact_array)) {
-          $this->setError(sprintf('[%s - %s] %s', __METHOD__, __LINE__, $dbContact->getError()));
-          return false;
-        }
-        // E-Mail Adressen ermitteln und in ein Array schreiben
-        $email_array = array();
-        foreach ($contact_array as $contact) {
-          $e_array = explode(';', $contact[dbKITcontact::field_email]);
-          $e_item = explode('|', $e_array[$contact[dbKITcontact::field_email_standard]]);
-          if (isset($e_item[1]))
-            $email_array[] = $e_item[1];
-        }
-        // Array sortieren
-        natcasesort($email_array);
-        $list_array = array();
-        foreach ($email_array as $id => $email) {
-          $list_array[] = $contact_array[$id];
-        }
-        break;
-      case self::action_list_language:
-      	// sort by contact language
-      	$SQL = sprintf("SELECT %s.%s,%s.%s,%s,%s,%s,%s,%s,%s,%s,%s FROM %s WHERE %s!='%s' ORDER BY %s ASC",
-      			$dbContact->getTableName(),
-      			dbKITcontact::field_contact_language,
-      			$dbContact->getTableName(),
-      			dbKITcontact::field_id,
-      			dbKITcontact::field_person_last_name,
-      			dbKITcontact::field_person_first_name,
-      			dbKITcontact::field_company_name,
-      			dbKITcontact::field_address_standard,
-      			dbKITcontact::field_email,
-      			dbKITcontact::field_email_standard,
-      			dbKITcontact::field_phone,
-      			dbKITcontact::field_phone_standard,
-      			$dbContact->getTableName(),
-      			dbKITcontact::field_status,
-      			dbKITcontact::status_deleted,
-      			dbKITcontact::field_contact_language
-      	);
-      	$list_array = array();
-      	if (!$dbContact->sqlExec($SQL, $list_array)) {
-      		$this->setError(sprintf('[%s - %s] %s', __METHOD__, __LINE__, $dbContact->getError()));
-      		return false;
-      	}
-      	break;
-      case self::action_list_unsorted:
-      default:
-        // Standard - unsortierte Ausgabe aller Eintraege
-        $SQL = sprintf("SELECT %s.%s,%s.%s,%s,%s,%s,%s,%s,%s,%s,%s FROM %s WHERE %s!='%s'",
-            $dbContact->getTableName(),
-        		dbKITcontact::field_contact_language,
-        		$dbContact->getTableName(),
-            dbKITcontact::field_id,
-            dbKITcontact::field_person_last_name,
-            dbKITcontact::field_person_first_name,
-            dbKITcontact::field_company_name,
-            dbKITcontact::field_address_standard,
-            dbKITcontact::field_email,
-            dbKITcontact::field_email_standard,
-            dbKITcontact::field_phone,
-            dbKITcontact::field_phone_standard,
-            $dbContact->getTableName(),
-            dbKITcontact::field_status,
-            dbKITcontact::status_deleted
-            );
-        $list_array = array();
-        if (!$dbContact->sqlExec($SQL, $list_array)) {
-          $this->setError(sprintf('[%s - %s] %s', __METHOD__, __LINE__, $dbContact->getError()));
-          return false;
-        }
-        break;
-    endswitch;
-
-    // Liste aufteilen und nur Ausschnitt anzeigen
-    $list_entries = count($list_array);
-    $max_pages = ceil($list_entries / $max_entries);
-    $offset = ($actual_page * $max_entries) - $max_entries;
-    $length = $max_entries - 1;
-    $list_array = array_slice($list_array, $offset, $length, true);
-
-    $start_page_min = $actual_page - 3;
-    if ($start_page_min < 1)
-      $start_page_min = 1;
-    $start_page_max = $actual_page + 3;
-    if ($start_page_max > $max_pages)
-      $start_page_max = $max_pages;
-
-    $ps_link = sprintf('%s&%s=%s&%s=%s&%s=',
-    		$this->page_link,
-    		self::request_action,
-    		self::action_list,
-    		self::request_sub_action,
-    		$sub_action,
-    		self::request_page
-    		);
-    // Sprung zur ersten Seite
-    $ps = sprintf('<a href="%s%d">&laquo;&nbsp;&nbsp;</a>', $ps_link, 1);
-    if ($start_page_min > 1)
-      $ps .= '...&nbsp;&nbsp;';
-    // aktuelle und umschliessende Seiten zur Auswahl anzeigen
-    for ($i = $start_page_min; $i < $start_page_max + 1; $i++) {
-      if ($i != $start_page_min)
-        $ps .= ', ';
-      if ($i == $actual_page) {
-        $ps .= sprintf('<b>%d</b>', $i);
-      }
-      else {
-        $ps .= sprintf('<a href="%s%d">%d</a>', $ps_link, $i, $i);
-      }
-    }
-    // letzte Seiten anzeigen
-    if ($i < $max_pages) {
-      $end_page_start = $max_pages - 2;
-      if ($end_page_start <= $start_page_max)
-        $end_page_start = $start_page_max + 1;
-      ($end_page_start > $start_page_max + 1) ? $ps .= '  ...  ' : $ps .= ', ';
-      for ($x = $end_page_start; $x < $max_pages + 1; $x++) {
-        if ($x != $end_page_start)
-          $ps .= ', ';
-        $ps .= sprintf('<a href="%s%d">%d</a>', $ps_link, $x, $x);
-      }
-    }
-    // Sprung zur letzten Seite
-    $ps .= sprintf('<a href="%s%d">&nbsp;&nbsp;&raquo;', $ps_link, $max_pages);
-
-    $page_select = sprintf('<div class="%s">%s</div>', self::request_page, $ps);
-
-    $row = new Dwoo_Template_File($this->template_path.'backend.contact.list.row.htt');
-    $rows = '';
-    $flipflop = true;
-    foreach ($list_array as $contact) {
-      ($flipflop) ? $flipflop = false : $flipflop = true;
-      ($flipflop) ? $class = 'flip' : $class = 'flop';
-      // Select Basket
-      $select = sprintf('<input type="checkbox" name="%s[]" value="%s" />', self::request_basket_add, $contact[dbKITcontact::field_id]);
-      // Edit
-      $edit = sprintf('<a href="%s"><img src="%s" width="%s" height="%s" alt="%s" title="%s" /></a>', $this->page_link.'&amp;'.self::request_action.'='.self::action_contact.'&amp;'.dbKITcontact::field_id.'='.$contact[dbKITcontact::field_id], WB_URL.'/modules/'.basename(dirname(__FILE__)).'/img/edit.gif', 16, 16, kit_label_contact_edit, kit_label_contact_edit);
-      // Street and City
-      if (!empty($contact[dbKITcontact::field_address_standard])) {
-        // Standardadresse auslesen
-        $where = array();
-        $where[dbKITcontactAddress::field_id] = $contact[dbKITcontact::field_address_standard];
-        $address = array();
-        if (!$dbContactAddress->sqlSelectRecord($where, $address)) {
-          $this->setError(sprintf('[%s - %s] %s', __METHOD__, __LINE__, $dbContactAddress->getError()));
-          return false;
-        }
-        if (count($address) < 1) {
-          $street = '';
-          $city = '';
-          $zip = '';
-          $country = '';
-        }
-        else {
-          $street = $address[0][dbKITcontactAddress::field_street];
-          $city = $address[0][dbKITcontactAddress::field_city];
-          $zip = $address[0][dbKITcontactAddress::field_zip];
-          $country = $address[0][dbKITcontactAddress::field_country];
-        }
-      }
-      else {
-        $street = '';
-        $city = '';
-        $zip = '';
-        $country = '';
-      }
-      // E-Mail
-      if (!empty($contact[dbKITcontact::field_email]) && intval($contact[dbKITcontact::field_email_standard] >= 0)) {
-        $email_array = explode(';', $contact[dbKITcontact::field_email]);
-        list($type, $email) = explode('|', $email_array[$contact[dbKITcontact::field_email_standard]]);
-      }
-      else {
-        $email = '';
-      }
-      // Telefon
-      if (!empty($contact[dbKITcontact::field_phone]) && intval($contact[dbKITcontact::field_phone_standard] >= 0)) {
-        $phone_array = explode(';', $contact[dbKITcontact::field_phone]);
-        list($type, $phone) = explode('|', $phone_array[$contact[dbKITcontact::field_phone_standard]]);
-      }
-      else {
-        $phone = '';
-      }
-      // contact language
-      if (!empty($contact[dbKITcontact::field_contact_language])) {
-      	$language = strtoupper($contact[dbKITcontact::field_contact_language]);
-      }
-      else {
-      	$language = '';
-      }
-      $data = array(
-          'class' => $class,
-          'select' => $select,
-          'edit' => $edit,
-          'lastname' => $contact[dbKITcontact::field_person_last_name],
-          'firstname' => $contact[dbKITcontact::field_person_first_name],
-          'company' => $contact[dbKITcontact::field_company_name],
-          'country' => $country,
-          'zip' => $zip,
-          'city' => $city,
-          'street' => $street,
-          'email' => $email,
-          'phone' => $phone,
-      		'language' => $language
-      		);
-      $rows .= $parser->get($row, $data);
+    $SQL = "SELECT `contact_id` FROM `".self::$table_prefix."mod_kit_contact` WHERE `contact_status` != 'statusDeleted'";
+    if (null == ($query = $database->query($SQL))) {
+      $this->setError(sprintf('[%s - %s] %s', __METHOD__, __LINE__, $database->get_error()));
+      return false;
     }
 
-    // intro oder meldung?
-    if ($this->isMessage()) {
-      $intro = sprintf('<div class="message">%s</div>', $this->getMessage());
+    $contact_array = array();
+
+    while (false !== ($con = $query->fetchRow(MYSQL_ASSOC))) {
+      $contact = array();
+      if (!$kitContactInterface->getContact($con['contact_id'], $contact, $get_deleted)) {
+        $this->setError(sprintf('[%s - %s] %s', __METHOD__, __LINE__, $kitContactInterface->getError()));
+        return false;
+      }
+      $contact['link'] = array(
+          'edit' => sprintf('%s&%s', $this->page_link, http_build_query(array(
+              self::request_action => self::action_contact,
+              dbKITcontact::field_id => $con['contact_id']
+              ))),
+          );
+      $contact_array[$con['contact_id']] = $contact;
     }
-    else {
-      $intro = sprintf('<div class="intro">%s</div>', kit_intro_contact_list);
+
+    // get the names of the free fields and free notes
+    $field_translation = array(
+        'kit_free_field_1' => 'kit_free_field_1',
+        'kit_free_field_2' => 'kit_free_field_2',
+        'kit_free_field_3' => 'kit_free_field_3',
+        'kit_free_field_4' => 'kit_free_field_4',
+        'kit_free_field_5' => 'kit_free_field_5',
+        'kit_free_note_1' => 'kit_free_note_1',
+        'kit_free_note_2' => 'kit_free_note_2'
+        );
+    $free_fields = $dbCfg->getValue(dbKITcfg::cfgAdditionalFields);
+    foreach ($free_fields as $field) {
+      if (!strpos($field, '|')) continue;
+      list($number, $name) = explode('|', $field);
+      $field_translation[sprintf('kit_free_field_%d', $number)] = $name;
     }
+    $free_notes = $dbCfg->getValue(dbKITcfg::cfgAdditionalNotes);
+    foreach ($free_fields as $field) {
+      if (!strpos($field, '|')) continue;
+      list($number, $name) = explode('|', $field);
+      $field_translation[sprintf('kit_free_note_%d', $number)] = $name;
+    }
+
+    // check if libraryAdmin exists
+    if (file_exists(WB_PATH.'/modules/libraryadmin/inc/class.LABackend.php')) {
+      require_once WB_PATH.'/modules/libraryadmin/inc/class.LABackend.php';
+      // create instance; if you're not using OOP, use a simple var, like $la
+      $libraryAdmin = new LABackend();
+      // load the preset
+      $libraryAdmin->loadPreset(array(
+          'module' => 'kit',
+          'lib'    => 'lib_jquery',
+          'preset' => 'dataTable'
+      ));
+      // print the preset
+      $libraryAdmin->printPreset();
+    }
+
     $data = array(
-        'form_name' => $form_name,
-        'form_action' => $this->page_link,
-        'action_name' => self::request_action,
-        'action_value' => self::action_list,
-        'last_action_name' => self::request_last_action,
-        'last_action_value' => $sub_action,
-        'header' => kit_header_contact_list,
-        'intro' => $intro,
-        'list_sort' => $select_sort,
-        'page_select' => $page_select,
-        'header_select' => '',
-        'header_edit' => '',
-        'header_lastname' => kit_label_person_last_name,
-        'header_firstname' => kit_label_person_first_name,
-        'header_company' => kit_label_company_name,
-        'header_country' => '',
-        'header_zip' => kit_label_address_zip,
-        'header_street' => kit_label_address_street,
-        'header_city' => kit_label_address_city,
-        'header_email' => kit_label_contact_email,
-        'header_phone' => kit_label_contact_phone,
-    		'header_language' => 'LG',
-        'rows' => $rows
-    		);
-    return $parser->get($this->template_path.'backend.contact.list.htt', $data);
+        'language' => LANGUAGE,
+        'fields' => $dbCfg->getValue(dbKITcfg::cfgContactListColumns),
+        'contacts' => $contact_array,
+        'translation' => $field_translation
+        );
+    return $this->getTemplate('list.dwoo', $data);
   } // dlgList()
 
   /**
@@ -1051,7 +605,7 @@ class kitBackend {
    *
    * @todo personal photo/image is not supported yet!
    */
-  /*
+/*
   public function dlgContact() {
     global $dbContact;
     global $tools;
@@ -1650,7 +1204,7 @@ class kitBackend {
         'values' => $newsletter_array,
         'newsletter' => $newsletter
     );
-*/
+
     /*
     // Kategorien
 
@@ -1767,7 +1321,7 @@ class kitBackend {
         'language' => (LANGUAGE == 'EN') ? '' : strtolower(LANGUAGE),
         'contact' => $contact_array
         );
-    return $this->getTemplate('contact.lte', $data);
+    return $this->getTemplate('contact.dwoo', $data);
   } // dlgContact()
 */
 
@@ -1846,25 +1400,25 @@ class kitBackend {
     // contact language
     $languages = array();
     if (!$dbLanguages->sqlExec(sprintf("SELECT * FROM %s", $dbLanguages->getTableName()), $languages)) {
-    	$this->setError(sprintf('[%s - %s] %s', __METHOD__, __LINE__, $dbLanguages->getError()));
-    	return false;
+      $this->setError(sprintf('[%s - %s] %s', __METHOD__, __LINE__, $dbLanguages->getError()));
+      return false;
     }
     $select = '';
     $lang_select = $dbCfg->getValue(dbKITcfg::cfgContactLanguageSelect);
     $lang_select = strtolower(trim($lang_select));
     foreach ($languages as $language) {
-    	$selected = ($language[dbKITlanguages::FIELD_ISO] == $item[dbKITcontact::field_contact_language]) ? ' selected="selected"' : '';
-    	if ($lang_select == 'iso') {
-    		$lang = $language[dbKITlanguages::FIELD_ISO];
-    	}
-    	elseif ($lang_select == 'english') {
-    		$lang = $language[dbKITlanguages::FIELD_ENGLISH];
-    	}
-    	else {
-    		// use local settings
-    		$lang = $language[dbKITlanguages::FIELD_LOCAL];
-    	}
-    	$select .= sprintf('<option value="%s"%s>%s</option>', $language[dbKITlanguages::FIELD_ISO], $selected, $lang);
+      $selected = ($language[dbKITlanguages::FIELD_ISO] == $item[dbKITcontact::field_contact_language]) ? ' selected="selected"' : '';
+      if ($lang_select == 'iso') {
+        $lang = $language[dbKITlanguages::FIELD_ISO];
+      }
+      elseif ($lang_select == 'english') {
+        $lang = $language[dbKITlanguages::FIELD_ENGLISH];
+      }
+      else {
+        // use local settings
+        $lang = $language[dbKITlanguages::FIELD_LOCAL];
+      }
+      $select .= sprintf('<option value="%s"%s>%s</option>', $language[dbKITlanguages::FIELD_ISO], $selected, $lang);
     }
     $contact_languages = sprintf('<select name="%s">%s</select>', dbKITcontact::field_contact_language, $select);
 
@@ -1941,12 +1495,16 @@ class kitBackend {
         (isset($_REQUEST[dbKITcontactAddress::field_street.'_'.$addr])) ? $street = $_REQUEST[dbKITcontactAddress::field_street.'_'.$addr] : $street = '';
         (isset($_REQUEST[dbKITcontactAddress::field_zip.'_'.$addr])) ? $zip = $_REQUEST[dbKITcontactAddress::field_zip.'_'.$addr] : $zip = '';
         (isset($_REQUEST[dbKITcontactAddress::field_city.'_'.$addr])) ? $city = $_REQUEST[dbKITcontactAddress::field_city.'_'.$addr] : $city = '';
+        (isset($_REQUEST[dbKITcontactAddress::field_extra.'_'.$addr])) ? $address_extra = $_REQUEST[dbKITcontactAddress::field_extra.'_'.$addr] : $address_extra = '';
+        (isset($_REQUEST[dbKITcontactAddress::field_region.'_'.$addr])) ? $address_region = $_REQUEST[dbKITcontactAddress::field_region.'_'.$addr] : $address_region = '';
         (isset($_REQUEST[dbKITcontactAddress::field_country.'_'.$addr])) ? $country = $_REQUEST[dbKITcontactAddress::field_country.'_'.$addr] : $country = 'DE';
         (isset($_REQUEST[dbKITcontactAddress::field_type.'_'.$addr])) ? $addr_type = $_REQUEST[dbKITcontactAddress::field_type.'_'.$addr] : $addr_type = dbKITcontactAddress::type_undefined;
         $addr_values[dbKITcontactAddress::field_id] = $addr;
         $addr_values[dbKITcontactAddress::field_street] = $street;
         $addr_values[dbKITcontactAddress::field_zip] = $zip;
         $addr_values[dbKITcontactAddress::field_city] = $city;
+        $addr_values[dbKITcontactAddress::field_extra] = $address_extra;
+        $addr_values[dbKITcontactAddress::field_region] = $address_region;
         $addr_values[dbKITcontactAddress::field_country] = $country;
         $addr_values[dbKITcontactAddress::field_type] = $addr_type;
         $addr_values[dbKITcontactAddress::field_status] = dbKITcontactAddress::status_active;
@@ -1972,6 +1530,8 @@ class kitBackend {
         $street = sprintf('<input type="text" name="%s" value="%s" />', dbKITcontactAddress::field_street.'_'.$addr_values[dbKITcontactAddress::field_id], $addr_values[dbKITcontactAddress::field_street]);
         $zip = sprintf('<input type="text" name="%s" value="%s" />', dbKITcontactAddress::field_zip.'_'.$addr_values[dbKITcontactAddress::field_id], $addr_values[dbKITcontactAddress::field_zip]);
         $city = sprintf('<input type="text" name="%s" value="%s" />', dbKITcontactAddress::field_city.'_'.$addr_values[dbKITcontactAddress::field_id], $addr_values[dbKITcontactAddress::field_city]);
+        $extra = sprintf('<input type="text" name="%s" value="%s" />', dbKITcontactAddress::field_extra.'_'.$addr_values[dbKITcontactAddress::field_id], $addr_values[dbKITcontactAddress::field_extra]);
+        $region = sprintf('<input type="text" name="%s" value="%s" />', dbKITcontactAddress::field_region.'_'.$addr_values[dbKITcontactAddress::field_id], $addr_values[dbKITcontactAddress::field_region]);
         $additional = '';
         $select = '';
         foreach ($countries as $key => $name) {
@@ -2009,11 +1569,17 @@ class kitBackend {
             'label_street' => kit_label_address_street,
             'value_street' => $street,
             'class_street' => dbKITcontactAddress::field_street,
+            'label_extra' => $this->lang->translate('Address extra'),
+            'value_extra' => $extra,
+            'class_extra' => dbKITcontactAddress::field_extra,
             'label_zip_city' => kit_label_address_zip_city,
             'value_city' => $city,
             'class_city' => dbKITcontactAddress::field_city,
             'value_zip' => $zip,
             'class_zip' => dbKITcontactAddress::field_zip,
+            'label_region' => $this->lang->translate('Region or area'),
+            'value_region' => $region,
+            'class_region' => dbKITcontactAddress::field_region,
             'label_add' => '&nbsp;',
             'value_add' => $additional);
         $addresses .= $parser->get($addr_template, $addr_array);
@@ -2513,8 +2079,8 @@ class kitBackend {
         'action_name' => self::request_action,
         'action_value' => self::action_contact_save,
         'language' => (LANGUAGE == 'EN') ? '' : strtolower(LANGUAGE),
-        'btn_ok' => kit_btn_ok,
-        'btn_abort' => kit_btn_abort,
+        'btn_ok' => $this->lang->translate('OK'),
+        'btn_abort' => $this->lang->translate('Abort'),
         'abort_location' => $this->page_link,
         'id_name' => dbKITcontact::field_id,
         'id_value' => $id,
@@ -2543,9 +2109,9 @@ class kitBackend {
         'label_access' => kit_label_contact_access,
         'value_access' => $access,
         'class_access' => dbKITcontact::field_access,
-    		'label_language' => kit_label_contact_language,
-    		'value_language' => $contact_languages,
-    		'class_language' => dbKITcontact::field_contact_language,
+        'label_language' => kit_label_contact_language,
+        'value_language' => $contact_languages,
+        'class_language' => dbKITcontact::field_contact_language,
         'label_status' => kit_label_contact_status,
         'value_status' => $status,
         'class_status' => dbKITcontact::field_status,
@@ -2607,16 +2173,349 @@ class kitBackend {
         // Verteiler
         'label_distribution' => kit_label_distribution,
         'value_distribution' => $distribution,
+        // Special
+        'special' => $this->getSpecialDlg($id),
         // Protokoll
         'label_protocol' => kit_label_protocol,
         'value_protocol' => $protocol,
         // Administration
         'administration' => $administration,
         // additional fields & notes
-        'additional_fields' => $additional);
+        'additional_fields' => $additional
+        );
     return $parser->get($this->template_path.'backend.contact.htt', $data);
   } // dlgContact()
 
+  /**
+   * Iterate directory tree very efficient
+   * Function postet from donovan.pp@gmail.com at
+   * http://www.php.net/manual/de/function.scandir.php
+   *
+   * @param STR $dir
+   * @return ARRAY - directoryTree
+   */
+  public function directoryTree($dir) {
+    if (substr($dir,-1) == "/") $dir = substr($dir,0,-1);
+    $path = array();
+    $stack = array();
+    $stack[] = $dir;
+    while ($stack) {
+      $thisdir = array_pop($stack);
+      if (false !== ($dircont = scandir($thisdir))) {
+        $i=0;
+        while (isset($dircont[$i])) {
+          if ($dircont[$i] !== '.' && $dircont[$i] !== '..') {
+            $current_file = "{$thisdir}/{$dircont[$i]}";
+            if (is_file($current_file)) {
+              $path[] = "{$thisdir}/{$dircont[$i]}";
+            }
+            elseif (is_dir($current_file)) {
+              $stack[] = $current_file;
+            }
+          }
+          $i++;
+        }
+      }
+    }
+    return $path;
+  } // directoryTree()
+
+  /**
+   * Special functions for the KIT Contact Dialog
+   *
+   * @param integer $id
+   * @return string
+   */
+  private function getSpecialDlg($kit_id) {
+    global $database;
+    global $dbCfg;
+
+    // first check if kitForm is installed
+    if (!file_exists(WB_PATH.'/modules/kit_form/class.frontend.php')) {
+      return $this->lang->translate('<p>For the special functions <b>kitform<(b> must be installed!</p>');
+    }
+
+    // get the primary email address for this contact
+    $SQL = "SELECT `contact_email`, `contact_email_standard` FROM `".TABLE_PREFIX."mod_kit_contact` WHERE `contact_id`='$kit_id'";
+    $query = $database->query($SQL);
+    if ($database->is_error()) {
+      $this->setError(sprintf('[%s - %s] %s', __METHOD__, __LINE__, $database->get_error()));
+      return false;
+    }
+    $contact = $query->fetchRow(MYSQL_ASSOC);
+    $email_array = explode(';', $contact['contact_email']);
+    if (isset($email_array[$contact['contact_email_standard']])) {
+      list($email_type, $email) = explode('|', $email_array[$contact[dbKITcontact::field_email_standard]]);
+    }
+    else {
+      $email = 'undefined@email.tld';
+    }
+
+    // create pages array
+    $SQL = "SELECT `page_id`, `link`, `page_title` FROM `".TABLE_PREFIX."pages` ORDER BY `page_title` ASC";
+    $query = $database->query($SQL);
+    if ($database->is_error()) {
+      $this->setError(sprintf('[%s - %s] %s', __METHOD__, __LINE__, $database->get_error()));
+      return false;
+    }
+    $pages = array();
+    while (false !== ($page = $query->fetchRow(MYSQL_ASSOC))) {
+      $pages[$page['page_id']] = array(
+          'id' => $page['page_id'],
+          'title' => $page['page_title'],
+          'link' => $page['link']
+          );
+    }
+    // create option array
+    $upload_options = array();
+    $upload_options[] = array(
+        'value' => 'THROW-AWAY',
+        'text' => $this->lang->translate('throw-away link')
+        );
+    $upload_options[] = array(
+        'value' => 'PERMANENT',
+        'text' => $this->lang->translate('permanent link')
+        );
+
+    // get the created upload links
+    $SQL = "SELECT * FROM  `".TABLE_PREFIX."mod_kit_links` WHERE `kit_id`='$kit_id' AND `type`='UPLOAD' AND `status`!='DELETED' ORDER BY `timestamp` DESC";
+    $query = $database->query($SQL);
+    if ($database->is_error()) {
+      $this->setError(sprintf('[%s - %s] %s', __METHOD__, __LINE__, $database->get_error()));
+      return false;
+    }
+    // build the links array
+    $upload_links = array();
+    while (false !== ($link = $query->fetchRow(MYSQL_ASSOC))) {
+      $upload_links[$link['id']] = $link;
+      $message_data = array(
+          'link' => array(
+              'url' => $link['url']
+              )
+          );
+      $upload_links[$link['id']]['message'] = rawurlencode($this->getTemplate('special.email.upload.dwoo', $message_data));
+    }
+
+    // download links
+    $download_directories = array();
+    $directories = $dbCfg->getValue(dbKITcfg::cfgSpecialLinksDownlodDirectories);
+
+    foreach ($directories as $directory) {
+      $download_directories[] = array(
+          'type' => 'GLOBAL',
+          'directory' => $directory,
+          'path' => WB_PATH.MEDIA_DIRECTORY.'/kit_protected/'.$directory
+          );
+    }
+    $download_directories[] = array(
+        'type' => 'ADMIN',
+        'directory' => 'contacts/'.$email[0]."/$email/admin",
+        'path' => WB_PATH.MEDIA_DIRECTORY.'/kit_protected/contacts/'.$email[0]."/$email/admin"
+        );
+    $download_directories[] = array(
+        'type' => 'USER',
+        'directory' => 'contacts/'.$email[0]."/$email/user",
+        'path' => WB_PATH.MEDIA_DIRECTORY.'/kit_protected/contacts/'.$email[0]."/$email/user"
+    );
+
+    $download_files = array();
+    foreach ($download_directories as $directory) {
+      if (file_exists($directory['path'])) {
+          $add_files = $this->directoryTree($directory['path']);
+          foreach ($add_files as $file) {
+            $url = WB_URL.substr($file, strlen(WB_PATH));
+            $download_files[] = array(
+                'url' => $url,
+                'path' => $file,
+                'type' => $directory['type'],
+                'file' => substr($file, strlen($directory['path']))
+                );
+          }
+      }
+    }
+
+    // get the created download links
+    $SQL = "SELECT * FROM  `".TABLE_PREFIX."mod_kit_links` WHERE `kit_id`='$kit_id' AND `type`='DOWNLOAD' AND `status`!='DELETED' ORDER BY `timestamp` DESC";
+    $query = $database->query($SQL);
+    if ($database->is_error()) {
+      $this->setError(sprintf('[%s - %s] %s', __METHOD__, __LINE__, $database->get_error()));
+      return false;
+    }
+    // build the links array
+    $download_links = array();
+    while (false !== ($link = $query->fetchRow(MYSQL_ASSOC))) {
+      $download_links[$link['id']] = $link;
+      $message_data = array(
+          'link' => array(
+              'url' => $link['url']
+          )
+      );
+      $download_links[$link['id']]['message'] = rawurlencode($this->getTemplate('special.email.download.dwoo', $message_data));
+    }
+
+    $data = array(
+        'images' => array(
+            'url' => $this->img_url
+            ),
+        'upload_links' => array(
+            'pages' => array(
+                'name' => self::REQUEST_UPLOAD_PAGE_ID,
+                'value' => -1,
+                'items' => $pages
+                ),
+            'option' => array(
+                'name' => self::REQUEST_UPLOAD_OPTION,
+                'value' => -1,
+                'items' => $upload_options
+                ),
+            'create_link' => array(
+                'name' => self::REQUEST_SPECIAL_CREATE_UPLOAD_LINK
+                ),
+            'links' => array(
+                'email' => $email,
+                'name' => self::REQUEST_UPLOAD_LINK,
+                'count' => count($upload_links),
+                'items' => $upload_links
+                ),
+            ),
+        'download_links' => array(
+            'files' => array(
+                'name' => self::REQUEST_DOWNLOAD_FILE,
+                'value' => -1,
+                'items' => $download_files
+                ),
+            'option' => array(
+                'name' => self::REQUEST_DOWNLOAD_OPTION,
+                'value' => -1,
+                'items' => $upload_options // they are still identical!
+                ),
+            'create_link' => array(
+                'name' => self::REQUEST_SPECIAL_CREATE_DOWNLOAD_LINK
+                ),
+            'links' => array(
+                'email' => $email,
+                'name' => self::REQUEST_DOWNLOAD_LINK,
+                'count' => count($download_links),
+                'items' => $download_links
+                )
+            )
+        );
+    return $this->getTemplate('special.dwoo', $data);
+  } // getSpecialDlg()
+
+
+  /**
+   * Check the special settings
+   *
+   * @param integer $id
+   * @param string $messages
+   */
+  private function checkSpecialDlg($kit_id, &$message) {
+    global $tools;
+    global $database;
+
+    // check UPLOAD links
+    if (isset($_REQUEST[self::REQUEST_SPECIAL_CREATE_UPLOAD_LINK])) {
+      // create a upload link
+      if (!isset($_REQUEST[self::REQUEST_UPLOAD_PAGE_ID]) || ($_REQUEST[self::REQUEST_UPLOAD_PAGE_ID] < 1)) {
+        $message .= $this->lang->translate('<p>Please select a page with a kitForm Upload script!</p>');
+        return false;
+      }
+      // get the page_id for the target
+      $page_id = (int) $_REQUEST[self::REQUEST_UPLOAD_PAGE_ID];
+      // get the upload option
+      $option = $_REQUEST[self::REQUEST_UPLOAD_OPTION];
+      // create a new entry in mod_kit_links
+      $SQL = "INSERT INTO `".TABLE_PREFIX."mod_kit_links` (`type`,`option`,`status`,`kit_id`) VALUES ".
+          "('UPLOAD','$option','LOCKED','$kit_id')";
+      $database->query($SQL);
+      if ($database->is_error()) {
+        $this->setError(sprintf('[%s - %s] %s', __METHOD__, __LINE__, $database->get_error()));
+        return false;
+      }
+      // get the last inserted ID
+      $upload_id = mysql_insert_id();
+      $guid = base_convert($upload_id+self::KIT_LINKS_ID_ADD, 10, self::KIT_LINKS_TO_BASE);
+      // get the link
+      $link = $database->get_one("SELECT `link` FROM `".TABLE_PREFIX."pages` WHERE `page_id`='$page_id'", MYSQL_ASSOC);
+      if ($database->is_error()) {
+        $this->setError(sprintf('[%s - %s] %s', __METHOD__, __LINE__, $database->get_error()));
+        return false;
+      }
+      $url = WB_URL.PAGES_DIRECTORY.$link.PAGE_EXTENSION.'?'.self::REQUEST_SPECIAL_LINK.'='.$guid;
+      // update mod_kit_links
+      $SQL = "UPDATE `".TABLE_PREFIX."mod_kit_links` SET `guid`='$guid', `url`='$url', `status`='ACTIVE' WHERE `id`='$upload_id'";
+      $database->query($SQL);
+      if ($database->is_error()) {
+        $this->setError(sprintf('[%s - %s] %s', __METHOD__, __LINE__, $database->get_error()));
+        return false;
+      }
+      $message .= $this->lang->translate('<p>The upload link was created, please check at the special functions!</p>');
+    }
+    // delete UPLOAD links
+    if (isset($_REQUEST[self::REQUEST_UPLOAD_LINK])) {
+      // delete one or more upload links
+      $delete = $_REQUEST[self::REQUEST_UPLOAD_LINK];
+      foreach ($delete as $link_guid) {
+        $SQL = "UPDATE `".TABLE_PREFIX."mod_kit_links` SET `status`='DELETED' WHERE `guid`='$link_guid'";
+        $database->query($SQL);
+        if ($database->is_error()) {
+          $this->setError(sprintf('[%s - %s] %s', __METHOD__, __LINE__, $database->get_error()));
+          return false;
+        }
+        $message .= $this->lang->translate('<p>The link with the GUID <b>{{ guid }}</b> was deleted.</p>', array('guid' => $link_guid));
+      }
+    }
+
+    // check DOWNLOAD links
+    if (isset($_REQUEST[self::REQUEST_SPECIAL_CREATE_DOWNLOAD_LINK])) {
+      // create a download link
+      if (!isset($_REQUEST[self::REQUEST_DOWNLOAD_FILE]) || ($_REQUEST[self::REQUEST_DOWNLOAD_FILE] == '-1')) {
+        $message .= $this->lang->translate('<p>Please select the file which should be downloaded!</p>');
+        return false;
+      }
+      // get the file URL
+      $file_url = $_REQUEST[self::REQUEST_DOWNLOAD_FILE];
+      // get the download option
+      $option = $_REQUEST[self::REQUEST_DOWNLOAD_OPTION];
+      // create a new entry in mod_kit_links
+      $SQL = "INSERT INTO `".TABLE_PREFIX."mod_kit_links` (`type`,`option`,`status`,`kit_id`,`file_url`) VALUES ".
+          "('DOWNLOAD','$option','LOCKED','$kit_id','$file_url')";
+      $database->query($SQL);
+      if ($database->is_error()) {
+        $this->setError(sprintf('[%s - %s] %s', __METHOD__, __LINE__, $database->get_error()));
+        return false;
+      }
+      // get the last inserted ID
+      $download_id = mysql_insert_id();
+      // take the determined ID addition and change the id from base 10 to base 36
+      $guid = base_convert($download_id+self::KIT_LINKS_ID_ADD, 10, self::KIT_LINKS_TO_BASE);
+      // create the download link
+      $download_url = WB_URL.'/modules/kit/sl.php?guid='.$guid;
+      // update mod_kit_links
+      $SQL = "UPDATE `".TABLE_PREFIX."mod_kit_links` SET `guid`='$guid', `url`='$download_url', `status`='ACTIVE' WHERE `id`='$download_id'";
+      $database->query($SQL);
+      if ($database->is_error()) {
+        $this->setError(sprintf('[%s - %s] %s', __METHOD__, __LINE__, $database->get_error()));
+        return false;
+      }
+      $message .= $this->lang->translate('<p>The download link was created, please check at the special functions!</p>');
+    }
+    // delete DOWNLOAD links
+    if (isset($_REQUEST[self::REQUEST_DOWNLOAD_LINK])) {
+      // delete one or more upload links
+      $delete = $_REQUEST[self::REQUEST_DOWNLOAD_LINK];
+      foreach ($delete as $link_guid) {
+        $SQL = "UPDATE `".TABLE_PREFIX."mod_kit_links` SET `status`='DELETED' WHERE `guid`='$link_guid'";
+        $database->query($SQL);
+        if ($database->is_error()) {
+          $this->setError(sprintf('[%s - %s] %s', __METHOD__, __LINE__, $database->get_error()));
+          return false;
+        }
+        $message .= $this->lang->translate('<p>The link with the GUID <b>{{ guid }}</b> was deleted.</p>', array('guid' => $link_guid));
+      }
+    }
+  } // checkSpecialDlg()
 
   private function getKeyIndexOfValue($array = array(), $item) {
     foreach ($array as $key => $value) {
@@ -2637,7 +2536,7 @@ class kitBackend {
         dbKITcontact::field_access => dbKITcontact::access_internal,
         dbKITcontact::field_status => dbKITcontact::status_active,
         dbKITcontact::field_contact_identifier => '',
-    		dbKITcontact::field_contact_language => '',
+        dbKITcontact::field_contact_language => '',
         dbKITcontact::field_company_title => '',
         dbKITcontact::field_company_name => '',
         dbKITcontact::field_company_department => '',
@@ -2817,6 +2716,10 @@ class kitBackend {
             $data = array();
             $data[dbKITcontactAddress::field_street] = $_REQUEST[dbKITcontactAddress::field_street.'_'.$addr_id];
             unset($_REQUEST[dbKITcontactAddress::field_street.'_'.$addr_id]);
+            $data[dbKITcontactAddress::field_extra] = $_REQUEST[dbKITcontactAddress::field_extra.'_'.$addr_id];
+            unset($_REQUEST[dbKITcontactAddress::field_extra.'_'.$addr_id]);
+            $data[dbKITcontactAddress::field_region] = $_REQUEST[dbKITcontactAddress::field_region.'_'.$addr_id];
+            unset($_REQUEST[dbKITcontactAddress::field_region.'_'.$addr_id]);
             $data[dbKITcontactAddress::field_zip] = $_REQUEST[dbKITcontactAddress::field_zip.'_'.$addr_id];
             unset($_REQUEST[dbKITcontactAddress::field_zip.'_'.$addr_id]);
             $data[dbKITcontactAddress::field_city] = $_REQUEST[dbKITcontactAddress::field_city.'_'.$addr_id];
@@ -2847,10 +2750,20 @@ class kitBackend {
               return false;
             }
             $addr_old = $addr_old[0];
-            if (($addr_old[dbKITcontactAddress::field_street] != $_REQUEST[dbKITcontactAddress::field_street.'_'.$addr_id]) || ($addr_old[dbKITcontactAddress::field_zip] != $_REQUEST[dbKITcontactAddress::field_zip.'_'.$addr_id]) || ($addr_old[dbKITcontactAddress::field_city] != $_REQUEST[dbKITcontactAddress::field_city.'_'.$addr_id]) || ($addr_old[dbKITcontactAddress::field_country] != $_REQUEST[dbKITcontactAddress::field_country.'_'.$addr_id]) || ($addr_old[dbKITcontactAddress::field_type] != $_REQUEST[dbKITcontactAddress::field_type.'_'.$addr_id]) || ($addr_old[dbKITcontactAddress::field_status] != $_REQUEST[dbKITcontactAddress::field_status.'_'.$addr_id])) {
+            if (($addr_old[dbKITcontactAddress::field_street] != $_REQUEST[dbKITcontactAddress::field_street.'_'.$addr_id]) ||
+                ($addr_old[dbKITcontactAddress::field_zip] != $_REQUEST[dbKITcontactAddress::field_zip.'_'.$addr_id]) ||
+                ($addr_old[dbKITcontactAddress::field_extra] != $_REQUEST[dbKITcontactAddress::field_extra.'_'.$addr_id]) ||
+                ($addr_old[dbKITcontactAddress::field_region] != $_REQUEST[dbKITcontactAddress::field_region.'_'.$addr_id]) ||
+                ($addr_old[dbKITcontactAddress::field_city] != $_REQUEST[dbKITcontactAddress::field_city.'_'.$addr_id]) ||
+                ($addr_old[dbKITcontactAddress::field_country] != $_REQUEST[dbKITcontactAddress::field_country.'_'.$addr_id]) ||
+                ($addr_old[dbKITcontactAddress::field_type] != $_REQUEST[dbKITcontactAddress::field_type.'_'.$addr_id]) ||
+                ($addr_old[dbKITcontactAddress::field_status] != $_REQUEST[dbKITcontactAddress::field_status.'_'.$addr_id])
+                ) {
               // one ore more entries changed...
               $data = array();
               $data[dbKITcontactAddress::field_street] = $_REQUEST[dbKITcontactAddress::field_street.'_'.$addr_id];
+              $data[dbKITcontactAddress::field_extra] = $_REQUEST[dbKITcontactAddress::field_extra.'_'.$addr_id];
+              $data[dbKITcontactAddress::field_region] = $_REQUEST[dbKITcontactAddress::field_region.'_'.$addr_id];
               $data[dbKITcontactAddress::field_zip] = $_REQUEST[dbKITcontactAddress::field_zip.'_'.$addr_id];
               $data[dbKITcontactAddress::field_city] = $_REQUEST[dbKITcontactAddress::field_city.'_'.$addr_id];
               $data[dbKITcontactAddress::field_country] = $_REQUEST[dbKITcontactAddress::field_country.'_'.$addr_id];
@@ -3141,6 +3054,9 @@ class kitBackend {
         $message .= kit_msg_register_status_updated;
       }
     }
+
+    // check special functions
+    $this->checkSpecialDlg($this->contact_array[dbKITcontact::field_id], $message);
 
     $this->setMessage($message);
     return true;
@@ -3486,8 +3402,8 @@ class kitBackend {
         'intro' => $intro,
         'items' => $items,
         'add' => '',
-        'btn_ok' => kit_btn_ok,
-        'btn_abort' => kit_btn_abort,
+        'btn_ok' => $this->lang->translate('OK'),
+        'btn_abort' => $this->lang->translate('Abort'),
         'abort_location' => $this->page_link);
     return $parser->get($this->template_path.'backend.config.general.htt', $data);
   } // dlgConfigGeneral()
@@ -3586,168 +3502,11 @@ class kitBackend {
         'items' => $items,
         'add_title' => kit_label_cfg_array_add_items,
         'add' => $add,
-        'btn_ok' => kit_btn_ok,
-        'btn_abort' => kit_btn_abort,
+        'btn_ok' => $this->lang->translate('OK'),
+        'btn_abort' => $this->lang->translate('Abort'),
         'abort_location' => $this->page_link);
     return $parser->get($this->template_path.'backend.config.array.htt', $data);
   } // dlgConfigArray()
-
-  /**
-   * Importieren von Daten
-   */
-  public function dlgConfigImport() {
-    global $dbContact;
-    global $parser;
-
-    $dbMassmail = new dbMassMailAddresses();
-    $items = '';
-    if ($dbMassmail->sqlTableExists()) {
-      $dbMassmailGroups = new dbMassMailGroups();
-      if (!$dbMassmailGroups->sqlTableExists()) {
-        // fataler Fehler, Gruppen Tabelle fehlt!
-        $this->setError(sprintf('[%s - %s] %s', __METHOD__, __LINE__, kit_error_import_massmail_grp_missing));
-        return false;
-      }
-      $where = array();
-      $group_array = array();
-      if (!$dbMassmailGroups->sqlSelectRecord($where, $group_array)) {
-        $this->setError(sprintf('[%s - %s] %s', __METHOD__, __LINE__, $dbMassmailGroups->getError()));
-        return false;
-      }
-
-      $option = '';
-      foreach ($group_array as $group) {
-        $option .= sprintf('<option value="%s">%s</option>', $group[dbMassmailGroups::field_group_id], utf8_decode($group[dbMassmailGroups::field_group_name]));
-      }
-      $select_massmail_group = sprintf('<select name="%s">%s</select>', dbMassmailGroups::field_group_name, $option);
-
-      $option = '';
-      foreach ($dbContact->newsletter_array as $key => $value) {
-        $option .= sprintf('<option value="%s">%s</option>', $key, $value);
-      }
-      $select_kit_newsletter = sprintf('<select name="%s">%s</select>', dbKITcontact::field_newsletter, $option);
-
-      $option = '';
-      foreach ($dbContact->email_array as $key => $value) {
-        $option .= sprintf('<option value="%s">%s</option>', $key, $value);
-      }
-      $select_email_type = sprintf('<select name="%s">%s</select>', dbKITcontact::field_email, $option);
-      $data = array(
-          'header_massmail' => kit_label_massmail,
-          'form_name' => 'import_massmail',
-          'form_action' => $this->page_link,
-          'action_name' => self::request_action,
-          'action_value' => self::action_cfg,
-          'cfg_name' => self::request_cfg_tab,
-          'cfg_value' => self::action_cfg_tab_import,
-          'import_name' => self::request_import,
-          'import_value' => self::action_import_massmail,
-          'massmail_group' => sprintf('%s %s', kit_text_from_massmail_group, $select_massmail_group),
-          'kit_group' => sprintf('%s %s<br />%s %s', kit_text_to_category, $select_kit_newsletter, kit_text_as_email_type, $select_email_type),
-          'import' => kit_btn_import);
-      $items .= $parser->get($this->template_path.'backend.config.import.massmail.htt', $data);
-    }
-    else {
-      $items .= $parser->get($this->template_path.'backend.config.import.massmail.tr.htt', array(
-          'label' => kit_label_massmail,
-          'value' => kit_msg_massmail_not_installed));
-    }
-    // Mitteilungen anzeigen
-    if ($this->isMessage()) {
-      $intro = sprintf('<div class="message">%s</div>', $this->getMessage());
-    }
-    else {
-      $intro = sprintf('<div class="intro">%s</div>', kit_intro_cfg_import);
-    }
-    $data = array(
-        'header' => kit_header_cfg_import,
-        'intro' => $intro,
-        'header_import' => kit_label_import_from,
-        'header_action' => kit_label_import_action,
-        'items' => $items);
-    return $parser->get($this->template_path.'backend.config.import.htt', $data);
-  } // dlgConfigImport()
-
-  /**
-   * Fuehrt den Import von Massmail Daten durch und gibt Meldungen ueber den Verlauf aus.
-   *
-   * @return STR dlgConfigImport()
-   */
-  public function execImportMassmail() {
-    global $tools;
-    global $dbContact;
-
-    if (!isset($_REQUEST[dbMassmailGroups::field_group_name]) || !isset($_REQUEST[dbKITcontact::field_newsletter]) || !isset($_REQUEST[dbKITcontact::field_email])) {
-      // Fataler Fehler: nicht alle Variablen gesetzt
-      $this->setError(kit_error_import_massmail_missing_vars);
-      return false;
-    }
-    $message = '';
-    $dbMassmail = new dbMassMailAddresses();
-    $where = array();
-    $where[dbMassMailAddresses::field_group_id] = $_REQUEST[dbMassMailGroups::field_group_name];
-    $massmail_data = array();
-    if (!$dbMassmail->sqlSelectRecord($where, $massmail_data)) {
-      $this->setError(sprintf('[%s - %s] %s', __METHOD__, __LINE__, $dbMassmail));
-      return false;
-    }
-    if (count($massmail_data) < 1) {
-      // Gruppe enthaelt keine Daten
-      $this->setMessage(sprintf(kit_msg_massmail_group_no_data, $_REQUEST[dbMassMailGroups::field_group_name]));
-      return $this->dlgConfigImport();
-    }
-    else {
-      // Import starten
-      $add_emails = array();
-      $ignore_emails = array();
-      foreach ($massmail_data as $massmail) {
-        $SQL = sprintf("SELECT %s FROM %s WHERE %s LIKE '%%%s%%'", dbKITcontact::field_id, $dbContact->getTableName(), dbKITcontact::field_email, $massmail[dbMassmailAddresses::field_mail_to]);
-        $kitCheck = array();
-        if (!$dbContact->sqlExec($SQL, $kitCheck)) {
-          $this->setError(sprintf('[%s - %s] %s', __METHOD__, __LINE__, $dbContact->getError()));
-          return false;
-        }
-        if (count($kitCheck) > 0) {
-          // E-Mail Adresse existiert bereits
-          $ignore_emails[] = sprintf('%s (ID %05d)', $massmail[dbMassmailAddresses::field_mail_to], $kitCheck[0][dbKITcontact::field_id]);
-        }
-        else {
-          // E-Mail Adresse uebernehmen
-          $data = array();
-          $data[dbKITcontact::field_email] = sprintf('%s|%s', $_REQUEST[dbKITcontact::field_email], strtolower($massmail[dbMassmailAddresses::field_mail_to]));
-          $data[dbKITcontact::field_email_standard] = 0;
-          $data[dbKITcontact::field_contact_identifier] = strtolower($massmail[dbMassmailAddresses::field_mail_to]);
-          $data[dbKITcontact::field_status] = dbKITcontact::status_active;
-          $data[dbKITcontact::field_access] = dbKITcontact::access_internal;
-          //$data[dbKITcontact::field_category] = $_REQUEST[dbKITcontact::field_category];
-          $data[dbKITcontact::field_newsletter] = $_REQUEST[dbKITcontact::field_newsletter];
-          $data[dbKITcontact::field_update_by] = $tools->getDisplayName();
-          $data[dbKITcontact::field_update_when] = date('Y-m-d H:i:s');
-          $id = -1;
-          if (!$dbContact->sqlInsertRecord($data, $id)) {
-            $this->setError(sprintf('[%s - %s] %s', __METHOD__, __LINE__, $dbContact->getError()));
-            return false;
-          }
-          $add_emails[] = $massmail[dbMassmailAddresses::field_mail_to];
-          $dbContact->addSystemNotice($id, sprintf(kit_protocol_create_contact_massmail, $massmail[dbMassmailAddresses::field_mail_to]));
-        }
-      }
-      if (count($ignore_emails) > 0) {
-        // ignorierte E-Mails anzeigen
-        $message .= sprintf(kit_msg_massmail_email_skipped, implode(', ', $ignore_emails));
-      }
-      if (count($add_emails) > 0) {
-        // importierte E-Mails anzeigen
-        $message .= sprintf(kit_msg_massmail_emails_imported, count($add_emails), implode(', ', $add_emails));
-      }
-      else {
-        // keine E-Mails uebernommen
-        $message .= kit_msg_massmail_no_emails_imported;
-      }
-      $this->setMessage($message);
-      return $this->dlgConfigImport();
-    }
-  } // execImportMassmail()
 
   /**
    * Dialog for configuring KIT
@@ -3770,23 +3529,27 @@ class kitBackend {
         $result = $this->saveConfigArray();
         break;
       case self::action_cfg_tab_import:
-        $kitImportDlg = new kitImportDialog();
-        $result = $kitImportDlg->action();
+        // load the import dialog
+        require_once WB_PATH.'/modules/kit/class.import.csv.php';
+        $pageLink = sprintf('%s&%s', $this->page_link, http_build_query(array(
+            self::request_action => self::action_cfg,
+            self::request_cfg_tab => self::action_cfg_tab_import)));
+        $import = new kitCSVimport($pageLink);
+        $result = $import->action();
+        if ($import->isError())
+          $this->setError($import->getError());
         break;
-      /*
-       * Massmail Import wird nicht laenger verwendet!
-       *
-      (isset($_REQUEST[self::request_import])) ? $import = $_REQUEST[self::request_import] : $import = '';
-      switch ($import):
-      case self::action_import_massmail:
-      $result = $this->execImportMassmail();
-      break;
-      default:
-      $result = $this->dlgConfigImport();
-      break;
-      endswitch;
-      break;
-       */
+      case self::ACTION_CFG_TAB_EXPORT:
+        // load the export dialog
+        require_once WB_PATH.'/modules/kit/class.export.csv.php';
+        $pageLink = sprintf('%s&%s', $this->page_link, http_build_query(array(
+            self::request_action => self::action_cfg,
+            self::request_cfg_tab => self::ACTION_CFG_TAB_EXPORT)));
+        $export = new kitCSVexport($pageLink);
+        $result = $export->action();
+        if ($export->isError())
+          $this->setError($export->getError());
+        break;
       case self::action_cfg_tab_provider:
         $result = $this->dlgConfigProvider();
         break;
@@ -4124,8 +3887,8 @@ class kitBackend {
         'value_enable_relaying' => $value[dbKITprovider::field_relaying],
         'label_status' => kit_label_status,
         'value_status' => $value[dbKITprovider::field_status],
-        'btn_ok' => kit_btn_ok,
-        'btn_abort' => kit_btn_abort,
+        'btn_ok' => $this->lang->translate('OK'),
+        'btn_abort' => $this->lang->translate('Abort'),
         'abort_location' => $this->page_link,
         'header_help' => kit_header_help_documentation);
     return $parser->get($this->template_path.'backend.config.provider.htt', $data);
@@ -4337,8 +4100,8 @@ class kitBackend {
         'items' => $items,
         'value_editor' => $editor,
         'header_help' => kit_header_help_documentation,
-        'btn_send' => kit_btn_send,
-        'btn_abort' => kit_btn_abort,
+        'btn_send' => $this->lang->translate('Send'),
+        'btn_abort' => $this->lang->translate('Abort'),
         'abort_location' => $this->page_link);
     return $parser->get($this->template_path.'backend.email.dlg.htt', $data);
   } // dlgEMail()

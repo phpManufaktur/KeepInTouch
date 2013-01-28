@@ -1,0 +1,53 @@
+{*
+ * KeepInTouch
+ *
+ * @author Ralf Hertsch <ralf.hertsch@phpmanufaktur.de>
+ * @link http://phpmanufaktur.de
+ * @copyright 2010 - 2013
+ * @license MIT License (MIT) http://www.opensource.org/licenses/MIT
+ *}
+<div class="kit_export">
+  <h2>{translate('Export CSV file')}</h2>
+  {if $message.active == 1}
+  <div class="message">{$message.text}</div>
+  {else}
+  <div class="intro">{translate('<p>You can export all your contact and address data records from different addons in comma separated textfiles (CSV).</p><p>You can open and edit these CSV files with any texteditor but also with programs like Excel.</p><p>Additional, KeepInTouch support the import of CSV files.</p>')}</div>
+  {/if}
+  <form name="{$form.name}" action="{$form.action}" method="post" enctype="multipart/form-data">
+    <input type="hidden" name="{$action.name}" value="{$action.value}" />
+    <fieldset class="kit_export_fieldset">
+      <legend>{translate('Export CSV file from selected source')}</legend>
+      <div class="kit_export_label">{translate('Source data')}</div>
+      <div class="kit_export_value">
+        {foreach $csv.export.values export}
+        <input type="radio" name="{$csv.export.name}" value="{$export.value}" {if $export.value == 'kit'}checked="checked" {/if}{if $export.enabled == 0}disabled="disabled" {/if}/> {if $export.enabled == 0}<span class="kit_export_disabled">{/if}{$export.text}{if $export.enabled == 0} {translate('- not installed -')}</span>{/if}<br />
+        {/foreach}
+      </div>
+      <div class="kit_export_clear"></div>
+      <div class="kit_export_clear"></div>
+      <div class="kit_export_clear"></div>
+      <div class="kit_export_label">{translate('Separator')}</div>
+      <div class="kit_export_value">
+        <select name="{$csv.separator.name}">
+          <option value=";">{translate('Semicolon')}</option>
+          <option value=",">{translate('Comma')}</option>
+        </select>
+      </div>
+      <div class="kit_export_clear"></div>
+      <div class="kit_export_label">{translate('Charset')}</div>
+      <div class="kit_export_value">
+        <select name="{$csv.charset.name}">
+          <option value="ANSI">{translate('ANSI')}</option>
+          <option value="UTF-8">{translate('UTF-8')}</option>
+        </select>
+      </div>
+      <div class="kit_export_clear"></div>
+      <div class="kit_export_clear"></div>
+      <div class="kit_export_label">&nbsp;</div>
+      <div class="kit_export_value">
+        <input type="submit" value="{translate('Start export')}" />
+      </div>
+      <div class="kit_export_clear"></div>
+    </fieldset>
+  </form>
+</div>
