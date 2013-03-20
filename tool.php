@@ -2232,7 +2232,7 @@ class kitBackend {
 
     // first check if kitForm is installed
     if (!file_exists(WB_PATH.'/modules/kit_form/class.frontend.php')) {
-      return $this->lang->translate('<p>For the special functions <b>kitform<(b> must be installed!</p>');
+      return $this->lang->translate('<p>For the special functions <b>kitform</b> must be installed!</p>');
     }
 
     // get the primary email address for this contact

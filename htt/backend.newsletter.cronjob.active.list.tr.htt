@@ -7,7 +7,7 @@
  * @license MIT License (MIT) http://www.opensource.org/licenses/MIT
  *}
 <tr class="{$class}">
-  <td class="job_cb">{$select}</td>
+  <!--<td class="job_cb">{$select}</td>-->
   <td class="job_id">{$id}</td>
   <td class="job_created">{$created}</td>
   <td class="job_process">{$process}</td>

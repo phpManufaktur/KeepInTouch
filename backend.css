@@ -645,3 +645,8 @@ fieldset.kit_import_fieldset {
   color: #999999;
   background-color: transparent;
 }
+.cronjob_abort {
+    margin: 0;
+    padding: 20px 0 0 0;
+    text-align: right;
+}

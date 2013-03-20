@@ -5,8 +5,14 @@ http://phpManufaktur.de - ralf.hertsch@phpManufaktur.de
 
 Release 0.70 - NOT PUBLISHED
 
-* added: fields kit_identifier and kit_contact_since are now accessible for 
+* added: fields kit_identifier and kit_contact_since are now accessible for
   the import and for kitForm
+* changed: import accept now category values or identifiers
+* added: import can activate newsletter automatically
+* added: truncate KIT contact database before import new data
+* added: import can handle internal categories
+* added: import ignore records with status deleted
+* added: switch to abort the actual running newsletter cronjob
 
 Release 0.69 - 2013-01-21
 

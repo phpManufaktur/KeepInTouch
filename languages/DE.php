@@ -58,6 +58,8 @@ $LANG = array(
       => 'Titel',
     'academicNone'
       => '',
+    'Activate Newsletter'
+        => 'Newsletter aktivieren',
     'ACTIVE'
       => 'Aktiv',
     '<p>Added <b>{{ add }}</b> records, updated <b>{{ update }}</b> records.</p>'
@@ -164,11 +166,14 @@ $LANG = array(
     'Function'
       => 'Funktion',
 
+    '<p>If you check this box, import and assign the <b>kit_status</b> field, records with status <i>deleted</i> will be ignored and skipped.</p>'
+        => '<p>Aktivieren Sie diese Option, importieren und weisen Sie das Feld <b>kit_status</b> zu um sicher zu stellen, dass als <i>gelöscht</i> markierte Datensätze beim Import ignoriert werden.</p>',
+    'Ignore deleted contact records'
+        => 'Gelöschte Kontaktdaten ignorieren',
     'Import CSV file'
       => 'CSV Datei importieren',
     '<p>Import CSV files i.e. from Excel into KeepInTouch.</p><p>If you are using excel, the preselection with <i>semicolon</i> and <i>ANSI</i> is well, otherwise set the correct values.</p><p>The import expect the field names as first line!</p>'
       => '<p>CSV Dateien z.B. aus Excel heraus nach KeepInTouch importieren.</p><p>Falls Sie Excel verwenden können Sie die Voreinstellungen mit <i>Semikolon</i> und <i>ANSI</i> übernehmen, andernfalls setzen Sie bitte die korrekten Werte.</p><p>Der Import erwartet, dass sich in der ersten Zeile der CSV Datei die Feldbezeichner befinden!</p>',
-
     '<p>In this dialog you assign the CSV fields to the KIT fields.</p><p>At least you must assign an <i>email address</i> to the KIT field <i>kit_email</i> as unique identifier.</p><p>The import can add and update KIT records. If an email adress already exists the KIT record will be updated. You can also use the <i>KIT ID</i>, assigned to the field <i>kit_id</i> to update existing KIT records.</p><p>Please check the <a href="https://addons.phpmanufaktur.de/de/name/keepintouch/documentation.php">KIT documentation</a> for further informations!</p>'
       => '<p>Mit diesem Dialog weisen Sie die Felder der CSV Datei den entsprechenden KIT Datenfeldern zu.</p><p>Letztendlich müssen Sie mindestens eine <i>E-Mail Adresse</i> dem KIT Datenfeld <i>kit_email</i> als eindeutige Kennzeichnung zuweisen.</p><p>Der CSV Datenimport kann KIT Datensätze hinzfügen und aktualisieren. Falls eine E-Mail Adresse bereits existiert, wird der entsprechende Datensatz in KIT mit den CSV Daten aktualisiert. Sie können darüber hinaus die <i>KIT ID</i> verwenden und diese <i>kit_id</i> zuweisen um bereits existierende Datensätze zu aktualisieren.</p><p>Bitte nutzen Sie die <a href="https://addons.phpmanufaktur.de/de/name/keepintouch/documentation.php">KeepInTouch Dokumentation</a> für weitere Informationen!</p>',
     'Information'
@@ -178,6 +183,8 @@ $LANG = array(
     '[ {{ line }} ] Invalid GUID, please contact the webmaster.'
       => '[ {{ line }} ] Ungueltige GUID, bitte kontaktieren Sie den Webmaster!',
 
+    '<p>Killed cronjob with the ID {{ id }}.</p>'
+        => 'Der Cronjob mit der ID {{ id }} wurde gelöscht.</p>',
     'kit_address_type'
       => 'Adresstyp',
     'kit_birthday'
@@ -246,16 +253,22 @@ $LANG = array(
     'Map'
       => 'Karte',
 
+    '<p>Newsletter subscribtions must be confirmed by the user (Double Opt-In).<br />If you check this box the confirmation will be set by the system, use this option careful!</p>'
+        => '<p>Newsletter Anmeldungen müssen normalerweise von den Empfängern bestätigt werden (Double Opt-In Verfahren).<br />Wenn Sie die Checkbox aktivieren, wird die Bestätigung durch das System gesetzt, benutzen Sie diese Option mit Bedacht!</p>',
     '<p>No CSV file uploaded!</p>'
       => '<p>Es wurde keine CSV Datei übermittelt!</p>',
     '<p>No data source selected!</p>'
       => '<p>Es wurde keine Datenquelle ausgewählt!</p>',
     'Notes'
       => 'Notizen',
+    '<p>Nothing to do ...</p>'
+        => '<p>Nichts zu erledigen ...</p>',
 
     '[ {{ line }} ] Oooops, missing the requested file. Please contact the webmaster!'
       => '[ {{ line }} ] Uuuups, die angeforderte Datei steht nicht mehr zur Verfügung. Bitte nehmen Sie Kontakt mit dem Webmaster auf.',
 
+    'PENDING'
+        => 'AUSSTEHEND',
     'PERMANENT'
       => 'Permanent',
     'permanent link'
@@ -347,11 +360,18 @@ $LANG = array(
       => 'Einweg',
     'throw-away link'
       => 'Wegwerf-Link',
+    'Truncate KIT contact database'
+        => 'KIT Kontakt Datenbank zurücksetzen',
+    '<p>Truncate the KIT contact database.</p>'
+        => '<p>Die KIT Kontakt Datenbank wurde vor dem Import zurückgesetzt (geleert).</p>',
     'Type'
       => 'Typ',
 
     'UPLOAD'
       => 'Upload',
+
+    '<p><b>Warning:</b> This option will truncate the KIT contact database with all entries and additional informations, i.e. addresses, memos, protocols and user registrations <i>before</i> starting the import!<br /><b>Attention:</b> Make a backup of your KIT contact database before proceeding (you can use the <i>export</i> function for this)!</p>'
+        => '<p><b>Warnung:</b> Diese Option setzt die KIT Kontakt Datenbank mit allen Einträgen und zusätzlichen Informationen wie Adressen, Memos, Protokolle, Benutzer Registrierungen usw. <i>zurück</i> und löscht die Daten <b>bevor</b> der Import durchgeführt wird.<br /><b>Achtung:</b> Führen Sie eine Datensicherung der KIT Kontakt Datenbank durch bevor Sie fortfahren, Sie können hierfür die <i>Export</i> Funktion nutzen!</p>',
 
     '<p>You can export all your contact and address data records from different addons in comma separated textfiles (CSV).</p><p>You can open and edit these CSV files with any texteditor but also with programs like Excel.</p><p>Additional, KeepInTouch support the import of CSV files.</p>'
       => '<p>Mit Hilfe dieses Dialog können Sie die Adress- und Kontaktdaten von verschiedenen WebsiteBaker bzw. LEPTON Addons als Komma getrennte Textdateien (CSV Format) exportieren.</p><p>Dateien im CSV Format können mit jedem beliebigen Texteditor oder im Tabellenformat mit Programmen wie Microsoft Excel oder OpenOffice Calc geöffnet und bearbeitet werden.</p><p>Über die Import Funktion können Sie CSV Dateien in KeepInTouch einlesen.</p><p>Falls Sie Microsoft Excel für die Kontrolle und Weiterverarbeitung der CSV Dateien verwenden, übernehmen Sie bitte die Voreinstellungen <i>Semikolon</i> und <i>ANSI</i>, ansonsten passen Sie die Voreinstellungen nach Bedarf an.</p>',

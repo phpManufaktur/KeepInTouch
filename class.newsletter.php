@@ -567,6 +567,7 @@ class kitNewsletterDialog {
   const request_action						= 'nlact';
   const request_command						= 'cmd';
   const request_items							= 'its';
+  const request_cronjob_abort     = 'cab';
   const action_config							= 'cfg';
   const action_config_save				= 'cfgs';
   const action_cronjobs_active		= 'cja';
@@ -730,6 +731,9 @@ class kitNewsletterDialog {
     case self::action_newsletter:
       return $this->show(self::action_newsletter, $this->dlgNewsletter());
       break;
+    case self::action_cronjobs_act_check:
+        return $this->show(self::action_cronjobs_active, $this->abortCronjobs());
+        break;
     default:
     case self::action_cronjobs_active:
       return $this->show(self::action_cronjobs_active, $this->dlgCronjobsActive());
@@ -2294,9 +2298,13 @@ class kitNewsletterDialog {
       $this->setError(sprintf('[%s - %s] %s', __METHOD__, __LINE__, $dbNewsletterProcess->getError()));
       return false;
     }
-    if (count($process) < 1) {
+    $cronjob_count = count($process);
+    if ($cronjob_count < 1) {
       // keine Eintraege vorhanden
-      if ($cronjob_running) {
+      if ($this->isMessage()) {
+          return sprintf('<div class="message">%s</div>', $this->getMessage());
+      }
+      elseif ($cronjob_running) {
         return sprintf('<div class="intro">%s</div>', sprintf(kit_msg_cronjob_last_call, date(CFG_DATETIME_STR, $cronjob_last_call)));
       }
       else {
@@ -2355,10 +2363,55 @@ class kitNewsletterDialog {
       'header_count'			=> kit_label_job_count,
       'header_archive_id'	=> kit_label_archive_id,
       'header_newsletter'	=> kit_label_newsletter,
-      'rows'							=> $rows
+      'rows'							=> $rows,
+        'cronjob' => array(
+            'count' => $cronjob_count,
+            'abort' => array(
+                'name' => self::request_cronjob_abort,
+                'value' => 1
+                )
+            )
     );
      return $parser->get($this->template_path.'backend.newsletter.cronjob.active.list.htt', $data);
   } // dlgCronjobsActive()
+
+  protected function abortCronjobs() {
+      global $dbNewsletterProcess;
+
+      if (isset($_REQUEST[self::request_cronjob_abort])) {
+          // abort all cronjobs
+          $where = array(dbKITnewsletterProcess::field_is_done => 0);
+          $process = array();
+          if (!$dbNewsletterProcess->sqlSelectRecord($where, $process)) {
+              $this->setError(sprintf('[%s - %s] %s', __METHOD__, __LINE__, $dbNewsletterProcess->getError()));
+              return false;
+          }
+          if (count($process) < 1) {
+              $this->setMessage($this->lang->translate('<p>Nothing to do ...</p>'));
+              return $this->dlgCronjobsActive();
+          }
+          $message = '';
+          foreach ($process as $cronjob) {
+              $where = array(dbKITnewsletterProcess::field_id => $cronjob[dbKITnewsletterProcess::field_id]);
+              $cronjob[dbKITnewsletterProcess::field_job_done_dt] = date('Y-m-d H:i:s');
+              $cronjob[dbKITnewsletterProcess::field_is_done] = 1;
+              $cronjob[dbKITnewsletterProcess::field_send] = 0;
+              $cronjob[dbKITnewsletterProcess::field_job_process_time] = 0;
+              if (!$dbNewsletterProcess->sqlUpdateRecord($cronjob, $where)) {
+                  $this->setError(sprintf('[%s - %s] %s', __METHOD__, __LINE__, $dbNewsletterProcess->getError()));
+                  exit($this->getError());
+              }
+              $message .= $this->lang->translate('<p>Killed cronjob with the ID {{ id }}.</p>',
+                  array('id' => $cronjob[dbKITnewsletterProcess::field_id]));
+          }
+          $this->setMessage($message);
+      }
+      else {
+          // nothing to do
+          $this->setMessage($this->lang->translate('<p>Nothing to do ...</p>'));
+      }
+      return $this->dlgCronjobsActive();
+  }
 
   public function dlgCronjobsProtocoll() {
     global $dbNewsletterProcess;
@@ -2386,7 +2439,8 @@ class kitNewsletterDialog {
         'aid'				=> sprintf('%08d', $protocol[dbKITnewsletterProcess::field_archiv_id]),
         'process'		=> ($protocol[dbKITnewsletterProcess::field_simulate] == 1) ? kit_text_process_simulate : kit_text_process_execute,
         'created'		=> date(CFG_DATETIME_STR, strtotime($protocol[dbKITnewsletterProcess::field_job_created_dt])),
-        'done'			=> date(CFG_DATETIME_STR, strtotime($protocol[dbKITnewsletterProcess::field_job_done_dt])),
+        'done'			=> ($protocol[dbKITnewsletterProcess::field_job_done_dt] == '0000-00-00 00:00:00') ?
+                          $this->lang->translate('PENDING') : date(CFG_DATETIME_STR, strtotime($protocol[dbKITnewsletterProcess::field_job_done_dt])),
         'time'			=> number_format($protocol[dbKITnewsletterProcess::field_job_process_time], 4, CFG_DECIMAL_SEPARATOR, CFG_THOUSAND_SEPARATOR),
         'count'			=> $protocol[dbKITnewsletterProcess::field_count],
         'send'			=> $protocol[dbKITnewsletterProcess::field_send]

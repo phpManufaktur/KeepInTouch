@@ -13,7 +13,7 @@
     {$intro|default: ''}
     <table width="99%">
       <colgroup>
-        <col width="5%" />
+        <!--<col width="5%" />-->
         <col width="10%" />
         <col width="20%" />
         <col width="15%" />
@@ -22,7 +22,7 @@
         <col width="30%" />
       </colgroup>
       <tr>
-        <th>{$header_select|default: ''}</th>
+        <!--<th>{$header_select|default: ''}</th>-->
         <th>{$header_id|default: ''}</th>
         <th>{$header_created|default: ''}</th>
         <th>{$header_process|default: ''}</th>
@@ -32,5 +32,10 @@
       </tr>
       {$rows}
     </table>
+    {if $cronjob.count > 0}
+        <div class="cronjob_abort">
+            <input type="checkbox" name="{$cronjob.abort.name}" value="{$cronjob.abort.value}" />&nbsp;{translate('Abort all active cronjobs')}&nbsp;<input type="submit" value="{translate('Abort')}" />
+        </div>
+    {/if}    
   </form>
 </div>

@@ -38,6 +38,31 @@
         <input type="file" name="{$csv.file.name}" />
       </div>
       <div class="kit_import_clear"></div>
+      <div class="kit_import_label">&nbsp;</div>
+      <div class="kit_import_value">
+        <input type="checkbox" name="{$options.newsletter.activate.name}" value="{$options.newsletter.activate.value}" />&nbsp;{translate('Activate Newsletter')}
+        <div class="small">
+            {translate('<p>Newsletter subscribtions must be confirmed by the user (Double Opt-In).<br />If you check this box the confirmation will be set by the system, use this option careful!</p>')}
+        </div>
+      </div>
+      <div class="kit_import_clear"></div>
+      <div class="kit_import_label">&nbsp;</div>
+      <div class="kit_import_value">
+        <input type="checkbox" name="{$options.database.truncate.name}" value="{$options.database.truncate.value}" />&nbsp;{translate('Truncate KIT contact database')}
+        <div class="small">
+            {translate('<p><b>Warning:</b> This option will truncate the KIT contact database with all entries and additional informations, i.e. addresses, memos, protocols and user registrations <i>before</i> starting the import!<br /><b>Attention:</b> Make a backup of your KIT contact database before proceeding (you can use the <i>export</i> function for this)!</p>')}
+        </div>
+      </div>
+      <div class="kit_import_clear"></div>
+      <div class="kit_import_label">&nbsp;</div>
+      <div class="kit_import_value">
+        <input type="checkbox" name="{$options.ignore.deleted.name}" value="{$options.ignore.deleted.value}" />&nbsp;{translate('Ignore deleted contact records')}
+        <div class="small">
+            {translate('<p>If you check this box, import and assign the <b>kit_status</b> field, records with status <i>deleted</i> will be ignored and skipped.</p>')}
+        </div>
+      </div>
+      
+      <div class="kit_import_clear"></div>
       <div class="kit_import_clear"></div>
       <div class="kit_import_label">&nbsp;</div>
       <div class="kit_import_value">

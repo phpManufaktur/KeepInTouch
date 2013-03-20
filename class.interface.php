@@ -188,7 +188,9 @@ class kitContactInterface {
       self::kit_address_region => 40,
       self::kit_distribution => 41,
       self::kit_identifier => 42,
-      self::kit_contact_since => 43 // last added field
+      self::kit_contact_since => 43,
+      self::kit_intern => 44,
+      self::kit_status => 45 // last added field
   );
 
   const address_type_private = 'private';
@@ -506,6 +508,7 @@ class kitContactInterface {
         switch ($field) :
           case self::kit_title:
           case self::kit_title_academic:
+          case self::kit_status:
             if (isset($contact_array[$field]) && ($contact_array[$field] !== $contact[$this->field_assign[$field]])) {
               $contact[$this->field_assign[$field]] = $contact_array[$field];
               $contact_changed = true;
@@ -614,6 +617,14 @@ class kitContactInterface {
               }
             }
             break;
+          case self::kit_intern:
+              if (isset($contact_array[$field]))  {
+                  if ($contact_array[$field] != $contact[dbKITcontact::field_intern]) {
+                      $contact[dbKITcontact::field_intern] = $contact_array[$field];
+                      $contact_changed = true;
+                  }
+              }
+              break;
         endswitch;
       }
       if ($address_changed) {
@@ -833,7 +844,7 @@ class kitContactInterface {
           $contact[$key] = dbKITcontact::type_person;
           break;
         case dbKITcontact::field_status:
-          $contact[$key] = dbKITcontact::status_active;
+          $contact[$key] = (isset($contact_array[self::kit_status])) ? $contact_array[self::kit_status] : dbKITcontact::status_active;
           break;
         case dbKITcontact::field_contact_language:
           // set contact language

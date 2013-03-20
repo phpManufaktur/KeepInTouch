@@ -20,6 +20,9 @@
     <input type="hidden" name="{$import.separator.name}" value="{$import.separator.value}" />
     <input type="hidden" name="{$import.fields.count.name}" value="{$import.fields.count.value}" />
     <input type="hidden" name="{$kit.fields.name}" value="{$kit.fields.value}" />
+    <input type="hidden" name="{$options.newsletter.activate.name}" value="{$options.newsletter.activate.value}" />
+    <input type="hidden" name="{$options.database.truncate.name}" value="{$options.database.truncate.value}" />
+    <input type="hidden" name="{$options.ignore.deleted.name}" value="{$options.ignore.deleted.value}" />
     <fieldset class="kit_import_fieldset">
       <legend>{translate('Assign the CSV fields to the KIT fields')}</legend>
       {foreach $import.fields.names field}

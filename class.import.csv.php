@@ -43,6 +43,9 @@ class kitCSVimport {
   const REQUEST_CSV_FIELD_COUNT = 'ccfc';
   const REQUEST_CSV_FILE = 'cf';
   const REQUEST_KIT_FIELDS = 'ckf';
+  const REQUEST_ACTIVATE_NEWSLETTER = 'can';
+  const REQUEST_TRUNCATE_DATABASE = 'ctd';
+  const REQUEST_IGNORE_DELETED = 'cid';
 
   const ACTION_ASSIGN_FIELDS = 'caf';
   const ACTION_DEFAULT = 'def';
@@ -225,6 +228,26 @@ class kitCSVimport {
             'file' => array(
                 'name' => self::REQUEST_CSV_FILE
                 )
+            ),
+        'options' => array(
+            'newsletter' => array(
+                'activate' => array(
+                    'name' => self::REQUEST_ACTIVATE_NEWSLETTER,
+                    'value' => 1
+                    )
+                ),
+            'database' => array(
+                'truncate' => array(
+                    'name' => self::REQUEST_TRUNCATE_DATABASE,
+                    'value' => 1
+                    )
+                ),
+            'ignore' => array(
+                'deleted' => array(
+                    'name' => self::REQUEST_IGNORE_DELETED,
+                    'value' => 1
+                    )
+                )
             )
         );
     return $this->getTemplate('import.csv.dwoo', $data);
@@ -349,6 +372,26 @@ class kitCSVimport {
                 'name' => self::REQUEST_KIT_FIELDS,
                 'value' => implode(',', $kit_fields)
                 )
+            ),
+        'options' => array(
+            'newsletter' => array(
+                'activate' => array(
+                    'value' => (int) isset($_REQUEST[self::REQUEST_ACTIVATE_NEWSLETTER]),
+                    'name' => self::REQUEST_ACTIVATE_NEWSLETTER
+                    )
+                ),
+            'database' => array(
+                'truncate' => array(
+                    'name' => self::REQUEST_TRUNCATE_DATABASE,
+                    'value' => (int) isset($_REQUEST[self::REQUEST_TRUNCATE_DATABASE])
+                    )
+                ),
+            'ignore' => array(
+                'deleted' => array(
+                    'name' => self::REQUEST_IGNORE_DELETED,
+                    'value' => (int) isset($_REQUEST[self::REQUEST_IGNORE_DELETED])
+                    )
+                )
             )
         );
     return $this->getTemplate('import.csv.assign.dwoo', $data);
@@ -371,6 +414,9 @@ class kitCSVimport {
     $csvFile = $_REQUEST[self::REQUEST_CSV_FILE];
     $kit_fields = explode(',', $_REQUEST[self::REQUEST_KIT_FIELDS]);
     $use_fields = array();
+    $activate_newsletter = (bool) $_REQUEST[self::REQUEST_ACTIVATE_NEWSLETTER];
+    $truncate_database = (bool) $_REQUEST[self::REQUEST_TRUNCATE_DATABASE];
+    $ignore_deleted = (bool) $_REQUEST[self::REQUEST_IGNORE_DELETED];
 
     $columns = array();
     for ($i=0; $i < $field_count; $i++) {
@@ -391,6 +437,29 @@ class kitCSVimport {
       $this->setMessage($this->lang->translate('<p>At minimum you must assign an email address to <b>kit_email</b> or assign a valid <b>ID</b> to <b>kit_id</b>. Can\'t start the import!</p>'));
       return $this->checkCSVfile();
     }
+
+    // get previous messages to the $message var
+    $message = $this->getMessage();
+
+    // truncate the KIT database before import new data?
+    if ($truncate_database) {
+        $queries = array(
+            "TRUNCATE TABLE `".TABLE_PREFIX."mod_kit_contact`",
+            "TRUNCATE TABLE `".TABLE_PREFIX."mod_kit_contact_address`",
+            "TRUNCATE TABLE `".TABLE_PREFIX."mod_kit_contact_memos`",
+            "TRUNCATE TABLE `".TABLE_PREFIX."mod_kit_contact_protocol`",
+            "TRUNCATE TABLE `".TABLE_PREFIX."mod_kit_register`"
+            );
+        foreach ($queries as $query) {
+            $database->query($query);
+            if ($database->is_error()) {
+                $this->setError(sprintf('[%s - %s] %s', __METHOD__, __LINE__, $database->get_error()));
+                return false;
+            }
+        }
+        $message .= $this->lang->translate('<p>Truncate the KIT contact database.</p>');
+    }
+
     // open the CSV file
     if (false === ($handle = fopen($csvFile, "r"))) {
       // can't open the file
@@ -399,11 +468,9 @@ class kitCSVimport {
       return false;
     }
 
-    // get previous messages to the $message var
-    $message = $this->getMessage();
-
     $title_array = $dbContact->person_title_array;
     $academic_array = $dbContact->person_title_academic_array;
+
     $newsletter_array = array();
     $x = $dbContact->newsletter_array;
     foreach ($x as $key => $value)
@@ -413,6 +480,11 @@ class kitCSVimport {
     $x = $dbContact->distribution_array;
     foreach ($x as $key => $value)
       $distribution_array[] = $key;
+
+    $intern_array = array();
+    $x = $dbContact->category_array;
+    foreach ($x as $key => $value)
+        $intern_array[] = $key;
 
     // now we loop through the CSV file and import the data
     $line = 0;
@@ -428,6 +500,7 @@ class kitCSVimport {
             array('line' => $line));
         continue;
       }
+      $ignore_record = false;
       // step through the columns
       $contact = array();
       for ($i=0; $i < $field_count; $i++) {
@@ -459,6 +532,8 @@ class kitCSVimport {
               if (empty($news)) continue;
               if (in_array($news, $newsletter_array))
                 $newsletter[] = $news;
+              elseif (false !== ($key = array_search($news, $dbContact->newsletter_array)))
+                $newsletter[] = $key;
             }
             $contact[$columns[$i]] = implode(',', $newsletter);
             break;
@@ -471,8 +546,24 @@ class kitCSVimport {
               if (empty($dist)) continue;
               if (in_array($dist, $distribution_array))
                 $distribution[] = $dist;
+              elseif (false !== ($key = array_search($dist, $dbContact->distribution_array)))
+                  $distribution[] = $key;
             }
             $contact[$columns[$i]] = implode(',', $distribution);
+            break;
+          case 'kit_intern':
+            // check for intern category
+            $il = explode(',', $data[$i]);
+            $intern = array();
+            foreach ($il as $int) {
+                $dist = trim($int);
+                if (empty($int)) continue;
+                if (in_array($int, $intern_array))
+                    $intern[] = $int;
+                elseif (false !== ($key = array_search($int, $dbContact->category_array)))
+                    $intern[] = $key;
+            }
+            $contact[$columns[$i]] = implode(',', $intern);
             break;
           case 'kit_birthday':
             // set the contact birthday
@@ -488,6 +579,13 @@ class kitCSVimport {
             }
             $contact[$columns[$i]] = date('Y-m-d H:i:s', $date);
             break;
+          case 'kit_status':
+              // if deleted records should be ignored still continue ...
+              if ($ignore_deleted && ($data[$i] == 'statusDeleted')) {
+                  $ignore_record = true;
+              }
+              $contact[$columns[$i]] = $data[$i];
+              break;
           default:
             // all other KIT fields
             $contact[$columns[$i]] = ($charset == 'ANSI') ? utf8_encode($data[$i]) : $data[$i];
@@ -496,53 +594,66 @@ class kitCSVimport {
       } // for columns
 
       $kit_id = -1;
-      $status = dbKITcontact::status_active;
+      $status = (isset($contact['kit_status'])) ? $contact['kit_status'] : dbKITcontact::status_active;
       $register = array();
 
-      if (isset($contact['kit_id'])) {
-        // update an existing KIT record
-        if (null === ($kit_id = $database->get_one("SELECT `contact_id` FROM `".self::$table_prefix."mod_kit_contact` WHERE `contact_id`='{$contact['kit_id']}'", MYSQL_ASSOC))) {
-          $this->setError(sprintf('[%s - %s] %s', __METHOD__, __LINE__, $database->get_error()));
-          return false;
-        }
-        if ($kit_id != $contact['kit_id']) {
-          $message .= $this->lang->translate('<p>Skipped line <i>{{ line }}</i>, the KIT ID <b>{{ kit_id }}</b> does not exists!</p>',
-              array('line' => $line, 'kit_id' => $contact['kit_id']));
-        }
-        elseif (!$kitContactInterface->updateContact($contact['kit_id'], $contact)) {
-          if ($kitContactInterface->isError()) {
-            $this->setError(sprintf('[%s - %s] %s', __METHOD__, __LINE__, $kitContactInterface->getError()));
-            return false;
+      if (!$ignore_record) {
+          if (isset($contact['kit_id'])) {
+            // update an existing KIT record
+            if (null === ($kit_id = $database->get_one("SELECT `contact_id` FROM `".self::$table_prefix."mod_kit_contact` WHERE `contact_id`='{$contact['kit_id']}'", MYSQL_ASSOC))) {
+              $this->setError(sprintf('[%s - %s] %s', __METHOD__, __LINE__, $database->get_error()));
+              return false;
+            }
+            if ($kit_id != $contact['kit_id']) {
+              $message .= $this->lang->translate('<p>Skipped line <i>{{ line }}</i>, the KIT ID <b>{{ kit_id }}</b> does not exists!</p>',
+                  array('line' => $line, 'kit_id' => $contact['kit_id']));
+            }
+            elseif (!$kitContactInterface->updateContact($contact['kit_id'], $contact)) {
+              if ($kitContactInterface->isError()) {
+                $this->setError(sprintf('[%s - %s] %s', __METHOD__, __LINE__, $kitContactInterface->getError()));
+                return false;
+              }
+              $message .= $kitContactInterface->getMessage();
+            }
+            else
+              $update_records++;
           }
-          $message .= $kitContactInterface->getMessage();
-        }
-        else
-          $update_records++;
-      }
-      elseif ($kitContactInterface->isEMailRegistered($contact['kit_email'], $kit_id, $status)) {
-        // KIT contact already exists, update the record
-        if (!$kitContactInterface->updateContact($kit_id, $contact)) {
-          if ($kitContactInterface->isError()) {
-            $this->setError(sprintf('[%s - %s] %s', __METHOD__, __LINE__, $kitContactInterface->getError()));
-            return false;
+          elseif ($kitContactInterface->isEMailRegistered($contact['kit_email'], $kit_id, $status)) {
+            // KIT contact already exists, update the record
+            if (!$kitContactInterface->updateContact($kit_id, $contact)) {
+              if ($kitContactInterface->isError()) {
+                $this->setError(sprintf('[%s - %s] %s', __METHOD__, __LINE__, $kitContactInterface->getError()));
+                return false;
+              }
+              $message .= $kitContactInterface->getMessage();
+            }
+            else
+              $update_records++;
           }
-          $message .= $kitContactInterface->getMessage();
-        }
-        else
-          $update_records++;
-      }
-      else {
-        // add a new record to KIT
-        if (!$kitContactInterface->addContact($contact, $kit_id, $register)) {
-          if ($kitContactInterface->isError()) {
-            $this->setError(sprintf('[%s - %s] %s', __METHOD__, __LINE__, $kitContactInterface->getError()));
-            return false;
+          else {
+            // add a new record to KIT
+            if (!$kitContactInterface->addContact($contact, $kit_id, $register)) {
+              if ($kitContactInterface->isError()) {
+                $this->setError(sprintf('[%s - %s] %s', __METHOD__, __LINE__, $kitContactInterface->getError()));
+                return false;
+              }
+              $message .= $kitContactInterface->getMessage();
+            }
+            else
+              $add_records++;
           }
-          $message .= $kitContactInterface->getMessage();
-        }
-        else
-          $add_records++;
-      }
+          // Handling for activation of Newsletters
+          if ($activate_newsletter && !empty($contact['kit_newsletter'])) {
+              $SQL = "UPDATE `".TABLE_PREFIX."mod_kit_register` SET `reg_status`='statusActive', ".
+                  "`reg_newsletter`='".$contact['kit_newsletter']."', `reg_register_confirmed`='".date('Y-m-d H:i:s')."'".
+                  " WHERE `reg_email`='".$contact['kit_email']."'";
+              $database->query($SQL);
+              if ($database->is_error()) {
+                  $this->setError(sprintf('[%s - %s] %s', __METHOD__, __LINE__, $database->get_error()));
+                  return false;
+              }
+          }
+      } // !$ignore_record
     } // while
 
         // close the CSV file
