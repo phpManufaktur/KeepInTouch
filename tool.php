@@ -96,6 +96,7 @@ class kitBackend {
   const action_cfg = 'cfg';
   const action_cfg_save_general = 'cfgsg';
   const action_cfg_save_array = 'cfgsa';
+  const ACTION_CFG_TAB_ADMIN = 'cfgta';
   const action_cfg_tab_general = 'cftg';
   const action_cfg_tab_array = 'cfta';
   const action_cfg_tab_array_save = 'cftas';
@@ -149,7 +150,8 @@ class kitBackend {
       self::action_cfg_tab_provider => kit_tab_cfg_provider,
       self::action_cfg_tab_array => kit_tab_cfg_array,
       self::action_cfg_tab_import		=> kit_tab_cfg_import,
-      self::ACTION_CFG_TAB_EXPORT => kit_tab_cfg_export
+      self::ACTION_CFG_TAB_EXPORT => kit_tab_cfg_export,
+      self::ACTION_CFG_TAB_ADMIN => kit_tab_cfg_admin
       );
 
   private $page_link = '';
@@ -3550,6 +3552,18 @@ class kitBackend {
         if ($export->isError())
           $this->setError($export->getError());
         break;
+      case self::ACTION_CFG_TAB_ADMIN:
+          // load the admin dialog
+          require_once WB_PATH.'/modules/kit/class.admin.cfg.php';
+          $pageLink = sprintf('%s&%s', $this->page_link, http_build_query(array(
+              self::request_action => self::action_cfg,
+              self::request_cfg_tab => self::ACTION_CFG_TAB_ADMIN)));
+          $admin = new kitAdmin($pageLink);
+          $result = $admin->action();
+          if ($admin->isError()) {
+              $this->setError($admin->getError());
+          }
+          break;
       case self::action_cfg_tab_provider:
         $result = $this->dlgConfigProvider();
         break;

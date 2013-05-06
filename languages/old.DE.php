@@ -597,6 +597,7 @@ define('kit_status_step_4', 'STEP 4');
 define('kit_status_step_5', 'STEP 5');
 define('kit_status_success', 'SUCCESS');
 
+define('kit_tab_cfg_admin', 'Verwaltung');
 define('kit_tab_cfg_array', 'Listen anpassen');
 define('kit_tab_cfg_export', 'Export');
 define('kit_tab_cfg_general', 'Allgemein');

@@ -616,6 +616,7 @@ fieldset.fs_person {
   background-color: transparent;
 }
 
+fieldset.kit_admin_fieldset,
 fieldset.kit_export_fieldset,
 fieldset.kit_import_fieldset {
   color: #000;
@@ -624,16 +625,24 @@ fieldset.kit_import_fieldset {
   padding: 20px;
   border: 1px solid #a0a0a0;
 }
+.kit_admin_label,
 .kit_export_label,
 .kit_import_label {
   float: left;
   width: 200px;
 }
+.kit_admin_value,
 .kit_export_value,
 .kit_import_value {
   float: left;
   width: 400px;
 }
+.kit_admin_hint {
+  font-size: smaller;
+  float: left;
+  width: 200px;
+}
+.kit_admin_clear,
 .kit_export_clear,
 .kit_import_clear {
   clear: both;

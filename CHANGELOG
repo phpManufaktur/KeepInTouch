@@ -3,7 +3,11 @@
 Ralf Hertsch, Stockholmer Str. 31, 13359 Berlin (Germany)
 http://phpManufaktur.de - ralf.hertsch@phpManufaktur.de
 
-Release 0.70 - NOT PUBLISHED
+Release 0.71 - 2013-05-06
+
+* added: admin function to delete contacts of a selected category
+
+Release 0.70 - 2013-03-20
 
 * added: fields kit_identifier and kit_contact_since are now accessible for
   the import and for kitForm

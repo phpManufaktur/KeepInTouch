@@ -1,0 +1,47 @@
+{*
+ * KeepInTouch
+ *
+ * @author Ralf Hertsch <ralf.hertsch@phpmanufaktur.de>
+ * @link http://phpmanufaktur.de
+ * @copyright 2010 - 2013
+ * @license MIT License (MIT) http://www.opensource.org/licenses/MIT
+ *}
+<div class="kit_admin">
+  <h2>{translate('General admin dialog')}</h2>
+  {if $message.active == 1}
+  <div class="message">{$message.text}</div>
+  {else}
+  <div class="intro">{translate('<p>This admin dialog provide you with some tools.</p>')}</div>
+  {/if}
+  <form name="{$form.name}" action="{$form.action}" method="post">
+    <input type="hidden" name="{$action.name}" value="{$action.value}" />
+    <fieldset class="kit_admin_fieldset">
+      <legend>{translate('Delete category')}</legend>
+      <div class="kit_admin_label">{translate('Category')}</div>
+      <div class="kit_admin_value">
+        <select name="category">
+          <option value="-1">{translate('- please select -')}</option>
+          {foreach $categories category}
+            <option value="{$category.identifier}">{$category.text}</option>
+          {/foreach}
+        </select>
+      </div>
+      <div class="kit_admin_hint">
+        {translate('<p>Make a backup before processing!</p><p>This function will directly delete all contacts of the selected category.</p>')}
+      </div>
+      <div class="kit_admin_clear"></div>
+      <div class="kit_admin_label">&nbsp;</div>
+      <div class="kit_admin_value">
+        <input type="checkbox" name="reg_status_inactive" value="1" /> {translate("don't delete if registration status is active")}
+      </div>
+      <div class="kit_admin_clear"></div>
+      <div class="kit_admin_clear"></div>
+      <div class="kit_admin_clear"></div>
+      <div class="kit_admin_label">&nbsp;</div>
+      <div class="kit_admin_value">
+        <input type="submit" value="{translate('Delete category')}" />
+      </div>
+      <div class="kit_admin_clear"></div>
+    </fieldset>
+  </form>
+</div>

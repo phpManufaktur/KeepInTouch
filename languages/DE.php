@@ -88,6 +88,9 @@ $LANG = array(
       => '<p>Konnte die hochgeladene Datei nicht in das Zielverzeichnis verschieben!</p>',
     '<p>Can\'t open the file {{ file }}!</p>'
       => '<p>Konnte die Datei {{ file }} nicht öffnen!</p>',
+
+    'Category'
+        => 'Kategorie',
     'Categories'
       => 'Kategorien',
     'Charset'
@@ -135,12 +138,16 @@ $LANG = array(
 
     'Delete'
       => 'Löschen',
+    'Delete category'
+        => 'Kategorie löschen',
     'DELETED'
       => 'Gelöscht',
     'Department'
       => 'Abteilung',
     'Distribution'
       => 'Verteiler',
+    "don't delete if registration status is active"
+        => 'nicht löschen wenn die Registrierung bestätigt ist',
 
     'Edit'
       => 'Bearbeiten',
@@ -166,6 +173,9 @@ $LANG = array(
     'Function'
       => 'Funktion',
 
+    'General admin dialog'
+        => 'Allgemeiner Verwaltungsdialog',
+
     '<p>If you check this box, import and assign the <b>kit_status</b> field, records with status <i>deleted</i> will be ignored and skipped.</p>'
         => '<p>Aktivieren Sie diese Option, importieren und weisen Sie das Feld <b>kit_status</b> zu um sicher zu stellen, dass als <i>gelöscht</i> markierte Datensätze beim Import ignoriert werden.</p>',
     'Ignore deleted contact records'
@@ -178,6 +188,8 @@ $LANG = array(
       => '<p>Mit diesem Dialog weisen Sie die Felder der CSV Datei den entsprechenden KIT Datenfeldern zu.</p><p>Letztendlich müssen Sie mindestens eine <i>E-Mail Adresse</i> dem KIT Datenfeld <i>kit_email</i> als eindeutige Kennzeichnung zuweisen.</p><p>Der CSV Datenimport kann KIT Datensätze hinzfügen und aktualisieren. Falls eine E-Mail Adresse bereits existiert, wird der entsprechende Datensatz in KIT mit den CSV Daten aktualisiert. Sie können darüber hinaus die <i>KIT ID</i> verwenden und diese <i>kit_id</i> zuweisen um bereits existierende Datensätze zu aktualisieren.</p><p>Bitte nutzen Sie die <a href="https://addons.phpmanufaktur.de/de/name/keepintouch/documentation.php">KeepInTouch Dokumentation</a> für weitere Informationen!</p>',
     'Information'
       => 'Information',
+    'Internal'
+        => 'Intern',
     '[ {{ line }} ] Invalid call, missing GUID!'
       => '[ {{ line }} ] Ungueltiger Aufruf, es wurde keine GUID uebergeben!',
     '[ {{ line }} ] Invalid GUID, please contact the webmaster.'
@@ -252,6 +264,8 @@ $LANG = array(
 
     'Map'
       => 'Karte',
+    '<p>Make a backup before processing!</p><p>This function will directly delete all contacts of the selected category.</p>'
+        => '<p>Führen Sie zueerst eine Datensicherung durch!</p><p>Diese Funktion löscht alle Kontakte der ausgewählten Kategorie.</p>',
 
     '<p>Newsletter subscribtions must be confirmed by the user (Double Opt-In).<br />If you check this box the confirmation will be set by the system, use this option careful!</p>'
         => '<p>Newsletter Anmeldungen müssen normalerweise von den Empfängern bestätigt werden (Double Opt-In Verfahren).<br />Wenn Sie die Checkbox aktivieren, wird die Bestätigung durch das System gesetzt, benutzen Sie diese Option mit Bedacht!</p>',
@@ -348,6 +362,10 @@ $LANG = array(
       => '<p>Der Upload Link wurde angelegt, bitte prüfen Sie den Link bei den <em>Speziellen Funktionen</em></p>',
     '<p>There are no data records to export for {{ export }}.</p>'
       => '<p>Für <b>{{ export }}</b> sind keine Datensätze zum exportieren vorhanden.</p>',
+    '<p>There are no records to delete!</p>'
+        => '<p>Es wurden keine Datensätze gelöscht.</p>',
+    '<p>This admin dialog provide you with some tools.</p>'
+        => 'Dieser Verwaltungsdialog stellt Ihnen Werkzeuge zur Datenpflege zur Verfügung.',
     '[ {{ line }} ] This download link is no longer valid, please contact the webmaster to get a new one!'
       => '[ {{ line }} ] Dieser Download Link steht nicht mehr zur Verfuegung, bitte kontaktieren Sie den Webmaster um einen neuen Link zu erhalten!',
     '[ {{ line }} ] This is no valid download link, please contact the webmaster.'
@@ -360,12 +378,20 @@ $LANG = array(
       => 'Einweg',
     'throw-away link'
       => 'Wegwerf-Link',
+    '<p>Totally {{ count }} records where successfull removed!</p>'
+        => '<p>Insgesamt wurden {{ count }} Datensätze gelöscht.</p>',
     'Truncate KIT contact database'
         => 'KIT Kontakt Datenbank zurücksetzen',
     '<p>Truncate the KIT contact database.</p>'
         => '<p>Die KIT Kontakt Datenbank wurde vor dem Import zurückgesetzt (geleert).</p>',
     'Type'
       => 'Typ',
+    'typeCategory'
+        => 'Intern',
+    'typeDistribution'
+        => 'Verteiler',
+    'typeNewsletter'
+        => 'Newsletter',
 
     'UPLOAD'
       => 'Upload',
