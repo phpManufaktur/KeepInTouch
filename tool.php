@@ -102,7 +102,7 @@ class kitBackend {
   const action_cfg_tab_array_save = 'cftas';
   const ACTION_CFG_TAB_EXPORT = 'cftx';
   const action_cfg_tab_import = 'cfti';
-  const action_cfg_tab_provider = 'cftp';
+  const action_cfg_tab_provider = 'cftep'; //'cftp';
   const action_cfg_tab_provider_save = 'cfgsp';
   const action_list_company = 2;
   const action_list_city = 5;

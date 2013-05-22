@@ -3,6 +3,10 @@
 Ralf Hertsch, Stockholmer Str. 31, 13359 Berlin (Germany)
 http://phpManufaktur.de - ralf.hertsch@phpManufaktur.de
 
+Release 0.72 - not published
+
+* fixed: WebsiteBaker does not like the parameter 'ctab' at provider configuration
+
 Release 0.71 - 2013-05-06
 
 * added: admin function to delete contacts of a selected category
