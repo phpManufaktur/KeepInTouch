@@ -3,7 +3,7 @@
 Ralf Hertsch, Stockholmer Str. 31, 13359 Berlin (Germany)
 http://phpManufaktur.de - ralf.hertsch@phpManufaktur.de
 
-Release 0.72 - not published
+Release 0.72 - 2013-05-23
 
 * fixed: WebsiteBaker does not like the parameter 'ctab' at provider configuration
 
