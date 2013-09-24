@@ -201,8 +201,11 @@ class kitCSVimport {
     }
     // remove the content of the temporary directory
     $handle = opendir($temp_path);
-    while (false !== ($data = readdir($handle)))
-      if (!is_dir($data) && ($data != '.') && ($data != '..')) unlink("$temp_path/$data");
+    while (false !== ($data = readdir($handle))) {
+      if (!is_dir($data) && ($data != '.') && ($data != '..')) {
+        @unlink("$temp_path/$data");
+      }
+    }
     closedir($handle);
 
     $data = array(
@@ -273,7 +276,7 @@ class kitCSVimport {
         return $this->dlgImport();
       }
 
-      $csvFile = WB_PATH.'/temp/kit/import/'.date('Ymd-His').'-kit-csv-import.csv';
+      $csvFile = $this->sanitizePath(WB_PATH.'/temp/kit/import/'.date('Ymd-His').'-kit-csv-import.csv');
       if (!move_uploaded_file($_FILES[self::REQUEST_CSV_FILE]['tmp_name'], $csvFile)) {
         // can't move the uploaded file
         $this->setError(sprintf('[%s - %s] %s', __METHOD__, __LINE__, $this->lang->translate(
@@ -283,7 +286,7 @@ class kitCSVimport {
     }
     else {
       // the file is already uploaded, use it!
-      $csvFile = $_REQUEST[self::REQUEST_CSV_FILE];
+      $csvFile = $this->sanitizePath($_REQUEST[self::REQUEST_CSV_FILE]);
     }
 
     if (false === ($handle = fopen($csvFile, "r"))) {
@@ -299,7 +302,7 @@ class kitCSVimport {
       return false;
     }
     $cols = count($data);
-    if ($cols < 3) {
+    if ($cols < 2) {
       // does not contain any columns!
       $this->setMessage($this->lang->translate('<p>The CSV file {{ file }} does not have any columns, please check the file!</p><p>Perhaps you have assigned the wrong Separator? In this case the program can not proper split the columns!</p>',
           array('file' => basename($csvFile))));
@@ -398,6 +401,46 @@ class kitCSVimport {
   } // checkCSVfile()
 
   /**
+   * fixes a path by removing //, /../ and other things
+   *
+   * @access public
+   * @param string $path to fix
+   * @return string
+   *
+   */
+  protected static function sanitizePath ($path)
+  {
+      // remove / at end of string; this will make sanitizePath fail otherwise!
+      $path = preg_replace('~/{1,}$~', '', $path);
+
+      // make all slashes forward
+      $path = str_replace('\\', '/', $path);
+
+      // bla/./bloo ==> bla/bloo
+      $path = preg_replace('~/\./~', '/', $path);
+
+      // resolve /../
+      // loop through all the parts, popping whenever there's a .., pushing otherwise.
+      $parts = array();
+      foreach (explode('/', preg_replace('~/+~', '/', $path)) as $part) {
+      if ($part === ".." || $part == '') {
+      array_pop($parts);
+      } elseif ($part != "") {
+      $parts[] = $part;
+      }
+      }
+
+      $new_path = implode("/", $parts);
+
+      // windows
+      if (! preg_match('/^[a-z]\:/i', $new_path)) {
+      $new_path = '/' . $new_path;
+  }
+
+  return $new_path;
+  } // sanitizePath()
+
+  /**
    * In this dialog the user assign the CSV fields to the KIT fields and start
    * the import of the CSV file
    *
@@ -411,7 +454,9 @@ class kitCSVimport {
     $field_count = (int) $_REQUEST[self::REQUEST_CSV_FIELD_COUNT];
     $charset = $_REQUEST[self::REQUEST_CSV_CHARSET];
     $separator = $_REQUEST[self::REQUEST_CSV_SEPARATOR];
-    $csvFile = $_REQUEST[self::REQUEST_CSV_FILE];
+
+    $csvFile = $this->sanitizePath($_REQUEST[self::REQUEST_CSV_FILE]);
+
     $kit_fields = explode(',', $_REQUEST[self::REQUEST_KIT_FIELDS]);
     $use_fields = array();
     $activate_newsletter = (bool) $_REQUEST[self::REQUEST_ACTIVATE_NEWSLETTER];

@@ -3,6 +3,11 @@
 Ralf Hertsch, Stockholmer Str. 31, 13359 Berlin (Germany)
 http://phpManufaktur.de - ralf.hertsch@phpManufaktur.de
 
+Release 0.73 - 2013-09-24
+
+* fixed: it was not possible to import 2-column massmail CSV files because KIT
+  expected at minimum 3 columns.
+
 Release 0.72 - 2013-05-23
 
 * fixed: WebsiteBaker does not like the parameter 'ctab' at provider configuration
