@@ -3,6 +3,11 @@
 Ralf Hertsch, Stockholmer Str. 31, 13359 Berlin (Germany)
 http://phpManufaktur.de - ralf.hertsch@phpManufaktur.de
 
+Release 0.74 - 2013-11-21
+
+* fixed: problem accessing language files at BlackCat CMS environment
+* changed: precheck.php does no longer check for Dwoo at BlackCat CMS environment
+
 Release 0.73 - 2013-09-24
 
 * fixed: it was not possible to import 2-column massmail CSV files because KIT

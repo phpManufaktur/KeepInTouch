@@ -55,11 +55,6 @@ $check = array(
         'version' => '0.68',
         'problem' => 'dbConnect_LE => <b><a href="https://addons.phpmanufaktur.de/download.php?file=dbConnect_LE" target="_blank">Download actual version</a></b>'
         ),
-    'Dwoo' => array(
-        'directory' => 'dwoo',
-        'version' => '0.17',
-        'problem' => 'Dwoo => <b><a href="https://addons.phpmanufaktur.de/download.php?file=Dwoo" target="_blank">Download actual version</a></b>'
-        ),
     'wbLib' => array(
         'directory' => 'wblib',
         'version' => '0.65',
@@ -76,6 +71,14 @@ $check = array(
        'problem' => 'libJQuery => <b><a href="http://jquery.lepton-cms.org/modules/download_gallery/dlc.php?file=76&id=1320743410" target="_blank">Download actual version</a></b>'
        ),
 );
+
+if (!defined('CAT_VERSION')) {
+    $check['Dwoo'] = array(
+        'directory' => 'dwoo',
+        'version' => '0.17',
+        'problem' => 'Dwoo => <b><a href="https://addons.phpmanufaktur.de/download.php?file=Dwoo" target="_blank">Download actual version</a></b>'
+    );
+}
 
 $versionSQL = "SELECT `version` FROM `".TABLE_PREFIX."addons` WHERE `directory`='%s'";
 

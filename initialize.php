@@ -34,22 +34,33 @@ else {
 if (!defined('DEBUG_MODE')) define('DEBUG_MODE', true);
 
 if (DEBUG_MODE) {
-	ini_set('display_errors', 1);
-	error_reporting(E_ALL);
+    ini_set('display_errors', 1);
+    error_reporting(E_ALL);
 }
 else {
-	ini_set('display_errors', 0);
-	error_reporting(E_ERROR);
+    ini_set('display_errors', 0);
+    error_reporting(E_ERROR);
 }
 
 // use LEPTON 2.x I18n for access to language files
-if (!class_exists('LEPTON_Helper_I18n')) require_once WB_PATH.'/modules/'.basename(dirname(__FILE__)).'/framework/LEPTON/Helper/I18n.php';
+if (!class_exists('CAT_Helper_I18n') && !class_exists('LEPTON_Helper_I18n')) {
+    require_once WB_PATH . '/modules/' . basename(dirname(__FILE__)) . '/framework/LEPTON/Helper/I18n.php';
+}
+
 global $I18n;
+
 if (!is_object($I18n)) {
-  $I18n = new LEPTON_Helper_I18n(array('lang' => LANGUAGE));
+    if (class_exists('CAT_Helper_I18n')) {
+        // this is a BlackCat environment
+        $I18n = new CAT_Helper_I18n(array('lang' => LANGUAGE));
+    }
+    else {
+        // all other environments
+        $I18n = new LEPTON_Helper_I18n(array('lang' => LANGUAGE));
+    }
 }
 else {
-  $I18n->addFile('DE.php', WB_PATH.'/modules/'.basename(dirname(__FILE__)).'/languages/');
+    $I18n->addFile('DE.php', LEPTON_PATH.'/modules/'.basename(dirname(__FILE__)).'/languages/');
 }
 
 // load language depending onfiguration
@@ -67,10 +78,10 @@ if (!file_exists(WB_PATH . '/modules/' . basename(dirname(__FILE__)) . '/languag
 
 // include the OLD language file - needed as long not complete switched to I18n !!!
 if (!file_exists(WB_PATH .'/modules/'.basename(dirname(__FILE__)).'/languages/old.' .LANGUAGE .'.php')) {
-	require_once(WB_PATH .'/modules/'.basename(dirname(__FILE__)).'/languages/old.DE.php');
+    require_once(WB_PATH .'/modules/'.basename(dirname(__FILE__)).'/languages/old.DE.php');
 }
 else {
-	require_once(WB_PATH .'/modules/'.basename(dirname(__FILE__)).'/languages/old.' .LANGUAGE .'.php');
+    require_once(WB_PATH .'/modules/'.basename(dirname(__FILE__)).'/languages/old.' .LANGUAGE .'.php');
 }
 
 // include dbConnect
