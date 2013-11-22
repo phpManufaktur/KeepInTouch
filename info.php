@@ -34,7 +34,7 @@ else {
 $module_directory = 'kit';
 $module_name = 'KeepInTouch';
 $module_function = 'tool';
-$module_version = '0.74';
+$module_version = '0.75';
 $module_status = 'stable';
 $module_languages = 'DE';
 $module_platform = '2.8';

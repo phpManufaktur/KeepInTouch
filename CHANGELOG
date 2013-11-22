@@ -3,6 +3,11 @@
 Ralf Hertsch, Stockholmer Str. 31, 13359 Berlin (Germany)
 http://phpManufaktur.de - ralf.hertsch@phpManufaktur.de
 
+Release 0.75 - 2013-11-22
+
+* fixed missing parts: problem accessing language files at BlackCat CMS environment
+* added icon.png (BlackCat CMS) and tool_icon.png (WebsiteBaker 2.8.4)
+
 Release 0.74 - 2013-11-21
 
 * fixed: problem accessing language files at BlackCat CMS environment
