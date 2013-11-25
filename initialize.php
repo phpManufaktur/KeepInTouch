@@ -31,7 +31,7 @@ else {
 }
 // end include class.secure.php
 
-if (!defined('DEBUG_MODE')) define('DEBUG_MODE', true);
+if (!defined('DEBUG_MODE')) define('DEBUG_MODE', false);
 
 if (DEBUG_MODE) {
     ini_set('display_errors', 1);
